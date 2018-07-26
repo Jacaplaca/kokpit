@@ -214,6 +214,9 @@ module.exports = app => {
                 };
                 smtpTransport.sendMail(mailOptions, function(err) {
                   console.log('mail sent');
+                  console.log(process.env.GMAILPW);
+                  console.log(req.headers.host);
+                  console.log(token);
                 });
                 done(token, user);
               })
