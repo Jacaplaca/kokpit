@@ -24,7 +24,7 @@ class App extends Component {
       // <div className="container">
       <BrowserRouter>
         <div>
-          {/* <Header /> */}
+          <Header />
           <MiniDrawer>
             <Route path="/login" component={Login} />
             <Route exact path="/" component={Landing} />
