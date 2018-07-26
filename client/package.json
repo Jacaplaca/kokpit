@@ -6,7 +6,13 @@
     "/auth/google": {
       "target": "http://localhost:5000"
     },
+    "/auth/*": {
+      "target": "http://localhost:5000"
+    },
     "/api/*": {
+      "target": "http://localhost:5000"
+    },
+    "/reset/token/*": {
       "target": "http://localhost:5000"
     }
   },
