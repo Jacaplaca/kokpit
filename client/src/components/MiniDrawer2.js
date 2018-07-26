@@ -19,8 +19,8 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 430,
-    zIndex: 1,
+    height: 0,
+    zIndex: 0,
     overflow: 'hidden',
     position: 'relative',
     display: 'flex'
