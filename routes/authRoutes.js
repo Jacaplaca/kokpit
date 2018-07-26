@@ -216,11 +216,12 @@ module.exports = app => {
                   to: user.email,
                   // to: 'dziewanowski@gmail.com',
                   from: process.env.RESETMAIL,
-                  subject: 'Password Reset',
+                  subject: 'Password Reset ✔',
                   text: `http://${req.headers.host}/reset/token/${token}`
                 };
                 // smtpTransport.sendMail(mailOptions, function(err) {
                 //   console.log('mail sent');
+                // console.log(process.env.RESETMAIL);
                 //   // console.log(process.env.GMAILPW);
                 //   // console.log(req.headers.host);
                 //   // console.log(token);
@@ -310,8 +311,8 @@ module.exports = app => {
             if (password1 === password2) {
               console.log('pasuja hasla');
               bcrypt.hash(password1, saltRounds, function(err, hash) {
-                user.resetPasswordToken = 111;
-                user.resetPasswordExpires = 1632560851436;
+                user.resetPasswordToken = undefined;
+                user.resetPasswordExpires = undefined;
                 user.password = hash;
                 user
                   .save()
