@@ -311,8 +311,8 @@ module.exports = app => {
             if (password1 === password2) {
               console.log('pasuja hasla');
               bcrypt.hash(password1, saltRounds, function(err, hash) {
-                user.resetPasswordToken = undefined;
-                user.resetPasswordExpires = undefined;
+                user.resetPasswordToken = null;
+                user.resetPasswordExpires = null;
                 user.password = hash;
                 user
                   .save()
