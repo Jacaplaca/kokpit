@@ -199,24 +199,45 @@ module.exports = app => {
               .then(() => {
                 console.log('mailujemy');
                 var smtpTransport = nodemailer.createTransport({
-                  service: 'Gmail',
+                  // service: 'Gmail',
+                  // auth: {
+                  //   user: 'bikerhill@gmail.com',
+                  //   pass: process.env.GMAILPW
+                  // }
+                  host: process.env.RESETMAILSMTP,
+                  port: 587,
+                  secure: false, // true for 465, false for other ports
                   auth: {
-                    user: 'bikerhill@gmail.com',
-                    pass: process.env.GMAILPW
+                    user: process.env.RESETMAIL, // generated ethereal user
+                    pass: process.env.RESETMAILPW // generated ethereal password
                   }
                 });
                 const mailOptions = {
-                  // to: user.email,
-                  to: 'dziewanowski@gmail.com',
-                  from: 'bikerhill@gmail.com',
+                  to: user.email,
+                  // to: 'dziewanowski@gmail.com',
+                  from: process.env.RESETMAIL,
                   subject: 'Password Reset',
                   text: `http://${req.headers.host}/reset/token/${token}`
                 };
-                smtpTransport.sendMail(mailOptions, function(err) {
-                  console.log('mail sent');
-                  console.log(process.env.GMAILPW);
-                  console.log(req.headers.host);
-                  console.log(token);
+                // smtpTransport.sendMail(mailOptions, function(err) {
+                //   console.log('mail sent');
+                //   // console.log(process.env.GMAILPW);
+                //   // console.log(req.headers.host);
+                //   // console.log(token);
+                // });
+                smtpTransport.sendMail(mailOptions, (error, info) => {
+                  if (error) {
+                    return console.log(error);
+                  }
+                  console.log('Message sent: %s', info.messageId);
+                  // Preview only available when sending through an Ethereal account
+                  console.log(
+                    'Preview URL: %s',
+                    nodemailer.getTestMessageUrl(info)
+                  );
+
+                  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+                  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
                 });
                 done(token, user);
               })
