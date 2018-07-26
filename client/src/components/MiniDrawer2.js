@@ -97,11 +97,7 @@ class MiniDrawer2 extends React.Component {
   render() {
     const { classes, theme } = this.props;
 
-    return (
-      <div className={classes.root}>
-        <p>asdf</p>
-      </div>
-    );
+    return <div>{/* <p>asdf</p> */}</div>;
   }
 }
 
