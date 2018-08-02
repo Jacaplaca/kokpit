@@ -13,23 +13,23 @@ require('dotenv').config();
 
 var db = {};
 
-if (config.use_env_variable) {
-  var sequelize = new Sequelize(process.env[config.use_env_variable], config, {
+// if (config.use_env_variable) {
+//   var sequelize = new Sequelize(process.env[config.use_env_variable], config, {
+//     logging: false
+//   });
+// } else {
+var sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: 'mysql',
+    operatorsAliases: false,
     logging: false
-  });
-} else {
-  var sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-      host: process.env.DB_HOST,
-      dialect: 'mysql',
-      operatorsAliases: false,
-      logging: false
-    }
-  );
-}
+  }
+);
+// }
 
 fs.readdirSync(__dirname)
   .filter(file => {
