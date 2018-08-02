@@ -1,8 +1,9 @@
-import { FETCH_FORM } from '../actions/types';
+import { CLICKED } from '../actions/types';
 
 export default function(state = false, action) {
+  // console.log(action);
   switch (action.type) {
-    case FETCH_FORM:
+    case CLICKED:
       return action.payload || false;
     default:
       return state;

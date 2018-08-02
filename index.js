@@ -8,8 +8,15 @@ const bodyParser = require('body-parser');
 // const { check, validationResult } = require('express-validator/check');
 var session = require('express-session');
 var flash = require('connect-flash');
+var morgan = require('morgan');
 // const seql = require('./seql');
-const User = require('./models/user');
+
+// const User = require('./models/user');
+// const Client = require('./models/client');
+const db = require('./models/index');
+const User = db.users;
+const Client = db.clients;
+
 // var Article = require('./models/article');
 var MySQLStore = require('express-mysql-session')(session);
 const keys = require('./config/keys');
@@ -23,11 +30,47 @@ const app = express();
 const jsonParser = bodyParser.json();
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 require('dotenv').config();
+app.use(morgan('short'));
+// console.log(db);
+
+// Client.findAll({
+//   include: [{ model: User }]
+// }).then(result => result.forEach(one => console.log(one)));
+
+User.findAll({
+  // where: { id: 3 },
+  // attributes: ['email'],
+  include: [
+    {
+      model: Client
+      // where: { name: 'Salana' }
+    }
+  ]
+}).then(
+  results => results.forEach(one => one.isAdmin(one.client))
+  // console.log(`${results[4].dataValues.email} ${results[4].client.name}`)
+);
+
+// User.findAll({
+//   limit: 100,
+//   attributes: ['email'],
+//   include: [
+//     {
+//       model: Client,
+//       where: { name: 'Dako' },
+//       attributes: ['name']
+//     }
+//   ]
+// }).then(users => {
+//   console.log(users.map(user => user.dataValues));
+// });
+
 // User.create({
-//   email: 'asdfas@asdkfja.com',
+//   email: 'asddfas@addsdkfja.com',
 //   password: ':ASDF_23=4XCV#$%4567',
 //   status: 'active'
 // });
+
 // Article.update({ title: 'a very different title now' }, { where: { id: 210 } })
 //   .then(result => console.log(result))
 //   .catch(err => console.log(err));
@@ -43,13 +86,13 @@ require('dotenv').config();
 //     console.error('Unable to connect to the database:', err);
 //   });
 
-var options = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
-};
-var sessionStore = new MySQLStore(options);
+// var options = {
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_NAME
+// };
+// var sessionStore = new MySQLStore(options);
 
 app.use(jsonParser);
 app.use(urlencodedParser);
@@ -85,6 +128,7 @@ app.use(passport.session());
 
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
+require('./routes/otherRoutes')(app);
 // require('./routes/surveyRoutes')(app);
 
 if (process.env.NODE_ENV === 'online') {

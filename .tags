@@ -1,0 +1,271 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+html	C:\Work\reactfull\server\client\public\index.html	/^<html lang="en">$/;"	function	line:2
+head	C:\Work\reactfull\server\client\public\index.html	/^  <head>$/;"	function	line:3
+meta	C:\Work\reactfull\server\client\public\index.html	/^    <meta charset="utf-8">$/;"	function	line:4
+meta	C:\Work\reactfull\server\client\public\index.html	/^    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">$/;"	function	line:5
+meta	C:\Work\reactfull\server\client\public\index.html	/^    <meta name="theme-color" content="#000000">$/;"	function	line:6
+link	C:\Work\reactfull\server\client\public\index.html	/^    <link rel="manifest" href="%PUBLIC_URL%\/manifest.json">$/;"	function	line:11
+link	C:\Work\reactfull\server\client\public\index.html	/^    <link rel="shortcut icon" href="%PUBLIC_URL%\/favicon.ico">$/;"	function	line:12
+title	C:\Work\reactfull\server\client\public\index.html	/^    <title>React App<\/title>$/;"	function	line:22
+body	C:\Work\reactfull\server\client\public\index.html	/^  <body>$/;"	function	line:24
+noscript	C:\Work\reactfull\server\client\public\index.html	/^    <noscript>$/;"	function	line:25
+div	C:\Work\reactfull\server\client\public\index.html	/^    <div id="root"><\/div>$/;"	function	line:28
+short_name	C:\Work\reactfull\server\client\public\manifest.json	/^  "short_name": "React App",$/;"	function	line:2
+name	C:\Work\reactfull\server\client\public\manifest.json	/^  "name": "Create React App Sample",$/;"	function	line:3
+icons	C:\Work\reactfull\server\client\public\manifest.json	/^  "icons": [$/;"	function	line:4
+src	C:\Work\reactfull\server\client\public\manifest.json	/^      "src": "favicon.ico",$/;"	function	line:6
+sizes	C:\Work\reactfull\server\client\public\manifest.json	/^      "sizes": "64x64 32x32 24x24 16x16",$/;"	function	line:7
+type	C:\Work\reactfull\server\client\public\manifest.json	/^      "type": "image\/x-icon"$/;"	function	line:8
+start_url	C:\Work\reactfull\server\client\public\manifest.json	/^  "start_url": ".\/index.html",$/;"	function	line:11
+display	C:\Work\reactfull\server\client\public\manifest.json	/^  "display": "standalone",$/;"	function	line:12
+theme_color	C:\Work\reactfull\server\client\public\manifest.json	/^  "theme_color": "#000000",$/;"	function	line:13
+background_color	C:\Work\reactfull\server\client\public\manifest.json	/^  "background_color": "#ffffff"$/;"	function	line:14
+Table of Contents	C:\Work\reactfull\server\client\README.md	/^## Table of Contents$/;"	function	line:6
+Updating to New Releases	C:\Work\reactfull\server\client\README.md	/^## Updating to New Releases$/;"	function	line:106
+Sending Feedback	C:\Work\reactfull\server\client\README.md	/^## Sending Feedback$/;"	function	line:123
+Folder Structure	C:\Work\reactfull\server\client\README.md	/^## Folder Structure$/;"	function	line:127
+Available Scripts	C:\Work\reactfull\server\client\README.md	/^## Available Scripts$/;"	function	line:164
+`npm start`	C:\Work\reactfull\server\client\README.md	/^### `npm start`$/;"	function	line:168
+`npm test`	C:\Work\reactfull\server\client\README.md	/^### `npm test`$/;"	function	line:176
+`npm run build`	C:\Work\reactfull\server\client\README.md	/^### `npm run build`$/;"	function	line:181
+`npm run eject`	C:\Work\reactfull\server\client\README.md	/^### `npm run eject`$/;"	function	line:191
+Supported Browsers	C:\Work\reactfull\server\client\README.md	/^## Supported Browsers$/;"	function	line:201
+Supported Language Features and Polyfills	C:\Work\reactfull\server\client\README.md	/^## Supported Language Features and Polyfills$/;"	function	line:207
+Syntax Highlighting in the Editor	C:\Work\reactfull\server\client\README.md	/^## Syntax Highlighting in the Editor$/;"	function	line:233
+Displaying Lint Output in the Editor	C:\Work\reactfull\server\client\README.md	/^## Displaying Lint Output in the Editor$/;"	function	line:237
+Debugging in the Editor	C:\Work\reactfull\server\client\README.md	/^## Debugging in the Editor$/;"	function	line:260
+Visual Studio Code	C:\Work\reactfull\server\client\README.md	/^### Visual Studio Code$/;"	function	line:266
+WebStorm	C:\Work\reactfull\server\client\README.md	/^### WebStorm$/;"	function	line:293
+Formatting Code Automatically	C:\Work\reactfull\server\client\README.md	/^## Formatting Code Automatically$/;"	function	line:305
+Changing the Page `<title>`	C:\Work\reactfull\server\client\README.md	/^## Changing the Page `<title>`$/;"	function	line:355
+Installing a Dependency	C:\Work\reactfull\server\client\README.md	/^## Installing a Dependency$/;"	function	line:365
+Importing a Component	C:\Work\reactfull\server\client\README.md	/^## Importing a Component$/;"	function	line:381
+`Button.js`	C:\Work\reactfull\server\client\README.md	/^### `Button.js`$/;"	function	line:388
+`DangerButton.js`	C:\Work\reactfull\server\client\README.md	/^### `DangerButton.js`$/;"	function	line:402
+Code Splitting	C:\Work\reactfull\server\client\README.md	/^## Code Splitting$/;"	function	line:430
+`moduleA.js`	C:\Work\reactfull\server\client\README.md	/^### `moduleA.js`$/;"	function	line:438
+`App.js`	C:\Work\reactfull\server\client\README.md	/^### `App.js`$/;"	function	line:445
+With React Router	C:\Work\reactfull\server\client\README.md	/^### With React Router$/;"	function	line:477
+Adding a Stylesheet	C:\Work\reactfull\server\client\README.md	/^## Adding a Stylesheet$/;"	function	line:483
+`Button.css`	C:\Work\reactfull\server\client\README.md	/^### `Button.css`$/;"	function	line:487
+`Button.js`	C:\Work\reactfull\server\client\README.md	/^### `Button.js`$/;"	function	line:495
+Post-Processing CSS	C:\Work\reactfull\server\client\README.md	/^## Post-Processing CSS$/;"	function	line:515
+Adding a CSS Preprocessor (Sass, Less etc.)	C:\Work\reactfull\server\client\README.md	/^## Adding a CSS Preprocessor (Sass, Less etc.)$/;"	function	line:548
+Adding Images, Fonts, and Files	C:\Work\reactfull\server\client\README.md	/^## Adding Images, Fonts, and Files$/;"	function	line:642
+Using the `public` Folder	C:\Work\reactfull\server\client\README.md	/^## Using the `public` Folder$/;"	function	line:683
+Changing the HTML	C:\Work\reactfull\server\client\README.md	/^### Changing the HTML$/;"	function	line:687
+Adding Assets Outside of the Module System	C:\Work\reactfull\server\client\README.md	/^### Adding Assets Outside of the Module System$/;"	function	line:692
+When to Use the `public` Folder	C:\Work\reactfull\server\client\README.md	/^### When to Use the `public` Folder$/;"	function	line:735
+Using Global Variables	C:\Work\reactfull\server\client\README.md	/^## Using Global Variables$/;"	function	line:747
+Adding Bootstrap	C:\Work\reactfull\server\client\README.md	/^## Adding Bootstrap$/;"	function	line:761
+Using a Custom Theme	C:\Work\reactfull\server\client\README.md	/^### Using a Custom Theme$/;"	function	line:794
+Adding Flow	C:\Work\reactfull\server\client\README.md	/^## Adding Flow$/;"	function	line:805
+Adding a Router	C:\Work\reactfull\server\client\README.md	/^## Adding a Router$/;"	function	line:824
+Adding Custom Environment Variables	C:\Work\reactfull\server\client\README.md	/^## Adding Custom Environment Variables$/;"	function	line:844
+Referencing Environment Variables in the HTML	C:\Work\reactfull\server\client\README.md	/^### Referencing Environment Variables in the HTML$/;"	function	line:907
+Adding Temporary Environment Variables In Your Shell	C:\Work\reactfull\server\client\README.md	/^### Adding Temporary Environment Variables In Your Shell$/;"	function	line:922
+Windows (cmd.exe)	C:\Work\reactfull\server\client\README.md	/^#### Windows (cmd.exe)$/;"	function	line:927
+Windows (Powershell)	C:\Work\reactfull\server\client\README.md	/^#### Windows (Powershell)$/;"	function	line:935
+Linux, macOS (Bash)	C:\Work\reactfull\server\client\README.md	/^#### Linux, macOS (Bash)$/;"	function	line:941
+Adding Development Environment Variables In `.env`	C:\Work\reactfull\server\client\README.md	/^### Adding Development Environment Variables In `.env`$/;"	function	line:947
+What other `.env` files can be used?	C:\Work\reactfull\server\client\README.md	/^#### What other `.env` files can be used?$/;"	function	line:960
+Expanding Environment Variables In `.env`	C:\Work\reactfull\server\client\README.md	/^#### Expanding Environment Variables In `.env`$/;"	function	line:981
+also works:	C:\Work\reactfull\server\client\README.md	/^# also works:$/;"	function	line:991
+REACT_APP_VERSION=${npm_package_version}	C:\Work\reactfull\server\client\README.md	/^# REACT_APP_VERSION=${npm_package_version}$/;"	function	line:992
+Can I Use Decorators?	C:\Work\reactfull\server\client\README.md	/^## Can I Use Decorators?$/;"	function	line:1003
+Fetching Data with AJAX Requests	C:\Work\reactfull\server\client\README.md	/^## Fetching Data with AJAX Requests$/;"	function	line:1020
+Integrating with an API Backend	C:\Work\reactfull\server\client\README.md	/^## Integrating with an API Backend$/;"	function	line:1030
+Node	C:\Work\reactfull\server\client\README.md	/^### Node$/;"	function	line:1035
+Ruby on Rails	C:\Work\reactfull\server\client\README.md	/^### Ruby on Rails$/;"	function	line:1039
+Proxying API Requests in Development	C:\Work\reactfull\server\client\README.md	/^## Proxying API Requests in Development$/;"	function	line:1044
+"Invalid Host Header" Errors After Configuring Proxy	C:\Work\reactfull\server\client\README.md	/^### "Invalid Host Header" Errors After Configuring Proxy$/;"	function	line:1082
+NOTE: THIS IS DANGEROUS!	C:\Work\reactfull\server\client\README.md	/^# NOTE: THIS IS DANGEROUS!$/;"	function	line:1101
+It exposes your machine to attacks from the websites you visit.	C:\Work\reactfull\server\client\README.md	/^# It exposes your machine to attacks from the websites you visit.$/;"	function	line:1102
+Configuring the Proxy Manually	C:\Work\reactfull\server\client\README.md	/^### Configuring the Proxy Manually$/;"	function	line:1108
+Configuring a WebSocket Proxy	C:\Work\reactfull\server\client\README.md	/^### Configuring a WebSocket Proxy$/;"	function	line:1166
+Using HTTPS in Development	C:\Work\reactfull\server\client\README.md	/^## Using HTTPS in Development$/;"	function	line:1196
+Windows (cmd.exe)	C:\Work\reactfull\server\client\README.md	/^#### Windows (cmd.exe)$/;"	function	line:1204
+Windows (Powershell)	C:\Work\reactfull\server\client\README.md	/^#### Windows (Powershell)$/;"	function	line:1210
+Linux, macOS (Bash)	C:\Work\reactfull\server\client\README.md	/^#### Linux, macOS (Bash)$/;"	function	line:1218
+Generating Dynamic `<meta>` Tags on the Server	C:\Work\reactfull\server\client\README.md	/^## Generating Dynamic `<meta>` Tags on the Server$/;"	function	line:1226
+Pre-Rendering into Static HTML Files	C:\Work\reactfull\server\client\README.md	/^## Pre-Rendering into Static HTML Files$/;"	function	line:1242
+Injecting Data from the Server into the Page	C:\Work\reactfull\server\client\README.md	/^## Injecting Data from the Server into the Page$/;"	function	line:1252
+Running Tests	C:\Work\reactfull\server\client\README.md	/^## Running Tests$/;"	function	line:1267
+Filename Conventions	C:\Work\reactfull\server\client\README.md	/^### Filename Conventions$/;"	function	line:1280
+Command Line Interface	C:\Work\reactfull\server\client\README.md	/^### Command Line Interface$/;"	function	line:1292
+Version Control Integration	C:\Work\reactfull\server\client\README.md	/^### Version Control Integration$/;"	function	line:1300
+Writing Tests	C:\Work\reactfull\server\client\README.md	/^### Writing Tests$/;"	function	line:1308
+Testing Components	C:\Work\reactfull\server\client\README.md	/^### Testing Components$/;"	function	line:1326
+`src/setupTests.js`	C:\Work\reactfull\server\client\README.md	/^#### `src\/setupTests.js`$/;"	function	line:1363
+Using Third Party Assertion Libraries	C:\Work\reactfull\server\client\README.md	/^### Using Third Party Assertion Libraries$/;"	function	line:1431
+Initializing Test Environment	C:\Work\reactfull\server\client\README.md	/^### Initializing Test Environment$/;"	function	line:1444
+`src/setupTests.js`	C:\Work\reactfull\server\client\README.md	/^#### `src\/setupTests.js`$/;"	function	line:1452
+Focusing and Excluding Tests	C:\Work\reactfull\server\client\README.md	/^### Focusing and Excluding Tests$/;"	function	line:1471
+Coverage Reporting	C:\Work\reactfull\server\client\README.md	/^### Coverage Reporting$/;"	function	line:1476
+Configuration	C:\Work\reactfull\server\client\README.md	/^#### Configuration$/;"	function	line:1485
+Continuous Integration	C:\Work\reactfull\server\client\README.md	/^### Continuous Integration$/;"	function	line:1520
+On CI servers	C:\Work\reactfull\server\client\README.md	/^### On CI servers$/;"	function	line:1528
+Travis CI	C:\Work\reactfull\server\client\README.md	/^#### Travis CI$/;"	function	line:1529
+CircleCI	C:\Work\reactfull\server\client\README.md	/^#### CircleCI$/;"	function	line:1547
+On your own environment	C:\Work\reactfull\server\client\README.md	/^### On your own environment$/;"	function	line:1551
+Windows (cmd.exe)	C:\Work\reactfull\server\client\README.md	/^##### Windows (cmd.exe)$/;"	function	line:1552
+Windows (Powershell)	C:\Work\reactfull\server\client\README.md	/^##### Windows (Powershell)$/;"	function	line:1564
+Linux, macOS (Bash)	C:\Work\reactfull\server\client\README.md	/^##### Linux, macOS (Bash)$/;"	function	line:1574
+Disabling jsdom	C:\Work\reactfull\server\client\README.md	/^### Disabling jsdom$/;"	function	line:1590
+Snapshot Testing	C:\Work\reactfull\server\client\README.md	/^### Snapshot Testing$/;"	function	line:1625
+Editor Integration	C:\Work\reactfull\server\client\README.md	/^### Editor Integration$/;"	function	line:1629
+Debugging Tests	C:\Work\reactfull\server\client\README.md	/^## Debugging Tests$/;"	function	line:1635
+Debugging Tests in Chrome	C:\Work\reactfull\server\client\README.md	/^### Debugging Tests in Chrome$/;"	function	line:1641
+Debugging Tests in Visual Studio Code	C:\Work\reactfull\server\client\README.md	/^### Debugging Tests in Visual Studio Code$/;"	function	line:1665
+Developing Components in Isolation	C:\Work\reactfull\server\client\README.md	/^## Developing Components in Isolation$/;"	function	line:1694
+Getting Started with Storybook	C:\Work\reactfull\server\client\README.md	/^### Getting Started with Storybook$/;"	function	line:1711
+Getting Started with Styleguidist	C:\Work\reactfull\server\client\README.md	/^### Getting Started with Styleguidist$/;"	function	line:1736
+Publishing Components to npm	C:\Work\reactfull\server\client\README.md	/^## Publishing Components to npm$/;"	function	line:1774
+Making a Progressive Web App	C:\Work\reactfull\server\client\README.md	/^## Making a Progressive Web App$/;"	function	line:1778
+Opting Out of Caching	C:\Work\reactfull\server\client\README.md	/^### Opting Out of Caching$/;"	function	line:1797
+Offline-First Considerations	C:\Work\reactfull\server\client\README.md	/^### Offline-First Considerations$/;"	function	line:1815
+Progressive Web App Metadata	C:\Work\reactfull\server\client\README.md	/^### Progressive Web App Metadata$/;"	function	line:1872
+Analyzing the Bundle Size	C:\Work\reactfull\server\client\README.md	/^## Analyzing the Bundle Size$/;"	function	line:1885
+Deployment	C:\Work\reactfull\server\client\README.md	/^## Deployment$/;"	function	line:1921
+Static Server	C:\Work\reactfull\server\client\README.md	/^### Static Server$/;"	function	line:1925
+Other Solutions	C:\Work\reactfull\server\client\README.md	/^### Other Solutions$/;"	function	line:1942
+Serving Apps with Client-Side Routing	C:\Work\reactfull\server\client\README.md	/^### Serving Apps with Client-Side Routing$/;"	function	line:1968
+Building for Relative Paths	C:\Work\reactfull\server\client\README.md	/^### Building for Relative Paths$/;"	function	line:2013
+Serving the Same Build from Different Paths	C:\Work\reactfull\server\client\README.md	/^#### Serving the Same Build from Different Paths$/;"	function	line:2033
+[Azure](https://azure.microsoft.com/)	C:\Work\reactfull\server\client\README.md	/^### [Azure](https:\/\/azure.microsoft.com\/)$/;"	function	line:2045
+[Firebase](https://firebase.google.com/)	C:\Work\reactfull\server\client\README.md	/^### [Firebase](https:\/\/firebase.google.com\/)$/;"	function	line:2051
+[GitHub Pages](https://pages.github.com/)	C:\Work\reactfull\server\client\README.md	/^### [GitHub Pages](https:\/\/pages.github.com\/)$/;"	function	line:2124
+Step 1: Add `homepage` to `package.json`	C:\Work\reactfull\server\client\README.md	/^#### Step 1: Add `homepage` to `package.json`$/;"	function	line:2128
+Step 2: Install `gh-pages` and add `deploy` to `scripts` in `package.json`	C:\Work\reactfull\server\client\README.md	/^#### Step 2: Install `gh-pages` and add `deploy` to `scripts` in `package.json`$/;"	function	line:2147
+Step 3: Deploy the site by running `npm run deploy`	C:\Work\reactfull\server\client\README.md	/^#### Step 3: Deploy the site by running `npm run deploy`$/;"	function	line:2187
+Step 4: Ensure your project’s settings use `gh-pages`	C:\Work\reactfull\server\client\README.md	/^#### Step 4: Ensure your project’s settings use `gh-pages`$/;"	function	line:2195
+Step 5: Optionally, configure the domain	C:\Work\reactfull\server\client\README.md	/^#### Step 5: Optionally, configure the domain$/;"	function	line:2201
+Notes on client-side routing	C:\Work\reactfull\server\client\README.md	/^#### Notes on client-side routing$/;"	function	line:2205
+Troubleshooting	C:\Work\reactfull\server\client\README.md	/^#### Troubleshooting$/;"	function	line:2212
+"/dev/tty: No such a device or address"	C:\Work\reactfull\server\client\README.md	/^##### "\/dev\/tty: No such a device or address"$/;"	function	line:2214
+[Heroku](https://www.heroku.com/)	C:\Work\reactfull\server\client\README.md	/^### [Heroku](https:\/\/www.heroku.com\/)$/;"	function	line:2222
+Resolving Heroku Deployment Errors	C:\Work\reactfull\server\client\README.md	/^#### Resolving Heroku Deployment Errors$/;"	function	line:2227
+"Module not found: Error: Cannot resolve 'file' or 'directory'"	C:\Work\reactfull\server\client\README.md	/^##### "Module not found: Error: Cannot resolve 'file' or 'directory'"$/;"	function	line:2231
+"Could not find a required file."	C:\Work\reactfull\server\client\README.md	/^##### "Could not find a required file."$/;"	function	line:2245
+[Netlify](https://www.netlify.com/)	C:\Work\reactfull\server\client\README.md	/^### [Netlify](https:\/\/www.netlify.com\/)$/;"	function	line:2260
+[Now](https://zeit.co/now)	C:\Work\reactfull\server\client\README.md	/^### [Now](https:\/\/zeit.co\/now)$/;"	function	line:2290
+[S3](https://aws.amazon.com/s3) and [CloudFront](https://aws.amazon.com/cloudfront/)	C:\Work\reactfull\server\client\README.md	/^### [S3](https:\/\/aws.amazon.com\/s3) and [CloudFront](https:\/\/aws.amazon.com\/cloudfront\/)$/;"	function	line:2310
+[Surge](https://surge.sh/)	C:\Work\reactfull\server\client\README.md	/^### [Surge](https:\/\/surge.sh\/)$/;"	function	line:2314
+Advanced Configuration	C:\Work\reactfull\server\client\README.md	/^## Advanced Configuration$/;"	function	line:2326
+Troubleshooting	C:\Work\reactfull\server\client\README.md	/^## Troubleshooting$/;"	function	line:2343
+`npm start` doesn’t detect changes	C:\Work\reactfull\server\client\README.md	/^### `npm start` doesn’t detect changes$/;"	function	line:2345
+`npm test` hangs on macOS Sierra	C:\Work\reactfull\server\client\README.md	/^### `npm test` hangs on macOS Sierra$/;"	function	line:2359
+`npm run build` exits too early	C:\Work\reactfull\server\client\README.md	/^### `npm run build` exits too early$/;"	function	line:2383
+`npm run build` fails on Heroku	C:\Work\reactfull\server\client\README.md	/^### `npm run build` fails on Heroku$/;"	function	line:2391
+Moment.js locales are missing	C:\Work\reactfull\server\client\README.md	/^### Moment.js locales are missing$/;"	function	line:2396
+`npm run build` fails to minify	C:\Work\reactfull\server\client\README.md	/^### `npm run build` fails to minify$/;"	function	line:2422
+Alternatives to Ejecting	C:\Work\reactfull\server\client\README.md	/^## Alternatives to Ejecting$/;"	function	line:2438
+Something Missing?	C:\Work\reactfull\server\client\README.md	/^## Something Missing?$/;"	function	line:2442
+componentDidMount	C:\Work\reactfull\server\client\src\components\App.js	/^  componentDidMount() {$/;"	function	line:18
+render	C:\Work\reactfull\server\client\src\components\App.js	/^  render() {$/;"	function	line:23
+renderContent	C:\Work\reactfull\server\client\src\components\Header.js	/^  renderContent() {$/;"	function	line:7
+switch	C:\Work\reactfull\server\client\src\components\Header.js	/^    switch (this.props.auth) {$/;"	function	line:9
+render	C:\Work\reactfull\server\client\src\components\Header.js	/^  render() {$/;"	function	line:40
+mapStateToProps	C:\Work\reactfull\server\client\src\components\Header.js	/^\/\/ function mapStateToProps({state}) {$/;"	function	line:57
+mapStateToProps	C:\Work\reactfull\server\client\src\components\Header.js	/^function mapStateToProps({ auth }) {$/;"	function	line:60
+mapStateToProps	C:\Work\reactfull\server\client\src\components\Header.js	/^function mapStateToProps({ auth }) {$/;"	function	line:60
+class.email	C:\Work\reactfull\server\client\src\components\Login.js	/^    email: ''$/;"	property	line:8
+render	C:\Work\reactfull\server\client\src\components\Login.js	/^  render() {$/;"	function	line:31
+mapStateToProps	C:\Work\reactfull\server\client\src\components\Login.js	/^function mapStateToProps({ formTemp }) {$/;"	function	line:86
+class.Component.open	C:\Work\reactfull\server\client\src\components\MiniDrawer.js	/^    open: true$/;"	property	line:108
+renderContent	C:\Work\reactfull\server\client\src\components\MiniDrawer.js	/^  renderContent() {$/;"	function	line:119
+switch	C:\Work\reactfull\server\client\src\components\MiniDrawer.js	/^    switch (this.props.auth) {$/;"	function	line:121
+render	C:\Work\reactfull\server\client\src\components\MiniDrawer.js	/^  render() {$/;"	function	line:156
+MiniDrawer.propTypes.classes	C:\Work\reactfull\server\client\src\components\MiniDrawer.js	/^  classes: PropTypes.object.isRequired,$/;"	property	line:252
+mapStateToProps	C:\Work\reactfull\server\client\src\components\MiniDrawer.js	/^function mapStateToProps({ auth }) {$/;"	function	line:256
+mapStateToProps	C:\Work\reactfull\server\client\src\components\MiniDrawer.js	/^function mapStateToProps({ auth }) {$/;"	function	line:256
+class.Component.open	C:\Work\reactfull\server\client\src\components\MiniDrawer2.js	/^    open: false$/;"	property	line:86
+render	C:\Work\reactfull\server\client\src\components\MiniDrawer2.js	/^  render() {$/;"	function	line:97
+MiniDrawer2.propTypes.classes	C:\Work\reactfull\server\client\src\components\MiniDrawer2.js	/^  classes: PropTypes.object.isRequired,$/;"	property	line:105
+render	C:\Work\reactfull\server\client\src\components\Payments.js	/^  render() {$/;"	function	line:7
+class.email	C:\Work\reactfull\server\client\src\components\Register.js	/^    email: this.props.formTemp.length > 0 ? this.props.formTemp[0].email : ''$/;"	property	line:7
+render	C:\Work\reactfull\server\client\src\components\Register.js	/^  render() {$/;"	function	line:30
+mapStateToProps	C:\Work\reactfull\server\client\src\components\Register.js	/^function mapStateToProps({ formTemp }) {$/;"	function	line:69
+class.password1	C:\Work\reactfull\server\client\src\components\ResetPassword.js	/^    password1: '',$/;"	property	line:7
+class.password2	C:\Work\reactfull\server\client\src\components\ResetPassword.js	/^    password2: ''$/;"	property	line:8
+render	C:\Work\reactfull\server\client\src\components\ResetPassword.js	/^  render() {$/;"	function	line:22
+constructor	C:\Work\reactfull\server\client\src\containersJumbo\SideNav\index.js	/^  constructor(props) {$/;"	function	line:11
+state.width	C:\Work\reactfull\server\client\src\containersJumbo\SideNav\index.js	/^      width: $(window).width()$/;"	property	line:14
+render	C:\Work\reactfull\server\client\src\containersJumbo\SideNav\index.js	/^  render() {$/;"	function	line:34
+componentDidMount	C:\Work\reactfull\server\client\src\containersJumbo\SideNav\SidenavContent.js	/^    componentDidMount() {$/;"	function	line:7
+render	C:\Work\reactfull\server\client\src\containersJumbo\SideNav\SidenavContent.js	/^    render() {$/;"	function	line:51
+switch	C:\Work\reactfull\server\client\src\reducers\authReducer.js	/^  switch (action.type) {$/;"	function	line:5
+switch	C:\Work\reactfull\server\client\src\reducers\formReducer.js	/^  switch (action.type) {$/;"	function	line:6
+register	C:\Work\reactfull\server\client\src\registerServiceWorker.js	/^export default function register() {$/;"	function	line:21
+registerValidSW	C:\Work\reactfull\server\client\src\registerServiceWorker.js	/^function registerValidSW(swUrl) {$/;"	function	line:55
+registerValidSW	C:\Work\reactfull\server\client\src\registerServiceWorker.js	/^function registerValidSW(swUrl) {$/;"	function	line:55
+checkValidServiceWorker	C:\Work\reactfull\server\client\src\registerServiceWorker.js	/^function checkValidServiceWorker(swUrl) {$/;"	function	line:84
+checkValidServiceWorker	C:\Work\reactfull\server\client\src\registerServiceWorker.js	/^function checkValidServiceWorker(swUrl) {$/;"	function	line:84
+unregister	C:\Work\reactfull\server\client\src\registerServiceWorker.js	/^export function unregister() {$/;"	function	line:111
+module.exports.development	C:\Work\reactfull\server\config\config.js	/^  development: {$/;"	property	line:4
+development	C:\Work\reactfull\server\config\config.json	/^  "development": {$/;"	function	line:2
+username	C:\Work\reactfull\server\config\config.json	/^    "username": "process.env.DB_USER",$/;"	function	line:3
+password	C:\Work\reactfull\server\config\config.json	/^    "password": "process.env.DB_PASSWORD",$/;"	function	line:4
+database	C:\Work\reactfull\server\config\config.json	/^    "database": "process.env.DB_NAME",$/;"	function	line:5
+host	C:\Work\reactfull\server\config\config.json	/^    "host": "process.env.DB_HOST",$/;"	function	line:6
+dialect	C:\Work\reactfull\server\config\config.json	/^    "dialect": "mysql"$/;"	function	line:7
+test	C:\Work\reactfull\server\config\config.json	/^  "test": {$/;"	function	line:9
+username	C:\Work\reactfull\server\config\config.json	/^    "username": "process.env.DB_USER",$/;"	function	line:10
+password	C:\Work\reactfull\server\config\config.json	/^    "password": "process.env.DB_PASSWORD",$/;"	function	line:11
+database	C:\Work\reactfull\server\config\config.json	/^    "database": "process.env.DB_NAME",$/;"	function	line:12
+host	C:\Work\reactfull\server\config\config.json	/^    "host": "process.env.DB_HOST",$/;"	function	line:13
+dialect	C:\Work\reactfull\server\config\config.json	/^    "dialect": "mysql"$/;"	function	line:14
+production	C:\Work\reactfull\server\config\config.json	/^  "production": {$/;"	function	line:16
+username	C:\Work\reactfull\server\config\config.json	/^    "username": "process.env.DB_USER",$/;"	function	line:17
+password	C:\Work\reactfull\server\config\config.json	/^    "password": "process.env.DB_PASSWORD",$/;"	function	line:18
+database	C:\Work\reactfull\server\config\config.json	/^    "database": "process.env.DB_NAME",$/;"	function	line:19
+host	C:\Work\reactfull\server\config\config.json	/^    "host": "process.env.DB_HOST",$/;"	function	line:20
+dialect	C:\Work\reactfull\server\config\config.json	/^    "dialect": "mysql"$/;"	function	line:21
+module.exports.googleClientID	C:\Work\reactfull\server\config\dev.js	/^  googleClientID:$/;"	property	line:3
+module.exports.googleClientSecret	C:\Work\reactfull\server\config\dev.js	/^  googleClientSecret: 'TbMS0l1jN5sAjWn0o5HK15y-',$/;"	property	line:5
+module.exports.mongoURI	C:\Work\reactfull\server\config\dev.js	/^  mongoURI: 'mongodb:\/\/admin:password@ds027495.mlab.com:27495\/emaily-dev-jd',$/;"	property	line:6
+module.exports.cookieKey	C:\Work\reactfull\server\config\dev.js	/^  cookieKey: 'lskdajflskadjflaskdjghlvbnba',$/;"	property	line:7
+module.exports.stripePublishableKey	C:\Work\reactfull\server\config\dev.js	/^  stripePublishableKey: 'pk_test_HV8u9Lg2jaMGGhAGqyEjKKkb',$/;"	property	line:8
+module.exports.stripeSecretKey	C:\Work\reactfull\server\config\dev.js	/^  stripeSecretKey: 'sk_test_9sA1dE5MMKOYNUV3Q24Orkow'$/;"	property	line:9
+module.exports.googleClientID	C:\Work\reactfull\server\config\prod.js	/^  googleClientID: process.env.GOOGLE_CLIENT_ID,$/;"	property	line:3
+session	C:\Work\reactfull\server\index.js	/^var session = require('express-session');$/;"	variable	line:9
+flash	C:\Work\reactfull\server\index.js	/^var flash = require('connect-flash');$/;"	variable	line:10
+MySQLStore	C:\Work\reactfull\server\index.js	/^var MySQLStore = require('express-mysql-session')(session);$/;"	variable	line:20
+filePattern	C:\Work\reactfull\server\lupaProject.json	/^  "filePattern": "src\/**\/*.js"$/;"	function	line:2
+module.exports.up	C:\Work\reactfull\server\migrations\20180727081821-artpl.js	/^  up: (queryInterface, Sequelize) => {$/;"	property	line:4
+module.exports.up	C:\Work\reactfull\server\migrations\20180727094808-create-user.js	/^  up: (queryInterface, Sequelize) => {$/;"	property	line:3
+module.exports.up	C:\Work\reactfull\server\migrations\20180727095721-create-client.js	/^  up: (queryInterface, Sequelize) => {$/;"	property	line:3
+up	C:\Work\reactfull\server\migrations\20180727112356-'password.js	/^  up: function(queryInterface, DataTypes) {$/;"	function	line:4
+module.exports.up	C:\Work\reactfull\server\migrations\20180727112356-'password.js	/^  up: function(queryInterface, DataTypes) {$/;"	method	line:4
+down	C:\Work\reactfull\server\migrations\20180727112356-'password.js	/^  down: function(queryInterface, Sequelize) {$/;"	function	line:18
+module.exports.down	C:\Work\reactfull\server\migrations\20180727112356-'password.js	/^  down: function(queryInterface, Sequelize) {$/;"	method	line:18
+up	C:\Work\reactfull\server\migrations\20180727123019-'reset'.js	/^  up: function(queryInterface, DataTypes) {$/;"	function	line:4
+module.exports.up	C:\Work\reactfull\server\migrations\20180727123019-'reset'.js	/^  up: function(queryInterface, DataTypes) {$/;"	method	line:4
+down	C:\Work\reactfull\server\migrations\20180727123019-'reset'.js	/^  down: function(queryInterface, Sequelize) {$/;"	function	line:21
+module.exports.down	C:\Work\reactfull\server\migrations\20180727123019-'reset'.js	/^  down: function(queryInterface, Sequelize) {$/;"	method	line:21
+up	C:\Work\reactfull\server\migrations\20180727132355-'clientId'.js	/^  up: function(queryInterface, DataTypes) {$/;"	function	line:4
+module.exports.up	C:\Work\reactfull\server\migrations\20180727132355-'clientId'.js	/^  up: function(queryInterface, DataTypes) {$/;"	method	line:4
+down	C:\Work\reactfull\server\migrations\20180727132355-'clientId'.js	/^  down: function(queryInterface, Sequelize) {$/;"	function	line:14
+module.exports.down	C:\Work\reactfull\server\migrations\20180727132355-'clientId'.js	/^  down: function(queryInterface, Sequelize) {$/;"	method	line:14
+fs	C:\Work\reactfull\server\models\index.js	/^var fs = require('fs');$/;"	variable	line:3
+path	C:\Work\reactfull\server\models\index.js	/^var path = require('path');$/;"	variable	line:4
+Sequelize	C:\Work\reactfull\server\models\index.js	/^var Sequelize = require('sequelize');$/;"	variable	line:5
+basename	C:\Work\reactfull\server\models\index.js	/^var basename = path.basename(__filename);$/;"	variable	line:6
+env	C:\Work\reactfull\server\models\index.js	/^var env = process.env.NODE_ENV || 'development';$/;"	variable	line:7
+config	C:\Work\reactfull\server\models\index.js	/^var config = require(path.join(__dirname, '..', 'config', 'config.json'))[env];$/;"	variable	line:8
+isAdmin	C:\Work\reactfull\server\models\user.js	/^  User.prototype.isAdmin = function(client) {$/;"	function	line:62
+User	C:\Work\reactfull\server\models\user.js	/^  User.prototype.isAdmin = function(client) {$/;"	class	line:62
+User.isAdmin	C:\Work\reactfull\server\models\user.js	/^  User.prototype.isAdmin = function(client) {$/;"	method	line:62
+bcrypt	C:\Work\reactfull\server\routes\authRoutes.js	/^var bcrypt = require('bcrypt');$/;"	variable	line:4
+async	C:\Work\reactfull\server\routes\authRoutes.js	/^var async = require('async');$/;"	variable	line:5
+nodemailer	C:\Work\reactfull\server\routes\authRoutes.js	/^var nodemailer = require('nodemailer');$/;"	variable	line:6
+crypto	C:\Work\reactfull\server\routes\authRoutes.js	/^var crypto = require('crypto');$/;"	variable	line:8
+authenticationMiddleware	C:\Work\reactfull\server\routes\authRoutes.js	/^  \/\/ function authenticationMiddleware() {$/;"	function	line:379
+Article	C:\Work\reactfull\server\seql_old.js	/^var Article = connection.define('article', {$/;"	variable	line:16
+bcrypt	C:\Work\reactfull\server\services\passport.js	/^var bcrypt = require('bcrypt');$/;"	variable	line:3
+fetchAlbums	C:\Work\reactfull\server\test.js	/^\/\/ function fetchAlbums() {$/;"	function	line:1

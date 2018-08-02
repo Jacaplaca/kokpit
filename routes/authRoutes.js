@@ -1,5 +1,4 @@
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 const { check, validationResult } = require('express-validator/check');
 var bcrypt = require('bcrypt');
 var async = require('async');
@@ -7,13 +6,14 @@ var nodemailer = require('nodemailer');
 require('dotenv').config();
 var crypto = require('crypto');
 const saltRounds = 10;
-const db = require('../db');
-const User = require('../models/user');
+// const db = require('../db');
+const db = require('../models/index');
+const User = db.users;
+// const User = require('../models/user');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 // let email = '';
 // let errorsy = [];
-let formularz;
 const validatorsRegister = [
   // username must be an email
   check(
@@ -59,7 +59,7 @@ module.exports = app => {
         }
       })
         .then(result => {
-          console.log(result);
+          // console.log(result);
           if (result.length > 0) {
             console.log('juz jest konto ');
             req.flash('info', {
@@ -94,54 +94,8 @@ module.exports = app => {
           console.log(err);
           res.redirect('/register');
         });
-      // bcrypt.hash(password, saltRounds, function(err, hash) {
-      //   db.query(
-      //     'INSERT INTO users (email, password) VALUES (?, ?)',
-      //     [email, hash],
-      //     (error, results, fields) => {
-      //       // if (error) throw error;
-      //       if (error) {
-      //         console.log(error);
-      //         // Object.assign(message, { errors: "Konto o podanym adresie email już istnieje" });
-      //         req.flash('info', {
-      //           errors: 'Konto o podanym adresie email już istnieje'
-      //         });
-      //         res.redirect('/register');
-      //       } else {
-      //         db.query('SELECT LAST_INSERT_ID() as user_id', function(
-      //           error,
-      //           results,
-      //           fields
-      //         ) {
-      //           if (error) throw error;
-      //           // if (error) {
-      //           //   console.log(error);
-      //           // }
-      //           const user_id = results[0];
-      //           req.login(user_id, function(err) {
-      //             res.redirect('/');
-      //           });
-      //         });
-      //       }
-      //     }
-      //   );
-      // });
     }
   });
-
-  // app.post('/auth/register', (req, res, next) => {
-  //   const { email, password } = req.body;
-  //   // res.render('index', { title: 'Reg Comp' });
-  //   db.query(
-  //     'INSERT INTO users (email, password) VALUES (?, ?)',
-  //     [email, password],
-  //     (error, results, fields) => {
-  //       if (error) throw error;
-  //       res.redirect('/');
-  //     }
-  //   );
-  //   // res.send({ hiaa: '3' });
-  // });
 
   app.get(
     '/auth/google',
@@ -164,16 +118,8 @@ module.exports = app => {
   });
 
   app.get('/api/current_user', (req, res) => {
-    console.log(req.user);
+    // res.json({ user: 'aaa' });
     res.send(req.user);
-    // res.sendStatus(req.user);
-    // res.send({ errors: 'asdb', email: 'asdf@asdf.com' });
-  });
-
-  app.get('/api/message', (req, res) => {
-    const message = req.flash('info');
-    console.log(message);
-    res.send(message);
   });
 
   app.post('/auth/reset', (req, res, next) => {
@@ -199,11 +145,6 @@ module.exports = app => {
               .then(() => {
                 console.log('mailujemy');
                 var smtpTransport = nodemailer.createTransport({
-                  // service: 'Gmail',
-                  // auth: {
-                  //   user: 'bikerhill@gmail.com',
-                  //   pass: process.env.GMAILPW
-                  // }
                   host: process.env.RESETMAILSMTP,
                   port: 587,
                   secure: false, // true for 465, false for other ports
@@ -219,13 +160,6 @@ module.exports = app => {
                   subject: 'Password Reset ✔',
                   text: `http://${req.headers.host}/reset/token/${token}`
                 };
-                // smtpTransport.sendMail(mailOptions, function(err) {
-                //   console.log('mail sent');
-                // console.log(process.env.RESETMAIL);
-                //   // console.log(process.env.GMAILPW);
-                //   // console.log(req.headers.host);
-                //   // console.log(token);
-                // });
                 smtpTransport.sendMail(mailOptions, (error, info) => {
                   if (error) {
                     return console.log(error);
@@ -254,8 +188,8 @@ module.exports = app => {
   });
 
   app.get('/reset/token/:token', function(req, res, done) {
-    console.log('szukamy tokena');
-    console.log(req.params.token);
+    // console.log('szukamy tokena');
+    // console.log(req.params.token);
     User.findOne({
       where: {
         resetPasswordToken: req.params.token,
@@ -337,50 +271,4 @@ module.exports = app => {
         .catch(err => console.log(err));
     }
   );
-
-  // app.get('/api/form', (req, res) => {
-  //   // console.log('api form');
-  //   // const message = req.flash('info');
-  //   // console.log(message);
-  //
-  //   // console.log('api/form');
-  //   // console.log(req.isAuthenticated());
-  //   // res.send(req.user);
-  //   // res.send({ message: ['asdfdfd', 'asdf'] });
-  //   // res.send({ message: message });
-  //   res.send(formularz);
-  // });
-
-  // passport.serializeUser((user_id, done) => {
-  //   console.log('serializeUser');
-  //   console.log(user_id);
-  //   done(null, user_id);
-  // });
-  //
-  // passport.deserializeUser((user_id, done) => {
-  //   console.log('deserializeUser');
-  //   console.log(user_id);
-  //   done(null, user_id);
-  // });
-
-  // passport.use(
-  //   'local-login',
-  //   new LocalStrategy(function(email, password, done) {
-  //     console.log('passport local');
-  //     console.log(email);
-  //     console.log(password);
-  //     return done(null, false);
-  //   })
-  // );
-
-  // function authenticationMiddleware() {
-  //   return (req, res, next) => {
-  //     console.log(
-  //       `req.session.passport.user: ${JSON.stringify(req.session.passport)}`
-  //     );
-  //
-  //     if (req.isAuthenticated()) return next();
-  //     res.redirect('/login');
-  //   };
-  // }
 };

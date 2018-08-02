@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Iframe from 'react-iframe';
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -13,12 +14,17 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import MoneyIcon from '@material-ui/icons/AttachMoney';
+
 import Button from '@material-ui/core/Button';
-
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import * as actions from '../actions';
+// import { Link } from 'react-router-dom';
 
-import { mailFolderListItems, otherMailFolderListItems } from './tileData';
+// import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 // import Header from './Header';
 
 const drawerWidth = 240;
@@ -26,7 +32,7 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 430,
+    height: '100%',
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
@@ -107,12 +113,20 @@ class MiniDrawer extends React.Component {
     open: true
   };
 
+  // componentWillMount = () => {
+  //   this.props.fetchForm();
+  // };
+
   handleDrawerOpen = () => {
     this.setState({ open: true });
   };
 
   handleDrawerClose = () => {
     this.setState({ open: false });
+  };
+
+  handleClickWhere = where => {
+    this.props.clicked(where);
   };
 
   renderContent() {
@@ -126,9 +140,9 @@ class MiniDrawer extends React.Component {
           //   <a href="/auth/google">Login With Google</a>
           // </li>
           [
-            <Button key="1a" color="inherit" href="/register">
-              Rejestracja
-            </Button>,
+            // <Button key="1a" color="inherit" href="/register">
+            //   Rejestracja
+            // </Button>,
             <Button key="2b" color="inherit" href="/login">
               Logowanie
             </Button>
@@ -201,6 +215,7 @@ class MiniDrawer extends React.Component {
           }}
           open={this.state.open}>
           <div className={classes.toolbar}>
+            {this.props.auth && this.props.auth.email.split('@')[0]}
             <IconButton onClick={this.handleDrawerClose}>
               {theme.direction === 'rtl' ? (
                 <ChevronRightIcon />
@@ -209,10 +224,17 @@ class MiniDrawer extends React.Component {
               )}
             </IconButton>
           </div>
-          <Divider />
+          <ListItem button onClick={() => this.handleClickWhere('costs')}>
+            <ListItemIcon>
+              <MoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Koszty" />
+          </ListItem>
+
+          {/* <Divider />
           <List>{mailFolderListItems}</List>
           <Divider />
-          <List>{otherMailFolderListItems}</List>
+          <List>{otherMailFolderListItems}</List> */}
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
@@ -220,11 +242,31 @@ class MiniDrawer extends React.Component {
             {'You think water moves fast? You should see ice.'}
           </Typography> */}
           {this.props.children}
+          {/* <Iframe
+            url="https://www.spidersweb.pl/"
+            width="100%"
+            height="100%"
+            id="myId"
+            className="myClassname"
+            display="initial"
+            position="relative"
+            allowFullScreen
+          /> */}
+          {/* <iframe
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            src="https://antyweb.pl/"
+            style={{ width: 500, height: 600 }}
+            // s="border: 0; width:130px; height:20px;"
+          /> */}
         </main>
       </div>
     );
   }
 }
+
+// MiniDrawer.defaultProps = {
+//   auth: { email: 'd' }
+// };
 
 MiniDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
@@ -236,5 +278,8 @@ function mapStateToProps({ auth }) {
 }
 
 export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps)(MiniDrawer)
+  connect(
+    mapStateToProps,
+    actions
+  )(MiniDrawer)
 );

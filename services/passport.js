@@ -1,8 +1,9 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 var bcrypt = require('bcrypt');
-var User = require('../models/user');
-console.log(LocalStrategy);
+const db = require('../models/index');
+const User = db.users;
+// var User = require('../models/user');
 // const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // const mongoose = require('mongoose');
 // const keys = require('../config/keys');
@@ -10,21 +11,24 @@ console.log(LocalStrategy);
 // const User = mongoose.model('users');
 
 passport.serializeUser((user_id, done) => {
-  console.log('serializeUser');
-  console.log(user_id);
+  // console.log('serializeUser');
+  // console.log(user_id);
+  // console.log(user_id);
   done(null, user_id);
 });
 
 passport.deserializeUser((user_id, done) => {
-  console.log('deserializeUser');
+  // console.log('deserializeUser');
+  // console.log(user_id);
   const id = user_id.user_id;
   User.findById(id)
     .then(project => {
       const result = JSON.parse(JSON.stringify(project));
+      const { clientId, email, role } = result;
       // console.log(result);
       if (result.status === 'active') {
-        console.log(result.status);
-        done(null, user_id);
+        // console.log(result.status);
+        done(null, Object.assign(user_id, { clientId, email, role }));
       } else {
         console.log('konto zostalo zawieszone');
         return done(null, false, {
@@ -32,10 +36,18 @@ passport.deserializeUser((user_id, done) => {
         });
       }
     })
-    .catch(err => console(err));
+    // .catch(err =>
+    //   done(null, false, {
+    //     message: 'Incorrect username or password.'
+    //   })
+    // );
+    .catch(err => {
+      console.log('blad w deserialize');
+      return done(null, false);
+    });
 });
 
-console.log('gdzie jestem: ', process.env.NODE_ENV);
+// console.log('gdzie jestem: ', process.env.NODE_ENV);
 
 passport.use(
   'local',

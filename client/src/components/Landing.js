@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Costs from './Costs';
 
-const Landing = () => {
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <h1>Świadoma Firma</h1>
-      Raporty, analizy, prowizje - wszystko w jednym miejscu
-    </div>
-  );
-};
+class Landing extends Component {
+  componentWillMount() {
+    console.log(this.props.clicked);
+  }
 
-export default Landing;
+  whatToShow = () => {
+    switch (this.props.clicked) {
+      case 'costs':
+        return <Costs />;
+        break;
+      default:
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <h1>Świadoma Firma</h1>
+            Raporty, analizy, prowizje - wszystko w jednym miejscu
+          </div>
+        );
+    }
+  };
+
+  render() {
+    return this.whatToShow();
+  }
+}
+
+function mapStateToProps({ clicked }) {
+  return { clicked };
+}
+
+export default connect(mapStateToProps)(Landing);
