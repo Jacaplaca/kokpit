@@ -4,6 +4,17 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-class.email	C:\Work\reactfull\server\client\src\components\Login.js	/^    email: ''$/;"	property	line:8
-render	C:\Work\reactfull\server\client\src\components\Login.js	/^  render() {$/;"	function	line:29
-Login.propTypes.fetchForm	C:\Work\reactfull\server\client\src\components\Login.js	/^  fetchForm: PropTypes.func,$/;"	property	line:82
+render	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^  render() {$/;"	function	line:55
+const.verticalAlign	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      verticalAlign: 'middle',$/;"	property	line:68
+const.paddingLeft	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      paddingLeft: 5,$/;"	property	line:70
+const.paddingTop	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      paddingTop: 0,$/;"	property	line:71
+const.paddingBottom	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      paddingBottom: 0$/;"	property	line:72
+const.verticalAlign	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      verticalAlign: 'middle',$/;"	property	line:76
+const.paddingLeft	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      paddingLeft: 5,$/;"	property	line:78
+const.paddingTop	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      paddingTop: 0,$/;"	property	line:79
+const.paddingBottom	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      paddingBottom: 0,$/;"	property	line:80
+const.fontSize	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      fontSize: 17,$/;"	property	line:81
+const.fontWeight	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      fontWeight: 600,$/;"	property	line:82
+const.textAlign	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^      textAlign: 'center'$/;"	property	line:83
+mapStateToProps	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^function mapStateToProps({ clicked }) {$/;"	function	line:243
+mapStateToProps	C:\Work\reactfull\server\client\src\components\CostsTable.js	/^function mapStateToProps({ clicked }) {$/;"	function	line:243

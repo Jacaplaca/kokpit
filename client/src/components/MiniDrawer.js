@@ -66,6 +66,11 @@ const styles = theme => ({
     padding: '0 30px',
     // boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
     'font-size': 25
+    // $nest: {
+    //   '&:hover': {
+    //     color: 'red'
+    //   }
+    // }
   },
   menuButton: {
     marginLeft: 12,
@@ -140,9 +145,9 @@ class MiniDrawer extends React.Component {
           //   <a href="/auth/google">Login With Google</a>
           // </li>
           [
-            // <Button key="1a" color="inherit" href="/register">
-            //   Rejestracja
-            // </Button>,
+            <Button key="1a" color="inherit" href="/register">
+              Rejestracja
+            </Button>,
             <Button key="2b" color="inherit" href="/login">
               Logowanie
             </Button>

@@ -61,6 +61,9 @@ module.exports = app => {
       return res.redirect('/');
     }
     const { user_id, clientId } = req.user;
+    // console.log(id);
+    // console.log(user_id);
+    // console.log(clientId);
     Cost.destroy({ where: { clientId, id } })
       .then(() => res.end())
       .catch(err => {
