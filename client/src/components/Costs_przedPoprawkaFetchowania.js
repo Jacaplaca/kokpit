@@ -10,7 +10,7 @@ import {
 import { pl } from 'react-date-range/src/locale/index';
 import _ from 'lodash';
 import currency from 'currency.js';
-import { connect } from 'react-redux';
+
 import {
   addDays,
   endOfDay,
@@ -27,9 +27,6 @@ import {
 import Collapse from 'rc-collapse';
 import 'rc-collapse/assets/index.css';
 // import { pl } from 'date-fns/locale';
-// import CurrencyInput from 'react-currency-input';
-import NumberFormat from 'react-number-format';
-import InputMask from 'react-input-mask';
 
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -38,8 +35,6 @@ import {
   MuiThemeProvider,
   createMuiTheme
 } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-// import NoSsr from '@material-ui/core/NoSsr';
 import Paper from '@material-ui/core/Paper';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -47,8 +42,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-// import Select from '@material-ui/core/Select';
-import Select from 'react-select';
+import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import Send from '@material-ui/icons/Send';
@@ -75,50 +69,6 @@ import CostsTable from './CostsTable2Remote';
 import PieChart1 from './PieChart1';
 
 var Panel = Collapse.Panel;
-
-function inputComponent({ inputRef, ...props }) {
-  return <div ref={inputRef} {...props} />;
-}
-
-function Control(props) {
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputComponent,
-        inputProps: {
-          className: props.selectProps.classes.input,
-          inputRef: props.innerRef,
-          children: props.children,
-          ...props.innerProps
-        }
-      }}
-      {...props.selectProps.textFieldProps}
-    />
-  );
-}
-
-function Placeholder(props) {
-  return (
-    <Typography
-      color="textSecondary"
-      className={props.selectProps.classes.placeholder}
-      {...props.innerProps}>
-      {props.children}
-    </Typography>
-  );
-}
-
-const components = {
-  // Option,
-  Control,
-  // NoOptionsMessage,
-  Placeholder
-  //SingleValue,
-  //MultiValue,
-  //ValueContainer,
-  //Menu,
-};
 
 const defineds = {
   startOfWeek: startOfWeek(new Date()),
@@ -185,15 +135,6 @@ const staticRanges = [
 ];
 
 const styles = theme => ({
-  input: {
-    display: 'flex',
-    padding: 0
-  },
-  placeholder: {
-    position: 'absolute',
-    left: 2,
-    fontSize: 16
-  },
   accordionClass: {
     backgroundColor: fade(theme.palette.primary.main, 0.15)
     // borderColor: theme.palette.primary.main,
@@ -250,42 +191,13 @@ const styles = theme => ({
   }
 });
 
-function NumberFormatCustom(props) {
-  const { inputRef, onChange, ...other } = props;
-  // console.log(props);
-
-  return (
-    <NumberFormat
-      {...other}
-      getInputRef={inputRef}
-      onValueChange={values => {
-        onChange({
-          target: {
-            value: values.formattedValue.replace(/ /g, '')
-          }
-        });
-      }}
-      // removeFormatting={formattedValue => `{}`}
-      decimalSeparator=","
-      thousandSeparator=" "
-      // format="### ### ### ###"
-      decimalScale={2}
-      // prefix="$"
-      suffix="  zł"
-    />
-  );
-}
-
 class Costs extends Component {
   state = {
-    // numberformat: '',
     id: '',
-    nr_dokumentu: 'FV 83929',
-    data_wystawienia: '2018-07-05',
-    nazwa_pozycji: 'Benzyna',
+    nr_dokumentu: '',
+    data_wystawienia: '',
+    nazwa_pozycji: '',
     kwota_netto: '',
-    // categoryId: { label: '', value: '' },
-    // groupId: { label: '', value: '' },
     categoryId: '',
     groupId: '',
     groups: [],
@@ -300,63 +212,16 @@ class Costs extends Component {
       startDate: defineds.startOfLastMonth,
       endDate: defineds.endOfLastMonth,
       key: 'rangeselection'
-    },
-    submitIsDisable: true
-  };
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const {
-      nr_dokumentu: nr_dokumentu_prevState,
-      data_wystawienia: data_wystawienia_prevState,
-      nazwa_pozycji: nazwa_pozycji_prevState,
-      kwota_netto: kwota_netto_prevState,
-      categoryId: categoryId_prevState,
-      groupId: groupId_prevState
-    } = prevState;
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu !== '' &&
-        data_wystawienia !== '' &&
-        nazwa_pozycji !== '' &&
-        kwota_netto !== '' &&
-        (categoryId ? categoryId.value !== '' : categoryId !== '') &&
-        (groupId ? groupId.value !== '' : groupId !== ''))
-      // categoryId.value !== '' &&
-      // groupId.value !== ''
-    ) {
-      this.setState({ submitIsDisable: false });
-    } else if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu === '' ||
-        data_wystawienia === '' ||
-        nazwa_pozycji === '' ||
-        kwota_netto === '' ||
-        (categoryId ? categoryId.value === '' : categoryId === '') ||
-        (groupId ? groupId.value === '' : groupId === ''))
-    ) {
-      this.setState({ submitIsDisable: true });
-    } else {
-      return;
     }
-  }
+    // chipData: [
+    //   { key: 0, label: 'Angular', clicked: true },
+    //   { key: 1, label: 'jQuery', clicked: true },
+    //   { key: 2, label: 'Polymer', clicked: true },
+    //   { key: 3, label: 'React', clicked: true },
+    //   { key: 4, label: 'Vue.js', clicked: true }
+    // ]
+    // name: 'Composed TextField'
+  };
 
   czyWypelniony = () => {
     const {
@@ -384,6 +249,7 @@ class Costs extends Component {
   };
 
   clearForm = () => {
+    // console.log('czyszcze form');
     this.setState({
       id: '',
       nr_dokumentu: '',
@@ -408,6 +274,7 @@ class Costs extends Component {
   }
 
   fetchCosts = () => {
+    console.log('fetchuje');
     axios.get('/api/table/costs').then(result => {
       const koszty = result.data;
       const nieUnikalneGrupy = koszty.map(el => {
@@ -438,7 +305,10 @@ class Costs extends Component {
   //   return self.indexOf(value) === index;
   // };
 
-  renderSelectNorm = select => {
+  renderSelect = select => {
+    // console.log('select');
+    // console.log(select);
+    // return [1, 2, 3];
     const none = (
       <MenuItem value="">
         <em>Brak</em>
@@ -450,39 +320,71 @@ class Costs extends Component {
       </MenuItem>
     ));
     return [none, ...doWyboru];
+    // return doWyboru;
   };
 
-  dynamicSort = property => {
-    let sortOrder = 1;
-    if (property[0] === '-') {
-      sortOrder = -1;
-      property = property.substr(1);
-    }
-    return function(a, b) {
-      const result =
-        a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-      return result * sortOrder;
-    };
-  };
-
-  renderSelect = select => {
-    const none = { label: 'Brak', value: '' };
-    const doWyboru = select.map((elem, i) => ({
-      label: elem.name,
-      value: elem.id
-    }));
-    return doWyboru.sort(this.dynamicSort('label'));
+  renderCosts = costs => {
+    const header = (
+      <ListItem button key="header">
+        <ListItemText
+          style={{ width: 100 }}
+          primary="Data wystawienia"
+          secondary="Nr dokumentu"
+        />
+        <ListItemText primary="Nazwa pozycji" style={{ width: 100 }} />
+        <ListItemText primary="Grupa" style={{ width: 100 }} />
+        <ListItemText primary="Kategoria" style={{ width: 100 }} />
+        <ListItemText primary="Kwota netto" style={{ width: 100 }} />
+      </ListItem>
+    );
+    const costsList = costs.map(
+      elem =>
+        elem.clicked === true ? (
+          <ListItem
+            button
+            key={elem.id}
+            onClick={() => this.handleEdit(elem.id)}>
+            <ListItemText
+              style={{ width: 100 }}
+              primary={elem.data_wystawienia}
+              secondary={elem.nr_dokumentu}
+            />
+            <ListItemText primary={elem.nazwa_pozycji} style={{ width: 100 }} />
+            <ListItemText primary={elem.group.name} style={{ width: 100 }} />
+            <ListItemText primary={elem.category.name} style={{ width: 100 }} />
+            <ListItemText
+              primary={elem.kwota_netto.replace('.', ',')}
+              style={{ width: 100 }}
+            />
+            {/* <ListItemText
+          primary="Single-line item"
+          secondary={'Secondary text'}
+        /> */}
+            <ListItemSecondaryAction>
+              <IconButton
+                aria-label="Delete"
+                onClick={() => this.handleDelete(elem.id)}>
+                <DeleteIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        ) : null
+    );
+    // return [header, ...doWyboru];
+    return [header, ...costsList];
   };
 
   handleEdit = id => {
+    // console.log(`handleEdit ${id}`);
     axios.get(`/api/cost/${id}`).then(result => {
+      // console.log(result.data);
       const {
         nr_dokumentu,
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto,
-        category,
-        group
+        categoryId,
+        groupId
       } = result.data;
       this.setState({
         id,
@@ -490,14 +392,15 @@ class Costs extends Component {
         kwota_netto,
         nazwa_pozycji,
         data_wystawienia,
-        categoryId: { label: category.name, value: category.id },
-        groupId: { label: group.name, value: group.id },
+        categoryId,
+        groupId,
         edited: true
       });
     });
   };
 
   onEdit = () => {
+    // console.log('wysylam do edycji');
     const {
       id,
       nr_dokumentu,
@@ -512,7 +415,6 @@ class Costs extends Component {
     fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
       body: JSON.stringify({
         nr_dokumentu,
         data_wystawienia,
@@ -521,17 +423,28 @@ class Costs extends Component {
         categoryId,
         groupId
       })
-    })
-      .then(() => {
-        this.fetchCosts();
-      })
-      .then(() => {
+    }).then(() => {
+      this.fetchCosts().then(() => {
         this.clearForm();
       });
+    });
+  };
+
+  handleDelete = id => {
+    // console.log('handleDelete');
+    // console.log(id);
+
+    const url = `/api/cost/remove/${id}`;
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }).then(() => {
+      this.fetchCosts();
+    });
   };
 
   handleSubmit = e => {
-    const { user_id, clientId } = this.props.auth;
+    // console.log('handleSubmit');
     e.preventDefault();
     const {
       nr_dokumentu,
@@ -546,7 +459,6 @@ class Costs extends Component {
     fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
       body: JSON.stringify({
         nr_dokumentu,
         data_wystawienia,
@@ -555,41 +467,21 @@ class Costs extends Component {
         categoryId,
         groupId
       })
-    })
-      .then(resp => resp.json())
-      .then(data => {
-        const dataWystawienia = data.data_wystawienia;
-        const startDate = startOfMonth(dataWystawienia);
-        const endDate = endOfMonth(dataWystawienia);
-        const rangeselection = { endDate, startDate, key: 'rangeselection' };
-        this.setState({ rangeselection });
-        // return console.log(startDate);
-      })
-      .then(() => {
-        this.fetchCosts();
-      })
-      .then(() => {
+    }).then(() => {
+      this.fetchCosts().then(() => {
         this.clearForm();
       });
+    });
+    // .then(resp => resp.json())
+    // .then(data => console.log(data));
   };
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleChangeKwota = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
-  };
-
-  handleChangeSelect = name => value => {
-    this.setState({
-      [name]: value
-    });
-  };
-
   handleChipClick = (data, kolumna) => () => {
+    // console.log(data);
     let koszty;
     let drugaKolumna;
     let porownanie = [];
@@ -609,6 +501,7 @@ class Costs extends Component {
       const chipToClick = chipData.indexOf(data);
       data.clicked = data.clicked ? false : true;
       chipData[chipToClick] = data;
+      // chipData.splice(chipToDelete, 1);
       return { [`chmurka_${kolumna}`]: chipData };
     });
     this.setState(state => {
@@ -637,11 +530,15 @@ class Costs extends Component {
         const dlugoscJestTrue = jestTrue[i].length;
         return { name: x, powtarza: dlugoscJestTrue };
       });
+      // console.log(porownanie);
 
       porownanie.map(x => {
+        // console.log('jedziemy');
+        // console.log(drugaKolumna);
         if (x.name !== null && x.powtarza === 0) {
           chipData.map(y => {
             if (y.name === x.name) {
+              // console.log(x.name);
               return zmodyfikowaneChip.push({
                 id: y.id,
                 name: y.name,
@@ -658,7 +555,7 @@ class Costs extends Component {
         } else if (x.name !== null && x.powtarza > 0) {
           zmodyfikowaneChip = chipData.map(y => {
             if (y.name === x.name) {
-              // console.log(x.name);
+              console.log(x.name);
               return { id: y.id, name: y.name, clicked: true };
             } else {
               return { id: y.id, name: y.name, clicked: false };
@@ -666,10 +563,84 @@ class Costs extends Component {
           });
         }
       });
+      // console.log(zmodyfikowaneChip);
     });
+    // this.setState(state => {
+    //   console.log('ustawiani drugiej kolumny');
+    //   console.log(koszty);
+    //   const chipData = [...state[`chmurka_${drugaKolumna}`]];
+    //   let zmodyfikowaneChip;
+    //   console.log(chipData);
+    //   const drugaKolumnaFalse = koszty.map(el => {
+    //     if (!el.clicked) {
+    //       return el[drugaKolumna].name;
+    //     } else {
+    //       return null;
+    //     }
+    //   });
+    //   console.log(drugaKolumnaFalse);
+    //   const jestTrue = drugaKolumnaFalse.map(el =>
+    //     koszty.filter(x => x[drugaKolumna].name === el && x.clicked === true)
+    //   );
+    //   const porownanie = drugaKolumnaFalse.map((x, i) => {
+    //     const dlugoscJestTrue = jestTrue[i].length;
+    //     return { name: x, powtarza: dlugoscJestTrue };
+    //   });
+    //   console.log('porownanie');
+    //   console.log(porownanie);
+    //   porownanie.map(x => {
+    //     // console.log('jedziemy');
+    //     console.log(drugaKolumna);
+    //     if (x.name !== null && x.powtarza === 0) {
+    //       zmodyfikowaneChip = chipData.map(y => {
+    //         if (y.name === x.name) {
+    //           return { id: y.id, name: y.name, clicked: false };
+    //         } else {
+    //           return { id: y.id, name: y.name, clicked: y.clicked };
+    //         }
+    //       });
+    //     } else if (x.name !== null && x.powtarza > 0) {
+    //       zmodyfikowaneChip = chipData.map(y => {
+    //         if (y.name === x.name) {
+    //           return { id: y.id, name: y.name, clicked: true };
+    //         } else {
+    //           return { id: y.id, name: y.name, clicked: y.clicked };
+    //         }
+    //       });
+    //     }
+    //   });
+    //   console.log('chipData');
+    //   console.log(zmodyfikowaneChip);
+    //   return { [`chmurka_${drugaKolumna}`]: zmodyfikowaneChip };
+    // });
+
+    // console.log(data);
   };
 
+  // porownajChmury = porownanie => {
+  //   porownanie.map(x => {
+  //     console.log('jedziemy');
+  //     console.log(x);
+  //     if (x.name !== null && x.powtarza !== 0) {
+  //       this.setState(state => {
+  //         // console.log(data);
+  //         const chipData = [...state[`chmurka_${drugaKolumna}`]];
+  //
+  //         const chipToClick = this.state.costs
+  //           .map(e => e[drugaKolumna].name)
+  //           .indexOf(x.name);
+  //         data.clicked = data.clicked ? false : true;
+  //         // data.label = 'nowy';
+  //         chipData[chipToClick] = data;
+  //         // chipData.splice(chipToDelete, 1);
+  //         return { chipData };
+  //       });
+  //     }
+  //   });
+  // };
+
   costs = () => {
+    // console.log('koszty i data');
     const koszty = this.state.costs;
     const { startDate, endDate } = this.state.rangeselection;
     const kosztyFiltered = koszty.filter(x => {
@@ -681,16 +652,21 @@ class Costs extends Component {
         kwota_netto: parseFloat(x.kwota_netto)
       })
     );
+    // console.log(costsInt);
     return costsInt;
   };
 
   handleSelect = ranges => {
+    // console.log(ranges);
+
     this.setState({
       ...ranges
     });
   };
 
   sumOfKey = (data, key) => {
+    // let formatted_data;
+    // console.log('formated data');
     let dane;
     let sorting;
     switch (key) {
@@ -742,9 +718,20 @@ class Costs extends Component {
         break;
       default:
     }
+    // return formatted_data;
   };
 
   render() {
+    // const formatted_data = _(this.costs())
+    //   .groupBy('category.name')
+    //   .map((v, k) => ({
+    //     name: k,
+    //     value: _.sumBy(v, 'kwota_netto')
+    //   }))
+    //   .value();
+
+    // console.log(this.sumOfKey(this.costs(), 'group'));
+
     const { classes } = this.props;
     const selectionRange = {
       startDate: new Date(),
@@ -765,6 +752,9 @@ class Costs extends Component {
       day: '2-digit'
     }).format(endDate);
 
+    // console.log(this.state.groups);
+    // console.log(this.state.categories);
+    // console.log(this.state);
     return (
       <div className={classes.container}>
         <Paper style={{ padding: 20, marginBottom: 20 }}>
@@ -825,24 +815,8 @@ class Costs extends Component {
             </FormControl>
 
             <FormControl className={classes.formControl}>
-              {/* <InputLabel htmlFor="adornment-password">Kwota netto</InputLabel> */}
-              <TextField
-                className={classes.formControl}
-                name="kwota_netto"
-                label="Kwota netto"
-                value={this.state.kwota_netto.replace('.', ',')}
-                // onChange={this.handleChange}
-                // value={this.state.kwota_netto}
-                onChange={this.handleChangeKwota('kwota_netto')}
-                id="formatted-numberformat-input"
-                InputProps={{
-                  inputComponent: NumberFormatCustom
-                }}
-                // endAdornment={
-                //   <InputAdornment position="end">PLN</InputAdornment>
-                // }
-              />
-              {/* <Input
+              <InputLabel htmlFor="adornment-password">Kwota netto</InputLabel>
+              <Input
                 name="kwota_netto"
                 id="adornment-password"
                 // type={this.state.showPassword ? 'text' : 'password'}
@@ -852,20 +826,15 @@ class Costs extends Component {
                 endAdornment={
                   <InputAdornment position="end">PLN</InputAdornment>
                 }
-              /> */}
+              />
             </FormControl>
-            <div style={{ display: 'flex' }}>
-              <div style={{ width: 410, marginRight: 22 }}>
-                {/* <FormControl required className={classes.formControl}> */}
-                <InputLabel htmlFor="categoryId">Kategoria</InputLabel>
+            <div>
+              <FormControl required className={classes.formControl}>
+                <InputLabel htmlFor="age-required">Kategoria</InputLabel>
                 <Select
-                  // label="Kategoria"
-                  placeholder="Wybierz..."
-                  components={components}
-                  classes={classes}
                   name="categoryId"
                   // label="asdf"
-                  id="categoryId"
+                  id="age-required"
                   // defaultValue="asdf"
                   // InputLabelProps={{
                   //   shrink: true
@@ -873,58 +842,44 @@ class Costs extends Component {
                   // value={this.state.age}
                   value={this.state.categoryId}
                   // value="Brak"
-                  onChange={this.handleChangeSelect('categoryId')}
+                  onChange={this.handleChange}
                   // name="age"
                   // inputProps={{
                   //   id: 'age-required'
                   // }}
                   className={classes.selectEmpty}
-                  // style={{ width: 200 }}
-                  options={this.renderSelect(this.state.categories)}
-                  // options={[
-                  //   { label: 'aa', value: 1 },
-                  //   { label: 'bb', value: 2 }
-                  // ]}
-                >
-                  {/* {this.renderSelect(this.state.categories)} */}
+                  style={{ width: 200 }}>
+                  {this.renderSelect(this.state.categories)}
                 </Select>
                 {/* <FormHelperTex  t>Required</FormHelperText> */}
-                {/* </FormControl> */}
-              </div>
-              <div style={{ width: 305 }}>
-                {/* <FormControl required className={classes.formControl}> */}
+              </FormControl>
+              <FormControl required className={classes.formControl}>
                 <InputLabel htmlFor="age-required">Grupa</InputLabel>
-                {/* <NoSsr> */}
                 <Select
-                  placeholder="Wybierz..."
                   name="groupId"
-                  components={components}
-                  classes={classes}
-                  // classes={classes}
-                  // styles={selectStyles}
-                  options={this.renderSelect(this.state.groups)}
-                  // components={components}
+                  // label="asdf"
+                  id="age-required"
+                  // defaultValue="asdf"
+                  // InputLabelProps={{
+                  //   shrink: true
+                  // }}
+                  // value={this.state.age}
                   value={this.state.groupId}
-                  onChange={this.handleChangeSelect('groupId')}
-                  // placeholder="Search a country"
-                />
-                {/* <Select
-      name="groupId"
-      id="age-required"
-      value={this.state.groupId}
-      onChange={this.handleChange}
-      className={classes.selectEmpty}
-      style={{ width: 200 }}>
-      {this.renderSelect(this.state.groups)}
-    </Select> */}
-                {/* </NoSsr> */}
+                  // value="Brak"
+                  onChange={this.handleChange}
+                  // name="age"
+                  // inputProps={{
+                  //   id: 'age-required'
+                  // }}
+                  className={classes.selectEmpty}
+                  style={{ width: 200 }}>
+                  {this.renderSelect(this.state.groups)}
+                </Select>
                 {/* <FormHelperTex  t>Required</FormHelperText> */}
-                {/* </FormControl> */}
-              </div>
+              </FormControl>
             </div>
             {!this.state.edited ? (
               <Button
-                disabled={this.state.submitIsDisable}
                 type="submit"
                 variant="contained"
                 color="primary"
@@ -935,7 +890,6 @@ class Costs extends Component {
             ) : (
               <Button
                 // type="submit"
-                disabled={this.state.submitIsDisable}
                 onClick={() => this.onEdit()}
                 variant="contained"
                 color="primary"
@@ -1046,17 +1000,4 @@ Costs.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
-}
-
-// export default connect(mapStateToProps)(Header);
-
-export default withStyles(styles, { withTheme: true })(
-  connect(
-    mapStateToProps
-    // actions
-  )(Costs)
-);
-
-// export default withStyles(styles)(Costs);
+export default withStyles(styles)(Costs);

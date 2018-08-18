@@ -1,6 +1,7 @@
 import { CLICKED } from '../actions/types';
 
 export default function(state = false, action) {
+  // export default function(state = 'costs', action) {
   // console.log(action);
   switch (action.type) {
     case CLICKED:

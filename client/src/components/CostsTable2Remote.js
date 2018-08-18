@@ -75,7 +75,7 @@ const mojTextFilter = textFilter({
 
 const RemoteFilter = props => {
   const rowClasses = (row, rowIndex) => {
-    console.log(props.classes.darkerRow);
+    // console.log(props.classes.darkerRow);
     if (rowIndex % 2 === 0) {
       return props.classes.lighterRow;
     } else {
@@ -93,7 +93,9 @@ const RemoteFilter = props => {
     const url = `/api/cost/remove/${id}`;
     fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
+      // body: JSON.stringify({ aa: 'aaa' }),
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin'
     }).then(() => {
       props.fetch();
     });
@@ -184,6 +186,16 @@ const RemoteFilter = props => {
       style: (cell, row, rowIndex, colIndex) => {
         return columnStyleMain;
       },
+      // headerFormatter: (column, colIndex, { sortElement, filterElement }) => {
+      //   return (
+      //     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      //       {column.text}
+      //       {sortElement}
+      //       <span>as</span>
+      //       {filterElement}
+      //     </div>
+      //   );
+      // },
       filter: multiSelectFilter({
         placeholder: 'wszystko...',
         style: { marginTop: 5 },
@@ -295,28 +307,27 @@ class CostsTable extends Component {
   };
 
   componentWillReceiveProps() {
-    console.log('c props');
-    console.log(this.props);
+    // console.log('component props');
+    // console.log(this.props);
     this.setState({
       data: this.props.costs,
       suma: this.sumuj(this.props.costs)
     });
   }
 
-  componentDidUpdate() {
-    console.log('componentDidUpdate');
-  }
-
-  componentDidMount() {
-    console.log('component did mount');
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    // console.log('componentDidUpdate');
+    // console.log(prevState);
+    // console.log(this.state);
+    // CostsTable.forceUpdate();
   }
 
   handleTableChange = (type, { filters }) => {
-    console.log(type);
+    // console.log(type);
     // console.log(JSON.stringify(filters));
-    console.log(filters);
+    // console.log(filters);
     setTimeout(() => {
-      console.log('handleTableChange setTimeout');
+      // console.log('handleTableChange setTimeout');
       let result = [];
       result = this.props.costs.filter(row => {
         let valid = true;
@@ -380,19 +391,23 @@ class CostsTable extends Component {
     koszty.map(x => {
       suma = x.kwota_netto + suma;
     });
-    console.log(suma);
+    // console.log(suma);
     return suma;
+  };
+
+  jakieDane = () => {
+    if (this.state.data.length === 0 || this.props.costs !== this.state.data) {
+      return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
+    } else {
+      return { costs: this.props.costs, sumuj: this.sumuj(this.state.data) };
+    }
   };
 
   render() {
     return (
       <RemoteFilter
-        data={this.state.data.length === 0 ? this.props.costs : this.state.data}
-        suma={
-          this.state.data.length === 0
-            ? this.sumuj(this.props.costs)
-            : this.sumuj(this.state.data)
-        }
+        data={this.jakieDane().costs}
+        suma={this.jakieDane().sumuj}
         dataCalosc={this.props.costs}
         onTableChange={this.handleTableChange}
         fetch={() => this.props.fetch()}

@@ -126,6 +126,11 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+// app.use(function(req, res, next) {
+//   res.locals.user = req.user || null;
+//   next();
+// });
+
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
 require('./routes/otherRoutes')(app);

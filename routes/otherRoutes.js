@@ -6,6 +6,7 @@ const User = db.users;
 const Group = db.groups;
 const Category = db.categories;
 const Cost = db.costs;
+const axios = require('axios');
 // const User = require('../models/user');
 // const Sequelize = require('sequelize');
 // const Op = Sequelize.Op;
@@ -20,6 +21,7 @@ module.exports = app => {
     console.log('edytuje cost api');
     const id = req.params.id;
     if (!req.user) {
+      console.log('przekierowanie');
       return res.redirect('/');
     }
     const {
@@ -40,8 +42,8 @@ module.exports = app => {
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto: kwota_netto.replace(',', '.'),
-        categoryId,
-        groupId
+        categoryId: categoryId.value,
+        groupId: groupId.value
       },
       {
         where: { clientId, id }
@@ -55,15 +57,12 @@ module.exports = app => {
   });
 
   app.post('/api/cost/remove/:id', (req, res, next) => {
-    console.log('remove cost api');
     const id = req.params.id;
     if (!req.user) {
+      console.log('przekierowanie');
       return res.redirect('/');
     }
     const { user_id, clientId } = req.user;
-    // console.log(id);
-    // console.log(user_id);
-    // console.log(clientId);
     Cost.destroy({ where: { clientId, id } })
       .then(() => res.end())
       .catch(err => {
@@ -76,9 +75,11 @@ module.exports = app => {
     console.log('get api/cost/');
     const id = req.params.id;
     const { user_id, clientId } = req.user;
+    console.log(req.user);
     if (!req.user) {
       return res.redirect('/');
     }
+    console.log('bedzie sie updatowac czy nie');
     Cost.find({
       include: [{ model: Category }, { model: Group }],
       where: { clientId, id }
@@ -95,6 +96,7 @@ module.exports = app => {
   app.post('/api/cost/', (req, res, next) => {
     console.log('api/cost/');
     console.log(req.body);
+    const { clientId, user_id } = req.user;
     if (!req.user) {
       return res.redirect('/');
     }
@@ -105,19 +107,35 @@ module.exports = app => {
       kwota_netto,
       categoryId,
       groupId
+      // user_id,
+      // clientId
     } = req.body;
-    const { user_id, clientId } = req.user;
     Cost.create({
       nr_dokumentu,
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto: kwota_netto.replace(',', '.'),
-      categoryId,
-      groupId,
+      categoryId: categoryId.value,
+      groupId: groupId.value,
       clientId,
       userId: user_id
     })
-      .then(() => res.end())
+      // Cost.create({
+      //   nr_dokumentu: 'FV-asdf-asdf',
+      //   data_wystawienia: '2018-07-05',
+      //   nazwa_pozycji: 'ASDFASDF',
+      //   kwota_netto: '25',
+      //   categoryId: 9,
+      //   groupId: 24,
+      //   clientId: 1,
+      //   userId: 1
+      // })
+      .then(results => {
+        // console.log(results);
+        return res.json(results);
+        // return;
+      })
+      // .then(() => res.end())
       // .then(result => next())
       // .then(result => res.redirect('/costs'))
       .catch(err => {
