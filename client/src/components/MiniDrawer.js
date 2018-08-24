@@ -1,49 +1,49 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import Iframe from 'react-iframe';
-import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import React from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
+import Iframe from "react-iframe";
+import { withStyles } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MoneyIcon from '@material-ui/icons/AttachMoney';
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import MoneyIcon from "@material-ui/icons/AttachMoney";
 
-import Button from '@material-ui/core/Button';
-import { connect } from 'react-redux';
-import * as actions from '../actions';
+import Button from "@material-ui/core/Button";
+import { connect } from "react-redux";
+import * as actions from "../actions";
 // import { Link } from 'react-router-dom';
 
 // import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 // import Header from './Header';
 
-const drawerWidth = 240;
+let drawerWidth = 240;
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: '100%',
+    height: "100%",
     zIndex: 1,
-    overflow: 'hidden',
-    position: 'relative',
-    display: 'flex'
+    overflow: "hidden",
+    position: "relative",
+    display: "flex"
   },
   flex: {
     flexGrow: 1
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     })
@@ -51,21 +51,25 @@ const styles = theme => ({
   appBarShift: {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen
     })
+  },
+  appBarShiftHide: {
+    marginLeft: 0,
+    width: `calc(100% - ${0}px)`
   },
   button: {
     // background: 'white',
     // borderRadius: 3,
     border: 0,
     // color: 'black',
-    'font-weight': 600,
+    "font-weight": 600,
     height: 35,
-    padding: '0 30px',
+    padding: "0 30px",
     // boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    'font-size': 25
+    "font-size": 25
     // $nest: {
     //   '&:hover': {
     //     color: 'red'
@@ -77,33 +81,36 @@ const styles = theme => ({
     marginRight: 36
   },
   hide: {
-    display: 'none'
+    display: "none"
   },
   drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
+    position: "relative",
+    whiteSpace: "nowrap",
     width: drawerWidth,
-    transition: theme.transitions.create('width', {
+    transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen
     })
   },
   drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
+    overflowX: "hidden",
+    transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
     width: theme.spacing.unit * 7,
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up("sm")]: {
       width: theme.spacing.unit * 9
     }
   },
+  drawerPaperHide: {
+    width: 0
+  },
   toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: "0 8px",
     ...theme.mixins.toolbar
   },
   content: {
@@ -118,9 +125,11 @@ class MiniDrawer extends React.Component {
     open: true
   };
 
-  // componentWillMount = () => {
-  //   this.props.fetchForm();
-  // };
+  componentDidMount = () => {
+    drawerWidth = this.props.auth !== false ? 240 : 0;
+    console.log(this.props.auth);
+    console.log(drawerWidth);
+  };
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -172,7 +181,7 @@ class MiniDrawer extends React.Component {
   }
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, auth } = this.props;
     // console.log(this.props.auth);
     return (
       <div className={classes.root}>
@@ -180,8 +189,10 @@ class MiniDrawer extends React.Component {
           position="absolute"
           className={classNames(
             classes.appBar,
-            this.state.open && classes.appBarShift
-          )}>
+            this.state.open && classes.appBarShift,
+            !this.props.auth && classes.appBarShiftHide
+          )}
+        >
           <Toolbar disableGutters={!this.state.open}>
             <IconButton
               color="inherit"
@@ -190,7 +201,8 @@ class MiniDrawer extends React.Component {
               className={classNames(
                 classes.menuButton,
                 this.state.open && classes.hide
-              )}>
+              )}
+            >
               <MenuIcon />
             </IconButton>
             {/* <Header /> */}
@@ -202,7 +214,8 @@ class MiniDrawer extends React.Component {
                 key="2"
                 color="inherit"
                 href="/"
-                className={classes.button}>
+                className={classes.button}
+              >
                 Świadoma Firma
               </Button>
             </div>
@@ -215,25 +228,34 @@ class MiniDrawer extends React.Component {
           classes={{
             paper: classNames(
               classes.drawerPaper,
-              !this.state.open && classes.drawerPaperClose
+              !this.state.open && classes.drawerPaperClose,
+              !this.props.auth && classes.drawerPaperHide
             )
           }}
-          open={this.state.open}>
+          open={this.state.open}
+        >
           <div className={classes.toolbar}>
-            {this.props.auth && this.props.auth.email.split('@')[0]}
+            {this.props.auth && this.props.auth.email.split("@")[0]}
             <IconButton onClick={this.handleDrawerClose}>
-              {theme.direction === 'rtl' ? (
+              {theme.direction === "rtl" ? (
                 <ChevronRightIcon />
               ) : (
                 <ChevronLeftIcon />
               )}
             </IconButton>
           </div>
-          <ListItem button onClick={() => this.handleClickWhere('costs')}>
+          <ListItem button onClick={() => this.handleClickWhere("costs")}>
             <ListItemIcon>
               <MoneyIcon />
             </ListItemIcon>
             <ListItemText primary="Koszty" />
+          </ListItem>
+
+          <ListItem button onClick={() => this.handleClickWhere("planer")}>
+            <ListItemIcon>
+              <MoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Planer" />
           </ListItem>
 
           {/* <Divider />

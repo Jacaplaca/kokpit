@@ -12,6 +12,7 @@ import MiniDrawer from './MiniDrawer';
 import MiniDrawer2 from './MiniDrawer2';
 import ResetPassword from './ResetPassword';
 import Costs from './Costs';
+import Planer from './Planer';
 // const Dashboard = () => <h2>Dashboard</h2>;
 // const SurveyNew = () => <h2>SurveyNew</h2>;
 
@@ -34,6 +35,7 @@ class App extends Component {
             <Route path="/register" component={Register} />
             <Route path="/reset" component={ResetPassword} />
             <Route path="/costs" component={Costs} />
+            <Route path="/planer" component={Planer} />
           </MiniDrawer>
           {/* <Route exact path="/surveys" component={Dashboard} /> */}
           {/* <Route path="/surveys/new" component={SurveyNew} /> */}

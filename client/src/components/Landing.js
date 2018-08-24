@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Costs from './Costs';
+import Planer from './Planer';
 
 class Landing extends Component {
   componentWillMount() {
@@ -11,6 +12,9 @@ class Landing extends Component {
     switch (this.props.clicked) {
       case 'costs':
         return <Costs />;
+        break;
+      case 'planer':
+        return <Planer />;
         break;
       default:
         return (

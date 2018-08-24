@@ -123,7 +123,7 @@ const costs = [
 // valid
 
 const suma = costs.reduce(x => x);
-console.log(suma);
+// console.log(suma);
 
 const handleTableChange = (type, { filters }) => {
   // console.log(type);
@@ -197,15 +197,33 @@ const filters = {
   }
 };
 
-console.log(handleTableChange('filter', filters));
+// console.log(handleTableChange('filter', filters));
+
+const dynamicSort = property => {
+  let sortOrder = 1;
+  if (property[0] === '-') {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+  return function(a, b) {
+    const result =
+      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    return result * sortOrder;
+  };
+};
 
 var arr = [
-  { kolor: 'czerwony', wieklosc: 'maly' },
-  { kolor: 'bialy', wieklosc: 'duzy' },
-  { kolor: 'niebieski', wieklosc: 'sredni' },
-  { kolor: 'zielony', wieklosc: 'maly' },
-  { kolor: 'czerwony', wieklosc: 'duzy' }
+  { kolor: 'czerwony', wieklosc: 'maly', value: 1 },
+  { kolor: 'bialy', wieklosc: 'duzy', value: 5 },
+  { kolor: 'niebieski', wieklosc: 'sredni', value: 2 },
+  { kolor: 'zielony', wieklosc: 'maly', value: 3 },
+  { kolor: 'czerwony', wieklosc: 'duzy', value: 4 }
 ];
+const noweDoWyboru = arr.sort(dynamicSort('kolor'));
+
+// const noweDoWyboru = arr.sort((a, b) => b.kolor - a.kolor);
+noweDoWyboru;
+arr;
 
 const cechy = ['kolor', 'wielkosc'];
 const zmienna = 'kolor';

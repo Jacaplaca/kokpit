@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 // import { DateRange } from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
 import {
   DateRangePicker,
   createStaticRanges,
   defaultStaticRanges
-} from 'react-date-range';
-import { pl } from 'react-date-range/src/locale/index';
-import _ from 'lodash';
-import currency from 'currency.js';
-import { connect } from 'react-redux';
+} from "react-date-range";
+import { pl } from "react-date-range/src/locale/index";
+import _ from "lodash";
+import currency from "currency.js";
+import { connect } from "react-redux";
 import {
   addDays,
   endOfDay,
@@ -22,57 +22,60 @@ import {
   endOfWeek,
   isSameDay,
   differenceInCalendarDays
-} from 'date-fns';
+} from "date-fns";
 
-import Collapse from 'rc-collapse';
-import 'rc-collapse/assets/index.css';
+import Collapse from "rc-collapse";
+import "rc-collapse/assets/index.css";
 // import { pl } from 'date-fns/locale';
 // import CurrencyInput from 'react-currency-input';
-import NumberFormat from 'react-number-format';
-import InputMask from 'react-input-mask';
+import NumberFormat from "react-number-format";
+import InputMask from "react-input-mask";
 
-import axios from 'axios';
-import PropTypes from 'prop-types';
+import axios from "axios";
+import PropTypes from "prop-types";
 import {
   withStyles,
   MuiThemeProvider,
   createMuiTheme
-} from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+} from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 // import NoSsr from '@material-ui/core/NoSsr';
-import Paper from '@material-ui/core/Paper';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import Paper from "@material-ui/core/Paper";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
 // import Select from '@material-ui/core/Select';
-import Select from 'react-select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Button from '@material-ui/core/Button';
-import Send from '@material-ui/icons/Send';
-import Edit from '@material-ui/icons/Edit';
-import Cancel from '@material-ui/icons/Clear';
+import Select from "react-select";
+import MenuItem from "@material-ui/core/MenuItem";
+import Button from "@material-ui/core/Button";
+import Send from "@material-ui/icons/Send";
+import Edit from "@material-ui/icons/Edit";
+import Cancel from "@material-ui/icons/Clear";
 
-import Chip from '@material-ui/core/Chip';
-import { emphasize, fade } from '@material-ui/core/styles/colorManipulator';
+import Chip from "@material-ui/core/Chip";
+import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import ImageIcon from '@material-ui/icons/Image';
-import WorkIcon from '@material-ui/icons/Work';
-import BeachAccessIcon from '@material-ui/icons/BeachAccess';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/icons/Folder';
-import DeleteIcon from '@material-ui/icons/Delete';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Avatar from "@material-ui/core/Avatar";
+import ImageIcon from "@material-ui/icons/Image";
+import WorkIcon from "@material-ui/icons/Work";
+import BeachAccessIcon from "@material-ui/icons/BeachAccess";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import IconButton from "@material-ui/core/IconButton";
+import FolderIcon from "@material-ui/icons/Folder";
+import DeleteIcon from "@material-ui/icons/Delete";
 
-import CostsTable from './CostsTable2Remote';
-import PieChart1 from './PieChart1';
+import CostsTable from "./CostsTable2Remote";
+import PieChart1 from "./PieChart1";
+
+import IntegrationAutosuggest from "./CitiesSearch";
+import Example from "./CitiesSearch2";
 
 var Panel = Collapse.Panel;
 
@@ -103,7 +106,8 @@ function Placeholder(props) {
     <Typography
       color="textSecondary"
       className={props.selectProps.classes.placeholder}
-      {...props.innerProps}>
+      {...props.innerProps}
+    >
       {props.children}
     </Typography>
   );
@@ -139,14 +143,14 @@ const staticRanges = [
   // ...defaultStaticRanges,
   ...createStaticRanges([
     {
-      label: 'Dziś',
+      label: "Dziś",
       range: () => ({
         startDate: defineds.startOfToday,
         endDate: defineds.endOfToday
       })
     },
     {
-      label: 'Wczoraj',
+      label: "Wczoraj",
       range: () => ({
         startDate: defineds.startOfYesterday,
         endDate: defineds.endOfYesterday
@@ -154,28 +158,28 @@ const staticRanges = [
     },
 
     {
-      label: 'Bieżący tydzień',
+      label: "Bieżący tydzień",
       range: () => ({
         startDate: defineds.startOfWeek,
         endDate: defineds.endOfWeek
       })
     },
     {
-      label: 'Poprzedni tydzień',
+      label: "Poprzedni tydzień",
       range: () => ({
         startDate: defineds.startOfLastWeek,
         endDate: defineds.endOfLastWeek
       })
     },
     {
-      label: 'Bieżący miesiąc',
+      label: "Bieżący miesiąc",
       range: () => ({
         startDate: defineds.startOfMonth,
         endDate: defineds.endOfMonth
       })
     },
     {
-      label: 'Poprzedni miesiąc',
+      label: "Poprzedni miesiąc",
       range: () => ({
         startDate: defineds.startOfLastMonth,
         endDate: defineds.endOfLastMonth
@@ -186,11 +190,11 @@ const staticRanges = [
 
 const styles = theme => ({
   input: {
-    display: 'flex',
+    display: "flex",
     padding: 0
   },
   placeholder: {
-    position: 'absolute',
+    position: "absolute",
     left: 2,
     fontSize: 16
   },
@@ -206,8 +210,8 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit
   },
   container: {
-    display: 'inline-block',
-    flexWrap: 'nowrap'
+    display: "inline-block",
+    flexWrap: "nowrap"
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -218,34 +222,34 @@ const styles = theme => ({
     margin: theme.spacing.unit
   },
   mojChipClickedRoot: {
-    color: 'white',
+    color: "white",
     margin: theme.spacing.unit / 2,
     backgroundColor: theme.palette.primary.main
   },
   mojChipRoot: {
     margin: theme.spacing.unit / 2,
-    backgroundColor: 'lightgray'
+    backgroundColor: "lightgray"
   },
   mojChipClicked: {
-    '&:hover, &:focus': {
+    "&:hover, &:focus": {
       margin: theme.spacing.unit / 2,
-      backgroundColor: 'lightgray'
+      backgroundColor: "lightgray"
     },
-    '&:active': {
-      color: 'white',
+    "&:active": {
+      color: "white",
       margin: theme.spacing.unit / 2,
       backgroundColor: theme.palette.primary.main
     }
   },
   mojChip: {
-    '&:hover, &:focus': {
-      color: 'white',
+    "&:hover, &:focus": {
+      color: "white",
       margin: theme.spacing.unit / 2,
       backgroundColor: theme.palette.primary.main
     },
-    '&:active': {
+    "&:active": {
       margin: theme.spacing.unit / 2,
-      backgroundColor: 'lightgray'
+      backgroundColor: "lightgray"
     }
   }
 });
@@ -261,7 +265,7 @@ function NumberFormatCustom(props) {
       onValueChange={values => {
         onChange({
           target: {
-            value: values.formattedValue.replace(/ /g, '')
+            value: values.formattedValue.replace(/ /g, "")
           }
         });
       }}
@@ -276,30 +280,31 @@ function NumberFormatCustom(props) {
   );
 }
 
-class Costs extends Component {
+class Planer extends Component {
   state = {
     // numberformat: '',
-    id: '',
-    nr_dokumentu: 'FV 83929',
-    data_wystawienia: '2018-07-05',
-    nazwa_pozycji: 'Benzyna',
-    kwota_netto: '',
+    id: "",
+    nr_dokumentu: "FV 83929",
+    data_wystawienia: "2018-07-05",
+    nazwa_pozycji: "Benzyna",
+    kwota_netto: "",
     // categoryId: { label: '', value: '' },
     // groupId: { label: '', value: '' },
-    categoryId: '',
-    groupId: '',
+    categoryId: "",
+    groupId: "",
     groups: [],
     categories: [],
     costs: [],
     edited: false,
     chmurka_group: [],
     chmurka_category: [],
+    city: "",
     rangeselection: {
       // startDate: defineds.startOfMonth,
       // endDate: defineds.endOfMonth,
       startDate: defineds.startOfLastMonth,
       endDate: defineds.endOfLastMonth,
-      key: 'rangeselection'
+      key: "rangeselection"
     },
     submitIsDisable: true
   };
@@ -328,12 +333,12 @@ class Costs extends Component {
         kwota_netto !== kwota_netto_prevState ||
         categoryId !== categoryId_prevState ||
         groupId !== groupId_prevState) &&
-      (nr_dokumentu !== '' &&
-        data_wystawienia !== '' &&
-        nazwa_pozycji !== '' &&
-        kwota_netto !== '' &&
-        (categoryId ? categoryId.value !== '' : categoryId !== '') &&
-        (groupId ? groupId.value !== '' : groupId !== ''))
+      (nr_dokumentu !== "" &&
+        data_wystawienia !== "" &&
+        nazwa_pozycji !== "" &&
+        kwota_netto !== "" &&
+        (categoryId ? categoryId.value !== "" : categoryId !== "") &&
+        (groupId ? groupId.value !== "" : groupId !== ""))
       // categoryId.value !== '' &&
       // groupId.value !== ''
     ) {
@@ -345,12 +350,12 @@ class Costs extends Component {
         kwota_netto !== kwota_netto_prevState ||
         categoryId !== categoryId_prevState ||
         groupId !== groupId_prevState) &&
-      (nr_dokumentu === '' ||
-        data_wystawienia === '' ||
-        nazwa_pozycji === '' ||
-        kwota_netto === '' ||
-        (categoryId ? categoryId.value === '' : categoryId === '') ||
-        (groupId ? groupId.value === '' : groupId === ''))
+      (nr_dokumentu === "" ||
+        data_wystawienia === "" ||
+        nazwa_pozycji === "" ||
+        kwota_netto === "" ||
+        (categoryId ? categoryId.value === "" : categoryId === "") ||
+        (groupId ? groupId.value === "" : groupId === ""))
     ) {
       this.setState({ submitIsDisable: true });
     } else {
@@ -385,39 +390,40 @@ class Costs extends Component {
 
   clearForm = () => {
     this.setState({
-      id: '',
-      nr_dokumentu: '',
-      data_wystawienia: '',
-      nazwa_pozycji: '',
-      kwota_netto: '',
-      categoryId: '',
-      groupId: '',
+      id: "",
+      nr_dokumentu: "",
+      data_wystawienia: "",
+      nazwa_pozycji: "",
+      kwota_netto: "",
+      categoryId: "",
+      groupId: "",
       edited: false
     });
   };
 
   componentWillMount() {
     axios
-      .get('/api/table/group')
+      .get("/api/table/group")
       .then(result => this.setState({ groups: result.data }));
     // .then(result => this.renderSelect(result.data));
     axios
-      .get('/api/table/category')
+      .get("/api/table/category")
       .then(result => this.setState({ categories: result.data }));
     this.fetchCosts();
   }
 
   fetchCosts = () => {
-    axios.get('/api/table/costs').then(result => {
+    axios.get("/api/table/costs").then(result => {
       const koszty = result.data;
+      console.log(koszty);
       const nieUnikalneGrupy = koszty.map(el => {
         return { groupId: el.groupId, group: el.group.name };
       });
       koszty.map(el => Object.assign(el, { clicked: true }));
       this.setState({
         costs: koszty,
-        chmurka_group: this.chmurka(koszty, 'group'),
-        chmurka_category: this.chmurka(koszty, 'category')
+        chmurka_group: this.chmurka(koszty, "group"),
+        chmurka_category: this.chmurka(koszty, "category")
       });
     });
   };
@@ -454,7 +460,7 @@ class Costs extends Component {
 
   dynamicSort = property => {
     let sortOrder = 1;
-    if (property[0] === '-') {
+    if (property[0] === "-") {
       sortOrder = -1;
       property = property.substr(1);
     }
@@ -466,12 +472,22 @@ class Costs extends Component {
   };
 
   renderSelect = select => {
-    const none = { label: 'Brak', value: '' };
+    const none = { label: "Brak", value: "" };
     const doWyboru = select.map((elem, i) => ({
       label: elem.name,
       value: elem.id
     }));
-    return doWyboru.sort(this.dynamicSort('label'));
+    return doWyboru.sort(this.dynamicSort("label"));
+  };
+
+  renderSelectCity = select => {
+    console.log(select);
+    // const none = { label: 'Brak', value: '' };
+    // const doWyboru = select.map((elem, i) => ({
+    //   label: elem.name,
+    //   value: elem.id
+    // }));
+    // return doWyboru.sort(this.dynamicSort('label'));
   };
 
   handleEdit = id => {
@@ -510,9 +526,9 @@ class Costs extends Component {
     const url = `/api/cost/edit/${id}`;
 
     fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
       body: JSON.stringify({
         nr_dokumentu,
         data_wystawienia,
@@ -541,12 +557,12 @@ class Costs extends Component {
       categoryId,
       groupId
     } = this.state;
-    const url = '/api/cost';
+    const url = "/api/cost";
 
     fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
       body: JSON.stringify({
         nr_dokumentu,
         data_wystawienia,
@@ -561,7 +577,7 @@ class Costs extends Component {
         const dataWystawienia = data.data_wystawienia;
         const startDate = startOfMonth(dataWystawienia);
         const endDate = endOfMonth(dataWystawienia);
-        const rangeselection = { endDate, startDate, key: 'rangeselection' };
+        const rangeselection = { endDate, startDate, key: "rangeselection" };
         this.setState({ rangeselection });
         // return console.log(startDate);
       })
@@ -597,11 +613,11 @@ class Costs extends Component {
     let porownanie = [];
     let zmodyfikowaneChip = [];
     switch (kolumna) {
-      case 'category':
-        drugaKolumna = 'group';
+      case "category":
+        drugaKolumna = "group";
         break;
-      case 'group':
-        drugaKolumna = 'category';
+      case "group":
+        drugaKolumna = "category";
         break;
       default:
     }
@@ -696,17 +712,17 @@ class Costs extends Component {
     let dane;
     let sorting;
     switch (key) {
-      case 'category':
+      case "category":
         dane = _(data)
-          .groupBy('category.name')
+          .groupBy("category.name")
           .map((v, k) => {
-            const suma = _.sumBy(v, 'kwota_netto');
+            const suma = _.sumBy(v, "kwota_netto");
             return {
               name: k,
               value: Math.round(suma),
               value_format: `${currency(Math.round(suma), {
-                separator: ' ',
-                decimal: ','
+                separator: " ",
+                decimal: ","
               }).format()}`
             };
           })
@@ -719,17 +735,17 @@ class Costs extends Component {
         return sorting.reverse();
 
         break;
-      case 'group':
+      case "group":
         dane = _(data)
-          .groupBy('group.name')
+          .groupBy("group.name")
           .map((v, k) => {
-            const suma = _.sumBy(v, 'kwota_netto');
+            const suma = _.sumBy(v, "kwota_netto");
             return {
               name: k,
               value: suma,
               value_format: `${currency(Math.round(suma), {
-                separator: ' ',
-                decimal: ','
+                separator: " ",
+                decimal: ","
               }).format()}`
             };
           })
@@ -751,20 +767,20 @@ class Costs extends Component {
     const selectionRange = {
       startDate: new Date(),
       endDate: new Date(),
-      key: 'selection'
+      key: "selection"
     };
 
     const { startDate, endDate } = this.state.rangeselection;
 
-    const startDateString = new Intl.DateTimeFormat('pl-PL', {
-      year: 'numeric',
-      month: 'long',
-      day: '2-digit'
+    const startDateString = new Intl.DateTimeFormat("pl-PL", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit"
     }).format(startDate);
-    const endDateString = new Intl.DateTimeFormat('pl-PL', {
-      year: 'numeric',
-      month: 'long',
-      day: '2-digit'
+    const endDateString = new Intl.DateTimeFormat("pl-PL", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit"
     }).format(endDate);
 
     return (
@@ -777,9 +793,11 @@ class Costs extends Component {
           >
             <FormControl
               className={classes.formControl}
-              aria-describedby="name-helper-text">
+              aria-describedby="name-helper-text"
+            >
               <InputLabel htmlFor="name-helper">Nr dokumentu</InputLabel>
               <Input
+                disabled
                 name="nr_dokumentu"
                 id="name-helper"
                 value={this.state.nr_dokumentu}
@@ -791,9 +809,11 @@ class Costs extends Component {
             </FormControl>
             <FormControl
               className={classes.formControl}
-              aria-describedby="name-helper-text">
+              aria-describedby="name-helper-text"
+            >
               {/* <InputLabel htmlFor="name-helper">Name</InputLabel> */}
               <TextField
+                disabled
                 name="data_wystawienia"
                 id="date"
                 label="Data wystawienia"
@@ -812,9 +832,11 @@ class Costs extends Component {
             </FormControl>
             <FormControl
               className={classes.formControl}
-              aria-describedby="name-helper-text">
+              aria-describedby="name-helper-text"
+            >
               <InputLabel htmlFor="name-helper">Nazwa pozycji</InputLabel>
               <Input
+                disabled
                 name="nazwa_pozycji"
                 id="name-helper"
                 value={this.state.nazwa_pozycji}
@@ -829,13 +851,14 @@ class Costs extends Component {
             <FormControl className={classes.formControl}>
               {/* <InputLabel htmlFor="adornment-password">Kwota netto</InputLabel> */}
               <TextField
+                disabled
                 className={classes.formControl}
                 name="kwota_netto"
                 label="Kwota netto"
-                value={this.state.kwota_netto.replace('.', ',')}
+                value={this.state.kwota_netto.replace(".", ",")}
                 // onChange={this.handleChange}
                 // value={this.state.kwota_netto}
-                onChange={this.handleChangeKwota('kwota_netto')}
+                onChange={this.handleChangeKwota("kwota_netto")}
                 id="formatted-numberformat-input"
                 InputProps={{
                   inputComponent: NumberFormatCustom
@@ -856,81 +879,50 @@ class Costs extends Component {
                 }
               /> */}
             </FormControl>
-            <div style={{ display: 'flex' }}>
-              <div style={{ width: 410, marginRight: 22 }}>
-                {/* <FormControl required className={classes.formControl}> */}
-                <InputLabel htmlFor="categoryId">Kategoria</InputLabel>
+            <div style={{ display: "flex" }}>
+              {/* <div style={{ width: 410, marginRight: 22 }}>
+                <InputLabel htmlFor="city">Miejscowość</InputLabel>
                 <Select
-                  // label="Kategoria"
                   placeholder="Wybierz..."
                   components={components}
                   classes={classes}
-                  name="categoryId"
-                  // label="asdf"
-                  id="categoryId"
-                  // defaultValue="asdf"
-                  // InputLabelProps={{
-                  //   shrink: true
-                  // }}
-                  // value={this.state.age}
-                  value={this.state.categoryId}
-                  // value="Brak"
-                  onChange={this.handleChangeSelect('categoryId')}
-                  // name="age"
-                  // inputProps={{
-                  //   id: 'age-required'
-                  // }}
+                  name="city"
+                  id="city"
+                  value={this.state.city}
+                  onChange={this.handleChangeSelect('city')}
                   className={classes.selectEmpty}
-                  // style={{ width: 200 }}
-                  options={this.renderSelect(this.state.categories)}
-                  // options={[
-                  //   { label: 'aa', value: 1 },
-                  //   { label: 'bb', value: 2 }
-                  // ]}
-                >
-                  {/* {this.renderSelect(this.state.categories)} */}
-                </Select>
-                {/* <FormHelperTex  t>Required</FormHelperText> */}
-                {/* </FormControl> */}
-              </div>
-              <div style={{ width: 305 }}>
-                {/* <FormControl required className={classes.formControl}> */}
+                  options={this.renderSelectCity(this.state.city)}
+                />
+              </div> */}
+              <IntegrationAutosuggest />
+              {/* <Example /> */}
+              {/* <div style={{ width: 305 }}>
                 <InputLabel htmlFor="age-required">Grupa</InputLabel>
-                {/* <NoSsr> */}
                 <Select
                   placeholder="Wybierz..."
                   name="groupId"
                   components={components}
                   classes={classes}
-                  // classes={classes}
-                  // styles={selectStyles}
                   options={this.renderSelect(this.state.groups)}
-                  // components={components}
                   value={this.state.groupId}
                   onChange={this.handleChangeSelect('groupId')}
-                  // placeholder="Search a country"
                 />
-                {/* <Select
-      name="groupId"
-      id="age-required"
-      value={this.state.groupId}
-      onChange={this.handleChange}
-      className={classes.selectEmpty}
-      style={{ width: 200 }}>
-      {this.renderSelect(this.state.groups)}
-    </Select> */}
-                {/* </NoSsr> */}
-                {/* <FormHelperTex  t>Required</FormHelperText> */}
-                {/* </FormControl> */}
-              </div>
+              </div> */}
             </div>
+            {/* <div style={{ display: "flex" }}>
+              <span>asdf</span>
+              <span style={{ float: "right", fontSize: 12 }}>
+                asdfasdfasdfasf
+              </span>
+            </div> */}
             {!this.state.edited ? (
               <Button
                 disabled={this.state.submitIsDisable}
                 type="submit"
                 variant="contained"
                 color="primary"
-                className={classes.button}>
+                className={classes.button}
+              >
                 Dodaj koszt
                 <Send style={{ marginLeft: 10 }} />
               </Button>
@@ -941,7 +933,8 @@ class Costs extends Component {
                 onClick={() => this.onEdit()}
                 variant="contained"
                 color="primary"
-                className={classes.button}>
+                className={classes.button}
+              >
                 Edytuj koszt
                 <Edit style={{ marginLeft: 10 }} />
               </Button>
@@ -950,7 +943,8 @@ class Costs extends Component {
               <Button
                 variant="contained"
                 className={classes.button}
-                onClick={() => this.clearForm()}>
+                onClick={() => this.clearForm()}
+              >
                 Anuluj
                 <Cancel style={{ marginLeft: 10 }} />
               </Button>
@@ -964,7 +958,7 @@ class Costs extends Component {
           <Collapse accordion={true}>
             <Panel
               header={
-                <span style={{ fontWeight: '600' }}>
+                <span style={{ fontWeight: "600" }}>
                   Zakres: {startDateString} - {endDateString}
                 </span>
               }
@@ -983,7 +977,7 @@ class Costs extends Component {
                 moveRangeOnFirstSelection={false}
                 months={2}
                 direction="horizontal"
-                rangeColors={['#303f9f']}
+                rangeColors={["#303f9f"]}
               />
             </Panel>
           </Collapse>
@@ -1002,21 +996,22 @@ class Costs extends Component {
           >
             <Panel
               // key="0"
-              header={<span style={{ fontWeight: '600' }}>Podsumowanie</span>}
+              header={<span style={{ fontWeight: "600" }}>Podsumowanie</span>}
               headerClass={classes.accordionClass}
-              style={{ color: 'white' }}>
+              style={{ color: "white" }}
+            >
               <div>
-                <div style={{ width: '100%' }}>
+                <div style={{ width: "100%" }}>
                   <PieChart1
-                    dane={this.sumOfKey(this.costs(), 'category')}
+                    dane={this.sumOfKey(this.costs(), "category")}
                     label="Kategorie"
                     // group={this.sumOfKey(this.costs(), 'group')}
                   />
                 </div>
-                <div style={{ width: '100%' }}>
+                <div style={{ width: "100%" }}>
                   <PieChart1
                     // category={this.sumOfKey(this.costs(), 'category')}
-                    dane={this.sumOfKey(this.costs(), 'group')}
+                    dane={this.sumOfKey(this.costs(), "group")}
                     label="Grupy"
                   />
                 </div>
@@ -1025,12 +1020,12 @@ class Costs extends Component {
           </Collapse>
         </Paper>
         <Paper>
-          <CostsTable
+          {/* <CostsTable
             costs={this.costs()}
             fetch={() => this.fetchCosts()}
             edit={id => this.handleEdit(id)}
             // range={this.state.rangeselection}
-          />
+          /> */}
         </Paper>
         {/* <div>
           <Paper>
@@ -1044,7 +1039,7 @@ class Costs extends Component {
   }
 }
 
-Costs.propTypes = {
+Planer.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
@@ -1058,7 +1053,5 @@ export default withStyles(styles, { withTheme: true })(
   connect(
     mapStateToProps
     // actions
-  )(Costs)
+  )(Planer)
 );
-
-// export default withStyles(styles)(Costs);

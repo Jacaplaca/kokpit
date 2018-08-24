@@ -12,6 +12,7 @@ require('dotenv').config();
 // const mysql = require('mysql2');
 
 var db = {};
+console.log(db);
 
 // if (config.use_env_variable) {
 //   var sequelize = new Sequelize(process.env[config.use_env_variable], config, {
