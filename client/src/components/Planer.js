@@ -7,6 +7,7 @@ import {
   createStaticRanges,
   defaultStaticRanges
 } from "react-date-range";
+import styled from "styled-components";
 import { pl } from "react-date-range/src/locale/index";
 import _ from "lodash";
 import currency from "currency.js";
@@ -23,7 +24,7 @@ import {
   isSameDay,
   differenceInCalendarDays
 } from "date-fns";
-
+import ReactHover from "react-hover";
 import Collapse from "rc-collapse";
 import "rc-collapse/assets/index.css";
 // import { pl } from 'date-fns/locale';
@@ -76,6 +77,8 @@ import PieChart1 from "./PieChart1";
 
 import IntegrationAutosuggest from "./CitiesSearch";
 import Example from "./CitiesSearch2";
+
+//poprawic wyszukiwanie po miescie bo dziwnie pokazuje lubartow ze jest w powiecie zaganskim, pewnie ma to zwiazek z tym że niektore wyniki pokazuje jako pierwsze
 
 var Panel = Collapse.Panel;
 
@@ -1020,6 +1023,33 @@ class Planer extends Component {
           </Collapse>
         </Paper>
         <Paper>
+          <Collapse
+            accordion={true}
+            activeKey="0"
+            defaultActiveKey="0"
+            onMouseEnter={() => console.log("Collapse")}
+          >
+            <Panel
+              onMouseOver={e => {
+                console.log(e);
+              }}
+              key="0"
+              header={<span style={{ fontWeight: "600" }}>Podsumowanie</span>}
+              headerClass={classes.accordionClass}
+              style={{ color: "white" }}
+            >
+              <div>alskdfjl</div>
+            </Panel>
+            <Panel
+              key="1"
+              header={<span style={{ fontWeight: "600" }}>Podsumowanie</span>}
+              headerClass={classes.accordionClass}
+              style={{ color: "white" }}
+            >
+              <div>alskdfjl</div>
+            </Panel>
+          </Collapse>
+
           {/* <CostsTable
             costs={this.costs()}
             fetch={() => this.fetchCosts()}
@@ -1034,10 +1064,59 @@ class Planer extends Component {
             </List>
           </Paper>
         </div> */}
+        <Accordion>
+          <AccordionItem className="accordion-item">
+            <h1>Section 1</h1>
+            <AccordionItemContent>
+              <p>Content for section 1</p>
+            </AccordionItemContent>
+          </AccordionItem>
+          <AccordionItem className="accordion-item">
+            <h1>Section 2</h1>
+            <AccordionItemContent>
+              <p>Content for section 2</p>
+            </AccordionItemContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     );
   }
 }
+
+const Accordion = styled.div`
+  font-size: 1.5em;
+  text-align: center;
+  color: palevioletred;
+`;
+
+const AccordionItem = styled.section`
+  border-bottom: 1px solid #666;
+  padding: 1em;
+  color: #eee;
+  background-color: hsl(200, 80%, 60%);
+  background-image: linear-gradient(
+    -90deg,
+    hsl(200, 80%, 60%),
+    hsl(200, 80%, 45%) 2em,
+    hsl(200, 80%, 60%)
+  );
+  &:hover {
+    ${AccordionItemContent} {
+      height: auto;
+    }
+  }
+`;
+
+const AccordionItemContent = styled.div`
+  height: 0;
+  overflow: hidden;
+  transition: height 0.25s;
+`;
+
+// .accordion:hover .accordion-item:hover .accordion-item-content,
+// .accordion .accordion-item--default .accordion-item-content {
+//     height: 6em;
+// }
 
 Planer.propTypes = {
   classes: PropTypes.object.isRequired
