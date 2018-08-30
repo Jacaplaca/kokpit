@@ -399,9 +399,18 @@ class CostsTable extends Component {
     return suma;
   };
 
+  //state.data pochodzi z filtrowania lub obecnie wyswietlane
+  //props.costs z fetchowania
+
   jakieDane = () => {
     if (this.state.data.length === 0 || this.props.costs === this.state.data) {
       console.log("state.data = 0 lub props.cost = state.data");
+      return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
+    } else if (
+      this.props.costs.length === this.state.data.length &&
+      this.props.costs !== this.state.data
+    ) {
+      console.log("zmienila sie wartosc ale nie dlugosc tabeli bo byla edycja");
       return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
     } else {
       console.log("jakie dane rozne nie 0");

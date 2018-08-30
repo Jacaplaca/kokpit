@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { BrowserRouter, Route } from "react-router-dom";
+import { connect } from "react-redux";
 
-import * as actions from '../actions';
+import * as actions from "../actions";
 
-import Register from './Register';
-import Header from './Header';
-import Landing from './Landing';
-import Login from './Login';
-import MiniDrawer from './MiniDrawer';
-import MiniDrawer2 from './MiniDrawer2';
-import ResetPassword from './ResetPassword';
-import Costs from './Costs';
-import Planer from './Planer';
+import Register from "./Register";
+import Header from "./Header";
+import Landing from "./Landing";
+import Login from "./Login";
+import MiniDrawer from "./MiniDrawer";
+import MiniDrawer2 from "./MiniDrawer2";
+import ResetPassword from "./ResetPassword";
+import Costs from "./Costs";
+import Planer from "./Planer";
 // const Dashboard = () => <h2>Dashboard</h2>;
 // const SurveyNew = () => <h2>SurveyNew</h2>;
 
@@ -28,7 +28,7 @@ class App extends Component {
       <BrowserRouter>
         <div>
           {/* <Header /> */}
-          <MiniDrawer2 />
+          {/* <MiniDrawer2 /> */}
           <MiniDrawer>
             <Route path="/login" component={Login} />
             <Route exact path="/" component={Landing} />
