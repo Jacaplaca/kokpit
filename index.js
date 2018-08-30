@@ -1,36 +1,36 @@
-const express = require('express');
+const express = require("express");
 // const router = express.Router()
 // const mongoose = require('mongoose');
-const cookieSession = require('cookie-session');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const bodyParser = require('body-parser');
+const cookieSession = require("cookie-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const bodyParser = require("body-parser");
 // const { check, validationResult } = require('express-validator/check');
-var session = require('express-session');
-var flash = require('connect-flash');
-var morgan = require('morgan');
+var session = require("express-session");
+var flash = require("connect-flash");
+var morgan = require("morgan");
 // const seql = require('./seql');
 
 // const User = require('./models/user');
 // const Client = require('./models/client');
-const db = require('./models/index');
+const db = require("./models/index");
 const User = db.users;
 const Client = db.clients;
 
 // var Article = require('./models/article');
-var MySQLStore = require('express-mysql-session')(session);
-const keys = require('./config/keys');
+var MySQLStore = require("express-mysql-session")(session);
+const keys = require("./config/keys");
 // require('./models/users');
 // require('./models/survey');
 
-require('./services/passport');
+require("./services/passport");
 // console.log(models.Article);
 // mongoose.connect(keys.mongoURI);
 const app = express();
 const jsonParser = bodyParser.json();
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
-require('dotenv').config();
-app.use(morgan('short'));
+require("dotenv").config();
+app.use(morgan("short"));
 // console.log(db);
 
 // Client.findAll({
@@ -131,19 +131,19 @@ app.use(passport.session());
 //   next();
 // });
 
-require('./routes/authRoutes')(app);
-require('./routes/billingRoutes')(app);
-require('./routes/otherRoutes')(app);
-require('./routes/smsRoutes')(app);
+require("./routes/authRoutes")(app);
+require("./routes/billingRoutes")(app);
+require("./routes/otherRoutes")(app);
+require("./routes/smsRoutes")(app);
 // require('./routes/surveyRoutes')(app);
 
-if (process.env.NODE_ENV === 'online') {
+if (process.env.NODE_ENV === "online") {
   // express will serve up production assets lie our main.js or main.class
-  app.use(express.static('client/build'));
+  app.use(express.static("client/build"));
   //express will server up index.html if it doesn't recognize the route
-  const path = require('path');
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  const path = require("path");
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
 }
 

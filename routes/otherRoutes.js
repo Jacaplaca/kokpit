@@ -255,7 +255,7 @@ module.exports = app => {
       nr_dokumentu,
       data_wystawienia,
       nazwa_pozycji,
-      kwota_netto: kwota_netto.replace(",", "."),
+      kwota_netto: kwota_netto.replace(",", ".").replace("zł", ""),
       categoryId: categoryId.value,
       groupId: groupId.value,
       clientId,
