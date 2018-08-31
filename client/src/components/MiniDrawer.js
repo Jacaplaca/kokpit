@@ -1,14 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import Iframe from "react-iframe";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -22,10 +18,6 @@ import MoneyIcon from "@material-ui/icons/AttachMoney";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import * as actions from "../actions";
-// import { Link } from 'react-router-dom';
-
-// import { mailFolderListItems, otherMailFolderListItems } from './tileData';
-// import Header from './Header';
 
 let drawerWidth = 240;
 

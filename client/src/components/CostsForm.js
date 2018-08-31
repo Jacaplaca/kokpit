@@ -187,6 +187,17 @@ class CostsForm extends Component {
     submitIsDisable: true
   };
 
+  componentWillMount() {
+    console.log("form zostal zamountowany");
+    console.log(this.props.editedId);
+    console.log(this.props.modal);
+    this.state.id !== this.props.editedId &&
+      this.handleEdit(this.props.editedId);
+    // this.props.modal && (
+    //
+    // )
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     const {
       nr_dokumentu: nr_dokumentu_prevState,
@@ -241,9 +252,9 @@ class CostsForm extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.state.id !== nextProps.editedId && this.handleEdit(nextProps.editedId);
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   this.state.id !== nextProps.editedId && this.handleEdit(nextProps.editedId);
+  // }
 
   czyWypelniony = () => {
     const {
@@ -281,50 +292,9 @@ class CostsForm extends Component {
       groupId: "",
       edited: false
     });
+    this.props.modal && this.props.closeModal();
     // this.props.clearForm;
   };
-
-  // componentWillMount() {
-  //   axios
-  //     .get("/api/table/group")
-  //     .then(result => this.setState({ groups: result.data }));
-  //   // .then(result => this.renderSelect(result.data));
-  //   axios
-  //     .get("/api/table/category")
-  //     .then(result => this.setState({ categories: result.data }));
-  //   this.fetchCosts();
-  // }
-
-  // fetchCosts = () => {
-  //   axios.get("/api/table/costs").then(result => {
-  //     const koszty = result.data;
-  //     const nieUnikalneGrupy = koszty.map(el => {
-  //       return { groupId: el.groupId, group: el.group.name };
-  //     });
-  //     koszty.map(el => Object.assign(el, { clicked: true }));
-  //     this.setState({
-  //       costs: koszty,
-  //       chmurka_group: this.chmurka(koszty, "group"),
-  //       chmurka_category: this.chmurka(koszty, "category")
-  //     });
-  //   });
-  // };
-
-  // chmurka = (data, kolumna) => {
-  //   const nieUnikalneGrupy = data.map(el => {
-  //     return JSON.stringify({
-  //       id: el[`${kolumna}Id`],
-  //       name: el[kolumna].name,
-  //       clicked: true
-  //     });
-  //   });
-  //   const unikalneGrupyString = [...new Set(nieUnikalneGrupy)];
-  //   return unikalneGrupyString.map(el => JSON.parse(el));
-  // };
-
-  // onlyUnique = (value, index, self) => {
-  //   return self.indexOf(value) === index;
-  // };
 
   renderSelectNorm = select => {
     const none = (
@@ -363,6 +333,7 @@ class CostsForm extends Component {
   };
 
   handleEdit = id => {
+    console.log("handluje edita");
     axios.get(`/api/cost/${id}`).then(result => {
       const {
         nr_dokumentu,
@@ -634,7 +605,7 @@ class CostsForm extends Component {
     const { classes } = this.props;
 
     return (
-      <Paper style={{ padding: 20, marginBottom: 20 }}>
+      <Paper style={{ padding: 20 }}>
         <form
           onSubmit={e => this.handleSubmit(e)}
           // method="POST"

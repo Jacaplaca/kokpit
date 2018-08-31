@@ -5,14 +5,14 @@ import reduxThunk from "redux-thunk";
 import reducers from "./reducers";
 
 // const store = createStore(reducers, {}, composeWithDevTools((applyMiddleware(reduxThunk)));
-// const store = createStore(
-//   reducers,
-//   composeWithDevTools(
-//     applyMiddleware(reduxThunk)
-//     // other store enhancers if any
-//   )
-// );
+const store = createStore(
+  reducers,
+  composeWithDevTools(
+    applyMiddleware(reduxThunk)
+    // other store enhancers if any
+  )
+);
 
-const store = createStore(reducers, applyMiddleware(reduxThunk));
+// const store = createStore(reducers, applyMiddleware(reduxThunk));
 
 export default store;

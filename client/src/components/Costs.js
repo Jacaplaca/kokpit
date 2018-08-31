@@ -40,6 +40,7 @@ import {
 } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 // import NoSsr from '@material-ui/core/NoSsr';
+import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -188,6 +189,14 @@ const staticRanges = [
 ];
 
 const styles = theme => ({
+  paper: {
+    position: "absolute",
+    //width: theme.spacing.unit * 50,
+    //backgroundColor: theme.palette.background.paper,
+    //boxShadow: theme.shadows[5],
+    boxShadow: "0 0 150px #111"
+    //padding: theme.spacing.unit * 4
+  },
   input: {
     display: "flex",
     padding: 0
@@ -282,6 +291,7 @@ function NumberFormatCustom(props) {
 class Costs extends Component {
   state = {
     // numberformat: '',
+    openModal: false,
     id: "",
     nr_dokumentu: "",
     data_wystawienia: "",
@@ -479,66 +489,9 @@ class Costs extends Component {
     return doWyboru.sort(this.dynamicSort("label"));
   };
 
-  // handleEdit = id => {
-  //   axios.get(`/api/cost/${id}`).then(result => {
-  //     const {
-  //       nr_dokumentu,
-  //       data_wystawienia,
-  //       nazwa_pozycji,
-  //       kwota_netto,
-  //       category,
-  //       group
-  //     } = result.data;
-  //     this.setState({
-  //       id,
-  //       nr_dokumentu,
-  //       kwota_netto,
-  //       nazwa_pozycji,
-  //       data_wystawienia,
-  //       categoryId: { label: category.name, value: category.id },
-  //       groupId: { label: group.name, value: group.id },
-  //       edited: true
-  //     });
-  //   });
-  // };
-
-  onEdit = () => {
-    const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    const url = `/api/cost/edit/${id}`;
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
-      })
-    })
-      .then(() => {
-        this.fetchCosts();
-      })
-      .then(() => {
-        this.clearForm();
-      });
-  };
-
-  // handleSubmit = e => {
-  //   const { user_id, clientId } = this.props.auth;
-  //   e.preventDefault();
+  // onEdit = () => {
   //   const {
+  //     id,
   //     nr_dokumentu,
   //     data_wystawienia,
   //     nazwa_pozycji,
@@ -546,7 +499,7 @@ class Costs extends Component {
   //     categoryId,
   //     groupId
   //   } = this.state;
-  //   const url = "/api/cost";
+  //   const url = `/api/cost/edit/${id}`;
   //
   //   fetch(url, {
   //     method: "POST",
@@ -561,15 +514,6 @@ class Costs extends Component {
   //       groupId
   //     })
   //   })
-  //     .then(resp => resp.json())
-  //     .then(data => {
-  //       const dataWystawienia = data.data_wystawienia;
-  //       const startDate = startOfMonth(dataWystawienia);
-  //       const endDate = endOfMonth(dataWystawienia);
-  //       const rangeselection = { endDate, startDate, key: "rangeselection" };
-  //       this.setState({ rangeselection });
-  //       // return console.log(startDate);
-  //     })
   //     .then(() => {
   //       this.fetchCosts();
   //     })
@@ -604,85 +548,13 @@ class Costs extends Component {
     });
   };
 
-  // handleChipClick = (data, kolumna) => () => {
-  //   let koszty;
-  //   let drugaKolumna;
-  //   let porownanie = [];
-  //   let zmodyfikowaneChip = [];
-  //   switch (kolumna) {
-  //     case "category":
-  //       drugaKolumna = "group";
-  //       break;
-  //     case "group":
-  //       drugaKolumna = "category";
-  //       break;
-  //     default:
-  //   }
-  //
-  //   this.setState(state => {
-  //     const chipData = [...state[`chmurka_${kolumna}`]];
-  //     const chipToClick = chipData.indexOf(data);
-  //     data.clicked = data.clicked ? false : true;
-  //     chipData[chipToClick] = data;
-  //     return { [`chmurka_${kolumna}`]: chipData };
-  //   });
-  //   this.setState(state => {
-  //     koszty = [...state.costs];
-  //     koszty.map(el => {
-  //       if (el[`${kolumna}Id`] !== data.id) {
-  //         return el;
-  //       } else {
-  //         return Object.assign(el, { clicked: el.clicked ? false : true });
-  //       }
-  //     });
-  //   });
-  //   this.setState(state => {
-  //     const chipData = [...state[`chmurka_${drugaKolumna}`]];
-  //     const drugaKolumnaFalse = koszty.map(el => {
-  //       if (!el.clicked) {
-  //         return el[drugaKolumna].name;
-  //       } else {
-  //         return null;
-  //       }
-  //     });
-  //     const jestTrue = drugaKolumnaFalse.map(el =>
-  //       koszty.filter(x => x[drugaKolumna].name === el && x.clicked === true)
-  //     );
-  //     const porownanie = drugaKolumnaFalse.map((x, i) => {
-  //       const dlugoscJestTrue = jestTrue[i].length;
-  //       return { name: x, powtarza: dlugoscJestTrue };
-  //     });
-  //
-  //     porownanie.map(x => {
-  //       if (x.name !== null && x.powtarza === 0) {
-  //         chipData.map(y => {
-  //           if (y.name === x.name) {
-  //             return zmodyfikowaneChip.push({
-  //               id: y.id,
-  //               name: y.name,
-  //               clicked: false
-  //             });
-  //           } else {
-  //             return zmodyfikowaneChip.push({
-  //               id: y.id,
-  //               name: y.name,
-  //               clicked: true
-  //             });
-  //           }
-  //         });
-  //       } else if (x.name !== null && x.powtarza > 0) {
-  //         zmodyfikowaneChip = chipData.map(y => {
-  //           if (y.name === x.name) {
-  //             // console.log(x.name);
-  //             return { id: y.id, name: y.name, clicked: true };
-  //           } else {
-  //             return { id: y.id, name: y.name, clicked: false };
-  //           }
-  //         });
-  //       }
-  //     });
-  //   });
-  // };
+  handleOpen = () => {
+    this.setState({ openModal: true });
+  };
+
+  handleClose = () => {
+    this.setState({ openModal: false });
+  };
 
   costs = () => {
     const koszty = this.state.costs;
@@ -759,6 +631,14 @@ class Costs extends Component {
     }
   };
 
+  getModalStyle = () => {
+    return {
+      top: `${50}%`,
+      left: `${50}%`,
+      transform: `translate(-${50}%, -${50}%)`
+    };
+  };
+
   render() {
     const { classes } = this.props;
     const selectionRange = {
@@ -782,14 +662,37 @@ class Costs extends Component {
 
     return (
       <div className={classes.container}>
-        <CostsForm
-          fetchuj={() => this.fetchCosts()}
-          groups={this.state.groups}
-          categories={this.state.categories}
-          changeRange={data => this.changeRange(data)}
-          editedId={this.state.editedId}
-          // clearForm={() => this.setState({ editedId: "" })}
-        />
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.openModal}
+          onClose={this.handleClose}
+        >
+          <div style={this.getModalStyle()} className={classes.paper}>
+            <CostsForm
+              fetchuj={() => this.fetchCosts()}
+              groups={this.state.groups}
+              categories={this.state.categories}
+              changeRange={data => this.changeRange(data)}
+              editedId={this.state.editedId}
+              modal
+              closeModal={() => this.setState({ openModal: false })}
+              // clearForm={() => this.setState({ editedId: "" })}
+            />
+          </div>
+        </Modal>
+
+        <div className="costsFormContainer" style={{ marginBottom: 20 }}>
+          <CostsForm
+            fetchuj={() => this.fetchCosts()}
+            groups={this.state.groups}
+            categories={this.state.categories}
+            changeRange={data => this.changeRange(data)}
+            editedId={this.state.editedId}
+
+            // clearForm={() => this.setState({ editedId: "" })}
+          />
+        </div>
 
         <Paper
           className={classes.accordionMain}
@@ -863,7 +766,10 @@ class Costs extends Component {
           <CostsTable
             costs={this.costs()}
             fetch={() => this.fetchCosts()}
-            edit={id => this.setState({ editedId: id })}
+            edit={id => {
+              this.setState({ openModal: true });
+              this.setState({ editedId: id });
+            }}
             // range={this.state.rangeselection}
           />
         </Paper>

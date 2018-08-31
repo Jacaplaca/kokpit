@@ -15,11 +15,18 @@ import {
   MuiThemeProvider,
   createMuiTheme
 } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 import currency from "currency.js";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 const styles = theme => ({
   headerClasses: {
@@ -86,19 +93,9 @@ const RemoteFilter = props => {
     }
   };
 
-  const handleDelete = id => {
-    console.log("handleDelete");
-    console.log(id);
-
-    const url = `/api/cost/remove/${id}`;
-    fetch(url, {
-      method: "POST",
-      // body: JSON.stringify({ aa: 'aaa' }),
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin"
-    }).then(() => {
-      props.fetch();
-    });
+  const handleDeleteConfirm = id => {
+    props.open();
+    props.setDelete(id);
   };
 
   const columnStyleMain = {
@@ -270,7 +267,10 @@ const RemoteFilter = props => {
       formatter: cell => {
         return (
           <div>
-            <IconButton aria-label="Delete" onClick={() => handleDelete(cell)}>
+            <IconButton
+              aria-label="Delete"
+              onClick={() => handleDeleteConfirm(cell)}
+            >
               <DeleteIcon />
             </IconButton>
             <IconButton aria-label="Edit" onClick={() => props.edit(cell)}>
@@ -303,7 +303,9 @@ const RemoteFilter = props => {
 class CostsTable extends Component {
   state = {
     data: [],
-    suma: 0
+    suma: 0,
+    open: false,
+    delete: ""
   };
 
   componentWillReceiveProps() {
@@ -402,6 +404,26 @@ class CostsTable extends Component {
   //state.data pochodzi z filtrowania lub obecnie wyswietlane
   //props.costs z fetchowania
 
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleDelete = () => {
+    // console.log("handleDelete");
+    // console.log(id);
+
+    const url = `/api/cost/remove/${this.state.delete}`;
+    this.setState({ delete: "", open: false });
+    fetch(url, {
+      method: "POST",
+      // body: JSON.stringify({ aa: 'aaa' }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin"
+    }).then(() => {
+      this.props.fetch();
+    });
+  };
+
   jakieDane = () => {
     if (this.state.data.length === 0 || this.props.costs === this.state.data) {
       console.log("state.data = 0 lub props.cost = state.data");
@@ -420,15 +442,47 @@ class CostsTable extends Component {
 
   render() {
     return (
-      <RemoteFilter
-        data={this.jakieDane().costs}
-        suma={this.jakieDane().sumuj}
-        dataCalosc={this.props.costs}
-        onTableChange={this.handleTableChange}
-        fetch={() => this.props.fetch()}
-        edit={id => this.props.edit(id)}
-        classes={this.props.classes}
-      />
+      <div>
+        <Dialog open={this.state.open} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">
+            Czy na pewno chcesz usunąć tę pozycję kosztową?{" "}
+          </DialogTitle>
+          <DialogContent>
+            {/* <DialogContentText>
+              To subscribe to this website, please enter your email address
+              here. We will send updates occasionally.
+            </DialogContentText> */}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={this.handleDelete}
+              variant="contained"
+              color="primary"
+            >
+              Tak
+            </Button>
+            <Button
+              onClick={this.handleClose}
+              variant="contained"
+              color="primary"
+            >
+              Nie
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <RemoteFilter
+          data={this.jakieDane().costs}
+          suma={this.jakieDane().sumuj}
+          dataCalosc={this.props.costs}
+          onTableChange={this.handleTableChange}
+          fetch={() => this.props.fetch()}
+          edit={id => this.props.edit(id)}
+          setDelete={id => this.setState({ delete: id })}
+          delete={this.state.delete}
+          open={() => this.setState({ open: true })}
+          classes={this.props.classes}
+        />
+      </div>
     );
   }
 }

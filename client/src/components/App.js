@@ -5,11 +5,11 @@ import { connect } from "react-redux";
 import * as actions from "../actions";
 
 import Register from "./Register";
-import Header from "./Header";
+// import Header from "./Header";
 import Landing from "./Landing";
 import Login from "./Login";
 import MiniDrawer from "./MiniDrawer";
-import MiniDrawer2 from "./MiniDrawer2";
+// import MiniDrawer2 from "./MiniDrawer2";
 import ResetPassword from "./ResetPassword";
 import Costs from "./Costs";
 import Planer from "./Planer";
