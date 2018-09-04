@@ -9,6 +9,8 @@ const Cost = db.costs;
 const City = db.gus_simc;
 const Street = db.gus_ulic;
 const Terc = db.gus_terc;
+const Wojewodztwo = db.gus_terc_woj;
+const Powiat = db.gus_terc_pow;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const axios = require("axios");
@@ -29,12 +31,74 @@ dynamicSort = property => {
 };
 
 module.exports = app => {
+  // app.get("/api/powiat/miel", (req, res, next) => {
+  //   const rezultaty = Powiat.findAll()
+  //     .then(result => {
+  //       var promises = [];
+  //
+  //       result.map((wynik, i) => {
+  //         const { pow_id, woj_id, id } = wynik.get();
+  //         console.log(woj_id);
+  //         Powiat.update(
+  //           {
+  //             woj_pow: woj_id + pow_id
+  //           },
+  //           {
+  //             where: { id }
+  //           }
+  //         )
+  //           .then(() => res.end())
+  //           .catch(err => {
+  //             console.log(err);
+  //             res.sendStatus(500);
+  //           });
+  //       });
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.sendStatus(500);
+  //     });
+  // });
+
+  // app.get("/api/city/miel", (req, res, next) => {
+  //   const rezultaty = City.findAll().then(result => {
+  //     var promises = [];
+  //
+  //     result
+  //       .map((wynik, i) => {
+  //         const { woj, pow, gmi, id } = wynik.get();
+  //         // console.log(woj_id);
+  //         setTimeout(function() {
+  //           City.update(
+  //             {
+  //               woj_pow: woj + pow,
+  //               woj_pow_gmi: woj + pow + gmi
+  //             },
+  //             {
+  //               where: { id }
+  //             }
+  //           )
+  //             .then(() => res.end())
+  //             .catch(err => {
+  //               console.log(err);
+  //               res.sendStatus(500);
+  //             });
+  //         });
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //         res.sendStatus(500);
+  //       });
+  //   }, 100);
+  // });
+
   app.get("/api/city/:city", (req, res, next) => {
     // console.log("get api/city/");
     const wyszukiwanie = req.params.city;
-    const city = wyszukiwanie.split(" ")[0];
+    const city = wyszukiwanie;
+    // const city = wyszukiwanie.split(" ")[0];
     const drugiCzlon = wyszukiwanie.split(" ")[1];
-    // console.log(city);
+    console.log(city);
     // console.log(drugiCzlon);
     if (city.length < 3) {
       res.json([]);
@@ -58,7 +122,21 @@ module.exports = app => {
       // );
 
       City.findAll({
-        where: { nazwa: { [Op.like]: `%${city.toLowerCase()}%` } },
+        where: {
+          nazwa: { [Op.like]: `${city}%` }
+          // attributes: {["id", "nazwa", "mz", "woj", "pow", "gmi"]}
+        },
+        // include: [{ model: Wojewodztwo }],
+        include: [
+          { model: Wojewodztwo, attributes: ["nazwa"] },
+          {
+            model: Powiat,
+            attributes: ["nazwa"]
+            // include: { model: Wojewodztwo, attributes: ["id", "nazwa"] }
+            // where: { woj_id: Sequelize.col("City.woj") }
+          },
+          { model: Terc, attributes: ["nazwa"] }
+        ],
         limit: 30
       }).then(result => {
         var promises = [];
@@ -68,87 +146,71 @@ module.exports = app => {
         // const filtrowany = result.filter(x => x.rm !== "95");
         const sortowany = result.sort(dynamicSort("rm"));
         const sortRevSlice = sortowany.reverse().slice(0, 10);
+        return res.json(sortRevSlice);
 
-        sortRevSlice.map((wynik, i) => {
-          const { woj, pow, gmi } = wynik.get();
-          var promise_woj = Terc.find({ where: { woj } }).then(x => {
-            wojewodztwo = x.get().nazwa;
-          });
-          var promise_pow = Terc.find({ where: { woj, pow } }).then(x => {
-            powiat = x.get().nazwa;
-          });
-          var promise_gmi = Terc.find({ where: { woj, pow, gmi } }).then(x => {
-            gmina = x.get().nazwa;
-            mods.push(
-              Object.assign(wynik.get(), {
-                wojewodztwo:
-                  wojewodztwo
-                    .toLowerCase()
-                    .charAt(0)
-                    .toUpperCase() + wojewodztwo.toLowerCase().slice(1),
-                powiat:
-                  powiat
-                    .toLowerCase()
-                    .charAt(0)
-                    .toUpperCase() + powiat.toLowerCase().slice(1),
-                gmina:
-                  gmina
-                    .toLowerCase()
-                    .charAt(0)
-                    .toUpperCase() + gmina.toLowerCase().slice(1)
-              })
-            );
-          });
-          promises.push(promise_woj, promise_pow, promise_gmi);
-        });
-        Promise.all(promises).then(y => {
-          if (!drugiCzlon) {
-            res.json(mods);
-          } else if (drugiCzlon.length > 2) {
-            const symboleMiast = mods.map(miasto => miasto.sym);
-            Street.findAll({
-              where: {
-                nazwa_1: { [Op.like]: `%${drugiCzlon.toLowerCase()}%` },
-                sym: symboleMiast
-              },
-              limit: 30
-            }).then(result => {
-              const ulice = result.map(b =>
-                Object.assign(
-                  {},
-                  {
-                    cecha: b.get().cecha,
-                    nazwa_1: b.get().nazwa_1,
-                    nazwa_2: b.get().nazwa_2,
-                    sym: b.get().sym
-                  }
-                )
-              );
-              const uliceImiasta = ulice.map(ulica => {
-                // console.log(ulica);
-                const miasto = mods.filter(m => m.sym === ulica.sym);
-                // console.log(miasto[0].sym);
-                return Object.assign(ulica, miasto[0]);
-              });
-              return res.json(uliceImiasta);
-              // console.log(ulice);
-              // const ulicePrzezMiasta = ulice.filter(o => {
-              //   return symboleMiast.includes(o.sym);
-              // });
-              // // console.log(ulice);
-              // // console.log(ulice.length);
-              // // console.log(symboleMiast);
-              // // console.log(ulicePrzezMiasta);
-              // const uliceImiasta = ulicePrzezMiasta.map(ulica => {
-              //   const miasto = mods.filter(m => m.sym === ulica.sym);
-              //   // console.log(miasto);
-              //   return Object.assign(miasto[0], ulica);
-              // });
-              // // console.log(uliceImiasta);
-              // return res.json(uliceImiasta);
-            });
-          }
-        });
+        // sortRevSlice.map((wynik, i) => {
+        //   const { woj, pow, gmi } = wynik.get();
+        //   var promise_woj = Terc.find({ where: { woj } }).then(x => {
+        //     wojewodztwo = x.get().nazwa;
+        //   });
+        //   var promise_pow = Terc.find({ where: { woj, pow } }).then(x => {
+        //     powiat = x.get().nazwa;
+        //   });
+        //   var promise_gmi = Terc.find({ where: { woj, pow, gmi } }).then(x => {
+        //     gmina = x.get().nazwa;
+        //     mods.push(
+        //       Object.assign(wynik.get(), {
+        //         wojewodztwo:
+        //           wojewodztwo
+        //             // .toLowerCase()
+        //             .charAt(0)
+        //             .toUpperCase() + wojewodztwo.slice(1),
+        //         powiat:
+        //           powiat
+        //             // .toLowerCase()
+        //             .charAt(0)
+        //             .toUpperCase() + powiat.slice(1),
+        //         gmina:
+        //           gmina
+        //             // .toLowerCase()
+        //             .charAt(0)
+        //             .toUpperCase() + gmina.slice(1)
+        //       })
+        //     );
+        //   });
+        //   promises.push(promise_woj, promise_pow, promise_gmi);
+        // });
+        // Promise.all(promises).then(y => {
+        //   if (!drugiCzlon) {
+        //     res.json(mods);
+        //   } else if (drugiCzlon.length > 2) {
+        //     const symboleMiast = mods.map(miasto => miasto.sym);
+        //     Street.findAll({
+        //       where: {
+        //         nazwa_1: { [Op.like]: `%${drugiCzlon}%` },
+        //         sym: symboleMiast
+        //       },
+        //       limit: 30
+        //     }).then(result => {
+        //       const ulice = result.map(b =>
+        //         Object.assign(
+        //           {},
+        //           {
+        //             cecha: b.get().cecha,
+        //             nazwa_1: b.get().nazwa_1,
+        //             nazwa_2: b.get().nazwa_2,
+        //             sym: b.get().sym
+        //           }
+        //         )
+        //       );
+        //       const uliceImiasta = ulice.map(ulica => {
+        //         const miasto = mods.filter(m => m.sym === ulica.sym);
+        //         return Object.assign(ulica, miasto[0]);
+        //       });
+        //       return res.json(uliceImiasta);
+        //     });
+        //   }
+        // });
       });
     }
   });

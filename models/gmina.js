@@ -1,11 +1,14 @@
 module.exports = (sequelize, Sequelize) => {
-  const Terc = sequelize.define(
+  const Gmina = sequelize.define(
     "gus_terc",
     {
       id: {
-        autoIncrement: true,
+        autoIncrement: false,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
+      },
+      nazwa: {
+        type: Sequelize.STRING
       },
       woj: {
         type: Sequelize.STRING
@@ -16,24 +19,14 @@ module.exports = (sequelize, Sequelize) => {
       gmi: {
         type: Sequelize.STRING
       },
-      rodz: {
+      woj_pow_gmi: {
         type: Sequelize.STRING
-      },
-      nazwa: {
-        type: Sequelize.STRING
-      },
-      nazwa_dod: {
-        type: Sequelize.STRING
-      },
-      stan_na: {
-        type: Sequelize.DATE
-      },
-      woj_pow_gmi: { type: Sequelize.STRING }
+      }
     },
     {
       freezeTableName: true
     }
   );
 
-  return Terc;
+  return Gmina;
 };

@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const City = sequelize.define(
-    'gus_simc',
+    "gus_simc",
     {
       id: {
         autoIncrement: true,
@@ -38,7 +38,19 @@ module.exports = (sequelize, Sequelize) => {
       },
       stan_na: {
         type: Sequelize.DATE
+      },
+      woj_pow: {
+        type: Sequelize.STRING
+      },
+      woj_pow_gmi: {
+        type: Sequelize.STRING
       }
+      // city_woj_pow: {
+      //   type: new Sequelize.VIRTUAL(Sequelize.STRINGN, ["woj", "pow"]),
+      //   get: function() {
+      //     return this.get("woj") + this.get("pow");
+      //   }
+      // }
     },
     {
       freezeTableName: true

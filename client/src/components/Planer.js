@@ -72,8 +72,8 @@ import IconButton from "@material-ui/core/IconButton";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-import CostsTable from "./CostsTable2Remote";
 import PieChart1 from "./PieChart1";
+import CostsTable from "./CostsTable2Remote";
 
 import IntegrationAutosuggest from "./CitiesSearch";
 import Example from "./CitiesSearch2";
@@ -1134,3 +1134,26 @@ export default withStyles(styles, { withTheme: true })(
     // actions
   )(Planer)
 );
+
+// CREATE TABLE `planer_klienci` (
+//   `id` int(11) NOT NULL AUTO_INCREMENT,
+//   `nazwa` varchar(150) NOT NULL,
+//   `adr_Kod` varchar(9) NOT NULL,
+//   `adr_Miejscowosc` varchar(60) NOT NULL,
+//   `kh_id` varchar(6) NOT NULL,
+//   `clientId` int(11) NOT NULL,
+//   `createdAt` date DEFAULT NULL,
+//   `updatedAt` date DEFAULT NULL,
+//   PRIMARY KEY (`id`),
+//   KEY `fk_planer_klienci_clients1_idx` (`clientId`),
+//   CONSTRAINT `fk_planer_klienci_clients1` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+// ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin2
+//
+// CREATE TABLE `myapp_klienci` (
+//   `id` int(11) NOT NULL AUTO_INCREMENT,
+//   `nazwa` varchar(150) NOT NULL,
+//   `adr_Kod` varchar(9) NOT NULL,
+//   `adr_Miejscowosc` varchar(60) NOT NULL,
+//   `kh_id` varchar(6) NOT NULL,
+//   PRIMARY KEY (`id`)
+// ) ENGINE=InnoDB AUTO_INCREMENT=100003 DEFAULT CHARSET=utf8

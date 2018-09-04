@@ -74,7 +74,14 @@ function renderInputComponent(inputProps) {
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.nazwa, query);
   const parts = parse(suggestion.nazwa, matches);
-  const { wojewodztwo, powiat, gmina, cecha, nazwa_1, nazwa_2 } = suggestion;
+  const {
+    gus_terc_woj,
+    gus_terc_pow,
+    gus_terc,
+    cecha,
+    nazwa_1,
+    nazwa_2
+  } = suggestion;
   // console.log(suggestion);
 
   return (
@@ -102,11 +109,11 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
         )}
         <span style={{ float: "right" }}>
           <span style={{ fontSize: 12 }}>woj.: </span>
-          <span style={{ fontSize: 15 }}>{wojewodztwo} </span>
+          <span style={{ fontSize: 15 }}>{gus_terc_woj.nazwa} </span>
           <span style={{ fontSize: 12 }}>pow.: </span>
-          <span style={{ fontSize: 15 }}>{powiat} </span>
+          <span style={{ fontSize: 15 }}>{gus_terc_pow.nazwa} </span>
           <span style={{ fontSize: 12 }}>gmi.: </span>
-          <span style={{ fontSize: 15 }}>{gmina} </span>
+          <span style={{ fontSize: 15 }}>{gus_terc.nazwa} </span>
         </span>
       </div>
       {/* <span>{gmina}</span> */}
