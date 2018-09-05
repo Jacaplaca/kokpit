@@ -14,43 +14,6 @@ import { withStyles } from "@material-ui/core/styles";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
-// const suggestions = [
-//   { nazwa: "Afghanistan" },
-//   { nazwa: "Aland Islands" },
-//   { nazwa: "Albania" },
-//   { nazwa: "Algeria" },
-//   { nazwa: "American Samoa" },
-//   { nazwa: "Andorra" },
-//   { nazwa: "Angola" },
-//   { nazwa: "Anguilla" },
-//   { nazwa: "Antarctica" },
-//   { nazwa: "Antigua and Barbuda" },
-//   { nazwa: "Argentina" },
-//   { nazwa: "Armenia" },
-//   { nazwa: "Aruba" },
-//   { nazwa: "Australia" },
-//   { nazwa: "Austria" },
-//   { nazwa: "Azerbaijan" },
-//   { nazwa: "Bahamas" },
-//   { nazwa: "Bahrain" },
-//   { nazwa: "Bangladesh" },
-//   { nazwa: "Barbados" },
-//   { nazwa: "Belarus" },
-//   { nazwa: "Belgium" },
-//   { nazwa: "Belize" },
-//   { nazwa: "Benin" },
-//   { nazwa: "Bermuda" },
-//   { nazwa: "Bhutan" },
-//   { nazwa: "Bolivia, Plurinational State of" },
-//   { nazwa: "Bonaire, Sint Eustatius and Saba" },
-//   { nazwa: "Bosnia and Herzegovina" },
-//   { nazwa: "Botswana" },
-//   { nazwa: "Bouvet Island" },
-//   { nazwa: "Brazil" },
-//   { nazwa: "British Indian Ocean Territory" },
-//   { nazwa: "Brunei Darussalam" }
-// ];
-
 function renderInputComponent(inputProps) {
   const { classes, inputRef = () => {}, ref, ...other } = inputProps;
 
@@ -121,41 +84,12 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
   );
 }
 
-// function getSuggestions(value) {
-//   const inputValue = value.trim().toLowerCase();
-//   const inputLength = inputValue.length;
-//   let count = 0;
-//
-//   return inputLength < 3
-//     ? []
-//     : suggestions.filter(suggestion => {
-//         const keep =
-//           count < 5 &&
-//           suggestion.nazwa.toLowerCase().slice(0, inputLength) === inputValue;
-//
-//         if (keep) {
-//           count += 1;
-//         }
-//         console.log(keep);
-//         return keep;
-//       });
-// }
-
-function getSuggestionValue(suggestion) {
-  // console.log(suggestion);
-  const miasto = suggestion.nazwa;
-  const cecha = suggestion.cecha ? suggestion.cecha : "";
-  const nazwa_1 = suggestion.nazwa_1 ? suggestion.nazwa_1 : "";
-  const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
-  // return suggestion.nazwa;
-  return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
-}
-
 const styles = theme => ({
   root: {
     // height: 250,
     width: "100%",
-    flexGrow: 1
+    // flexGrow: 1,
+    marginBottom: theme.spacing.unit / 2
   },
   container: {
     position: "relative"
@@ -176,11 +110,14 @@ const styles = theme => ({
     listStyleType: "none"
   },
   divider: {
-    height: theme.spacing.unit * 2
+    height: theme.spacing.unit * 1
   }
+  // input: {
+  //   margin: 44
+  // }
 });
 
-class IntegrationAutosuggest extends React.Component {
+class CitySearch extends React.Component {
   constructor() {
     super();
 
@@ -195,13 +132,6 @@ class IntegrationAutosuggest extends React.Component {
   }
 
   popperNode = null;
-
-  // state = {
-  //   single: "",
-  //   popper: "",
-  //   suggestions: [],
-  //   isLoading: false
-  // };
 
   randomDelay = () => {
     return 300 + Math.random() * 1000;
@@ -251,6 +181,18 @@ class IntegrationAutosuggest extends React.Component {
     });
   }
 
+  getSuggestionValue = suggestion => {
+    // console.log(suggestion);
+    const miasto = suggestion.nazwa;
+    const id = suggestion.id;
+    const cecha = suggestion.cecha ? suggestion.cecha : "";
+    const nazwa_1 = suggestion.nazwa_1 ? suggestion.nazwa_1 : "";
+    const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
+    // return suggestion.nazwa;
+    this.props.edytuj(id);
+    return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
+  };
+
   handleSuggestionsFetchRequested = ({ value }) => {
     console.log("handleSuggestionsFetchRequested");
     console.log(value);
@@ -267,13 +209,14 @@ class IntegrationAutosuggest extends React.Component {
   };
 
   handleChange = name => (event, { newValue }) => {
+    // this.props.edytuj(newValue);
     this.setState({
       [name]: newValue
     });
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, value, edytuj } = this.props;
 
     const status = this.state.isLoading ? "Szukam..." : "Miejscowość";
 
@@ -283,6 +226,8 @@ class IntegrationAutosuggest extends React.Component {
       placeholder: "Zacznij wpisywać miejscowość",
       value: this.state.single,
       onChange: this.handleChange("single")
+      // value: value
+      // onChange: event => edytuj(event.target.value)
     };
 
     const autosuggestProps = {
@@ -290,7 +235,7 @@ class IntegrationAutosuggest extends React.Component {
       suggestions: this.state.suggestions,
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
-      getSuggestionValue,
+      getSuggestionValue: this.getSuggestionValue,
       renderSuggestion
     };
 
@@ -336,8 +281,8 @@ class IntegrationAutosuggest extends React.Component {
   }
 }
 
-IntegrationAutosuggest.propTypes = {
+CitySearch.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(IntegrationAutosuggest);
+export default withStyles(styles)(CitySearch);

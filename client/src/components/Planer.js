@@ -24,59 +24,32 @@ import {
   isSameDay,
   differenceInCalendarDays
 } from "date-fns";
-import ReactHover from "react-hover";
 import Collapse from "rc-collapse";
 import "rc-collapse/assets/index.css";
 // import { pl } from 'date-fns/locale';
 // import CurrencyInput from 'react-currency-input';
-import NumberFormat from "react-number-format";
-import InputMask from "react-input-mask";
 
 import axios from "axios";
 import PropTypes from "prop-types";
-import {
-  withStyles,
-  MuiThemeProvider,
-  createMuiTheme
-} from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 // import NoSsr from '@material-ui/core/NoSsr';
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-// import Select from '@material-ui/core/Select';
-import Select from "react-select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
-import Chip from "@material-ui/core/Chip";
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
-import ImageIcon from "@material-ui/icons/Image";
-import WorkIcon from "@material-ui/icons/Work";
-import BeachAccessIcon from "@material-ui/icons/BeachAccess";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import IconButton from "@material-ui/core/IconButton";
-import FolderIcon from "@material-ui/icons/Folder";
-import DeleteIcon from "@material-ui/icons/Delete";
-
 import PieChart1 from "./PieChart1";
-import CostsTable from "./CostsTable2Remote";
 
-import IntegrationAutosuggest from "./CitiesSearch";
-import Example from "./CitiesSearch2";
+import PlanerForm from "./PlanerForm";
 
 //poprawic wyszukiwanie po miescie bo dziwnie pokazuje lubartow ze jest w powiecie zaganskim, pewnie ma to zwiazek z tym że niektore wyniki pokazuje jako pierwsze
 
@@ -213,6 +186,7 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit
   },
   container: {
+    width: "100%",
     display: "inline-block",
     flexWrap: "nowrap"
   },
@@ -257,40 +231,16 @@ const styles = theme => ({
   }
 });
 
-function NumberFormatCustom(props) {
-  const { inputRef, onChange, ...other } = props;
-  // console.log(props);
-
-  return (
-    <NumberFormat
-      {...other}
-      getInputRef={inputRef}
-      onValueChange={values => {
-        onChange({
-          target: {
-            value: values.formattedValue.replace(/ /g, "")
-          }
-        });
-      }}
-      // removeFormatting={formattedValue => `{}`}
-      decimalSeparator=","
-      thousandSeparator=" "
-      // format="### ### ### ###"
-      decimalScale={2}
-      // prefix="$"
-      suffix="  zł"
-    />
-  );
-}
-
 class Planer extends Component {
   state = {
     // numberformat: '',
     id: "",
-    nr_dokumentu: "FV 83929",
-    data_wystawienia: "2018-07-05",
-    nazwa_pozycji: "Benzyna",
+    nr_dokumentu: "",
+    data_wystawienia: "",
+    nazwa_pozycji: "",
     kwota_netto: "",
+
+    start: "",
     // categoryId: { label: '', value: '' },
     // groupId: { label: '', value: '' },
     categoryId: "",
@@ -592,6 +542,10 @@ class Planer extends Component {
       });
   };
 
+  // onChange = data => {
+  //   this.setState({ phone: data.target.value });
+  // };
+
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -788,172 +742,7 @@ class Planer extends Component {
 
     return (
       <div className={classes.container}>
-        <Paper style={{ padding: 20, marginBottom: 20 }}>
-          <form
-            onSubmit={e => this.handleSubmit(e)}
-            // method="POST"
-            // action="/api/cost/"
-          >
-            <FormControl
-              className={classes.formControl}
-              aria-describedby="name-helper-text"
-            >
-              <InputLabel htmlFor="name-helper">Nr dokumentu</InputLabel>
-              <Input
-                disabled
-                name="nr_dokumentu"
-                id="name-helper"
-                value={this.state.nr_dokumentu}
-                onChange={this.handleChange}
-              />
-              {/* <FormHelperText id="name-helper-text">
-            Some important helper text
-          </FormHelperText> */}
-            </FormControl>
-            <FormControl
-              className={classes.formControl}
-              aria-describedby="name-helper-text"
-            >
-              {/* <InputLabel htmlFor="name-helper">Name</InputLabel> */}
-              <TextField
-                disabled
-                name="data_wystawienia"
-                id="date"
-                label="Data wystawienia"
-                type="date"
-                // defaultValue="2017-05-24"
-                value={this.state.data_wystawienia}
-                className={classes.textField}
-                onChange={this.handleChange}
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-              {/* <FormHelperText id="name-helper-text">
-            Some important helper text
-          </FormHelperText> */}
-            </FormControl>
-            <FormControl
-              className={classes.formControl}
-              aria-describedby="name-helper-text"
-            >
-              <InputLabel htmlFor="name-helper">Nazwa pozycji</InputLabel>
-              <Input
-                disabled
-                name="nazwa_pozycji"
-                id="name-helper"
-                value={this.state.nazwa_pozycji}
-                onChange={this.handleChange}
-                style={{ width: 300 }}
-              />
-              {/* <FormHelperText id="name-helper-text">
-            Some important helper text
-          </FormHelperText> */}
-            </FormControl>
-
-            <FormControl className={classes.formControl}>
-              {/* <InputLabel htmlFor="adornment-password">Kwota netto</InputLabel> */}
-              <TextField
-                disabled
-                className={classes.formControl}
-                name="kwota_netto"
-                label="Kwota netto"
-                value={this.state.kwota_netto.replace(".", ",")}
-                // onChange={this.handleChange}
-                // value={this.state.kwota_netto}
-                onChange={this.handleChangeKwota("kwota_netto")}
-                id="formatted-numberformat-input"
-                InputProps={{
-                  inputComponent: NumberFormatCustom
-                }}
-                // endAdornment={
-                //   <InputAdornment position="end">PLN</InputAdornment>
-                // }
-              />
-              {/* <Input
-                name="kwota_netto"
-                id="adornment-password"
-                // type={this.state.showPassword ? 'text' : 'password'}
-                value={this.state.kwota_netto.replace('.', ',')}
-                onChange={this.handleChange}
-                style={{ width: 150 }}
-                endAdornment={
-                  <InputAdornment position="end">PLN</InputAdornment>
-                }
-              /> */}
-            </FormControl>
-            <div style={{ display: "flex" }}>
-              {/* <div style={{ width: 410, marginRight: 22 }}>
-                <InputLabel htmlFor="city">Miejscowość</InputLabel>
-                <Select
-                  placeholder="Wybierz..."
-                  components={components}
-                  classes={classes}
-                  name="city"
-                  id="city"
-                  value={this.state.city}
-                  onChange={this.handleChangeSelect('city')}
-                  className={classes.selectEmpty}
-                  options={this.renderSelectCity(this.state.city)}
-                />
-              </div> */}
-              <IntegrationAutosuggest />
-              {/* <Example /> */}
-              {/* <div style={{ width: 305 }}>
-                <InputLabel htmlFor="age-required">Grupa</InputLabel>
-                <Select
-                  placeholder="Wybierz..."
-                  name="groupId"
-                  components={components}
-                  classes={classes}
-                  options={this.renderSelect(this.state.groups)}
-                  value={this.state.groupId}
-                  onChange={this.handleChangeSelect('groupId')}
-                />
-              </div> */}
-            </div>
-            {/* <div style={{ display: "flex" }}>
-              <span>asdf</span>
-              <span style={{ float: "right", fontSize: 12 }}>
-                asdfasdfasdfasf
-              </span>
-            </div> */}
-            {!this.state.edited ? (
-              <Button
-                disabled={this.state.submitIsDisable}
-                type="submit"
-                variant="contained"
-                color="primary"
-                className={classes.button}
-              >
-                Dodaj koszt
-                <Send style={{ marginLeft: 10 }} />
-              </Button>
-            ) : (
-              <Button
-                // type="submit"
-                disabled={this.state.submitIsDisable}
-                onClick={() => this.onEdit()}
-                variant="contained"
-                color="primary"
-                className={classes.button}
-              >
-                Edytuj koszt
-                <Edit style={{ marginLeft: 10 }} />
-              </Button>
-            )}
-            {this.czyWypelniony() && (
-              <Button
-                variant="contained"
-                className={classes.button}
-                onClick={() => this.clearForm()}
-              >
-                Anuluj
-                <Cancel style={{ marginLeft: 10 }} />
-              </Button>
-            )}
-          </form>
-        </Paper>
+        <PlanerForm />
         <Paper
           className={classes.accordionMain}
           // style={{ marginBottom: 10 }}
@@ -992,36 +781,7 @@ class Planer extends Component {
           //   border: '1px solid #000',
           //   color: 'white'
           // }}
-        >
-          <Collapse
-            accordion={true}
-            // activeKey="0" defaultActiveKey="0"
-          >
-            <Panel
-              // key="0"
-              header={<span style={{ fontWeight: "600" }}>Podsumowanie</span>}
-              headerClass={classes.accordionClass}
-              style={{ color: "white" }}
-            >
-              <div>
-                <div style={{ width: "100%" }}>
-                  <PieChart1
-                    dane={this.sumOfKey(this.costs(), "category")}
-                    label="Kategorie"
-                    // group={this.sumOfKey(this.costs(), 'group')}
-                  />
-                </div>
-                <div style={{ width: "100%" }}>
-                  <PieChart1
-                    // category={this.sumOfKey(this.costs(), 'category')}
-                    dane={this.sumOfKey(this.costs(), "group")}
-                    label="Grupy"
-                  />
-                </div>
-              </div>
-            </Panel>
-          </Collapse>
-        </Paper>
+        />
         <Paper>
           <Collapse
             accordion={true}
@@ -1057,66 +817,10 @@ class Planer extends Component {
             // range={this.state.rangeselection}
           /> */}
         </Paper>
-        {/* <div>
-          <Paper>
-            <List component="nav" dense={true}>
-              {this.renderCosts(this.state.costs)}
-            </List>
-          </Paper>
-        </div> */}
-        <Accordion>
-          <AccordionItem className="accordion-item">
-            <h1>Section 1</h1>
-            <AccordionItemContent>
-              <p>Content for section 1</p>
-            </AccordionItemContent>
-          </AccordionItem>
-          <AccordionItem className="accordion-item">
-            <h1>Section 2</h1>
-            <AccordionItemContent>
-              <p>Content for section 2</p>
-            </AccordionItemContent>
-          </AccordionItem>
-        </Accordion>
       </div>
     );
   }
 }
-
-const Accordion = styled.div`
-  font-size: 1.5em;
-  text-align: center;
-  color: palevioletred;
-`;
-
-const AccordionItem = styled.section`
-  border-bottom: 1px solid #666;
-  padding: 1em;
-  color: #eee;
-  background-color: hsl(200, 80%, 60%);
-  background-image: linear-gradient(
-    -90deg,
-    hsl(200, 80%, 60%),
-    hsl(200, 80%, 45%) 2em,
-    hsl(200, 80%, 60%)
-  );
-  &:hover {
-    ${AccordionItemContent} {
-      height: auto;
-    }
-  }
-`;
-
-const AccordionItemContent = styled.div`
-  height: 0;
-  overflow: hidden;
-  transition: height 0.25s;
-`;
-
-// .accordion:hover .accordion-item:hover .accordion-item-content,
-// .accordion .accordion-item--default .accordion-item-content {
-//     height: 6em;
-// }
 
 Planer.propTypes = {
   classes: PropTypes.object.isRequired
@@ -1134,6 +838,20 @@ export default withStyles(styles, { withTheme: true })(
     // actions
   )(Planer)
 );
+
+// CREATE TABLE `planer_aktywnosci` (
+//   `id` int(11) NOT NULL AUTO_INCREMENT,
+//   `start` datetime(6) NOT NULL,
+//   `stop` datetime(6) NOT NULL,
+//   `miejsce_id` int(11) DEFAULT NULL,
+//   `aktywnosc_id` int(11) DEFAULT NULL,
+//   `inna` varchar(150) DEFAULT NULL,
+//   `uwagi` varchar(200) DEFAULT NULL,
+//   `wyslano` tinyint(1) NOT NULL,
+//   `user_id` int(11) NOT NULL DEFAULT "1",
+//   `klient_id` int(11) NOT NULL DEFAULT "1",
+//   PRIMARY KEY (`id`)
+// ) ENGINE=InnoDB AUTO_INCREMENT=894 DEFAULT CHARSET=utf8
 
 // CREATE TABLE `planer_klienci` (
 //   `id` int(11) NOT NULL AUTO_INCREMENT,

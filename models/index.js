@@ -88,6 +88,24 @@ db.gus_terc_pow.belongsTo(db.gus_terc_woj, {
   foreignKey: "woj_id",
   targetKey: "id"
 });
+
+db.planer_aktywnosci.belongsTo(db.gus_simc, {
+  foreignKey: "miejsce_id",
+  targetKey: "id"
+});
+db.planer_aktywnosci.belongsTo(db.planer_akt_rodz, {
+  foreignKey: "aktywnosc_id",
+  targetKey: "id"
+});
+db.planer_aktywnosci.belongsTo(db.users, {
+  foreignKey: "user_id",
+  targetKey: "id"
+});
+db.planer_aktywnosci.belongsTo(db.clients, {
+  foreignKey: "klient_id",
+  targetKey: "id"
+});
+
 // db.gus_simc.belongsToMany(db.gus_terc_pow, {
 //   through: db.gus_terc_woj,
 //   foreignKey: "woj_id"

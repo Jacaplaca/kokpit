@@ -5,6 +5,7 @@ const db = require("../models/index");
 const User = db.users;
 const Group = db.groups;
 const Category = db.categories;
+const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
 const City = db.gus_simc;
 const Street = db.gus_ulic;
@@ -124,16 +125,12 @@ module.exports = app => {
       City.findAll({
         where: {
           nazwa: { [Op.like]: `${city}%` }
-          // attributes: {["id", "nazwa", "mz", "woj", "pow", "gmi"]}
         },
-        // include: [{ model: Wojewodztwo }],
         include: [
           { model: Wojewodztwo, attributes: ["nazwa"] },
           {
             model: Powiat,
             attributes: ["nazwa"]
-            // include: { model: Wojewodztwo, attributes: ["id", "nazwa"] }
-            // where: { woj_id: Sequelize.col("City.woj") }
           },
           { model: Terc, attributes: ["nazwa"] }
         ],
@@ -366,6 +363,14 @@ module.exports = app => {
         break;
       case "group":
         Group.findAll({ where: { clientId } })
+          .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "rodzajAktywnosci":
+        RodzajAktywnosci.findAll({ where: { clientId } })
           .then(result => res.json(result))
           .catch(err => {
             console.log(err);
