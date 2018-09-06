@@ -12,6 +12,7 @@ import Popper from "@material-ui/core/Popper";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import { withStyles } from "@material-ui/core/styles";
@@ -45,7 +46,7 @@ class InputTime extends React.Component {
   };
 
   render() {
-    const { classes, label, value, edytuj } = this.props;
+    const { classes, label, value, edytuj, error } = this.props;
 
     return (
       <FormControl
@@ -60,6 +61,7 @@ class InputTime extends React.Component {
         >
           {() => (
             <TextField
+              error={error}
               id="input"
               label={label}
               name="input"
@@ -69,6 +71,9 @@ class InputTime extends React.Component {
             />
           )}
         </InputMask>
+        {/* <FormHelperText id="name-helper-text">
+          Some important helper text
+        </FormHelperText> */}
       </FormControl>
     );
   }

@@ -45,11 +45,14 @@ import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
+import { dataToString } from "../common/functions";
+
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 
 import PieChart1 from "./PieChart1";
 
-import PlanerForm from "./PlanerForm";
+import PlanerAktywnosciForm from "./PlanerAktywnosciForm";
+import PlanerAktywnosciLista from "./PlanerAktywnosciLista";
 
 //poprawic wyszukiwanie po miescie bo dziwnie pokazuje lubartow ze jest w powiecie zaganskim, pewnie ma to zwiazek z tym że niektore wyniki pokazuje jako pierwsze
 
@@ -234,6 +237,7 @@ const styles = theme => ({
 class Planer extends Component {
   state = {
     // numberformat: '',
+    aktywnosci: [],
     id: "",
     nr_dokumentu: "",
     data_wystawienia: "",
@@ -362,23 +366,22 @@ class Planer extends Component {
     axios
       .get("/api/table/category")
       .then(result => this.setState({ categories: result.data }));
-    this.fetchCosts();
+    this.fetchAktywnosci();
   }
 
-  fetchCosts = () => {
-    axios.get("/api/table/costs").then(result => {
-      const koszty = result.data;
-      console.log(koszty);
-      const nieUnikalneGrupy = koszty.map(el => {
-        return { groupId: el.groupId, group: el.group.name };
+  fetchAktywnosci = () => {
+    const { startDate, endDate } = this.state.rangeselection;
+    axios
+      .get(
+        `/api/table/planerAktywnosci/${dataToString(startDate)}_${dataToString(
+          endDate
+        )}`
+      )
+      .then(result => {
+        this.setState({
+          aktywnosci: result.data
+        });
       });
-      koszty.map(el => Object.assign(el, { clicked: true }));
-      this.setState({
-        costs: koszty,
-        chmurka_group: this.chmurka(koszty, "group"),
-        chmurka_category: this.chmurka(koszty, "category")
-      });
-    });
   };
 
   chmurka = (data, kolumna) => {
@@ -492,7 +495,7 @@ class Planer extends Component {
       })
     })
       .then(() => {
-        this.fetchCosts();
+        this.fetchAktywnosci();
       })
       .then(() => {
         this.clearForm();
@@ -535,7 +538,7 @@ class Planer extends Component {
         // return console.log(startDate);
       })
       .then(() => {
-        this.fetchCosts();
+        this.fetchAktywnosci();
       })
       .then(() => {
         this.clearForm();
@@ -742,7 +745,7 @@ class Planer extends Component {
 
     return (
       <div className={classes.container}>
-        <PlanerForm />
+        <PlanerAktywnosciForm />
         <Paper
           className={classes.accordionMain}
           // style={{ marginBottom: 10 }}
@@ -809,10 +812,13 @@ class Planer extends Component {
               <div>alskdfjl</div>
             </Panel>
           </Collapse>
+          <Paper>
+            <PlanerAktywnosciLista />
+          </Paper>
 
           {/* <CostsTable
             costs={this.costs()}
-            fetch={() => this.fetchCosts()}
+            fetch={() => this.fetchAktywnosci()}
             edit={id => this.handleEdit(id)}
             // range={this.state.rangeselection}
           /> */}

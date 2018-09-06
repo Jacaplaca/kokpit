@@ -72,6 +72,8 @@ import IconButton from "@material-ui/core/IconButton";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 
+import { dataToString } from "../common/functions";
+
 import CostsTable from "./CostsTable2Remote";
 import PieChart1 from "./PieChart1";
 
@@ -422,19 +424,24 @@ class Costs extends Component {
   }
 
   fetchCosts = () => {
+    const { startDate, endDate } = this.state.rangeselection;
     console.log("fetchCosts()");
-    axios.get("/api/table/costs").then(result => {
-      const koszty = result.data;
-      const nieUnikalneGrupy = koszty.map(el => {
-        return { groupId: el.groupId, group: el.group.name };
+    axios
+      .get(
+        `/api/table/costs/${dataToString(startDate)}_${dataToString(endDate)}`
+      )
+      .then(result => {
+        const koszty = result.data;
+        const nieUnikalneGrupy = koszty.map(el => {
+          return { groupId: el.groupId, group: el.group.name };
+        });
+        koszty.map(el => Object.assign(el, { clicked: true }));
+        this.setState({
+          costs: koszty,
+          chmurka_group: this.chmurka(koszty, "group"),
+          chmurka_category: this.chmurka(koszty, "category")
+        });
       });
-      koszty.map(el => Object.assign(el, { clicked: true }));
-      this.setState({
-        costs: koszty,
-        chmurka_group: this.chmurka(koszty, "group"),
-        chmurka_category: this.chmurka(koszty, "category")
-      });
-    });
   };
 
   chmurka = (data, kolumna) => {

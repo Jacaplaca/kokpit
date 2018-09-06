@@ -7,6 +7,7 @@ const Group = db.groups;
 const Category = db.categories;
 const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
+const Aktywnosci = db.planer_aktywnosci;
 const City = db.gus_simc;
 const Street = db.gus_ulic;
 const Terc = db.gus_terc;
@@ -307,8 +308,6 @@ module.exports = app => {
       kwota_netto,
       categoryId,
       groupId
-      // user_id,
-      // clientId
     } = req.body;
     Cost.create({
       nr_dokumentu,
@@ -321,39 +320,150 @@ module.exports = app => {
       userId: user_id
     })
       .then(results => {
-        // console.log(results);
         return res.json(results);
-        // return;
       })
-      // .then(() => res.end())
-      // .then(result => next())
-      // .then(result => res.redirect('/costs'))
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
       });
-    // res.end();
   });
 
-  //  async() => {
-  //     const city1 = await fetch(cityAPI).then(r => r.json());
-  //     const city2 = await fetch(cityAPI).then(r => r.json());
-  //
-  //     console.log(city1.name);
-  //     console.log(city2.name);
-  // }
+  app.post("/api/aktywnosci/", (req, res, next) => {
+    console.log("api/cost/");
+    console.log(req.body);
+    const { clientId, user_id } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const {
+      kiedy,
+      start,
+      stop,
+      aktywnosc_id,
+      miejsce_id,
+      inna,
+      uwagi
+    } = req.body;
+    Aktywnosci.create({
+      start: `${kiedy} ${start.split(" : ")[0]}:${start.split(" : ")[1]}:00`,
+      stop: `${kiedy} ${stop.split(" : ")[0]}:${stop.split(" : ")[1]}:00`,
+      aktywnosc_id,
+      miejsce_id: miejsce_id === "" ? null : miejsce_id,
+      inna,
+      uwagi,
+      klient_id: clientId,
+      user_id
+    })
+      .then(results => {
+        return res.json(results);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  // app.get("/api/planerAktywnosci/:zakres", (req, res) => {
+  //   const zakres = req.params.zakres;
+  //   console.log(zakres);
+  //   const start = zakres.split("_")[0];
+  //   const stop = zakres.split("_")[1];
+  //   const startDate = new Date(start);
+  //   const stopDate = new Date(`${stop} 23:59:59`);
+  //   console.log(startDate);
+  //   console.log(stopDate);
+  //   if (!req.user) {
+  //     return res.redirect("/");
+  //   }
+  //   const { clientId, role, user_id } = req.user;
+  //   Aktywnosci.findAll({
+  //     where: {
+  //       user_id,
+  //       start: {
+  //         // [Op.lt]: new Date(),
+  //         [Op.gte]: startDate
+  //       },
+  //       stop: {
+  //         [Op.lte]: stopDate
+  //       }
+  //     }
+  //   })
+  //     .then(result => res.json(result))
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.sendStatus(500);
+  //     });
+  // });
+
+  app.get("/api/table/:table/:zakres", (req, res) => {
+    const table = req.params;
+    const zakres = table.zakres;
+    const start = zakres.split("_")[0];
+    const stop = zakres.split("_")[1];
+    const startDate = new Date(start);
+    const stopDate = new Date(`${stop} 23:59:59`);
+    console.log(startDate);
+    console.log(stopDate);
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const { clientId, role, user_id } = req.user;
+    switch (table.table) {
+      case "planerAktywnosci":
+        Aktywnosci.findAll({
+          where: {
+            user_id,
+            start: {
+              [Op.gte]: startDate
+            },
+            stop: {
+              [Op.lte]: stopDate
+            }
+          }
+        })
+          .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "costs":
+        const foo = async () => {
+          const fetchuj = await Cost.findAll({
+            include: [{ model: Category }, { model: Group }],
+            where: {
+              clientId,
+              start: {
+                [Op.gte]: startDate
+              },
+              stop: {
+                [Op.lte]: stopDate
+              }
+            }
+          })
+            .then(result => {
+              res.json(result);
+            })
+            .catch(err => {
+              console.log(err);
+              res.sendStatus(500);
+            });
+        };
+        foo();
+        break;
+      default:
+        res.sendStatus(500);
+    }
+  });
 
   app.get("/api/table/:table", (req, res) => {
     const table = req.params;
     if (!req.user) {
       return res.redirect("/");
     }
-    console.log(table);
     const { clientId, role, user_id } = req.user;
-    console.log(clientId);
     switch (table.table) {
       case "category":
-        console.log("jestem w category");
         Category.findAll({ where: { clientId } })
           .then(result => res.json(result))
           .catch(err => {
@@ -377,41 +487,10 @@ module.exports = app => {
             res.sendStatus(500);
           });
         break;
-      case "costs":
-        const foo = async () => {
-          const fetchuj = await Cost.findAll({
-            include: [{ model: Category }, { model: Group }],
-            where: { clientId }
-          })
-            .then(result => {
-              // console.log(result[1].dataValues);
-              res.json(result);
-            })
-            .catch(err => {
-              console.log(err);
-              res.sendStatus(500);
-            });
-        };
-        foo();
-
-        // Cost.findAll({
-        //   include: [{ model: Category }, { model: Group }],
-        //   where: { clientId }
-        // })
-        // .then(result => {
-        //   // console.log(result[1].dataValues);
-        //   res.json(result);
-        // })
-        // .catch(err => {
-        //   console.log(err);
-        //   res.sendStatus(500);
-        // });
-        break;
       default:
         res.sendStatus(500);
     }
   });
-  // api.get("/account", permit('owner', 'employee'), (req, res) => req.json({currentUser: request.user}));
 
   app.get("/api/users", (req, res) => {
     console.log("api/users");

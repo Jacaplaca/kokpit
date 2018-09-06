@@ -99,17 +99,21 @@ const styles = theme => ({
   }
 });
 
-class PlanerForm extends Component {
+class PlanerAktywnosciForm extends Component {
   state = {
     id: "",
 
-    kiedy: "",
-    start: "",
-    stop: "",
+    kiedy: "2018-09-07",
+    start: "11 : 11",
+    stop: "22 : 22",
     miejsce_id: "",
-    aktywnosc_id: "",
-    uwagi: "",
+    aktywnosc_id: 2,
+    inna: "",
+    uwagi: "uwaga uwaga!",
     wyslano: "",
+
+    errorStart: false,
+    errorStop: false,
 
     activities: [],
     edited: false,
@@ -127,6 +131,46 @@ class PlanerForm extends Component {
     // // )
   }
 
+  validateTime = (time, pole) => {
+    const nazwaPola = `error${pole}`;
+    const hours = Math.trunc(time.split(" : ")[0]);
+    const minutes = Math.trunc(time.split(" : ")[1]);
+    // console.log(`${hours} : ${minutes}`);
+    // console.log(hours.length);
+    if (hours < 0 || hours > 23 || (minutes < 0 || minutes > 59)) {
+      // console.log("zly czas");
+      this.setState({ [nazwaPola]: true });
+    }
+    if (hours >= 0 && hours <= 23 && (minutes >= 0 && minutes <= 59)) {
+      this.setState({ [nazwaPola]: false });
+      return true;
+    } else {
+      if (hours && minutes) {
+        // this.setState({ [nazwaPola]: true });
+        // console.log("sa godizny i minuty");
+      }
+      return false;
+    }
+  };
+
+  // errorTime = () => {
+  //
+  // }
+
+  sprawdzPola = () => {
+    const { aktywnosc_id, miejsce_id, inna } = this.state;
+    switch (aktywnosc_id) {
+      case 1:
+        return miejsce_id === "" ? false : true;
+        break;
+      case 5:
+        return inna === "" ? false : true;
+        break;
+      default:
+        return true;
+    }
+  };
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     const {
       kiedy: kiedy_prevState,
@@ -134,33 +178,46 @@ class PlanerForm extends Component {
       stop: stop_prevState,
       aktywnosc_id: aktywnosc_id_prevState,
       miejsce_id: miejsce_id_prevState,
-      inne: inne_prevState,
+      inna: inna_prevState,
       uwagi: uwagi_prevState
     } = prevState;
-    const { kiedy, start, stop, aktywnosc_id, miejsce_id, inne } = this.state;
+    const { kiedy, start, stop, aktywnosc_id, miejsce_id, inna } = this.state;
+
+    if (start !== start_prevState || stop !== stop_prevState) {
+      this.validateTime(start, "Start");
+      this.validateTime(stop, "Stop");
+    }
+
+    if (aktywnosc_id !== aktywnosc_id_prevState) {
+      this.setState({ miejsce_id: "", inna: "" });
+    }
+
     if (
       (kiedy !== kiedy_prevState ||
         start !== start_prevState ||
         stop !== stop_prevState ||
         aktywnosc_id !== aktywnosc_id_prevState ||
         miejsce_id !== miejsce_id_prevState ||
-        inne !== inne_prevState) &&
+        inna !== inna_prevState) &&
       (kiedy !== "" &&
-        start !== "" &&
-        stop !== "" &&
+        this.validateTime(start, "Start") &&
+        this.validateTime(stop, "Stop") &&
         aktywnosc_id !== "" &&
-        miejsce_id !== "" &&
-        inne !== "")
-      // categoryId.value !== '' &&
-      // groupId.value !== ''
+        this.sprawdzPola())
     ) {
       this.setState({ submitIsDisable: false });
     } else if (
       (kiedy !== kiedy_prevState ||
         start !== start_prevState ||
         stop !== stop_prevState ||
-        aktywnosc_id !== aktywnosc_id_prevState) &&
-      (kiedy === "" || start === "" || stop === "" || aktywnosc_id === "")
+        aktywnosc_id !== aktywnosc_id_prevState ||
+        inna !== inna_prevState ||
+        miejsce_id !== miejsce_id_prevState) &&
+      (kiedy === "" ||
+        !this.validateTime(start, "Start") ||
+        !this.validateTime(stop, "Stop") ||
+        aktywnosc_id === "" ||
+        !this.sprawdzPola())
     ) {
       this.setState({ submitIsDisable: true });
     } else {
@@ -290,30 +347,32 @@ class PlanerForm extends Component {
     const { user_id, clientId } = this.props.auth;
     e.preventDefault();
     const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
+      kiedy,
+      start,
+      stop,
+      aktywnosc_id,
+      miejsce_id,
+      inna,
+      uwagi
     } = this.state;
-    const url = "/api/cost";
+    const url = "/api/aktywnosci";
 
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
+        kiedy,
+        start,
+        stop,
+        aktywnosc_id,
+        miejsce_id,
+        inna,
+        uwagi
       })
     })
       .then(resp => resp.json())
-      .then(data => this.props.changeRange(data))
+      // .then(data => this.props.changeRange(data))
       .then(() => {
         // this.fetchCosts();
         this.props.fetchuj();
@@ -373,12 +432,18 @@ class PlanerForm extends Component {
                 value={this.state.kiedy}
               />
               <InputTime
-                label="Początek"
+                label={
+                  this.state.errorStart ? "Wpisz poprawną godzinę" : "Początek"
+                }
+                error={this.state.errorStart}
                 edytuj={start => this.setState({ start })}
                 value={this.state.start}
               />
               <InputTime
-                label="Koniec"
+                label={
+                  this.state.errorStop ? "Wpisz poprawną godzinę" : "Koniec"
+                }
+                error={this.state.errorStop}
                 edytuj={stop => this.setState({ stop })}
                 value={this.state.stop}
               />
@@ -396,18 +461,22 @@ class PlanerForm extends Component {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <InputComponent
-                    label="Inna"
-                    type="text"
-                    edytuj={inna => this.setState({ inna })}
-                    value={this.state.inna}
-                  />
+                  {this.state.aktywnosc_id === 5 && (
+                    <InputComponent
+                      label="Inna"
+                      type="text"
+                      edytuj={inna => this.setState({ inna })}
+                      value={this.state.inna}
+                    />
+                  )}
                 </Grid>
               </Grid>
-              <CitySearch
-                edytuj={miejsce_id => this.setState({ miejsce_id })}
-                value={this.state.miejsce_id}
-              />
+              {this.state.aktywnosc_id === 1 && (
+                <CitySearch
+                  edytuj={miejsce_id => this.setState({ miejsce_id })}
+                  value={this.state.miejsce_id}
+                />
+              )}
 
               {/* <InputTime label="Koniec" /> */}
               <InputComponent
@@ -461,7 +530,7 @@ class PlanerForm extends Component {
   }
 }
 
-PlanerForm.propTypes = {
+PlanerAktywnosciForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
@@ -475,7 +544,7 @@ export default withStyles(styles, { withTheme: true })(
   connect(
     mapStateToProps
     // actions
-  )(PlanerForm)
+  )(PlanerAktywnosciForm)
 );
 
 // export default withStyles(styles)(Costs);
