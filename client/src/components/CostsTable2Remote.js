@@ -329,7 +329,7 @@ class CostsTable extends Component {
     // console.log(JSON.stringify(filters));
     // console.log(filters);
     setTimeout(() => {
-      console.log("handleTableChange setTimeout");
+      // console.log("handleTableChange setTimeout");
       let result = [];
       // console.log(result);
       result = this.props.costs.filter(row => {
@@ -426,16 +426,16 @@ class CostsTable extends Component {
 
   jakieDane = () => {
     if (this.state.data.length === 0 || this.props.costs === this.state.data) {
-      console.log("state.data = 0 lub props.cost = state.data");
+      // console.log("state.data = 0 lub props.cost = state.data");
       return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
     } else if (
       this.props.costs.length === this.state.data.length &&
       this.props.costs !== this.state.data
     ) {
-      console.log("zmienila sie wartosc ale nie dlugosc tabeli bo byla edycja");
+      // console.log("zmienila sie wartosc ale nie dlugosc tabeli bo byla edycja");
       return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
     } else {
-      console.log("jakie dane rozne nie 0");
+      // console.log("jakie dane rozne nie 0");
       return { costs: this.state.data, sumuj: this.sumuj(this.state.data) };
     }
   };

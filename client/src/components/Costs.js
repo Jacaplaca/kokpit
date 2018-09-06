@@ -423,13 +423,16 @@ class Costs extends Component {
     this.fetchCosts();
   }
 
-  fetchCosts = () => {
+  fetchCosts = range => {
+    console.log(range);
     const { startDate, endDate } = this.state.rangeselection;
+
+    const poczatek = range ? range.rangeselection.startDate : startDate;
+    const koniec = range ? range.rangeselection.endDate : endDate;
+
     console.log("fetchCosts()");
     axios
-      .get(
-        `/api/table/costs/${dataToString(startDate)}_${dataToString(endDate)}`
-      )
+      .get(`/api/table/costs/${dataToString(poczatek)}_${dataToString(koniec)}`)
       .then(result => {
         const koszty = result.data;
         const nieUnikalneGrupy = koszty.map(el => {
@@ -530,6 +533,7 @@ class Costs extends Component {
   // };
 
   changeRange = data => {
+    console.log("change range");
     const dataWystawienia = data.data_wystawienia;
     const startDate = startOfMonth(dataWystawienia);
     const endDate = endOfMonth(dataWystawienia);
@@ -582,6 +586,7 @@ class Costs extends Component {
     this.setState({
       ...ranges
     });
+    this.fetchCosts(ranges);
   };
 
   sumOfKey = (data, key) => {
@@ -666,6 +671,7 @@ class Costs extends Component {
       month: "long",
       day: "2-digit"
     }).format(endDate);
+    const zakres = `Zakres: ${startDateString} - ${endDateString}`;
 
     return (
       <div className={classes.container}>
@@ -707,11 +713,7 @@ class Costs extends Component {
         >
           <Collapse accordion={true}>
             <Panel
-              header={
-                <span style={{ fontWeight: "600" }}>
-                  Zakres: {startDateString} - {endDateString}
-                </span>
-              }
+              header={<span style={{ fontWeight: "600" }}>{zakres}</span>}
               headerClass={classes.accordionClass}
               // style={{ color: 'white' }}
             >

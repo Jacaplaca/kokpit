@@ -7,9 +7,9 @@ import {
   createStaticRanges,
   defaultStaticRanges
 } from "react-date-range";
+import _ from "lodash";
 import styled from "styled-components";
 import { pl } from "react-date-range/src/locale/index";
-import _ from "lodash";
 import currency from "currency.js";
 import { connect } from "react-redux";
 import {
@@ -259,8 +259,8 @@ class Planer extends Component {
     rangeselection: {
       // startDate: defineds.startOfMonth,
       // endDate: defineds.endOfMonth,
-      startDate: defineds.startOfLastMonth,
-      endDate: defineds.endOfLastMonth,
+      startDate: defineds.startOfMonth,
+      endDate: defineds.endOfMonth,
       key: "rangeselection"
     },
     submitIsDisable: true
@@ -359,27 +359,24 @@ class Planer extends Component {
   };
 
   componentWillMount() {
-    axios
-      .get("/api/table/group")
-      .then(result => this.setState({ groups: result.data }));
-    // .then(result => this.renderSelect(result.data));
-    axios
-      .get("/api/table/category")
-      .then(result => this.setState({ categories: result.data }));
     this.fetchAktywnosci();
   }
 
-  fetchAktywnosci = () => {
+  fetchAktywnosci = range => {
+    console.log(range);
     const { startDate, endDate } = this.state.rangeselection;
+
+    const poczatek = range ? range.rangeselection.startDate : startDate;
+    const koniec = range ? range.rangeselection.endDate : endDate;
     axios
       .get(
-        `/api/table/planerAktywnosci/${dataToString(startDate)}_${dataToString(
-          endDate
+        `/api/table/planerAktywnosci/${dataToString(poczatek)}_${dataToString(
+          koniec
         )}`
       )
       .then(result => {
         this.setState({
-          aktywnosci: result.data
+          aktywnosci: _.keyBy(result.data, "kiedy")
         });
       });
   };
@@ -666,6 +663,7 @@ class Planer extends Component {
     this.setState({
       ...ranges
     });
+    this.fetchAktywnosci(ranges);
   };
 
   sumOfKey = (data, key) => {

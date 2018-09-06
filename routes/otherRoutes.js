@@ -345,6 +345,7 @@ module.exports = app => {
       uwagi
     } = req.body;
     Aktywnosci.create({
+      kiedy,
       start: `${kiedy} ${start.split(" : ")[0]}:${start.split(" : ")[1]}:00`,
       stop: `${kiedy} ${stop.split(" : ")[0]}:${stop.split(" : ")[1]}:00`,
       aktywnosc_id,
@@ -433,10 +434,8 @@ module.exports = app => {
             include: [{ model: Category }, { model: Group }],
             where: {
               clientId,
-              start: {
-                [Op.gte]: startDate
-              },
-              stop: {
+              data_wystawienia: {
+                [Op.gte]: startDate,
                 [Op.lte]: stopDate
               }
             }

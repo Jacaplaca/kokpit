@@ -7,6 +7,9 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      kiedy: {
+        type: Sequelize.DATE
+      },
       start: {
         type: Sequelize.DATE
       },

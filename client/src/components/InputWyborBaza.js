@@ -79,7 +79,7 @@ class InputWyborBaza extends React.Component {
               name: "wybrany",
               id: "age-simple"
             }}
-            margin="normal"
+            // margin="normal"
             // className={classes.textField}
           >
             {" "}
