@@ -29,54 +29,21 @@ import "rc-collapse/assets/index.css";
 // import { pl } from 'date-fns/locale';
 // import CurrencyInput from 'react-currency-input';
 import NumberFormat from "react-number-format";
-import InputMask from "react-input-mask";
-
 import axios from "axios";
 import PropTypes from "prop-types";
-import {
-  withStyles,
-  MuiThemeProvider,
-  createMuiTheme
-} from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 // import NoSsr from '@material-ui/core/NoSsr';
-import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-// import Select from '@material-ui/core/Select';
-import Select from "react-select";
 import MenuItem from "@material-ui/core/MenuItem";
-import Button from "@material-ui/core/Button";
-import Send from "@material-ui/icons/Send";
-import Edit from "@material-ui/icons/Edit";
-import Cancel from "@material-ui/icons/Clear";
 
-import Chip from "@material-ui/core/Chip";
-import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
-
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
-import ImageIcon from "@material-ui/icons/Image";
-import WorkIcon from "@material-ui/icons/Work";
-import BeachAccessIcon from "@material-ui/icons/BeachAccess";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import IconButton from "@material-ui/core/IconButton";
-import FolderIcon from "@material-ui/icons/Folder";
-import DeleteIcon from "@material-ui/icons/Delete";
-
+import { fade } from "@material-ui/core/styles/colorManipulator";
 import { dataToString } from "../common/functions";
 
 import CostsTable from "./CostsTable2Remote";
 import PieChart1 from "./PieChart1";
-
+import ModalWindow from "./ModalWindow";
 import CostsForm from "./CostsForm";
 
 var Panel = Collapse.Panel;
@@ -559,9 +526,9 @@ class Costs extends Component {
     });
   };
 
-  handleOpen = () => {
-    this.setState({ openModal: true });
-  };
+  // handleOpen = () => {
+  //   this.setState({ openModal: true });
+  // };
 
   handleClose = () => {
     this.setState({ openModal: false });
@@ -643,14 +610,6 @@ class Costs extends Component {
     }
   };
 
-  getModalStyle = () => {
-    return {
-      top: `${50}%`,
-      left: `${50}%`,
-      transform: `translate(-${50}%, -${50}%)`
-    };
-  };
-
   render() {
     const { classes } = this.props;
     const selectionRange = {
@@ -675,25 +634,18 @@ class Costs extends Component {
 
     return (
       <div className={classes.container}>
-        <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={this.state.openModal}
-          onClose={this.handleClose}
-        >
-          <div style={this.getModalStyle()} className={classes.paper}>
-            <CostsForm
-              fetchuj={() => this.fetchCosts()}
-              groups={this.state.groups}
-              categories={this.state.categories}
-              changeRange={data => this.changeRange(data)}
-              editedId={this.state.editedId}
-              modal
-              closeModal={() => this.setState({ openModal: false })}
-              // clearForm={() => this.setState({ editedId: "" })}
-            />
-          </div>
-        </Modal>
+        <ModalWindow open={this.state.openModal} close={this.handleClose}>
+          <CostsForm
+            fetchuj={() => this.fetchCosts()}
+            groups={this.state.groups}
+            categories={this.state.categories}
+            changeRange={data => this.changeRange(data)}
+            editedId={this.state.editedId}
+            modal
+            closeModal={() => this.setState({ openModal: false })}
+            // clearForm={() => this.setState({ editedId: "" })}
+          />
+        </ModalWindow>
 
         <div className="costsFormContainer" style={{ marginBottom: 20 }}>
           <CostsForm

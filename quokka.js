@@ -212,21 +212,111 @@ const dynamicSort = property => {
   };
 };
 
-const objekt = { dom: { kolor: "zielony" } };
+var array1 = [5, 12, 8, 130, 44];
+
+const objekt = [
+  { kolor: "czerwony" },
+  { kolor: "bialy" },
+  { kolor: "niebieski" },
+  { kolor: "zielony" }
+];
+// const szukaj = objekt.
+
+function findFirstLargeNumber(element) {
+  return element.kolor === "niebieski";
+}
+
+console.log(objekt.findIndex(findFirstLargeNumber));
+// expected output: 3
 
 var arr = [
   { kolor: "czerwony", wieklosc: "maly", value: 1 },
   { kolor: "bialy", wieklosc: "duzy", value: 5 },
   { kolor: "niebieski", wieklosc: "sredni", value: 2 },
+  { kolor: "bialy", wieklosc: "sredni", value: 3 },
   { kolor: "zielony", wieklosc: "maly", value: 3 },
   { kolor: "czerwony", wieklosc: "duzy", value: 4 },
   { kolor: "bialy", wieklosc: "duzy", value: 6 }
 ];
-const nowa = [];
-const redukuj = arr.map(x => nowa.push({ kolor: x.kolor, wartosci: x }));
-const istnieje = nowa.map(x => Object.is(x["kolor"], "czerwony"));
-istnieje;
-nowa;
+
+const czas = {
+  start: "2018-09-07T09:00:00.000Z",
+  stop: "2018-09-07T09:10:00.000Z"
+};
+const czas2 = {
+  start: "2018-09-07T09:00:00.000Z",
+  stop: "2018-09-07T09:20:00.000Z"
+};
+const czasy = [
+  {
+    start: "2018-09-07T09:00:00.000Z",
+    stop: "2018-09-07T09:10:00.000Z"
+  },
+  {
+    start: "2018-09-07T09:00:00.000Z",
+    stop: "2018-09-07T09:20:00.000Z"
+  }
+];
+
+const timeDiff = (start, stop) => {
+  const date1 = new Date(start);
+  const date2 = new Date(stop);
+  const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+  const diffMinutes = Math.ceil(timeDiff / 1000 / 60);
+  return diffMinutes;
+};
+
+const sumaCzasow = czasy => {
+  let suma = 0;
+  czasy.map(x => {
+    suma = timeDiff(x.start, x.stop) + suma;
+  });
+  return suma;
+};
+
+const sumujczasy = sumaCzasow(czasy);
+sumujczasy;
+
+// const tylkoUnikalne = (value, index, self) => {
+//   return self.indexOf(value) === index;
+// };
+
+const onlyUnique = (value, index, self) => {
+  return self.indexOf(value) === index;
+};
+
+const podzielUnikalnymi = (array, key) => {
+  const notUnique = array.map((el, i) => el[key]);
+  const unique = notUnique.filter(onlyUnique);
+  const podzielone = unique.map(element => {
+    return { [key]: element, wartosci: [] };
+  });
+  array.map(element => {
+    const ktoryIndex = podzielone => {
+      return podzielone[key] === element[key];
+    };
+    const gdzieKlucz = podzielone.findIndex(ktoryIndex);
+    podzielone[gdzieKlucz].wartosci.push(element);
+  });
+  return podzielone;
+};
+
+// const chmurkaKategorii = () => {
+//   let mulitSelect = {};
+//   const nieUnikalneKategorie = costs.map((el, i) => el.category.name);
+//   const unikalne = nieUnikalneKategorie.filter(onlyUnique);
+//   unikalne.map((x, i) => Object.assign(mulitSelect, { [i]: x }));
+//   return mulitSelect;
+// };
+
+const wy = podzielUnikalnymi(arr, "kolor");
+wy;
+
+// const nowa = [];
+// const redukuj = arr.map(x => nowa.push({ kolor: x.kolor, wartosci: x }));
+// const istnieje = nowa.map(x => Object.is(x["kolor"], "czerwony"));
+// istnieje;
+// nowa;
 
 const filtrowany = arr.filter(x => x.wieklosc === "maly");
 // filtrowany
@@ -251,7 +341,7 @@ const result = arr.filter(o => {
   return compare_set_kolor.includes(o.kolor);
   // compare_set_wielkosc.includes(o.wieklosc)
 });
-console.log(result);
+// console.log(result);
 
 var data = [
   { id: 1, term_id: 5, type: "car" },
@@ -263,7 +353,7 @@ var result1 = data.filter(function(e) {
   return [5, 7].includes(e.term_id);
 });
 
-console.log(result1);
+// console.log(result1);
 
 const szukane = ["Samochód", "Telefon", "Biurowe"];
 const filtruj = costs.filter(
@@ -281,20 +371,16 @@ const filtruj = costs.filter(
   //   // return results
   // }
 );
-console.log(filtruj.length);
+// console.log(filtruj.length);
 
 const adres = "category.name";
 const pierwszy = adres.split(".")[0];
 const drugi = adres.split(".")[1];
-pierwszy;
-drugi;
+// pierwszy;
+// drugi;
 
 const cm = costs.map(row => row[pierwszy][drugi]);
-cm;
-
-onlyUnique = (value, index, self) => {
-  return self.indexOf(value) === index;
-};
+// cm;
 
 const chmurkaKategorii = () => {
   let mulitSelect = {};
@@ -315,12 +401,13 @@ const chmurkaGrup = () => {
 
 const wyb = costs[0];
 // chmurka()
-console.log(chmurkaGrup());
+// console.log(chmurkaGrup());
 
 const dupObj = [
   { id: 1, value: "a" },
   { id: 2, value: "b" },
-  { id: 1, value: "c" }
+  { id: 1, value: "c" },
+  { id: 2, value: "c" }
 ];
 const uniKeys = [...new Set(dupObj.map(({ id }) => id))];
 uniKeys;

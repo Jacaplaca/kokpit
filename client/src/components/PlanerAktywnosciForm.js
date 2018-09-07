@@ -103,13 +103,13 @@ class PlanerAktywnosciForm extends Component {
   state = {
     id: "",
 
-    kiedy: "2018-09-07",
-    start: "11 : 11",
-    stop: "22 : 22",
+    kiedy: "",
+    start: "",
+    stop: "",
     miejsce_id: "",
-    aktywnosc_id: 2,
+    aktywnosc_id: "",
     inna: "",
-    uwagi: "uwaga uwaga!",
+    uwagi: "",
     wyslano: "",
 
     errorStart: false,
@@ -121,14 +121,14 @@ class PlanerAktywnosciForm extends Component {
   };
 
   componentWillMount() {
-    // console.log("form zostal zamountowany");
-    // console.log(this.props.editedId);
-    // console.log(this.props.modal);
-    // this.state.id !== this.props.editedId &&
-    //   this.handleEdit(this.props.editedId);
-    // // this.props.modal && (
-    // //
-    // // )
+    console.log("form zostal zamountowany");
+    console.log(this.props.editedId);
+    console.log(this.props.modal);
+    this.state.id !== this.props.editedId &&
+      this.handleEdit(this.props.editedId);
+    // this.props.modal && (
+    //
+    // )
   }
 
   validateTime = (time, pole) => {
@@ -247,6 +247,7 @@ class PlanerAktywnosciForm extends Component {
   };
 
   clearForm = () => {
+    console.log("clearform");
     this.setState({
       id: "",
       kiedy: "",
@@ -286,23 +287,26 @@ class PlanerAktywnosciForm extends Component {
 
   handleEdit = id => {
     console.log("handluje edita");
-    axios.get(`/api/cost/${id}`).then(result => {
+    axios.get(`/api/akt/${id}`).then(result => {
       const {
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        category,
-        group
+        kiedy,
+        start,
+        stop,
+        aktywnosc_id,
+        miejsce_id,
+        inna,
+        uwagi
       } = result.data;
       this.setState({
-        id,
-        nr_dokumentu,
-        kwota_netto,
-        nazwa_pozycji,
-        data_wystawienia,
-        categoryId: { label: category.name, value: category.id },
-        groupId: { label: group.name, value: group.id },
+        kiedy,
+        start,
+        stop,
+        aktywnosc_id,
+        miejsce_id,
+        inna,
+        uwagi,
+        // categoryId: { label: category.name, value: category.id },
+        // groupId: { label: group.name, value: group.id },
         edited: true
       });
     });

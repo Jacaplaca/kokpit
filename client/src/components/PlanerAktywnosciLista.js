@@ -5,8 +5,14 @@ import { startOfMonth, endOfMonth } from "date-fns";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
+import Collapse from "rc-collapse";
 import { withStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
+import { sumaCzasow } from "../common/functions";
+//import Paper from "@material-ui/core/Paper";
+
+import PlanerAktywnosciSingle from "./PlanerAktywnosciSingle";
+
+const Panel = Collapse.Panel;
 
 const styles = theme => ({
   input: {
@@ -77,14 +83,41 @@ const styles = theme => ({
 class PlanerAktywnosciLista extends Component {
   state = {};
 
+  renderAktywnosci = () => {
+    return this.props.aktywnosci.map(day => {
+      return (
+        <Collapse
+          key={day.kiedy}
+          accordion={true}
+          // activeKey="0"
+          // defaultActiveKey="0"
+          onMouseEnter={() => console.log("Collapse")}
+        >
+          <Panel
+            key={day.kiedy}
+            header={
+              <span style={{ fontWeight: "600" }}>
+                {day.kiedy} - {sumaCzasow(day.values)}
+              </span>
+            }
+            //headerClass={classes.accordionClass}
+            style={{ color: "white" }}
+          >
+            <PlanerAktywnosciSingle
+              day={day.values}
+              edit={id => this.props.edit(id)}
+              delete={id => this.props.delete(id)}
+            />
+          </Panel>
+        </Collapse>
+      );
+    });
+  };
+
   render() {
     const { classes } = this.props;
 
-    return (
-      // <Paper style={{ padding: 20 }}>
-      <div>asdlkfjasdlf</div>
-      // </Paper>
-    );
+    return this.renderAktywnosci();
   }
 }
 

@@ -45,7 +45,7 @@ import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
-import { dataToString } from "../common/functions";
+import { dataToString, podzielUnikalnymi } from "../common/functions";
 
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 
@@ -53,10 +53,11 @@ import PieChart1 from "./PieChart1";
 
 import PlanerAktywnosciForm from "./PlanerAktywnosciForm";
 import PlanerAktywnosciLista from "./PlanerAktywnosciLista";
+import ModalWindow from "./ModalWindow";
 
 //poprawic wyszukiwanie po miescie bo dziwnie pokazuje lubartow ze jest w powiecie zaganskim, pewnie ma to zwiazek z tym że niektore wyniki pokazuje jako pierwsze
 
-var Panel = Collapse.Panel;
+const Panel = Collapse.Panel;
 
 function inputComponent({ inputRef, ...props }) {
   return <div ref={inputRef} {...props} />;
@@ -253,6 +254,7 @@ class Planer extends Component {
     categories: [],
     costs: [],
     edited: false,
+    editedId: "",
     chmurka_group: [],
     chmurka_category: [],
     city: "",
@@ -376,7 +378,8 @@ class Planer extends Component {
       )
       .then(result => {
         this.setState({
-          aktywnosci: _.keyBy(result.data, "kiedy")
+          // aktywnosci: _.keyBy(result.data, "kiedy")
+          aktywnosci: podzielUnikalnymi(result.data, "kiedy")
         });
       });
   };
@@ -554,6 +557,10 @@ class Planer extends Component {
     this.setState({
       [name]: event.target.value
     });
+  };
+
+  handleClose = () => {
+    this.setState({ openModal: false });
   };
 
   handleChangeSelect = name => value => {
@@ -743,7 +750,7 @@ class Planer extends Component {
 
     return (
       <div className={classes.container}>
-        <PlanerAktywnosciForm />
+        <PlanerAktywnosciForm editedId={this.state.editedId} />
         <Paper
           className={classes.accordionMain}
           // style={{ marginBottom: 10 }}
@@ -784,35 +791,17 @@ class Planer extends Component {
           // }}
         />
         <Paper>
-          <Collapse
-            accordion={true}
-            activeKey="0"
-            defaultActiveKey="0"
-            onMouseEnter={() => console.log("Collapse")}
-          >
-            <Panel
-              onMouseOver={e => {
-                console.log(e);
-              }}
-              key="0"
-              header={<span style={{ fontWeight: "600" }}>Podsumowanie</span>}
-              headerClass={classes.accordionClass}
-              style={{ color: "white" }}
-            >
-              <div>alskdfjl</div>
-            </Panel>
-            <Panel
-              key="1"
-              header={<span style={{ fontWeight: "600" }}>Podsumowanie</span>}
-              headerClass={classes.accordionClass}
-              style={{ color: "white" }}
-            >
-              <div>alskdfjl</div>
-            </Panel>
-          </Collapse>
-          <Paper>
-            <PlanerAktywnosciLista />
-          </Paper>
+          <PlanerAktywnosciLista
+            aktywnosci={this.state.aktywnosci}
+            edit={id => {
+              this.setState({ openModal: true });
+              this.setState({ editedId: id });
+            }}
+            delete={id => console.log(id)}
+            edit={id => console.log(id)}
+          />
+          {/* <Paper>
+          </Paper> */}
 
           {/* <CostsTable
             costs={this.costs()}
@@ -821,6 +810,23 @@ class Planer extends Component {
             // range={this.state.rangeselection}
           /> */}
         </Paper>
+        <ModalWindow open={this.state.openModal} close={this.handleClose}>
+          <PlanerAktywnosciForm
+            modal
+            editedId={this.state.editedId}
+            closeModal={() => this.setState({ openModal: false })}
+          />
+          {/* <CostsForm
+            fetchuj={() => this.fetchCosts()}
+            groups={this.state.groups}
+            categories={this.state.categories}
+            changeRange={data => this.changeRange(data)}
+            editedId={this.state.editedId}
+            modal
+            closeModal={() => this.setState({ openModal: false })}
+            // clearForm={() => this.setState({ editedId: "" })}
+          /> */}
+        </ModalWindow>
       </div>
     );
   }

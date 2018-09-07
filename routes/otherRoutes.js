@@ -272,26 +272,49 @@ module.exports = app => {
       });
   });
 
-  app.get("/api/cost/:id", (req, res, next) => {
-    console.log("get api/cost/");
+  app.get("/api/:table/:id", (req, res, next) => {
+    // console.log(req.params);
+    console.log("przegladaj tabele");
+    const table = req.params.table;
     const id = req.params.id;
     const { user_id, clientId } = req.user;
-    console.log(req.user);
+    console.log(`${table} ${id}`);
     if (!req.user) {
       return res.redirect("/");
     }
-    console.log("bedzie sie updatowac czy nie");
-    Cost.find({
-      include: [{ model: Category }, { model: Group }],
-      where: { clientId, id }
-    })
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
+    switch (table) {
+      case "cost":
+        Cost.find({
+          include: [{ model: Category }, { model: Group }],
+          where: { clientId, id }
+        })
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "akt":
+        Aktywnosci.find({
+          include: [
+            // { model: User },
+            { model: RodzajAktywnosci, attributes: ["name"] },
+            { model: City, attributes: ["nazwa"] }
+          ],
+          where: { user_id, id }
+        })
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      default:
+    }
   });
 
   app.post("/api/cost/", (req, res, next) => {
@@ -412,6 +435,11 @@ module.exports = app => {
     switch (table.table) {
       case "planerAktywnosci":
         Aktywnosci.findAll({
+          include: [
+            // { model: User },
+            { model: RodzajAktywnosci, attributes: ["name"] },
+            { model: City, attributes: ["nazwa"] }
+          ],
           where: {
             user_id,
             start: {
