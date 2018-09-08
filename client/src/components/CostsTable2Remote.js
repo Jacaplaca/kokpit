@@ -28,6 +28,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+import Confirmation from "./Confirmation";
+
 const styles = theme => ({
   headerClasses: {
     backgroundColor: theme.palette.primary.main,
@@ -443,33 +445,12 @@ class CostsTable extends Component {
   render() {
     return (
       <div>
-        <Dialog open={this.state.open} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">
-            Czy na pewno chcesz usunąć tę pozycję kosztową?{" "}
-          </DialogTitle>
-          <DialogContent>
-            {/* <DialogContentText>
-              To subscribe to this website, please enter your email address
-              here. We will send updates occasionally.
-            </DialogContentText> */}
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={this.handleDelete}
-              variant="contained"
-              color="primary"
-            >
-              Tak
-            </Button>
-            <Button
-              onClick={this.handleClose}
-              variant="contained"
-              color="primary"
-            >
-              Nie
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <Confirmation
+          open={this.state.open}
+          close={this.handleClose}
+          delete={this.handleDelete}
+          komunikat="Czy na pewno chcesz usunąć tę pozycję kosztową?"
+        />
         <RemoteFilter
           data={this.jakieDane().costs}
           suma={this.jakieDane().sumuj}

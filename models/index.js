@@ -25,11 +25,11 @@ var sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: "mysql",
     operatorsAliases: false,
-    logging: false,
+    logging: false
     // dialectOptions: {
-    //   useUTC: true //for reading from database
+    //   useUTC: false //for reading from database
     // }
-    timezone: "+02:00" //for writing to database
+    // timezone: "+02:00" //for writing to database
   }
 );
 // }

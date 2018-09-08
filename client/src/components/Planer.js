@@ -653,6 +653,7 @@ class Planer extends Component {
               this.setState({ editedId: id });
             }}
             delete={id => console.log(id)}
+            fetchuj={() => this.fetchAktywnosci()}
             // edit={id => console.log(id)}
           />
           {/* <Paper>

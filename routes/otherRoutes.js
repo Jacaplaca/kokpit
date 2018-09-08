@@ -279,14 +279,12 @@ module.exports = app => {
     Aktywnosci.update(
       {
         kiedy,
-        start: new Date(
-          `${kiedy} ${cleanStart.split(":")[0]}:${cleanStart.split(":")[1]}`
-        ),
-        stop: new Date(
-          `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`
-        ),
+        start: `${kiedy} ${cleanStart.split(":")[0]}:${
+          cleanStart.split(":")[1]
+        }`,
+        stop: `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`,
         aktywnosc_id,
-        miejsce_id,
+        miejsce_id: miejsce_id === "" ? null : miejsce_id,
         inna,
         uwagi
       },
@@ -309,6 +307,21 @@ module.exports = app => {
     }
     const { user_id, clientId } = req.user;
     Cost.destroy({ where: { clientId, id } })
+      .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/api/akt/remove/:id", (req, res, next) => {
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    Aktywnosci.destroy({ where: { user_id, id } })
       .then(() => res.end())
       .catch(err => {
         console.log(err);
@@ -416,13 +429,8 @@ module.exports = app => {
     const cleanStop = stop.replace(" ", "").replace(" ", "");
     Aktywnosci.create({
       kiedy,
-      start: new Date(
-        `${kiedy} ${cleanStart.split(":")[0]}:${cleanStart.split(":")[1]}`
-      ),
-      // start: new Date(`${kiedy} 01:01`),
-      stop: new Date(
-        `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`
-      ),
+      start: `${kiedy} ${cleanStart.split(":")[0]}:${cleanStart.split(":")[1]}`,
+      stop: `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`,
       aktywnosc_id,
       miejsce_id: miejsce_id === "" ? null : miejsce_id,
       inna,

@@ -104,9 +104,10 @@ class PlanerAktywnosciLista extends Component {
             style={{ color: "white" }}
           >
             <PlanerAktywnosciSingle
+              fetch={() => this.props.fetchuj()}
               day={day.values}
               edit={id => this.props.edit(id)}
-              delete={id => this.props.delete(id)}
+              //delete={id => this.props.delete(id)}
             />
           </Panel>
         </Collapse>

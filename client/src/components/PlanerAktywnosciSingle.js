@@ -16,6 +16,8 @@ import { withStyles } from "@material-ui/core/styles";
 import { timeDiff } from "../common/functions";
 //import Paper from "@material-ui/core/Paper";
 
+import Confirmation from "./Confirmation";
+
 const Panel = Collapse.Panel;
 
 const styles = theme => ({
@@ -39,12 +41,35 @@ class PlanerAktywnosciSingle extends Component {
     this.props.delete(id);
   };
 
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleDelete = id => {
+    const url = `/api/akt/remove/${id}`;
+    this.setState({ delete: "", open: false });
+    fetch(url, {
+      method: "POST",
+      // body: JSON.stringify({ aa: 'aaa' }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin"
+    }).then(() => {
+      this.props.fetch();
+    });
+  };
+
   renderDay = () => {
     const { classes } = this.props;
     return this.props.day.map(day => {
       const { id, kiedy, start, stop } = day;
       return (
         <div key={id}>
+          <Confirmation
+            open={this.state.open}
+            close={this.handleClose}
+            delete={() => this.handleDelete(id)}
+            komunikat="Czy na pewno chcesz usunąć tę aktywność?"
+          />
           <IconButton
             onClick={() => this.handleEdit(id)}
             color="primary"
@@ -57,7 +82,8 @@ class PlanerAktywnosciSingle extends Component {
           <IconButton
             className={classes.button}
             aria-label="Delete"
-            onClick={() => this.handleDelete(id)}
+            // onClick={() => this.handleDelete(id)}
+            onClick={() => this.setState({ open: true })}
           >
             <DeleteIcon />
           </IconButton>

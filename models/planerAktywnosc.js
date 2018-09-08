@@ -11,10 +11,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE
       },
       start: {
-        type: Sequelize.DATE
+        type: Sequelize.TEXT
       },
       stop: {
-        type: Sequelize.DATE
+        type: Sequelize.TEXT
       },
       miejsce_id: {
         type: Sequelize.INTEGER
