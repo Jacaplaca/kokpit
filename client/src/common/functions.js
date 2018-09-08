@@ -45,3 +45,16 @@ export const sumaCzasow = czasy => {
   });
   return suma;
 };
+
+export const wezGodzine = czas => {
+  const data = new Date(czas);
+  let godzina = data.getHours();
+  let minuty = data.getMinutes();
+  godzina = godzina < 10 ? `0${godzina}` : godzina;
+  minuty = minuty < 10 ? `0${minuty}` : minuty;
+  console.log(czas);
+  console.log(data);
+  console.log(godzina);
+  console.log(minuty);
+  return `${godzina}:${minuty}`;
+};

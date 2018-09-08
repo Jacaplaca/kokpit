@@ -33,6 +33,8 @@ import InputTime from "./InputTime";
 import InputData from "./InputData";
 import InputComponent from "./InputComponent";
 
+import { wezGodzine } from "../common/functions";
+
 const styles = theme => ({
   input: {
     display: "flex",
@@ -103,21 +105,25 @@ class PlanerAktywnosciForm extends Component {
   state = {
     id: "",
 
-    kiedy: "",
-    start: "",
-    stop: "",
+    kiedy: "2018-09-01",
+    start: "01:01",
+    stop: "20:20",
     miejsce_id: "",
-    aktywnosc_id: "",
+    aktywnosc_id: "2",
     inna: "",
     uwagi: "",
     wyslano: "",
+
+    miejsceLabel: "",
 
     errorStart: false,
     errorStop: false,
 
     activities: [],
     edited: false,
-    submitIsDisable: true
+    submitIsDisable: true,
+
+    miejsce_id_temp: ""
   };
 
   componentWillMount() {
@@ -133,8 +139,8 @@ class PlanerAktywnosciForm extends Component {
 
   validateTime = (time, pole) => {
     const nazwaPola = `error${pole}`;
-    const hours = Math.trunc(time.split(" : ")[0]);
-    const minutes = Math.trunc(time.split(" : ")[1]);
+    const hours = Math.trunc(time.split(":")[0]);
+    const minutes = Math.trunc(time.split(":")[1]);
     // console.log(`${hours} : ${minutes}`);
     // console.log(hours.length);
     if (hours < 0 || hours > 23 || (minutes < 0 || minutes > 59)) {
@@ -188,9 +194,9 @@ class PlanerAktywnosciForm extends Component {
       this.validateTime(stop, "Stop");
     }
 
-    if (aktywnosc_id !== aktywnosc_id_prevState) {
-      this.setState({ miejsce_id: "", inna: "" });
-    }
+    // if (aktywnosc_id !== aktywnosc_id_prevState) {
+    //   this.setState({ miejsce_id: "", inna: "" });
+    // }
 
     if (
       (kiedy !== kiedy_prevState ||
@@ -287,7 +293,7 @@ class PlanerAktywnosciForm extends Component {
 
   handleEdit = id => {
     console.log("handluje edita");
-    axios.get(`/api/akt/${id}`).then(result => {
+    axios.get(`/api/id/akt/${id}`).then(result => {
       const {
         kiedy,
         start,
@@ -295,19 +301,22 @@ class PlanerAktywnosciForm extends Component {
         aktywnosc_id,
         miejsce_id,
         inna,
-        uwagi
+        uwagi,
+        gus_simc
       } = result.data;
       this.setState({
         kiedy,
-        start,
-        stop,
+        start: wezGodzine(start),
+        stop: wezGodzine(stop),
         aktywnosc_id,
         miejsce_id,
         inna,
         uwagi,
+        miejsceLabel: gus_simc ? gus_simc.nazwa : "",
         // categoryId: { label: category.name, value: category.id },
         // groupId: { label: group.name, value: group.id },
-        edited: true
+        edited: true,
+        miejsce_id_temp: miejsce_id
       });
     });
   };
@@ -315,27 +324,28 @@ class PlanerAktywnosciForm extends Component {
   onEdit = () => {
     console.log("on edit");
     const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
+      kiedy,
+      start,
+      stop,
+      aktywnosc_id,
+      miejsce_id,
+      inna,
+      uwagi
     } = this.state;
-    const url = `/api/cost/edit/${id}`;
+    const url = `/api/akt/edit/${this.props.editedId}`;
 
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
+        kiedy,
+        start,
+        stop,
+        aktywnosc_id,
+        miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
+        inna: aktywnosc_id === 5 ? inna : "",
+        uwagi
       })
     })
       .then(() => {
@@ -370,8 +380,8 @@ class PlanerAktywnosciForm extends Component {
         start,
         stop,
         aktywnosc_id,
-        miejsce_id,
-        inna,
+        miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
+        inna: aktywnosc_id === 5 ? inna : "",
         uwagi
       })
     })
@@ -422,11 +432,7 @@ class PlanerAktywnosciForm extends Component {
 
     return (
       <Paper style={{ padding: 20 }}>
-        <form
-          onSubmit={e => this.handleSubmit(e)}
-          // method="POST"
-          // action="/api/cost/"
-        >
+        <form onSubmit={e => this.handleSubmit(e)}>
           <Grid container spacing={24}>
             <Grid item xs={3}>
               <InputData
@@ -477,8 +483,10 @@ class PlanerAktywnosciForm extends Component {
               </Grid>
               {this.state.aktywnosc_id === 1 && (
                 <CitySearch
+                  miejsceLabel={this.state.miejsceLabel}
                   edytuj={miejsce_id => this.setState({ miejsce_id })}
                   value={this.state.miejsce_id}
+                  cancelLabel={() => this.setState({ miejsceLabel: "" })}
                 />
               )}
 

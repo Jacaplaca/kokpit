@@ -133,30 +133,20 @@ class CitySearch extends React.Component {
 
   popperNode = null;
 
+  componentDidMount() {
+    console.log("city search did mount");
+  }
+
   randomDelay = () => {
     return 300 + Math.random() * 1000;
   };
 
   loadSuggestions(value) {
     console.log("loadSuggestions");
-    // if (this.lastRequestId !== null) {
-    //   clearTimeout(this.lastRequestId);
-    // }
 
     this.setState({
       isLoading: true
     });
-
-    // this.lastRequestId = setTimeout(() => {
-    //   axios.get(`/api/city/${value}`).then(result => {
-    //     const wyniki = result.data;
-    //     console.log(wyniki);
-    //     this.setState({
-    //       isLoading: false,
-    //       suggestions: wyniki
-    //     });
-    //   });
-    // }, 400);
 
     setTimeout(() => {
       // const suggestions = getMatchingLanguages(value);
@@ -182,13 +172,13 @@ class CitySearch extends React.Component {
   }
 
   getSuggestionValue = suggestion => {
-    // console.log(suggestion);
     const miasto = suggestion.nazwa;
     const id = suggestion.id;
     const cecha = suggestion.cecha ? suggestion.cecha : "";
     const nazwa_1 = suggestion.nazwa_1 ? suggestion.nazwa_1 : "";
     const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
-    // return suggestion.nazwa;
+    // if (this.state.single !== "") {
+    // }
     this.props.edytuj(id);
     return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
   };
@@ -196,10 +186,10 @@ class CitySearch extends React.Component {
   handleSuggestionsFetchRequested = ({ value }) => {
     console.log("handleSuggestionsFetchRequested");
     console.log(value);
-    // this.setState({
-    //   suggestions: getSuggestions(value)
-    // });
-    this.loadSuggestions(value);
+    if (this.state.single !== "") {
+      this.loadSuggestions(value);
+      this.props.cancelLabel();
+    }
   };
 
   handleSuggestionsClearRequested = () => {
@@ -209,10 +199,17 @@ class CitySearch extends React.Component {
   };
 
   handleChange = name => (event, { newValue }) => {
-    // this.props.edytuj(newValue);
     this.setState({
       [name]: newValue
     });
+  };
+
+  editMiejsceLabel = () => {
+    if (this.props.miejsceLabel !== "" && this.state.single === "") {
+      return this.props.miejsceLabel;
+    } else {
+      return this.state.single;
+    }
   };
 
   render() {
@@ -224,7 +221,8 @@ class CitySearch extends React.Component {
       classes,
       label: status,
       placeholder: "Zacznij wpisywać miejscowość",
-      value: this.state.single,
+      value: this.editMiejsceLabel(),
+      // value: this.state.single,
       onChange: this.handleChange("single")
       // value: value
       // onChange: event => edytuj(event.target.value)

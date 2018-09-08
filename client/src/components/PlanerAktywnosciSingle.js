@@ -53,7 +53,7 @@ class PlanerAktywnosciSingle extends Component {
           >
             <Edit />
           </IconButton>
-          {kiedy} - {timeDiff(start, stop)}
+          {kiedy} - {start} - {stop} - {timeDiff(start, stop)}
           <IconButton
             className={classes.button}
             aria-label="Delete"

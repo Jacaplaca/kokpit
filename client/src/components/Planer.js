@@ -253,7 +253,6 @@ class Planer extends Component {
     groups: [],
     categories: [],
     costs: [],
-    edited: false,
     editedId: "",
     chmurka_group: [],
     chmurka_category: [],
@@ -265,7 +264,9 @@ class Planer extends Component {
       endDate: defineds.endOfMonth,
       key: "rangeselection"
     },
-    submitIsDisable: true
+    edited: false,
+    submitIsDisable: true,
+    openModal: false
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -571,160 +572,11 @@ class Planer extends Component {
     });
   };
 
-  handleChipClick = (data, kolumna) => () => {
-    let koszty;
-    let drugaKolumna;
-    let porownanie = [];
-    let zmodyfikowaneChip = [];
-    switch (kolumna) {
-      case "category":
-        drugaKolumna = "group";
-        break;
-      case "group":
-        drugaKolumna = "category";
-        break;
-      default:
-    }
-
-    this.setState(state => {
-      const chipData = [...state[`chmurka_${kolumna}`]];
-      const chipToClick = chipData.indexOf(data);
-      data.clicked = data.clicked ? false : true;
-      chipData[chipToClick] = data;
-      return { [`chmurka_${kolumna}`]: chipData };
-    });
-    this.setState(state => {
-      koszty = [...state.costs];
-      koszty.map(el => {
-        if (el[`${kolumna}Id`] !== data.id) {
-          return el;
-        } else {
-          return Object.assign(el, { clicked: el.clicked ? false : true });
-        }
-      });
-    });
-    this.setState(state => {
-      const chipData = [...state[`chmurka_${drugaKolumna}`]];
-      const drugaKolumnaFalse = koszty.map(el => {
-        if (!el.clicked) {
-          return el[drugaKolumna].name;
-        } else {
-          return null;
-        }
-      });
-      const jestTrue = drugaKolumnaFalse.map(el =>
-        koszty.filter(x => x[drugaKolumna].name === el && x.clicked === true)
-      );
-      const porownanie = drugaKolumnaFalse.map((x, i) => {
-        const dlugoscJestTrue = jestTrue[i].length;
-        return { name: x, powtarza: dlugoscJestTrue };
-      });
-
-      porownanie.map(x => {
-        if (x.name !== null && x.powtarza === 0) {
-          chipData.map(y => {
-            if (y.name === x.name) {
-              return zmodyfikowaneChip.push({
-                id: y.id,
-                name: y.name,
-                clicked: false
-              });
-            } else {
-              return zmodyfikowaneChip.push({
-                id: y.id,
-                name: y.name,
-                clicked: true
-              });
-            }
-          });
-        } else if (x.name !== null && x.powtarza > 0) {
-          zmodyfikowaneChip = chipData.map(y => {
-            if (y.name === x.name) {
-              // console.log(x.name);
-              return { id: y.id, name: y.name, clicked: true };
-            } else {
-              return { id: y.id, name: y.name, clicked: false };
-            }
-          });
-        }
-      });
-    });
-  };
-
-  costs = () => {
-    const koszty = this.state.costs;
-    const { startDate, endDate } = this.state.rangeselection;
-    const kosztyFiltered = koszty.filter(x => {
-      const data = new Date(x.data_wystawienia);
-      return data >= startDate && data <= endDate;
-    });
-    const costsInt = kosztyFiltered.map(x =>
-      Object.assign(x, {
-        kwota_netto: parseFloat(x.kwota_netto)
-      })
-    );
-    return costsInt;
-  };
-
   handleSelect = ranges => {
     this.setState({
       ...ranges
     });
     this.fetchAktywnosci(ranges);
-  };
-
-  sumOfKey = (data, key) => {
-    let dane;
-    let sorting;
-    switch (key) {
-      case "category":
-        dane = _(data)
-          .groupBy("category.name")
-          .map((v, k) => {
-            const suma = _.sumBy(v, "kwota_netto");
-            return {
-              name: k,
-              value: Math.round(suma),
-              value_format: `${currency(Math.round(suma), {
-                separator: " ",
-                decimal: ","
-              }).format()}`
-            };
-          })
-          .value();
-
-        sorting = dane.sort(function(a, b) {
-          return a.value - b.value;
-        });
-
-        return sorting.reverse();
-
-        break;
-      case "group":
-        dane = _(data)
-          .groupBy("group.name")
-          .map((v, k) => {
-            const suma = _.sumBy(v, "kwota_netto");
-            return {
-              name: k,
-              value: suma,
-              value_format: `${currency(Math.round(suma), {
-                separator: " ",
-                decimal: ","
-              }).format()}`
-            };
-          })
-          .value();
-
-        sorting = dane.sort(function(a, b) {
-          return a.value - b.value;
-        });
-
-        return sorting.reverse();
-
-        break;
-      default:
-    }
   };
 
   render() {
@@ -750,7 +602,10 @@ class Planer extends Component {
 
     return (
       <div className={classes.container}>
-        <PlanerAktywnosciForm editedId={this.state.editedId} />
+        <PlanerAktywnosciForm
+          editedId={this.state.editedId}
+          fetchuj={() => this.fetchAktywnosci()}
+        />
         <Paper
           className={classes.accordionMain}
           // style={{ marginBottom: 10 }}
@@ -798,7 +653,7 @@ class Planer extends Component {
               this.setState({ editedId: id });
             }}
             delete={id => console.log(id)}
-            edit={id => console.log(id)}
+            // edit={id => console.log(id)}
           />
           {/* <Paper>
           </Paper> */}
@@ -815,6 +670,7 @@ class Planer extends Component {
             modal
             editedId={this.state.editedId}
             closeModal={() => this.setState({ openModal: false })}
+            fetchuj={() => this.fetchAktywnosci()}
           />
           {/* <CostsForm
             fetchuj={() => this.fetchCosts()}

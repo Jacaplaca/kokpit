@@ -257,6 +257,50 @@ module.exports = app => {
       });
   });
 
+  app.post("/api/akt/edit/:id", (req, res, next) => {
+    console.log("edytuje aktywnosc api");
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const {
+      kiedy,
+      start,
+      stop,
+      aktywnosc_id,
+      miejsce_id,
+      inna,
+      uwagi
+    } = req.body;
+    const { user_id, clientId } = req.user;
+    const cleanStart = start.replace(" ", "").replace(" ", "");
+    const cleanStop = stop.replace(" ", "").replace(" ", "");
+    Aktywnosci.update(
+      {
+        kiedy,
+        start: new Date(
+          `${kiedy} ${cleanStart.split(":")[0]}:${cleanStart.split(":")[1]}`
+        ),
+        stop: new Date(
+          `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`
+        ),
+        aktywnosc_id,
+        miejsce_id,
+        inna,
+        uwagi
+      },
+      {
+        where: { user_id, id }
+      }
+    )
+      .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.post("/api/cost/remove/:id", (req, res, next) => {
     const id = req.params.id;
     if (!req.user) {
@@ -272,7 +316,7 @@ module.exports = app => {
       });
   });
 
-  app.get("/api/:table/:id", (req, res, next) => {
+  app.get("/api/id/:table/:id", (req, res, next) => {
     // console.log(req.params);
     console.log("przegladaj tabele");
     const table = req.params.table;
@@ -367,10 +411,18 @@ module.exports = app => {
       inna,
       uwagi
     } = req.body;
+    console.log(miejsce_id);
+    const cleanStart = start.replace(" ", "").replace(" ", "");
+    const cleanStop = stop.replace(" ", "").replace(" ", "");
     Aktywnosci.create({
       kiedy,
-      start: `${kiedy} ${start.split(" : ")[0]}:${start.split(" : ")[1]}:00`,
-      stop: `${kiedy} ${stop.split(" : ")[0]}:${stop.split(" : ")[1]}:00`,
+      start: new Date(
+        `${kiedy} ${cleanStart.split(":")[0]}:${cleanStart.split(":")[1]}`
+      ),
+      // start: new Date(`${kiedy} 01:01`),
+      stop: new Date(
+        `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`
+      ),
       aktywnosc_id,
       miejsce_id: miejsce_id === "" ? null : miejsce_id,
       inna,

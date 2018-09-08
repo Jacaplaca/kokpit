@@ -334,7 +334,7 @@ class CostsForm extends Component {
 
   handleEdit = id => {
     console.log("handluje edita");
-    axios.get(`/api/cost/${id}`).then(result => {
+    axios.get(`/api/id/cost/${id}`).then(result => {
       const {
         nr_dokumentu,
         data_wystawienia,
