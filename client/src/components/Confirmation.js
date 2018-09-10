@@ -42,7 +42,7 @@ class Confirmation extends Component {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={this.props.delete}
+            onClick={this.props.action}
             variant="contained"
             color="primary"
           >

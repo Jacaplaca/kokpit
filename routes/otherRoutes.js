@@ -329,6 +329,31 @@ module.exports = app => {
       });
   });
 
+  app.post("/api/akt/planned/:day", (req, res, next) => {
+    const day = req.params.day;
+    console.log(day);
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    console.log(user_id);
+    Aktywnosci.update(
+      {
+        wyslano: 1
+      },
+      {
+        where: { user_id, kiedy: new Date(day) }
+        // where: {kiedy:}
+      }
+    )
+      .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.get("/api/id/:table/:id", (req, res, next) => {
     // console.log(req.params);
     console.log("przegladaj tabele");

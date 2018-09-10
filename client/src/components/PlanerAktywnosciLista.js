@@ -6,9 +6,14 @@ import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
 import Collapse from "rc-collapse";
+import Button from "@material-ui/core/Button";
+import Icon from "@material-ui/core/Icon";
+import ClockIcon from "@material-ui/icons/WatchLater";
+import { fade } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
-import { sumaCzasow } from "../common/functions";
+import { sumaCzasow, minutes2hours } from "../common/functions";
 //import Paper from "@material-ui/core/Paper";
+import Confirmation from "./Confirmation";
 
 import PlanerAktywnosciSingle from "./PlanerAktywnosciSingle";
 
@@ -23,6 +28,9 @@ const styles = theme => ({
     position: "absolute",
     left: 2,
     fontSize: 16
+  },
+  wyslanoPasek: {
+    backgroundColor: fade(theme.palette.secondary.light, 0.1)
   },
   // accordionClass: {
   //   backgroundColor: fade(theme.palette.primary.main, 0.15)
@@ -47,78 +55,158 @@ const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit
   },
-  mojChipClickedRoot: {
+  root: {
+    // background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+    // boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)"
+    background: `linear-gradient(45deg, ${fade(
+      theme.palette.secondary.main,
+      1
+    )} 30%, ${fade(theme.palette.secondary.light, 1)} 90%)`,
+    //boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+    borderRadius: 3,
+    //border: 0,
     color: "white",
-    margin: theme.spacing.unit / 2,
-    backgroundColor: theme.palette.primary.main
+    height: 22,
+    padding: "0 20px"
+    // lineHeight: 1
   },
-  mojChipRoot: {
-    margin: theme.spacing.unit / 2,
-    backgroundColor: "lightgray"
+
+  label: {
+    // textTransform: "capitalize"
+    //padding: 0,
+    borderColor: "gray"
   },
-  mojChipClicked: {
-    "&:hover, &:focus": {
-      margin: theme.spacing.unit / 2,
-      backgroundColor: "lightgray"
-    },
-    "&:active": {
-      color: "white",
-      margin: theme.spacing.unit / 2,
-      backgroundColor: theme.palette.primary.main
-    }
-  },
-  mojChip: {
-    "&:hover, &:focus": {
-      color: "white",
-      margin: theme.spacing.unit / 2,
-      backgroundColor: theme.palette.primary.main
-    },
-    "&:active": {
-      margin: theme.spacing.unit / 2,
-      backgroundColor: "lightgray"
-    }
+  text: {
+    //padding: "0 1px",
+    //borderColor: "red",
+    height: 4
   }
 });
 
 class PlanerAktywnosciLista extends Component {
-  state = {};
+  state = {
+    open: false,
+    kiedy: ""
+  };
 
-  renderAktywnosci = () => {
-    return this.props.aktywnosci.map(day => {
-      return (
-        <Collapse
-          key={day.kiedy}
-          accordion={true}
-          // activeKey="0"
-          // defaultActiveKey="0"
-          onMouseEnter={() => console.log("Collapse")}
-        >
-          <Panel
-            key={day.kiedy}
-            header={
-              <span style={{ fontWeight: "600" }}>
-                {day.kiedy} - {sumaCzasow(day.values)}
-              </span>
-            }
-            //headerClass={classes.accordionClass}
-            style={{ color: "white" }}
-          >
-            <PlanerAktywnosciSingle
-              fetch={() => this.props.fetchuj()}
-              day={day.values}
-              edit={id => this.props.edit(id)}
-              //delete={id => this.props.delete(id)}
-            />
-          </Panel>
-        </Collapse>
-      );
-    });
+  wyslijDoPlanu = kiedy => {
+    const url = `/api/akt/planned/${kiedy}`;
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin"
+    })
+      .then(() => {
+        // this.fetchCosts();
+        this.props.fetchuj();
+      })
+      .then(() => {
+        // this.clearForm();
+        this.setState({ open: false, kiedy: "" });
+      });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false, kiedy: "" });
   };
 
   render() {
     const { classes } = this.props;
 
-    return this.renderAktywnosci();
+    return (
+      <div>
+        <Confirmation
+          open={this.state.open}
+          close={this.handleClose}
+          action={() => this.wyslijDoPlanu(this.state.kiedy)}
+          komunikat="Czy na pewno chcesz zakończyć planowanie tego dnia?"
+        />
+        {this.props.aktywnosci.map(day => {
+          return (
+            <Collapse
+              key={`day_${day.kiedy}`}
+              // key={day.kiedy}
+              accordion={true}
+              //activeKey="0"
+              //defaultActiveKey="0"
+              onMouseEnter={() => console.log("Collapse")}
+              // style={{
+              //   backgroundColor: day.values[0].wyslano && "rgb(125, 24, 24)"
+              // }}
+              className={day.values[0].wyslano && classes.wyslanoPasek}
+            >
+              <Panel
+                key={day.kiedy}
+                // key={0}
+                header={
+                  <span
+                    style={{
+                      fontWeight: "600",
+                      opacity: day.values[0].wyslano ? "0.65" : "1"
+                    }}
+                  >
+                    {day.kiedy}{" "}
+                    <Icon
+                      color="white"
+                      style={{
+                        //position: "relative"
+                        verticalAlign: "middle",
+                        //paddingBottom: 23,
+                        // width: 15,
+                        opacity: "0.4",
+                        marginLeft: 15
+                      }}
+                    >
+                      <ClockIcon
+                        style={{
+                          paddingBottom: 4,
+                          fontSize: 20
+                        }}
+                      />
+                    </Icon>{" "}
+                    {minutes2hours(sumaCzasow(day.values))}
+                    <Button
+                      onClick={() =>
+                        this.setState({ open: true, kiedy: day.kiedy })
+                      }
+                      classes={{
+                        root: day.values[0].wyslano
+                          ? classes.rootDisabled
+                          : classes.root,
+                        label: classes.label,
+                        text: classes.text // class name, e.g. `classes-nesting-label-x`
+                      }}
+                      style={{
+                        position: "absolute",
+                        right: "28px",
+                        marginTop: "3px"
+                      }}
+                      //variant="outlined"
+                      size="small"
+                      disabled={day.values[0].wyslano && "true"}
+                      // className={classes.button}
+                    >
+                      {day.values[0].wyslano
+                        ? "Wysłano do planu"
+                        : "Wyślij do planu"}
+                    </Button>
+                  </span>
+                }
+                //headerClass={classes.accordionClass}
+                style={{ color: "white" }}
+              >
+                <PlanerAktywnosciSingle
+                  fetch={() => this.props.fetchuj()}
+                  day={day.values}
+                  edit={id => this.props.edit(id)}
+                  //delete={id => this.props.delete(id)}
+                />
+              </Panel>
+            </Collapse>
+          );
+        })}
+      </div>
+    );
   }
 }
 

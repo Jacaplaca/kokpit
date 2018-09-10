@@ -448,7 +448,7 @@ class CostsTable extends Component {
         <Confirmation
           open={this.state.open}
           close={this.handleClose}
-          delete={this.handleDelete}
+          action={this.handleDelete}
           komunikat="Czy na pewno chcesz usunąć tę pozycję kosztową?"
         />
         <RemoteFilter

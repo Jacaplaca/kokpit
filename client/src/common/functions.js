@@ -52,9 +52,13 @@ export const wezGodzine = czas => {
   let minuty = data.getMinutes();
   godzina = godzina < 10 ? `0${godzina}` : godzina;
   minuty = minuty < 10 ? `0${minuty}` : minuty;
-  console.log(czas);
-  console.log(data);
-  console.log(godzina);
-  console.log(minuty);
   return `${godzina}:${minuty}`;
+};
+
+export const minutes2hours = minutes => {
+  let godziny = Math.trunc(minutes / 60);
+  let minuty = minutes % 60;
+  godziny = godziny < 10 ? `0${godziny}` : godziny;
+  minuty = minuty < 10 ? `0${minuty}` : minuty;
+  return `${godziny}:${minuty}`;
 };

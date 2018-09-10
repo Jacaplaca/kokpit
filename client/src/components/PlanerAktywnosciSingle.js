@@ -1,19 +1,18 @@
 import React, { Component } from "react";
-import _ from "lodash";
 import { connect } from "react-redux";
-import { startOfMonth, endOfMonth } from "date-fns";
 import Grid from "@material-ui/core/Grid";
-import axios from "axios";
 import PropTypes from "prop-types";
 import Collapse from "rc-collapse";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ClockIcon from "@material-ui/icons/WatchLater";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 import { withStyles } from "@material-ui/core/styles";
-import { timeDiff } from "../common/functions";
+import { fade } from "@material-ui/core/styles/colorManipulator";
+import { timeDiff, wezGodzine, minutes2hours } from "../common/functions";
 //import Paper from "@material-ui/core/Paper";
 
 import Confirmation from "./Confirmation";
@@ -21,6 +20,25 @@ import Confirmation from "./Confirmation";
 const Panel = Collapse.Panel;
 
 const styles = theme => ({
+  row: {
+    borderBottomColor: fade(theme.palette.primary.main, 0.22),
+    borderBottomStyle: "solid",
+    borderBottomWidth: 1
+  },
+  aktywnosc: {
+    borderRadius: 5,
+    backgroundColor: fade(theme.palette.primary.main, 0.1),
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 4,
+    fontWeight: "600"
+  },
+  hours: {
+    backgroundColor: fade(theme.palette.primary.main, 0.15),
+    fontWeight: "600",
+    padding: 2,
+    borderRadius: 5
+  },
   button: {
     margin: theme.spacing.unit,
     width: 30,
@@ -58,16 +76,35 @@ class PlanerAktywnosciSingle extends Component {
     });
   };
 
-  renderDay = () => {
+  // renderDay = () => {
+  //   const { classes } = this.props;
+  //
+  // };
+
+  render() {
     const { classes } = this.props;
+
+    // return this.renderDay();
     return this.props.day.map(day => {
-      const { id, kiedy, start, stop } = day;
+      const {
+        id,
+        kiedy,
+        start,
+        stop,
+        aktywnosc_id,
+        planer_akt_rodz,
+        miejsce_id,
+        gus_simc,
+        inna,
+        uwagi,
+        wyslano
+      } = day;
       return (
-        <div key={id}>
+        <div key={id} className={classes.row}>
           <Confirmation
             open={this.state.open}
             close={this.handleClose}
-            delete={() => this.handleDelete(id)}
+            action={() => this.handleDelete(id)}
             komunikat="Czy na pewno chcesz usunąć tę aktywność?"
           />
           <IconButton
@@ -75,27 +112,52 @@ class PlanerAktywnosciSingle extends Component {
             color="primary"
             className={classes.button}
             aria-label="Add to shopping cart"
+            disabled={wyslano && true}
           >
             <Edit />
           </IconButton>
-          {kiedy} - {start} - {stop} - {timeDiff(start, stop)}
+          {/* <div style={{ display: "inline" }}> */}
+          <span className={classes.hours}>
+            {wezGodzine(start)} - {wezGodzine(stop)}
+          </span>
+          {/* </div> */}
+          <span>
+            <Icon
+              color="primary"
+              style={{
+                //position: "relative",
+                verticalAlign: "sub",
+                // marginTop: 3,
+                // width: 15,
+                opacity: "0.4",
+                marginLeft: 20,
+                marginRight: 5
+              }}
+            >
+              <ClockIcon style={{ fontSize: 17 }} />
+            </Icon>
+            {minutes2hours(timeDiff(start, stop))}
+          </span>
+          <span className={classes.aktywnosc}>
+            {aktywnosc_id === 5 ? inna : planer_akt_rodz.name}{" "}
+            {aktywnosc_id === 1 && gus_simc.nazwa}
+          </span>
           <IconButton
+            style={{
+              position: "absolute",
+              right: "20px"
+            }}
             className={classes.button}
             aria-label="Delete"
             // onClick={() => this.handleDelete(id)}
             onClick={() => this.setState({ open: true })}
+            disabled={wyslano && true}
           >
             <DeleteIcon />
           </IconButton>
         </div>
       );
     });
-  };
-
-  render() {
-    const { classes } = this.props;
-
-    return this.renderDay();
   }
 }
 
