@@ -7,10 +7,7 @@ import {
   createStaticRanges,
   defaultStaticRanges
 } from "react-date-range";
-import _ from "lodash";
-import styled from "styled-components";
 import { pl } from "react-date-range/src/locale/index";
-import currency from "currency.js";
 import { connect } from "react-redux";
 import {
   addDays,
@@ -28,28 +25,18 @@ import Collapse from "rc-collapse";
 import "rc-collapse/assets/index.css";
 // import { pl } from 'date-fns/locale';
 // import CurrencyInput from 'react-currency-input';
-
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 // import NoSsr from '@material-ui/core/NoSsr';
 import Paper from "@material-ui/core/Paper";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import Button from "@material-ui/core/Button";
-import Send from "@material-ui/icons/Send";
-import Edit from "@material-ui/icons/Edit";
-import Cancel from "@material-ui/icons/Clear";
 
 import { dataToString, podzielUnikalnymi } from "../common/functions";
 
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
-
-import PieChart1 from "./PieChart1";
 
 import PlanerAktywnosciForm from "./PlanerAktywnosciForm";
 import PlanerAktywnosciLista from "./PlanerAktywnosciLista";

@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Costs from './Costs';
-import Planer from './Planer';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import Costs from "./Costs";
+import Planer from "./Planer";
+import PlanerRaporty from "./PlanerRaporty";
 
 class Landing extends Component {
   componentWillMount() {
@@ -10,15 +11,18 @@ class Landing extends Component {
 
   whatToShow = () => {
     switch (this.props.clicked) {
-      case 'costs':
+      case "costs":
         return <Costs />;
         break;
-      case 'planer':
+      case "planer":
         return <Planer />;
+        break;
+      case "planerRaporty":
+        return <PlanerRaporty />;
         break;
       default:
         return (
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: "center" }}>
             <h1>Świadoma Firma</h1>
             Raporty, analizy, prowizje - wszystko w jednym miejscu
           </div>

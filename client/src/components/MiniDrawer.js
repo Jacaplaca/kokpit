@@ -247,7 +247,17 @@ class MiniDrawer extends React.Component {
             <ListItemIcon>
               <MoneyIcon />
             </ListItemIcon>
-            <ListItemText primary="Planer" />
+            <ListItemText primary="Aktywności" />
+          </ListItem>
+
+          <ListItem
+            button
+            onClick={() => this.handleClickWhere("planerRaporty")}
+          >
+            <ListItemIcon>
+              <MoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Raporty" />
           </ListItem>
 
           {/* <Divider />

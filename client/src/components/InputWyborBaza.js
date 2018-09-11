@@ -72,7 +72,10 @@ class InputWyborBaza extends React.Component {
           <InputLabel htmlFor="age-simple">{label}</InputLabel>
           <Select
             value={value}
-            onChange={event => edytuj(event.target.value)}
+            onChange={event => {
+              console.log(event.target);
+              return edytuj(event.target.value);
+            }}
             // value={this.state.wybrany}
             // onChange={this.handleChange}
             inputProps={{

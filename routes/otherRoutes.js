@@ -16,6 +16,12 @@ const Powiat = db.gus_terc_pow;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const axios = require("axios");
+// const onlyUnique = require("../client/src/common/functions");
+
+const onlyUnique = (value, index, self) => {
+  return self.indexOf(value) === index;
+};
+
 // const User = require('../models/user');
 // const Op = Sequelize.Op;
 
@@ -33,67 +39,6 @@ dynamicSort = property => {
 };
 
 module.exports = app => {
-  // app.get("/api/powiat/miel", (req, res, next) => {
-  //   const rezultaty = Powiat.findAll()
-  //     .then(result => {
-  //       var promises = [];
-  //
-  //       result.map((wynik, i) => {
-  //         const { pow_id, woj_id, id } = wynik.get();
-  //         console.log(woj_id);
-  //         Powiat.update(
-  //           {
-  //             woj_pow: woj_id + pow_id
-  //           },
-  //           {
-  //             where: { id }
-  //           }
-  //         )
-  //           .then(() => res.end())
-  //           .catch(err => {
-  //             console.log(err);
-  //             res.sendStatus(500);
-  //           });
-  //       });
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.sendStatus(500);
-  //     });
-  // });
-
-  // app.get("/api/city/miel", (req, res, next) => {
-  //   const rezultaty = City.findAll().then(result => {
-  //     var promises = [];
-  //
-  //     result
-  //       .map((wynik, i) => {
-  //         const { woj, pow, gmi, id } = wynik.get();
-  //         // console.log(woj_id);
-  //         setTimeout(function() {
-  //           City.update(
-  //             {
-  //               woj_pow: woj + pow,
-  //               woj_pow_gmi: woj + pow + gmi
-  //             },
-  //             {
-  //               where: { id }
-  //             }
-  //           )
-  //             .then(() => res.end())
-  //             .catch(err => {
-  //               console.log(err);
-  //               res.sendStatus(500);
-  //             });
-  //         });
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //         res.sendStatus(500);
-  //       });
-  //   }, 100);
-  // });
-
   app.get("/api/city/:city", (req, res, next) => {
     // console.log("get api/city/");
     const wyszukiwanie = req.params.city;
@@ -399,6 +344,30 @@ module.exports = app => {
     }
   });
 
+  app.get(`/api/kiedy/akt/:data`, (req, res, next) => {
+    console.log(req.params);
+    console.log("przegladaj tabele");
+    const day = req.params.data;
+    const { user_id, clientId } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    Aktywnosci.findAll({
+      include: [
+        { model: RodzajAktywnosci, attributes: ["name"] },
+        { model: City, attributes: ["nazwa"] }
+      ],
+      where: { user_id, kiedy: new Date(day) }
+    })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.post("/api/cost/", (req, res, next) => {
     console.log("api/cost/");
     console.log(req.body);
@@ -471,38 +440,6 @@ module.exports = app => {
         res.sendStatus(500);
       });
   });
-
-  // app.get("/api/planerAktywnosci/:zakres", (req, res) => {
-  //   const zakres = req.params.zakres;
-  //   console.log(zakres);
-  //   const start = zakres.split("_")[0];
-  //   const stop = zakres.split("_")[1];
-  //   const startDate = new Date(start);
-  //   const stopDate = new Date(`${stop} 23:59:59`);
-  //   console.log(startDate);
-  //   console.log(stopDate);
-  //   if (!req.user) {
-  //     return res.redirect("/");
-  //   }
-  //   const { clientId, role, user_id } = req.user;
-  //   Aktywnosci.findAll({
-  //     where: {
-  //       user_id,
-  //       start: {
-  //         // [Op.lt]: new Date(),
-  //         [Op.gte]: startDate
-  //       },
-  //       stop: {
-  //         [Op.lte]: stopDate
-  //       }
-  //     }
-  //   })
-  //     .then(result => res.json(result))
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.sendStatus(500);
-  //     });
-  // });
 
   app.get("/api/table/:table/:zakres", (req, res) => {
     const table = req.params;
@@ -594,6 +531,24 @@ module.exports = app => {
       case "rodzajAktywnosci":
         RodzajAktywnosci.findAll({ where: { clientId } })
           .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "dniDoRaportu":
+        Aktywnosci.findAll({ where: { user_id, wyslano: 1 } })
+          // .then(result => {
+          //   console.log(result);
+          //   res.json(result);
+          // })
+          .then(result => {
+            const datyDoRaportu = result.map(x => x.get().kiedy);
+            const unique = datyDoRaportu.filter(onlyUnique);
+            return res.json(
+              unique.map((x, i) => Object.assign({}, { id: i, name: x }))
+            );
+          })
           .catch(err => {
             console.log(err);
             res.sendStatus(500);

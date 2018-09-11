@@ -446,86 +446,6 @@ class CostsForm extends Component {
     });
   };
 
-  // handleChipClick = (data, kolumna) => () => {
-  //   let koszty;
-  //   let drugaKolumna;
-  //   let porownanie = [];
-  //   let zmodyfikowaneChip = [];
-  //   switch (kolumna) {
-  //     case "category":
-  //       drugaKolumna = "group";
-  //       break;
-  //     case "group":
-  //       drugaKolumna = "category";
-  //       break;
-  //     default:
-  //   }
-  //
-  //   this.setState(state => {
-  //     const chipData = [...state[`chmurka_${kolumna}`]];
-  //     const chipToClick = chipData.indexOf(data);
-  //     data.clicked = data.clicked ? false : true;
-  //     chipData[chipToClick] = data;
-  //     return { [`chmurka_${kolumna}`]: chipData };
-  //   });
-  //   this.setState(state => {
-  //     koszty = [...state.costs];
-  //     koszty.map(el => {
-  //       if (el[`${kolumna}Id`] !== data.id) {
-  //         return el;
-  //       } else {
-  //         return Object.assign(el, { clicked: el.clicked ? false : true });
-  //       }
-  //     });
-  //   });
-  //   this.setState(state => {
-  //     const chipData = [...state[`chmurka_${drugaKolumna}`]];
-  //     const drugaKolumnaFalse = koszty.map(el => {
-  //       if (!el.clicked) {
-  //         return el[drugaKolumna].name;
-  //       } else {
-  //         return null;
-  //       }
-  //     });
-  //     const jestTrue = drugaKolumnaFalse.map(el =>
-  //       koszty.filter(x => x[drugaKolumna].name === el && x.clicked === true)
-  //     );
-  //     const porownanie = drugaKolumnaFalse.map((x, i) => {
-  //       const dlugoscJestTrue = jestTrue[i].length;
-  //       return { name: x, powtarza: dlugoscJestTrue };
-  //     });
-  //
-  //     porownanie.map(x => {
-  //       if (x.name !== null && x.powtarza === 0) {
-  //         chipData.map(y => {
-  //           if (y.name === x.name) {
-  //             return zmodyfikowaneChip.push({
-  //               id: y.id,
-  //               name: y.name,
-  //               clicked: false
-  //             });
-  //           } else {
-  //             return zmodyfikowaneChip.push({
-  //               id: y.id,
-  //               name: y.name,
-  //               clicked: true
-  //             });
-  //           }
-  //         });
-  //       } else if (x.name !== null && x.powtarza > 0) {
-  //         zmodyfikowaneChip = chipData.map(y => {
-  //           if (y.name === x.name) {
-  //             // console.log(x.name);
-  //             return { id: y.id, name: y.name, clicked: true };
-  //           } else {
-  //             return { id: y.id, name: y.name, clicked: false };
-  //           }
-  //         });
-  //       }
-  //     });
-  //   });
-  // };
-
   costs = () => {
     const koszty = this.state.costs;
     const { startDate, endDate } = this.state.rangeselection;
@@ -741,13 +661,9 @@ class CostsForm extends Component {
                 name="groupId"
                 components={components}
                 classes={classes}
-                // classes={classes}
-                // styles={selectStyles}
                 options={this.renderSelect(this.props.groups)}
-                // components={components}
                 value={this.state.groupId}
                 onChange={this.handleChangeSelect("groupId")}
-                // placeholder="Search a country"
               />
               {/* <Select
       name="groupId"

@@ -110,6 +110,32 @@ db.planer_aktywnosci.belongsTo(db.clients, {
   targetKey: "id"
 });
 
+db.planer_raporty.belongsTo(db.gus_simc, {
+  foreignKey: "miejsce_id",
+  targetKey: "id"
+});
+db.planer_raporty.belongsTo(db.planer_akt_rodz, {
+  foreignKey: "aktywnosc_id",
+  targetKey: "id"
+});
+db.planer_raporty.belongsTo(db.users, {
+  foreignKey: "user_id",
+  targetKey: "id"
+});
+db.planer_raporty.belongsTo(db.clients, {
+  foreignKey: "firma_id",
+  targetKey: "id"
+});
+db.planer_raporty.belongsTo(db.planer_klienci, {
+  foreignKey: "planer_klienci_id",
+  targetKey: "id"
+});
+
+db.planer_klienci.belongsTo(db.clients, {
+  foreignKey: "clientId",
+  targetKey: "id"
+});
+
 // db.gus_simc.belongsToMany(db.gus_terc_pow, {
 //   through: db.gus_terc_woj,
 //   foreignKey: "woj_id"
