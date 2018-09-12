@@ -12,55 +12,10 @@ import { withStyles } from "@material-ui/core/styles";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
-function inputComponent({ inputRef, ...props }) {
-  return <div ref={inputRef} {...props} />;
-}
-
-function Control(props) {
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputComponent,
-        inputProps: {
-          className: props.selectProps.classes.input,
-          inputRef: props.innerRef,
-          children: props.children,
-          ...props.innerProps
-        }
-      }}
-      {...props.selectProps.textFieldProps}
-    />
-  );
-}
-
-function Placeholder(props) {
-  return (
-    <Typography
-      color="textSecondary"
-      className={props.selectProps.classes.placeholder}
-      {...props.innerProps}
-    >
-      {props.children}
-    </Typography>
-  );
-}
-
-const components = {
-  // Option,
-  Control,
-  // NoOptionsMessage,
-  Placeholder
-  //SingleValue,
-  //MultiValue,
-  //ValueContainer,
-  //Menu,
-};
-
 const styles = theme => ({
   input: {
-    display: "flex",
-    padding: 6
+    display: "flex"
+    //padding: 6
   },
   placeholder: {
     position: "absolute",
@@ -85,32 +40,49 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit
+  },
+  label: {
+    fontSize: "12px"
   }
 });
 
 class InputSelectBaza extends React.Component {
   state = {
     wybrany: "",
-    selections: []
+    selections: [],
+    value: ""
   };
 
-  // componentDidMount() {
-  //   axios.get(`/api/table/${this.props.table}`).then(result => {
-  //     const selections = result.data;
-  //     this.setState({
-  //       selections
-  //     });
-  //   });
-  // }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const { value: value_prevState } = prevState;
+    const { value } = this.state;
+    console.log("input select baza did update");
+    console.log(value);
+    console.log(this.state);
+  }
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+  componentDidMount() {
+    console.log("inpue select baza did mount");
+    // axios.get(`/api/table/${this.props.table}`).then(result => {
+    //   const selections = result.data;
+    //   this.setState({
+    //     selections
+    //   });
+    // });
+  }
+
+  // handleChange = event => {
+  //   this.setState({ [event.target.name]: event.target.value });
+  // };
+  handleChange = selectedOption => {
+    this.setState({ selectedOption });
+    console.log(`Option selected:`, selectedOption);
   };
 
   handleChangeSelect = name => value => {
+    // console.log(value);
     this.props.wybrano(value[name]);
     // console.log(name);
-    // console.log(value);
     // console.log(value[name]);
     // this.setState({
     //   [name]: value
@@ -129,20 +101,77 @@ class InputSelectBaza extends React.Component {
   };
 
   render() {
+    const { selectedOption } = this.state;
     const { classes, array } = this.props;
+    const components = {
+      // Option,
+      Control,
+      // NoOptionsMessage,
+      Placeholder
+      //SingleValue,
+      //MultiValue,
+      //ValueContainer,
+      //Menu,
+    };
+    function inputComponent({ inputRef, ...props }) {
+      // console.log({ ...props });
+      return <div ref={inputRef} {...props} />;
+    }
 
+    function Control(props) {
+      console.log(props.selectProps.inputValue);
+      return (
+        <TextField
+          fullWidth
+          InputProps={{
+            inputComponent,
+            inputProps: {
+              className: props.selectProps.classes.input,
+              inputRef: props.innerRef,
+              children: props.children,
+              ...props.innerProps
+            }
+          }}
+          {...props.selectProps.textFieldProps}
+        />
+      );
+    }
+
+    function Placeholder(props) {
+      return (
+        <Typography
+          color="textSecondary"
+          className={props.selectProps.classes.placeholder}
+          {...props.innerProps}
+        >
+          {props.children}
+        </Typography>
+      );
+    }
+    console.log(this.state);
     return (
       <div>
-        {/* <InputLabel htmlFor="age-required">Grupa</InputLabel> */}
+        {/* <InputLabel className={classes.label} htmlFor="age-required">
+          Grupa
+        </InputLabel> */}
         {/* <NoSsr> */}
         <ReactSelect
           placeholder="Wybierz..."
-          name="groupId"
+          name="value"
           components={components}
           classes={classes}
           options={this.renderSelect(array)}
-          value={this.state.groupId}
+          value={selectedOption}
           onChange={this.handleChangeSelect(this.props.zwracam)}
+          inputValue={this.props.initialInput}
+
+          // menuIsOpen
+          // onMenuOpen
+          // onMenuClose
+          // onInputChange
+          // defaultValue
+          // defaultMenuIsOpen
+          // defaultInputValue
         />
       </div>
     );

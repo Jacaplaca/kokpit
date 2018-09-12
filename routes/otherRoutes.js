@@ -13,6 +13,7 @@ const Street = db.gus_ulic;
 const Terc = db.gus_terc;
 const Wojewodztwo = db.gus_terc_woj;
 const Powiat = db.gus_terc_pow;
+const Klienci = db.planer_klienci;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const axios = require("axios");
@@ -156,6 +157,38 @@ module.exports = app => {
         // });
       });
     }
+  });
+
+  app.get("/api/klienci/:query", (req, res, next) => {
+    // console.log("get api/city/");
+    const query = req.params.query;
+
+    const { user_id, clientId } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+
+    Klienci.findAll({
+      // where: {
+      //   adr_Miejscowosc: { [Op.like]: `${query}%` },
+      //   clientId
+      // },
+      where: {
+        [Op.or]: [
+          { adr_Miejscowosc: { [Op.like]: `${query}%` } },
+          { nazwa: { [Op.like]: `${query}%` } }
+        ],
+        clientId
+      }
+      //limit: 30
+    })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   });
 
   app.get("/api/message", (req, res) => {

@@ -34,10 +34,20 @@ import InputSelectBaza from "./InputSelectBaza";
 import InputTime from "./InputTime";
 import InputData from "./InputData";
 import InputComponent from "./InputComponent";
+import KlienciSearch from "./KlienciSearch";
 
-import { wezGodzine } from "../common/functions";
+import { wezGodzine, dynamicSort } from "../common/functions";
 
 const styles = theme => ({
+  aktyDoRaportu: {
+    // background: `linear-gradient(45deg, ${fade(
+    //   theme.palette.secondary.main,
+    //   1
+    // )} 30%, ${fade(theme.palette.secondary.light, 1)} 90%)`,
+    marginTop: 10,
+    //background: "lightgray",
+    padding: 5
+  },
   input: {
     display: "flex",
     padding: 0
@@ -73,30 +83,40 @@ const styles = theme => ({
   root: {
     // background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
     // boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)"
-    background: `linear-gradient(45deg, ${fade(
-      theme.palette.secondary.main,
-      1
-    )} 30%, ${fade(theme.palette.secondary.light, 1)} 90%)`,
-    //boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+    // background: `linear-gradient(45deg, ${fade(
+    //   theme.palette.secondary.main,
+    //   1
+    // )} 30%, ${fade(theme.palette.secondary.light, 1)} 90%)`,
+    //boxShadow: "0 1px 3px 1px rgba(33, 203, 243, .3)",
+    background: `${fade(theme.palette.primary.main, 1)}`,
+    // background: "white",
     borderRadius: 3,
     //border: 0,
     color: "white",
-    height: 22,
+    height: 50,
     width: "100%",
-    padding: "0 20px"
+    padding: "0 5px",
+    marginTop: 5,
+    // lineHeight: 1
+    "&:hover": {
+      color: "white",
+      background: `${fade(theme.palette.primary.main, 0.5)}`
+    }
     // lineHeight: 1
   },
+  hover: {},
 
   label: {
     // textTransform: "capitalize"
     //padding: 0,
-    borderColor: "gray"
-  },
-  text: {
-    //padding: "0 1px",
-    //borderColor: "red",
-    height: 4
+    borderColor: "gray",
+    textAlign: "left"
   }
+  // text: {
+  //   //padding: "0 1px",
+  //   //borderColor: "red",
+  //   height: 4
+  // }
 });
 
 class PlanerAktywnosciForm extends Component {
@@ -106,11 +126,12 @@ class PlanerAktywnosciForm extends Component {
     dataWybrana: "",
     aktyDaty: [],
 
-    kiedy: "2018-09-01",
-    start: "01:01",
-    stop: "20:20",
+    kiedy: "",
+    start: "",
+    stop: "",
     miejsce_id: "",
-    aktywnosc_id: "2",
+    aktywnosc_id: "",
+    klient_id: "",
     inna: "",
     uwagi: "",
     wyslano: "",
@@ -249,9 +270,13 @@ class PlanerAktywnosciForm extends Component {
   }
 
   fetchujDate = data => {
-    //console.log("fetchujDate");
-    //console.log(data);
     axios.get(`/api/kiedy/akt/${data}`).then(result => {
+      this.setState({ aktyDaty: result.data });
+    });
+  };
+
+  fetchujAktywnosc = id => {
+    axios.get(`/api/id/akt/${id}`).then(result => {
       console.log(result.data);
       const {
         kiedy,
@@ -263,18 +288,17 @@ class PlanerAktywnosciForm extends Component {
         uwagi,
         gus_simc
       } = result.data;
-      this.setState({ aktyDaty: result.data });
-      // this.setState({
-      //   kiedy,
-      //   start: wezGodzine(start),
-      //   stop: wezGodzine(stop),
-      //   aktywnosc_id,
-      //   miejsce_id,
-      //   inna,
-      //   uwagi,
-      //   miejsceLabel: gus_simc ? gus_simc.nazwa : "",
-      //   edited: true,
-      // });
+      this.setState({
+        kiedy,
+        start: wezGodzine(start),
+        stop: wezGodzine(stop),
+        aktywnosc_id,
+        miejsce_id,
+        inna,
+        uwagi,
+        miejsceLabel: gus_simc ? gus_simc.nazwa : ""
+        //edited: true
+      });
     });
   };
 
@@ -316,26 +340,13 @@ class PlanerAktywnosciForm extends Component {
     // this.props.clearForm;
   };
 
-  dynamicSort = property => {
-    let sortOrder = 1;
-    if (property[0] === "-") {
-      sortOrder = -1;
-      property = property.substr(1);
-    }
-    return function(a, b) {
-      const result =
-        a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-      return result * sortOrder;
-    };
-  };
-
   renderSelect = select => {
     const none = { label: "Brak", value: "" };
     const doWyboru = select.map((elem, i) => ({
       label: elem.name,
       value: elem.id
     }));
-    return doWyboru.sort(this.dynamicSort("label"));
+    return doWyboru.sort(dynamicSort("label"));
   };
 
   handleEdit = id => {
@@ -447,27 +458,6 @@ class PlanerAktywnosciForm extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleChangeKwota = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
-  };
-
-  costs = () => {
-    const koszty = this.state.costs;
-    const { startDate, endDate } = this.state.rangeselection;
-    const kosztyFiltered = koszty.filter(x => {
-      const data = new Date(x.data_wystawienia);
-      return data >= startDate && data <= endDate;
-    });
-    const costsInt = kosztyFiltered.map(x =>
-      Object.assign(x, {
-        kwota_netto: parseFloat(x.kwota_netto)
-      })
-    );
-    return costsInt;
-  };
-
   handleSelect = ranges => {
     this.setState({
       ...ranges
@@ -488,30 +478,25 @@ class PlanerAktywnosciForm extends Component {
         gus_simc,
         planer_akt_rodz
       } = day;
+      console.log(id);
       return (
         <Button
           key={id}
-          // onClick={() =>
-          //   this.setState({ open: true, kiedy: day.kiedy })
-          // }
+          onClick={
+            () => this.fetchujAktywnosc(id)
+            // this.setState({ open: true, kiedy: day.kiedy })
+          }
           classes={{
             root: classes.root,
             label: classes.label,
             text: classes.text // class name, e.g. `classes-nesting-label-x`
           }}
-          // style={{
-          //   position: "absolute",
-          //   right: "28px",
-          //   marginTop: "3px"
-          // }}
-          //variant="outlined"
-          size="small"
-          //disabled={day.values[0].wyslano && "true"}
-          // className={classes.button}
         >
           {`${wezGodzine(start)} - ${wezGodzine(stop)} ${
-            aktywnosc_id !== 5 ? planer_akt_rodz.name : inna
-          } ${gus_simc !== null && gus_simc.nazwa}`}
+            aktywnosc_id !== 5
+              ? planer_akt_rodz.name.slice(0, 20)
+              : inna.slice(0, 20)
+          } ${gus_simc !== null ? gus_simc.nazwa.slice(0, 20) : ""}`}
         </Button>
       );
     });
@@ -525,42 +510,31 @@ class PlanerAktywnosciForm extends Component {
         <form onSubmit={e => this.handleSubmit(e)}>
           <Grid container spacing={24}>
             <Grid item xs={3}>
-              {/* <InputWyborBaza
-                nazwa
-                table="dniDoRaportu"
-                label="Kiedy"
-                edytuj={dataWybrana => this.setState({ dataWybrana })}
-                value={this.state.dataWybrana}
-              /> */}
               <InputSelectBaza
                 array={this.state.datyUnikalne}
                 zwracam="label"
-                wybrano={dataWybrana => this.fetchujDate(dataWybrana)}
+                wybrano={dataWybrana => {
+                  this.fetchujDate(dataWybrana);
+                  this.setState({ kiedy: dataWybrana });
+                }}
               />
-              {this.renderAktywnosci()}
-
-              {/* <InputTime
-                label={
-                  this.state.errorStart ? "Wpisz poprawną godzinę" : "Początek"
-                }
-                error={this.state.errorStart}
-                edytuj={start => this.setState({ start })}
-                value={this.state.start}
-              />
-              <InputTime
-                label={
-                  this.state.errorStop ? "Wpisz poprawną godzinę" : "Koniec"
-                }
-                error={this.state.errorStop}
-                edytuj={stop => this.setState({ stop })}
-                value={this.state.stop}
-              /> */}
-              {/* <InputComponent label="Uwagi" type="text" /> */}
-              {/* <InputComponent label="Uwagi" type="text" /> */}
+              <div className={classes.aktyDoRaportu}>
+                {this.renderAktywnosci()}
+              </div>
             </Grid>
             <Grid item xs={9}>
               <Grid container spacing={24}>
                 <Grid item xs={6}>
+                  <InputTime
+                    label={
+                      this.state.errorStart
+                        ? "Wpisz poprawną godzinę"
+                        : "Początek"
+                    }
+                    error={this.state.errorStart}
+                    edytuj={start => this.setState({ start })}
+                    value={this.state.start}
+                  />
                   <InputWyborBaza
                     table="rodzajAktywnosci"
                     label="Aktywność"
@@ -569,6 +543,14 @@ class PlanerAktywnosciForm extends Component {
                   />
                 </Grid>
                 <Grid item xs={6}>
+                  <InputTime
+                    label={
+                      this.state.errorStop ? "Wpisz poprawną godzinę" : "Koniec"
+                    }
+                    error={this.state.errorStop}
+                    edytuj={stop => this.setState({ stop })}
+                    value={this.state.stop}
+                  />
                   {this.state.aktywnosc_id === 5 && (
                     <InputComponent
                       label="Inna"
@@ -580,12 +562,26 @@ class PlanerAktywnosciForm extends Component {
                 </Grid>
               </Grid>
               {this.state.aktywnosc_id === 1 && (
-                <CitySearch
-                  miejsceLabel={this.state.miejsceLabel}
-                  edytuj={miejsce_id => this.setState({ miejsce_id })}
-                  value={this.state.miejsce_id}
-                  cancelLabel={() => this.setState({ miejsceLabel: "" })}
-                />
+                <div>
+                  <CitySearch
+                    miejsceLabel={this.state.miejsceLabel}
+                    edytuj={miejsce_id => this.setState({ miejsce_id })}
+                    value={this.state.miejsce_id}
+                    cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                    wybranoLabel={wybranoLabel =>
+                      this.setState({ miejsceLabel: wybranoLabel })
+                    }
+                  />
+                  <KlienciSearch
+                    miejsceLabel={this.state.miejsceLabel}
+                    // miejsceLabel="lublin"
+                    edytuj={id => this.setState({ klient_id: id })}
+                    //value={this.state.miejsce_id}
+                    //cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                    label="Klient"
+                    placeholder="Zacznij wpisywać klienta"
+                  />
+                </div>
               )}
 
               {/* <InputTime label="Koniec" /> */}
@@ -606,7 +602,7 @@ class PlanerAktywnosciForm extends Component {
                   color="primary"
                   className={classes.button}
                 >
-                  Dodaj koszt
+                  Dodaj Raport
                   <Send style={{ marginLeft: 10 }} />
                 </Button>
               ) : (

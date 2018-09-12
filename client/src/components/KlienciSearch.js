@@ -37,14 +37,7 @@ function renderInputComponent(inputProps) {
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.nazwa, query);
   const parts = parse(suggestion.nazwa, matches);
-  const {
-    gus_terc_woj,
-    gus_terc_pow,
-    gus_terc,
-    cecha,
-    nazwa_1,
-    nazwa_2
-  } = suggestion;
+  const { nazwa, adr_Kod, adr_Miejscowosc } = suggestion;
   // console.log(suggestion);
 
   return (
@@ -63,20 +56,9 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
             );
           })}
         </span>
-        {nazwa_1 && (
-          <span style={{ float: "center" }}>
-            <span style={{ fontSize: 15 }}> {cecha}</span>
-            <span style={{ fontSize: 15 }}>{nazwa_1}</span>
-            <span style={{ fontSize: 15 }}> {nazwa_2}</span>
-          </span>
-        )}
         <span style={{ float: "right" }}>
-          <span style={{ fontSize: 12 }}>woj.: </span>
-          <span style={{ fontSize: 15 }}>{gus_terc_woj.nazwa} </span>
-          <span style={{ fontSize: 12 }}>pow.: </span>
-          <span style={{ fontSize: 15 }}>{gus_terc_pow.nazwa} </span>
-          <span style={{ fontSize: 12 }}>gmi.: </span>
-          <span style={{ fontSize: 15 }}>{gus_terc.nazwa} </span>
+          <span style={{ fontSize: 15 }}>{adr_Kod} </span>
+          <span style={{ fontSize: 15 }}>{adr_Miejscowosc} </span>
         </span>
       </div>
       {/* <span>{gmina}</span> */}
@@ -99,7 +81,9 @@ const styles = theme => ({
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,
-    right: 0
+    right: 0,
+    maxHeight: 300,
+    overflowY: "auto"
   },
   suggestion: {
     display: "block"
@@ -151,7 +135,7 @@ class CitySearch extends React.Component {
     setTimeout(() => {
       // const suggestions = getMatchingLanguages(value);
 
-      axios.get(`/api/city/${value}`).then(result => {
+      axios.get(`/api/klienci/${value}`).then(result => {
         const suggestions = result.data;
         console.log(suggestions);
 
@@ -172,32 +156,30 @@ class CitySearch extends React.Component {
   }
 
   getSuggestionValue = suggestion => {
-    const miasto = suggestion.nazwa;
+    const klient = suggestion.nazwa;
     const id = suggestion.id;
-    const cecha = suggestion.cecha ? suggestion.cecha : "";
-    const nazwa_1 = suggestion.nazwa_1 ? suggestion.nazwa_1 : "";
-    const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
+    const kod = suggestion.adr_Kod;
+    const miejscowosc = suggestion.adr_Miejscowosc;
     // if (this.state.single !== "") {
     // }
     this.props.edytuj(id);
-    this.props.wybranoLabel(miasto);
-    return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
+    return `${klient} (${kod} ${miejscowosc})`;
   };
 
   handleSuggestionsFetchRequested = ({ value }) => {
     console.log("handleSuggestionsFetchRequested");
     console.log(value);
-    if (this.state.single !== "") {
-      this.loadSuggestions(value);
-      this.props.cancelLabel();
-    }
+    // if (this.state.single !== "") {
+    //   this.loadSuggestions(value);
+    //   this.props.cancelLabel();
+    // }
+    this.loadSuggestions(value);
   };
 
   handleSuggestionsClearRequested = () => {
     this.setState({
       suggestions: []
     });
-    this.props.wybranoLabel("");
   };
 
   handleChange = name => (event, { newValue }) => {
@@ -207,8 +189,7 @@ class CitySearch extends React.Component {
   };
 
   editMiejsceLabel = () => {
-    // if (this.props.miejsceLabel !== "" && this.state.single === "") {
-    if (this.props.miejsceLabel !== "") {
+    if (this.props.miejsceLabel !== "" && this.state.single === "") {
       return this.props.miejsceLabel;
     } else {
       return this.state.single;
@@ -216,20 +197,23 @@ class CitySearch extends React.Component {
   };
 
   render() {
-    const { classes, value, edytuj } = this.props;
+    const { classes, value, edytuj, placeholder } = this.props;
 
-    const status = this.state.isLoading ? "Szukam..." : "Miejscowość";
+    const status = this.state.isLoading ? "Szukam..." : this.props.label;
 
     const inputProps = {
       classes,
       label: status,
-      placeholder: "Zacznij wpisywać miejscowość",
-      value: this.editMiejsceLabel(),
-      //value: this.state.single,
-      //value: this.props.miejsceLabel,
-      onChange: this.handleChange("single")
+      placeholder: placeholder,
+      //value: this.editMiejsceLabel(),
+      value: this.state.single,
+      onChange: this.handleChange("single"),
       // value: value
       // onChange: event => edytuj(event.target.value)
+      onFocus: () => {
+        this.setState({ single: this.props.miejsceLabel });
+        return this.loadSuggestions(this.props.miejsceLabel);
+      }
     };
 
     const autosuggestProps = {
@@ -246,7 +230,7 @@ class CitySearch extends React.Component {
         element={TextField}
         minLength={1}
         debounceTimeout={400}
-        autoFocus
+        //autoFocus
         // classesName={classes.input}
         {...inputProps}
       />
@@ -255,6 +239,7 @@ class CitySearch extends React.Component {
     return (
       <div className={classes.root}>
         <Autosuggest
+          // focusInputOnSuggestionClick={true}
           {...autosuggestProps}
           // inputProps={{
           //   classes,
@@ -277,6 +262,9 @@ class CitySearch extends React.Component {
           )}
           inputProps={inputProps}
           renderInputComponent={renderSearchInput}
+          // shouldRenderSuggestions={() =>
+          //   this.setState({ single: this.props.miejsceLabel })
+          // }
         />
       </div>
     );

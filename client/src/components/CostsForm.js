@@ -29,6 +29,8 @@ import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
+import { dynamicSort } from "../common/functions";
+
 function inputComponent({ inputRef, ...props }) {
   return <div ref={inputRef} {...props} />;
 }
@@ -310,26 +312,13 @@ class CostsForm extends Component {
     return [none, ...doWyboru];
   };
 
-  dynamicSort = property => {
-    let sortOrder = 1;
-    if (property[0] === "-") {
-      sortOrder = -1;
-      property = property.substr(1);
-    }
-    return function(a, b) {
-      const result =
-        a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-      return result * sortOrder;
-    };
-  };
-
   renderSelect = select => {
     const none = { label: "Brak", value: "" };
     const doWyboru = select.map((elem, i) => ({
       label: elem.name,
       value: elem.id
     }));
-    return doWyboru.sort(this.dynamicSort("label"));
+    return doWyboru.sort(dynamicSort("label"));
   };
 
   handleEdit = id => {

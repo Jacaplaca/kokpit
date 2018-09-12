@@ -122,6 +122,14 @@ const costs = [
 // const valid = costs[0].kwota_netto.indexOf(42.33);
 // valid
 
+const string = "Warszawa Wschodnia ul. Króla Swieczka 22/45";
+const skrocStringDo = (string, dlugosc) => {
+  return string.slice(0, 20);
+};
+
+const sk = skrocStringDo(string, 20);
+sk;
+
 const suma = costs.reduce(x => x);
 // console.log(suma);
 
