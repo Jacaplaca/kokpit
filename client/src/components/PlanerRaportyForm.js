@@ -122,9 +122,10 @@ const styles = theme => ({
 class PlanerAktywnosciForm extends Component {
   state = {
     id: "",
-    datyUnikalne: [],
+    //datyUnikalne: [],
     dataWybrana: "",
     aktyDaty: [],
+    datyDoRaportu: [],
 
     kiedy: "",
     start: "",
@@ -140,6 +141,7 @@ class PlanerAktywnosciForm extends Component {
 
     errorStart: false,
     errorStop: false,
+    errorKiedy: false,
 
     activities: [],
     edited: false,
@@ -149,17 +151,17 @@ class PlanerAktywnosciForm extends Component {
   };
 
   componentWillMount() {
-    axios.get(`/api/table/dniDoRaportu`).then(result => {
-      const datyUnikalne = result.data;
-      this.setState({
-        datyUnikalne
-      });
-      // console.log("form zostal zamountowany");
-      // console.log(this.props.editedId);
-      // console.log(this.props.modal);
-      // this.state.id !== this.props.editedId &&
-      //   this.handleEdit(this.props.editedId);
-    });
+    // axios.get(`/api/table/dniDoRaportu`).then(result => {
+    //   const datyUnikalne = result.data;
+    //   this.setState({
+    //     datyUnikalne
+    //   });
+    //   // console.log("form zostal zamountowany");
+    //   // console.log(this.props.editedId);
+    //   // console.log(this.props.modal);
+    //   // this.state.id !== this.props.editedId &&
+    //   //   this.handleEdit(this.props.editedId);
+    // });
   }
 
   validateTime = (time, pole) => {
@@ -184,9 +186,24 @@ class PlanerAktywnosciForm extends Component {
     }
   };
 
-  // errorTime = () => {
-  //
-  // }
+  validateKiedy = data => {
+    const nalezy =
+      this.state.datyDoRaportu.filter(x => x.name === data).length === 1
+        ? true
+        : false;
+    const pelnaData = data.length === 10 ? true : false;
+
+    if (pelnaData) {
+      if (nalezy) {
+        this.setState({ errorKiedy: false });
+        return true;
+      }
+      this.setState({ errorKiedy: true });
+      return false;
+    }
+    this.setState({ errorKiedy: false });
+    return false;
+  };
 
   sprawdzPola = () => {
     const { aktywnosc_id, miejsce_id, inna } = this.state;
@@ -232,6 +249,18 @@ class PlanerAktywnosciForm extends Component {
       this.validateTime(stop, "Stop");
     }
 
+    if (kiedy !== kiedy_prevState) {
+      this.validateKiedy(kiedy);
+    }
+
+    if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 1) {
+      this.setState({ miejsceLabel: "", miejsce_id: "", klient_id: "" });
+    }
+
+    if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 5) {
+      this.setState({ inna: "" });
+    }
+
     // if (aktywnosc_id !== aktywnosc_id_prevState) {
     //   this.setState({ miejsce_id: "", inna: "" });
     // }
@@ -243,7 +272,8 @@ class PlanerAktywnosciForm extends Component {
         aktywnosc_id !== aktywnosc_id_prevState ||
         miejsce_id !== miejsce_id_prevState ||
         inna !== inna_prevState) &&
-      (kiedy !== "" &&
+      // kiedy.length >= 10
+      (this.validateKiedy(kiedy) &&
         this.validateTime(start, "Start") &&
         this.validateTime(stop, "Stop") &&
         aktywnosc_id !== "" &&
@@ -257,7 +287,8 @@ class PlanerAktywnosciForm extends Component {
         aktywnosc_id !== aktywnosc_id_prevState ||
         inna !== inna_prevState ||
         miejsce_id !== miejsce_id_prevState) &&
-      (kiedy === "" ||
+      // kiedy === ""
+      (!this.validateKiedy(kiedy) ||
         !this.validateTime(start, "Start") ||
         !this.validateTime(stop, "Stop") ||
         aktywnosc_id === "" ||
@@ -327,10 +358,14 @@ class PlanerAktywnosciForm extends Component {
     console.log("clearform");
     this.setState({
       id: "",
+      dataWybrana: "",
+      miejsceLabel: "",
+      aktyDaty: [],
       kiedy: "",
       start: "",
       stop: "",
       miejsce_id: "",
+      klient_id: "",
       aktywnosc_id: "",
       uwagi: "",
       inna: "",
@@ -478,7 +513,7 @@ class PlanerAktywnosciForm extends Component {
         gus_simc,
         planer_akt_rodz
       } = day;
-      console.log(id);
+      // console.log(id);
       return (
         <Button
           key={id}
@@ -510,13 +545,29 @@ class PlanerAktywnosciForm extends Component {
         <form onSubmit={e => this.handleSubmit(e)}>
           <Grid container spacing={24}>
             <Grid item xs={3}>
-              <InputSelectBaza
+              {/* <InputSelectBaza
                 array={this.state.datyUnikalne}
                 zwracam="label"
-                wybrano={dataWybrana => {
-                  this.fetchujDate(dataWybrana);
-                  this.setState({ kiedy: dataWybrana });
+                wybrano={kiedy => {
+                  this.fetchujDate(kiedy);
+                  this.setState({ kiedy });
                 }}
+                //edytuj={start => this.setState({ kiedy })}
+                value={this.state.kiedy}
+              /> */}
+              <InputSelectBaza
+                daty={datyDoRaportu => this.setState({ datyDoRaportu })}
+                error={this.state.errorKiedy}
+                miejsceLabel={this.state.miejsceLabel}
+                // miejsceLabel="lublin"
+                edytuj={kiedy => {
+                  this.fetchujDate(kiedy);
+                  this.setState({ kiedy });
+                }}
+                value={this.state.kiedy}
+                //cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                label="Kiedy"
+                placeholder="Dzień"
               />
               <div className={classes.aktyDoRaportu}>
                 {this.renderAktywnosci()}
@@ -564,6 +615,9 @@ class PlanerAktywnosciForm extends Component {
               {this.state.aktywnosc_id === 1 && (
                 <div>
                   <CitySearch
+                    test={miejsce_id =>
+                      this.setState({ miejsce_id_temp: miejsce_id })
+                    }
                     miejsceLabel={this.state.miejsceLabel}
                     edytuj={miejsce_id => this.setState({ miejsce_id })}
                     value={this.state.miejsce_id}
@@ -583,7 +637,6 @@ class PlanerAktywnosciForm extends Component {
                   />
                 </div>
               )}
-
               {/* <InputTime label="Koniec" /> */}
               <InputComponent
                 label="Uwagi"

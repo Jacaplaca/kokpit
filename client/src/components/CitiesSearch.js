@@ -122,6 +122,7 @@ class CitySearch extends React.Component {
     super();
 
     this.state = {
+      calaNazwa: "",
       single: "",
       popper: "",
       suggestions: [],
@@ -135,6 +136,15 @@ class CitySearch extends React.Component {
 
   componentDidMount() {
     console.log("city search did mount");
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const { single: single_prevState } = prevState;
+    const { single } = this.state;
+
+    if (single !== single_prevState && single.length < 3) {
+      this.props.edytuj("");
+    }
   }
 
   randomDelay = () => {
@@ -172,6 +182,7 @@ class CitySearch extends React.Component {
   }
 
   getSuggestionValue = suggestion => {
+    console.log("get suggestion value");
     const miasto = suggestion.nazwa;
     const id = suggestion.id;
     const cecha = suggestion.cecha ? suggestion.cecha : "";
@@ -179,8 +190,11 @@ class CitySearch extends React.Component {
     const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
     // if (this.state.single !== "") {
     // }
+    this.props.test(id);
     this.props.edytuj(id);
     this.props.wybranoLabel(miasto);
+    this.setState({ calaNazwa: miasto });
+    console.log(id);
     return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
   };
 
@@ -194,20 +208,36 @@ class CitySearch extends React.Component {
   };
 
   handleSuggestionsClearRequested = () => {
+    console.log("handleSuggestionsClearRequested");
     this.setState({
       suggestions: []
     });
     this.props.wybranoLabel("");
+    //this.props.edytuj("");
   };
 
   handleChange = name => (event, { newValue }) => {
+    console.log("handleChange");
     this.setState({
       [name]: newValue
     });
+    // if (newValue.lenght < 3) {
+    //   console.log("kasuj");
+    //   this.props.edytuj("");
+    // }
   };
 
   editMiejsceLabel = () => {
+    console.log("editMiejsceLabel");
     // if (this.props.miejsceLabel !== "" && this.state.single === "") {
+    // if (this.state.single.length < 3) {
+    //   this.props.edytuj("");
+    //   console.log("kasuj");
+    // } else {
+    //   console.log("nie kasuj");
+    // }
+
+    console.log(this.state.single.length);
     if (this.props.miejsceLabel !== "") {
       return this.props.miejsceLabel;
     } else {
@@ -228,6 +258,7 @@ class CitySearch extends React.Component {
       //value: this.state.single,
       //value: this.props.miejsceLabel,
       onChange: this.handleChange("single")
+      // onBlur: () => console.log("on blur")
       // value: value
       // onChange: event => edytuj(event.target.value)
     };
@@ -246,7 +277,7 @@ class CitySearch extends React.Component {
         element={TextField}
         minLength={1}
         debounceTimeout={400}
-        autoFocus
+        //autoFocus
         // classesName={classes.input}
         {...inputProps}
       />

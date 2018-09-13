@@ -101,7 +101,7 @@ const styles = theme => ({
   // }
 });
 
-class CitySearch extends React.Component {
+class KlienciSearch extends React.Component {
   constructor() {
     super();
 
@@ -186,6 +186,9 @@ class CitySearch extends React.Component {
     this.setState({
       [name]: newValue
     });
+    if (newValue === "") {
+      this.props.edytuj("");
+    }
   };
 
   editMiejsceLabel = () => {
@@ -271,8 +274,8 @@ class CitySearch extends React.Component {
   }
 }
 
-CitySearch.propTypes = {
+KlienciSearch.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(CitySearch);
+export default withStyles(styles)(KlienciSearch);
