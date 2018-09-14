@@ -11,22 +11,17 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
-import Typography from "@material-ui/core/Typography";
-// import NoSsr from '@material-ui/core/NoSsr';
+import classNames from "classnames";
 import Paper from "@material-ui/core/Paper";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-// import Select from '@material-ui/core/Select';
 import Select from "react-select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
+
+import Chip from "@material-ui/core/Chip";
+import DoneIcon from "@material-ui/icons/Done";
 
 import CitySearch from "./CitiesSearch";
 import InputWyborBaza from "./InputWyborBaza";
@@ -105,18 +100,26 @@ const styles = theme => ({
     // lineHeight: 1
   },
   hover: {},
-
   label: {
     // textTransform: "capitalize"
     //padding: 0,
     borderColor: "gray",
     textAlign: "left"
-  }
-  // text: {
-  //   //padding: "0 1px",
-  //   //borderColor: "red",
-  //   height: 4
-  // }
+  },
+  chipsContainer: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap"
+  },
+  buttonChip: { borderRadius: 30, height: 23, margin: theme.spacing.unit },
+  buttonChipYes: {
+    background: `${fade(theme.palette.primary.main, 1)}`,
+    color: "white",
+    "&:hover": {
+      background: `${fade(theme.palette.primary.main, 0.85)}`
+    }
+  },
+  buttonChipNo: { background: "lightgray" }
 });
 
 class PlanerAktywnosciForm extends Component {
@@ -137,6 +140,12 @@ class PlanerAktywnosciForm extends Component {
     uwagi: "",
     wyslano: "",
 
+    nawozy: false,
+    nowyKlient: false,
+    sprzedaz: false,
+    zmowienie: false,
+    zboza: false,
+
     miejsceLabel: "",
 
     errorStart: false,
@@ -147,7 +156,8 @@ class PlanerAktywnosciForm extends Component {
     edited: false,
     submitIsDisable: true,
 
-    miejsce_id_temp: ""
+    miejsce_id_temp: "",
+    miejsceLabel_temp: ""
   };
 
   componentWillMount() {
@@ -451,7 +461,7 @@ class PlanerAktywnosciForm extends Component {
   };
 
   handleSubmit = e => {
-    const { user_id, clientId } = this.props.auth;
+    //const { user_id, clientId } = this.props.auth;
     e.preventDefault();
     const {
       kiedy,
@@ -459,10 +469,16 @@ class PlanerAktywnosciForm extends Component {
       stop,
       aktywnosc_id,
       miejsce_id,
+      klient_id,
       inna,
-      uwagi
+      uwagi,
+      nawozy,
+      nowyKlient,
+      sprzedaz,
+      zmowienie,
+      zboza
     } = this.state;
-    const url = "/api/aktywnosci";
+    const url = "/api/planerRaporty";
 
     fetch(url, {
       method: "POST",
@@ -473,9 +489,15 @@ class PlanerAktywnosciForm extends Component {
         start,
         stop,
         aktywnosc_id,
+        klient_id,
         miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
         inna: aktywnosc_id === 5 ? inna : "",
-        uwagi
+        uwagi,
+        nawozy,
+        nowyKlient,
+        sprzedaz,
+        zmowienie,
+        zboza
       })
     })
       .then(resp => resp.json())
@@ -537,8 +559,21 @@ class PlanerAktywnosciForm extends Component {
     });
   };
 
+  chipClick = akcja => {
+    console.log("on chipClick()");
+    this.setState({ [akcja]: !this.state[akcja] });
+  };
+
   render() {
     const { classes } = this.props;
+    const { nawozy, nowyKlient, sprzedaz, zamowienie, zboza } = this.state;
+    const pola = [
+      { pole: "nawozy", nazwa: "Nawozy" },
+      { pole: "nowyKlient", nazwa: "Nowy klient" },
+      { pole: "sprzedaz", nazwa: "Sprzedaż" },
+      { pole: "zamowienie", nazwa: "Zamówienie" },
+      { pole: "zboza", nazwa: "Zboża" }
+    ];
 
     return (
       <Paper style={{ padding: 20 }}>
@@ -644,6 +679,29 @@ class PlanerAktywnosciForm extends Component {
                 edytuj={uwagi => this.setState({ uwagi })}
                 value={this.state.uwagi}
               />
+              <div className={classes.chipsContainer}>
+                {pola.map((pole, i) => {
+                  const co = pole.pole;
+                  const nazwa = pole.nazwa;
+                  return (
+                    <Button
+                      key={i}
+                      onClick={() => this.chipClick(co)}
+                      variant="contained"
+                      size="small"
+                      className={classNames(
+                        classes.buttonChip,
+                        this.state[co]
+                          ? classes.buttonChipYes
+                          : classes.buttonChipNo
+                      )}
+                    >
+                      {nazwa}
+                      {this.state[co] ? <DoneIcon /> : <Cancel />}
+                    </Button>
+                  );
+                })}
+              </div>
             </Grid>
 
             <div style={{ width: "100%", display: "block" }}>
@@ -664,7 +722,7 @@ class PlanerAktywnosciForm extends Component {
                   disabled={this.state.submitIsDisable}
                   onClick={() => this.onEdit()}
                   variant="contained"
-                  color="primary"
+                  color="default"
                   className={classes.button}
                 >
                   Edytuj koszt

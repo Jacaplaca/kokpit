@@ -8,6 +8,7 @@ const Category = db.categories;
 const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
 const Aktywnosci = db.planer_aktywnosci;
+const Raporty = db.planer_raporty;
 const City = db.gus_simc;
 const Street = db.gus_ulic;
 const Terc = db.gus_terc;
@@ -167,28 +168,31 @@ module.exports = app => {
     if (!req.user) {
       return res.redirect("/");
     }
-
-    Klienci.findAll({
-      // where: {
-      //   adr_Miejscowosc: { [Op.like]: `${query}%` },
-      //   clientId
-      // },
-      where: {
-        [Op.or]: [
-          { adr_Miejscowosc: { [Op.like]: `${query}%` } },
-          { nazwa: { [Op.like]: `${query}%` } }
-        ],
-        clientId
-      }
-      //limit: 30
-    })
-      .then(result => {
-        res.json(result);
+    if (query.length < 3) {
+      res.json([]);
+    } else {
+      Klienci.findAll({
+        // where: {
+        //   adr_Miejscowosc: { [Op.like]: `${query}%` },
+        //   clientId
+        // },
+        where: {
+          [Op.or]: [
+            { adr_Miejscowosc: { [Op.like]: `${query}%` } },
+            { nazwa: { [Op.like]: `${query}%` } }
+          ],
+          clientId
+        },
+        limit: 100
       })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.log(err);
+          res.sendStatus(500);
+        });
+    }
   });
 
   app.get("/api/message", (req, res) => {
@@ -464,6 +468,57 @@ module.exports = app => {
       uwagi,
       klient_id: clientId,
       user_id
+    })
+      .then(results => {
+        return res.json(results);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/api/planerRaporty/", (req, res, next) => {
+    console.log("/api/planerRaporty/");
+    console.log(req.body);
+    const { clientId, user_id } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const {
+      kiedy,
+      start,
+      stop,
+      aktywnosc_id,
+      miejsce_id,
+      klient_id,
+      inna,
+      uwagi,
+      nawozy,
+      nowyKlient,
+      sprzedaz,
+      zmowienie,
+      zboza
+    } = req.body;
+    console.log(miejsce_id);
+    const cleanStart = start.replace(" ", "").replace(" ", "");
+    const cleanStop = stop.replace(" ", "").replace(" ", "");
+    Raporty.create({
+      kiedy,
+      start: `${kiedy} ${cleanStart.split(":")[0]}:${cleanStart.split(":")[1]}`,
+      stop: `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`,
+      aktywnosc_id,
+      miejsce_id: miejsce_id === "" ? null : miejsce_id,
+      inna,
+      uwagi,
+      firma_id: clientId,
+      planer_klienci_id: klient_id === "" ? null : klient_id,
+      user_id,
+      nawozy,
+      nowyKlient,
+      sprzedaz,
+      zmowienie,
+      zboza
     })
       .then(results => {
         return res.json(results);

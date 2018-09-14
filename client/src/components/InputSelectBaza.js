@@ -1,39 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
-import { DebounceInput } from "react-debounce-input";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
-import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import Popper from "@material-ui/core/Popper";
 import axios from "axios";
-import debounce from "lodash.debounce";
 import { withStyles } from "@material-ui/core/styles";
+
+import InputSelectTextField from "./InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
-function renderInputComponent(inputProps) {
-  const { error, classes, inputRef = () => {}, ref, ...other } = inputProps;
-
-  return (
-    <TextField
-      error={error ? true : false}
-      fullWidth
-      InputProps={{
-        inputRef: node => {
-          ref(node);
-          inputRef(node);
-        },
-        classes: {
-          input: classes.input
-        }
-      }}
-      {...other}
-    />
-  );
-}
 //
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.name, query);
@@ -127,7 +105,10 @@ class InputSelectBaza extends React.Component {
     popper: "",
     suggestions: [],
     isLoading: false,
-    pokazujSugestie: true
+    pokazujSugestie: true,
+    clear: false,
+    fetchowane: []
+    //focus: false
   };
 
   componentWillMount() {
@@ -142,88 +123,36 @@ class InputSelectBaza extends React.Component {
     });
   }
 
-  //
-  // popperNode = null;
-  //
-  // componentDidMount() {
-  //   console.log("city search did mount");
-  // }
-  //
-  // randomDelay = () => {
-  //   return 300 + Math.random() * 1000;
-  // };
-  //
-  // loadSuggestions(value) {
-  //   console.log("loadSuggestions");
-  //
-  //   this.setState({
-  //     isLoading: true
-  //   });
-  //
-  //   // axios.get(`/api/dniDoRaportu/${value}`).then(result => {
-  //   axios.get(`/api/table/dniDoRaportu`).then(result => {
-  //     const suggestions = result.data;
-  //     console.log(suggestions);
-  //
-  //     if (value === this.state.value) {
-  //       this.setState({
-  //         isLoading: false,
-  //         suggestions
-  //       });
-  //     } else {
-  //       // Ignore suggestions if input value changed
-  //       this.setState({
-  //         isLoading: false,
-  //         suggestions
-  //       });
-  //     }
-  //   });
-  // }
-  //
-  // getSuggestionValue = suggestion => {
-  //   const { id, name } = suggestion;
-  //   // if (this.state.single !== "") {
-  //   // }
-  //   this.props.edytuj(id);
-  //   return `${name}`;
-  // };
-  //
-  // handleSuggestionsFetchRequested = ({ value }) => {
-  //   console.log("handleSuggestionsFetchRequested");
-  //   console.log(value);
-  //   // if (this.state.single !== "") {
-  //   //   this.loadSuggestions(value);
-  //   //   this.props.cancelLabel();
-  //   // }
-  //   this.loadSuggestions(value);
-  // };
-  //
-  // handleSuggestionsClearRequested = () => {
-  //   console.log("handleSuggestionsClearRequested");
-  //   this.setState({
-  //     suggestions: []
-  //   });
-  // };
-  //
-  // handleChange = name => (event, { newValue }) => {
-  //   this.setState({
-  //     [name]: newValue
-  //   });
-  // };
-  //
-  // editMiejsceLabel = () => {
-  //   if (this.props.miejsceLabel !== "" && this.state.single === "") {
-  //     return this.props.miejsceLabel;
-  //   } else {
-  //     return this.state.single;
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   const { value: value_prevState } = prevState;
+  //   const { value } = this.state;
+  //   if (value !== value_prevState) {
+  //     value !== ""
+  //       ? this.setState({ clear: true })
+  //       : this.setState({ clear: false });
   //   }
-  // };
+  // }
 
   onChange = (event, { newValue, method }) => {
     this.setState({
       value: newValue
     });
+    newValue !== ""
+      ? this.setState({ clear: true })
+      : this.setState({ clear: false });
     this.props.edytuj(newValue);
+  };
+
+  clearValue = () => {
+    this.setState({
+      value: "",
+      clear: false
+    });
+    this.props.edytuj("");
+    this.input.focus();
+    this.setState({
+      suggestions: this.state.fetchowane
+    });
   };
 
   onSuggestionsFetchRequested = ({ value }) => {
@@ -238,6 +167,12 @@ class InputSelectBaza extends React.Component {
     });
   };
 
+  storeInputReference = autosuggest => {
+    if (autosuggest !== null) {
+      this.input = autosuggest.input;
+    }
+  };
+
   render() {
     const {
       classes,
@@ -246,18 +181,25 @@ class InputSelectBaza extends React.Component {
       value: valueProps,
       error
     } = this.props;
-    const { value, suggestions } = this.state;
+    const { value, suggestions, clear, focus } = this.state;
+
     const inputProps = {
+      //autoFocus: focus,
       label: error ? "Wybierz poprawną datę" : label,
       placeholder,
       classes,
       value: valueProps,
       onChange: this.onChange,
-      error
+      error,
+      clear,
+      clearValue: this.clearValue
     };
 
     return (
       <Autosuggest
+        //autoFocus={true}
+        //focusInputOnSuggestionClick
+        //alwaysRenderSuggestions={true}
         theme={{
           // renderInputComponent: classes.root,
           container: classes.container,
@@ -270,7 +212,8 @@ class InputSelectBaza extends React.Component {
             {options.children}
           </Paper>
         )}
-        renderInputComponent={renderInputComponent}
+        // renderInputComponent={renderInputComponent}
+        renderInputComponent={InputSelectTextField}
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -278,83 +221,10 @@ class InputSelectBaza extends React.Component {
         shouldRenderSuggestions={shouldRenderSuggestions}
         renderSuggestion={renderSuggestion}
         inputProps={inputProps}
+        ref={this.storeInputReference}
       />
     );
   }
-
-  // render() {
-  //   const { classes, value, edytuj, placeholder } = this.props;
-  //
-  //   const status = this.state.isLoading ? "Szukam..." : this.props.label;
-  //
-  //   const inputProps = {
-  //     classes,
-  //     label: status,
-  //     placeholder: placeholder,
-  //     //value: this.editMiejsceLabel(),
-  //     value: this.state.single,
-  //     onChange: this.handleChange("single"),
-  //     onBlur: () => {
-  //       console.log("onblur");
-  //       this.setState({ pokazujSugestie: false });
-  //     }
-  //     // value: value
-  //     // onChange: event => edytuj(event.target.value)
-  //     // onFocus: () => {
-  //     //   console.log("focusuje na kiedy");
-  //     //   console.log(this.props.value);
-  //     //   // this.setState({ single: this.props.miejsceLabel });
-  //     //   // return this.loadSuggestions(this.props.miejsceLabel);
-  //     //   // this.loadSuggestions(this.props.value);
-  //     //   // return renderSuggestion(this.state.suggestions, {});
-  //     //   return this.setState({ pokazujSugestie: false });
-  //     // }
-  //   };
-  //
-  //   const autosuggestProps = {
-  //     renderInputComponent,
-  //     suggestions: this.state.suggestions,
-  //     onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
-  //     onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
-  //     getSuggestionValue: this.getSuggestionValue,
-  //     renderSuggestion
-  //   };
-  //
-  //   return (
-  //     <div className={classes.root}>
-  //       <Autosuggest
-  //         // focusInputOnSuggestionClick={true}
-  //         {...autosuggestProps}
-  //         // inputProps={{
-  //         //   classes,
-  //         //   label: "Miejscowość",
-  //         //   placeholder: "Zacznij wpisywać miejscowość",
-  //         //   value: this.state.single,
-  //         //   onChange: this.handleChange("single")
-  //         // }}
-  //         //alwaysRenderSuggestions={this.state.pokazujSugestie}
-  //         // focusInputOnSuggestionClick
-  //         theme={{
-  //           // renderInputComponent: classes.root,
-  //           container: classes.container,
-  //           suggestionsContainerOpen: classes.suggestionsContainerOpen,
-  //           suggestionsList: classes.suggestionsList,
-  //           suggestion: classes.suggestion
-  //         }}
-  //         renderSuggestionsContainer={options => (
-  //           <Paper {...options.containerProps} square>
-  //             {options.children}
-  //           </Paper>
-  //         )}
-  //         inputProps={inputProps}
-  //         //renderInputComponent={renderSearchInput}
-  //         // shouldRenderSuggestions={() =>
-  //         //   this.setState({ single: this.props.miejsceLabel })
-  //         // }
-  //       />
-  //     </div>
-  //   );
-  // }
 }
 
 InputSelectBaza.propTypes = {

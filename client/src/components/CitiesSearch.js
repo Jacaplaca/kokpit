@@ -11,28 +11,13 @@ import Popper from "@material-ui/core/Popper";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import { withStyles } from "@material-ui/core/styles";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import IconButton from "@material-ui/core/IconButton";
+import IconCancel from "@material-ui/icons/Clear";
+
+import InputSelectTextField from "./InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
-
-function renderInputComponent(inputProps) {
-  const { classes, inputRef = () => {}, ref, ...other } = inputProps;
-
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputRef: node => {
-          ref(node);
-          inputRef(node);
-        },
-        classes: {
-          input: classes.input
-        }
-      }}
-      {...other}
-    />
-  );
-}
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.nazwa, query);
@@ -126,7 +111,8 @@ class CitySearch extends React.Component {
       single: "",
       popper: "",
       suggestions: [],
-      isLoading: false
+      isLoading: false,
+      clear: false
     };
 
     this.debouncedLoadSuggestions = debounce(this.loadSuggestions, 400); // 1000ms is chosen for demo purposes only.
@@ -136,6 +122,8 @@ class CitySearch extends React.Component {
 
   componentDidMount() {
     console.log("city search did mount");
+    const { miejsceLabel } = this.props;
+    miejsceLabel !== "" && this.setState({ clear: true });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -144,6 +132,7 @@ class CitySearch extends React.Component {
 
     if (single !== single_prevState && single.length < 3) {
       this.props.edytuj("");
+      this.props.wybranoLabel("");
     }
   }
 
@@ -158,26 +147,20 @@ class CitySearch extends React.Component {
       isLoading: true
     });
 
-    setTimeout(() => {
-      // const suggestions = getMatchingLanguages(value);
+    axios.get(`/api/city/${value}`).then(result => {
+      const suggestions = result.data;
 
-      axios.get(`/api/city/${value}`).then(result => {
-        const suggestions = result.data;
-        console.log(suggestions);
-
-        if (value === this.state.value) {
-          this.setState({
-            isLoading: false,
-            suggestions
-          });
-        } else {
-          // Ignore suggestions if input value changed
-          this.setState({
-            isLoading: false,
-            suggestions
-          });
-        }
-      }, 400);
+      if (value === this.state.value) {
+        this.setState({
+          isLoading: false,
+          suggestions
+        });
+      } else {
+        this.setState({
+          isLoading: false,
+          suggestions
+        });
+      }
     });
   }
 
@@ -193,7 +176,7 @@ class CitySearch extends React.Component {
     this.props.test(id);
     this.props.edytuj(id);
     this.props.wybranoLabel(miasto);
-    this.setState({ calaNazwa: miasto });
+    this.setState({ calaNazwa: miasto, clear: true });
     console.log(id);
     return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
   };
@@ -203,7 +186,8 @@ class CitySearch extends React.Component {
     console.log(value);
     if (this.state.single !== "") {
       this.loadSuggestions(value);
-      this.props.cancelLabel();
+      this.props.wybranoLabel("");
+      //this.props.cancelLabel();
     }
   };
 
@@ -212,7 +196,7 @@ class CitySearch extends React.Component {
     this.setState({
       suggestions: []
     });
-    this.props.wybranoLabel("");
+    //this.props.wybranoLabel("");
     //this.props.edytuj("");
   };
 
@@ -221,10 +205,20 @@ class CitySearch extends React.Component {
     this.setState({
       [name]: newValue
     });
+    newValue !== ""
+      ? this.setState({ clear: true })
+      : this.setState({ clear: false });
     // if (newValue.lenght < 3) {
     //   console.log("kasuj");
     //   this.props.edytuj("");
     // }
+  };
+
+  clearValue = () => {
+    this.setState({ single: "", clear: false });
+    this.props.edytuj("");
+    this.props.wybranoLabel("");
+    this.input.focus();
   };
 
   editMiejsceLabel = () => {
@@ -245,12 +239,21 @@ class CitySearch extends React.Component {
     }
   };
 
+  storeInputReference = autosuggest => {
+    if (autosuggest !== null) {
+      this.input = autosuggest.input;
+    }
+  };
+
   render() {
     const { classes, value, edytuj } = this.props;
+    const { clear } = this.state;
 
     const status = this.state.isLoading ? "Szukam..." : "Miejscowość";
 
     const inputProps = {
+      clearValue: this.clearValue,
+      clear,
       classes,
       label: status,
       placeholder: "Zacznij wpisywać miejscowość",
@@ -264,24 +267,13 @@ class CitySearch extends React.Component {
     };
 
     const autosuggestProps = {
-      renderInputComponent,
+      renderInputComponent: InputSelectTextField,
       suggestions: this.state.suggestions,
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
       getSuggestionValue: this.getSuggestionValue,
       renderSuggestion
     };
-
-    const renderSearchInput = inputProps => (
-      <DebounceInput
-        element={TextField}
-        minLength={1}
-        debounceTimeout={400}
-        //autoFocus
-        // classesName={classes.input}
-        {...inputProps}
-      />
-    );
 
     return (
       <div className={classes.root}>
@@ -307,7 +299,8 @@ class CitySearch extends React.Component {
             </Paper>
           )}
           inputProps={inputProps}
-          renderInputComponent={renderSearchInput}
+          ref={this.storeInputReference}
+          //renderInputComponent={renderSearchInput}
         />
       </div>
     );

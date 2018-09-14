@@ -12,27 +12,9 @@ import axios from "axios";
 import debounce from "lodash.debounce";
 import { withStyles } from "@material-ui/core/styles";
 
+import InputSelectTextField from "./InputSelectTextField";
+
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
-
-function renderInputComponent(inputProps) {
-  const { classes, inputRef = () => {}, ref, ...other } = inputProps;
-
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputRef: node => {
-          ref(node);
-          inputRef(node);
-        },
-        classes: {
-          input: classes.input
-        }
-      }}
-      {...other}
-    />
-  );
-}
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.nazwa, query);
@@ -109,7 +91,8 @@ class KlienciSearch extends React.Component {
       single: "",
       popper: "",
       suggestions: [],
-      isLoading: false
+      isLoading: false,
+      clear: false
     };
 
     this.debouncedLoadSuggestions = debounce(this.loadSuggestions, 400); // 1000ms is chosen for demo purposes only.
@@ -119,6 +102,19 @@ class KlienciSearch extends React.Component {
 
   componentDidMount() {
     console.log("city search did mount");
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const { single: single_prevState } = prevState;
+    const { single } = this.state;
+
+    if (single !== single_prevState && single.length > 0) {
+      this.setState({ clear: true });
+      //this.props.edytuj("");
+      //this.props.wybranoLabel("");
+    } else if (single !== single_prevState && single.length === 0) {
+      this.setState({ clear: false });
+    }
   }
 
   randomDelay = () => {
@@ -191,36 +187,53 @@ class KlienciSearch extends React.Component {
     }
   };
 
-  editMiejsceLabel = () => {
-    if (this.props.miejsceLabel !== "" && this.state.single === "") {
-      return this.props.miejsceLabel;
-    } else {
-      return this.state.single;
+  clearValue = () => {
+    this.setState({ single: "", clear: false });
+    this.props.edytuj("");
+    this.input.focus();
+  };
+
+  // editMiejsceLabel = () => {
+  //   if (this.props.miejsceLabel !== "" && this.state.single === "") {
+  //     return this.props.miejsceLabel;
+  //   } else {
+  //     return this.state.single;
+  //   }
+  // };
+
+  storeInputReference = autosuggest => {
+    if (autosuggest !== null) {
+      this.input = autosuggest.input;
     }
   };
 
   render() {
-    const { classes, value, edytuj, placeholder } = this.props;
+    const { classes, value, edytuj, placeholder, miejsceLabel } = this.props;
+    const { clear, single } = this.state;
 
     const status = this.state.isLoading ? "Szukam..." : this.props.label;
 
     const inputProps = {
+      clearValue: this.clearValue,
+      clear,
       classes,
       label: status,
       placeholder: placeholder,
       //value: this.editMiejsceLabel(),
-      value: this.state.single,
+      value: single,
       onChange: this.handleChange("single"),
       // value: value
       // onChange: event => edytuj(event.target.value)
       onFocus: () => {
-        this.setState({ single: this.props.miejsceLabel });
-        return this.loadSuggestions(this.props.miejsceLabel);
+        if (single === "") {
+          this.setState({ single: miejsceLabel });
+        }
+        return this.loadSuggestions(miejsceLabel);
       }
     };
 
     const autosuggestProps = {
-      renderInputComponent,
+      renderInputComponent: InputSelectTextField,
       suggestions: this.state.suggestions,
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
@@ -228,21 +241,10 @@ class KlienciSearch extends React.Component {
       renderSuggestion
     };
 
-    const renderSearchInput = inputProps => (
-      <DebounceInput
-        element={TextField}
-        minLength={1}
-        debounceTimeout={400}
-        //autoFocus
-        // classesName={classes.input}
-        {...inputProps}
-      />
-    );
-
     return (
       <div className={classes.root}>
         <Autosuggest
-          // focusInputOnSuggestionClick={true}
+          // focusInputOnSuggestionClick
           {...autosuggestProps}
           // inputProps={{
           //   classes,
@@ -264,7 +266,7 @@ class KlienciSearch extends React.Component {
             </Paper>
           )}
           inputProps={inputProps}
-          renderInputComponent={renderSearchInput}
+          ref={this.storeInputReference}
           // shouldRenderSuggestions={() =>
           //   this.setState({ single: this.props.miejsceLabel })
           // }
