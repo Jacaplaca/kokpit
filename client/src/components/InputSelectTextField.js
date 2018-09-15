@@ -37,7 +37,9 @@ const InputSelectTextField = inputProps => {
               <IconButton onClick={() => clearValue()}>
                 <IconCancel />
               </IconButton>
-            ) : null}
+            ) : (
+              <div />
+            )}
           </InputAdornment>
         ),
         inputRef: node => {

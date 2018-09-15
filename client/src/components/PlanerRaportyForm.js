@@ -311,6 +311,7 @@ class PlanerAktywnosciForm extends Component {
   }
 
   fetchujDate = data => {
+    console.log(`/api/kiedy/akt/${data}`);
     axios.get(`/api/kiedy/akt/${data}`).then(result => {
       this.setState({ aktyDaty: result.data });
     });
@@ -597,6 +598,7 @@ class PlanerAktywnosciForm extends Component {
                 miejsceLabel={this.state.miejsceLabel}
                 // miejsceLabel="lublin"
                 edytuj={kiedy => {
+                  console.log("input select baza");
                   this.fetchujDate(kiedy);
                   this.setState({ kiedy });
                 }}

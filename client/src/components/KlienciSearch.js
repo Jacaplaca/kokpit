@@ -127,27 +127,22 @@ class KlienciSearch extends React.Component {
     this.setState({
       isLoading: true
     });
+    axios.get(`/api/klienci/${value}`).then(result => {
+      const suggestions = result.data;
+      console.log(suggestions);
 
-    setTimeout(() => {
-      // const suggestions = getMatchingLanguages(value);
-
-      axios.get(`/api/klienci/${value}`).then(result => {
-        const suggestions = result.data;
-        console.log(suggestions);
-
-        if (value === this.state.value) {
-          this.setState({
-            isLoading: false,
-            suggestions
-          });
-        } else {
-          // Ignore suggestions if input value changed
-          this.setState({
-            isLoading: false,
-            suggestions
-          });
-        }
-      }, 400);
+      if (value === this.state.value) {
+        this.setState({
+          isLoading: false,
+          suggestions
+        });
+      } else {
+        // Ignore suggestions if input value changed
+        this.setState({
+          isLoading: false,
+          suggestions
+        });
+      }
     });
   }
 

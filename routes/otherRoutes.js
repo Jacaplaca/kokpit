@@ -195,6 +195,10 @@ module.exports = app => {
     }
   });
 
+  app.get("/api/klienci", (req, res) => {
+    res.json([]);
+  });
+
   app.get("/api/message", (req, res) => {
     const message = req.flash("info");
     res.send(message);
@@ -403,6 +407,10 @@ module.exports = app => {
         console.log(err);
         res.sendStatus(500);
       });
+  });
+
+  app.get(`/api/kiedy/akt/`, (req, res, next) => {
+    res.json([]);
   });
 
   app.post("/api/cost/", (req, res, next) => {
