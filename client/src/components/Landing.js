@@ -13,13 +13,13 @@ class Landing extends Component {
     switch (this.props.clicked) {
       case "costs":
         return <Costs />;
-        break;
+      //break;
       case "planer":
         return <Planer />;
-        break;
+      //  break;
       case "planerRaporty":
         return <PlanerRaporty />;
-        break;
+      //break;
       default:
         return (
           <div style={{ textAlign: "center" }}>

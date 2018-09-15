@@ -34,7 +34,11 @@ import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 
-import { dataToString, podzielUnikalnymi } from "../common/functions";
+import {
+  dataToString,
+  podzielUnikalnymi,
+  dynamicSort
+} from "../common/functions";
 
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 
@@ -253,7 +257,8 @@ class Planer extends Component {
     },
     edited: false,
     submitIsDisable: true,
-    openModal: false
+    openModal: false,
+    expanded: ""
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -365,9 +370,17 @@ class Planer extends Component {
         )}`
       )
       .then(result => {
+        const podzielone = podzielUnikalnymi(
+          result.data,
+          "kiedy"
+          //this.state.expanded
+        );
+        this.setState({
+          aktywnosci: []
+        });
         this.setState({
           // aktywnosci: _.keyBy(result.data, "kiedy")
-          aktywnosci: podzielUnikalnymi(result.data, "kiedy")
+          aktywnosci: podzielone.sort(this.dynamicSort("kiedy")).reverse()
         });
       });
   };
@@ -591,6 +604,7 @@ class Planer extends Component {
       <div className={classes.container}>
         <PlanerAktywnosciForm
           editedId={this.state.editedId}
+          expanded={expanded => this.setState({ expanded })}
           fetchuj={() => this.fetchAktywnosci()}
         />
         <Paper
@@ -641,6 +655,8 @@ class Planer extends Component {
             }}
             delete={id => console.log(id)}
             fetchuj={() => this.fetchAktywnosci()}
+            expanded={this.state.expanded}
+            wyslanoDoPlanu={expanded => this.setState({ expanded })}
             // edit={id => console.log(id)}
           />
           {/* <Paper>

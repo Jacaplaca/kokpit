@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css";
-import _ from "lodash";
 import filterFactory, {
   textFilter,
   multiSelectFilter,
@@ -10,23 +9,13 @@ import filterFactory, {
   Comparator
 } from "react-bootstrap-table2-filter";
 import "bootstrap/dist/css/bootstrap.css";
-import {
-  withStyles,
-  MuiThemeProvider,
-  createMuiTheme
-} from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 import currency from "currency.js";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 
 import Confirmation from "./Confirmation";
 
@@ -303,6 +292,7 @@ const RemoteFilter = props => {
 };
 
 class CostsTable extends Component {
+  _isMounted = false;
   state = {
     data: [],
     suma: 0,
@@ -310,20 +300,28 @@ class CostsTable extends Component {
     delete: ""
   };
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
   componentWillReceiveProps() {
     // console.log('component props');
     // console.log(this.props);
-    this.setState({
-      data: this.props.costs,
-      suma: this.sumuj(this.props.costs)
-    });
+    this.receiveProps();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // console.log('componentDidUpdate');
-    // console.log(prevState);
-    // console.log(this.state);
-    // CostsTable.forceUpdate();
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  receiveProps() {
+    if (this._isMounted) {
+      console.log("cost table2remote is mounted");
+      this.setState({
+        data: this.props.costs,
+        suma: this.sumuj(this.props.costs)
+      });
+    }
   }
 
   handleTableChange = (type, { filters }) => {
@@ -386,7 +384,6 @@ class CostsTable extends Component {
         }
         return valid;
       });
-      console.log(result);
       this.setState(() => ({
         data: result,
         suma: this.sumuj(result)

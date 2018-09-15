@@ -2,26 +2,13 @@ import React, { Component } from "react";
 // import { DateRange } from 'react-date-range';
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
-import _ from "lodash";
-import currency from "currency.js";
 import { connect } from "react-redux";
-import { startOfMonth, endOfMonth } from "date-fns";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 // import NoSsr from '@material-ui/core/NoSsr';
 import Paper from "@material-ui/core/Paper";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-// import Select from '@material-ui/core/Select';
-import Select from "react-select";
-import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
@@ -33,7 +20,7 @@ import InputTime from "./InputTime";
 import InputData from "./InputData";
 import InputComponent from "./InputComponent";
 
-import { wezGodzine } from "../common/functions";
+import { wezGodzine, dataToString } from "../common/functions";
 
 const styles = theme => ({
   input: {
@@ -105,11 +92,11 @@ class PlanerAktywnosciForm extends Component {
   state = {
     id: "",
 
-    kiedy: "2018-09-01",
-    start: "01:01",
-    stop: "20:20",
+    kiedy: "2018-09-20",
+    start: "09:00",
+    stop: "10:00",
     miejsce_id: "",
-    aktywnosc_id: "2",
+    aktywnosc_id: 2,
     inna: "",
     uwagi: "",
     wyslano: "",
@@ -118,7 +105,10 @@ class PlanerAktywnosciForm extends Component {
 
     errorStart: false,
     errorStop: false,
+    errorKiedy: false,
+    //errorTimeMessage: "",
 
+    dniWyslane: [],
     activities: [],
     edited: false,
     submitIsDisable: true,
@@ -128,6 +118,13 @@ class PlanerAktywnosciForm extends Component {
 
   componentWillMount() {
     console.log("form zostal zamountowany");
+    axios.get(`/api/table/dniDoRaportu`).then(result => {
+      const dniWyslane = result.data;
+      this.setState({
+        //isLoading: false,
+        dniWyslane
+      });
+    });
     console.log(this.props.editedId);
     console.log(this.props.modal);
     this.state.id !== this.props.editedId &&
@@ -137,14 +134,32 @@ class PlanerAktywnosciForm extends Component {
     // )
   }
 
+  validateKiedy = data => {
+    console.log(this.state.dniWyslane);
+    console.log(data);
+    const nalezy =
+      this.state.dniWyslane.filter(x => x.name === data).length === 1
+        ? false
+        : true;
+    const pelnaData = data.length === 10 ? true : false;
+
+    if (pelnaData) {
+      if (nalezy) {
+        this.setState({ errorKiedy: false });
+        return true;
+      }
+      this.setState({ errorKiedy: true });
+      return false;
+    }
+    this.setState({ errorKiedy: false });
+    return false;
+  };
+
   validateTime = (time, pole) => {
     const nazwaPola = `error${pole}`;
     const hours = Math.trunc(time.split(":")[0]);
     const minutes = Math.trunc(time.split(":")[1]);
-    // console.log(`${hours} : ${minutes}`);
-    // console.log(hours.length);
     if (hours < 0 || hours > 23 || (minutes < 0 || minutes > 59)) {
-      // console.log("zly czas");
       this.setState({ [nazwaPola]: true });
     }
     if (hours >= 0 && hours <= 23 && (minutes >= 0 && minutes <= 59)) {
@@ -152,11 +167,33 @@ class PlanerAktywnosciForm extends Component {
       return true;
     } else {
       if (hours && minutes) {
-        // this.setState({ [nazwaPola]: true });
         // console.log("sa godizny i minuty");
       }
       return false;
     }
+  };
+
+  validateDuration = (start, stop) => {
+    const startHours = Math.trunc(start.split(":")[0]);
+    const startMinutes = Math.trunc(start.split(":")[1]);
+    const stopHours = Math.trunc(stop.split(":")[0]);
+    const stopMinutes = Math.trunc(stop.split(":")[1]);
+
+    const startTotal = startHours * 60 + startMinutes;
+    const stopTotal = stopHours * 60 + stopMinutes;
+    if (
+      !Number.isNaN(startHours) &&
+      !Number.isNaN(startMinutes) &&
+      !Number.isNaN(stopHours) &&
+      !Number.isNaN(stopMinutes)
+    ) {
+      if (startTotal < stopTotal) {
+        return true;
+      }
+      this.setState({ errorStop: true });
+      return false;
+    }
+    return false;
   };
 
   // errorTime = () => {
@@ -192,8 +229,11 @@ class PlanerAktywnosciForm extends Component {
     if (start !== start_prevState || stop !== stop_prevState) {
       this.validateTime(start, "Start");
       this.validateTime(stop, "Stop");
+      this.validateDuration(start, stop);
     }
-
+    if (kiedy !== kiedy_prevState) {
+      this.validateKiedy(kiedy);
+    }
     // if (aktywnosc_id !== aktywnosc_id_prevState) {
     //   this.setState({ miejsce_id: "", inna: "" });
     // }
@@ -205,9 +245,10 @@ class PlanerAktywnosciForm extends Component {
         aktywnosc_id !== aktywnosc_id_prevState ||
         miejsce_id !== miejsce_id_prevState ||
         inna !== inna_prevState) &&
-      (kiedy !== "" &&
+      (this.validateKiedy(kiedy) &&
         this.validateTime(start, "Start") &&
         this.validateTime(stop, "Stop") &&
+        this.validateDuration(start, stop) &&
         aktywnosc_id !== "" &&
         this.sprawdzPola())
     ) {
@@ -219,9 +260,10 @@ class PlanerAktywnosciForm extends Component {
         aktywnosc_id !== aktywnosc_id_prevState ||
         inna !== inna_prevState ||
         miejsce_id !== miejsce_id_prevState) &&
-      (kiedy === "" ||
+      (!this.validateKiedy(kiedy) ||
         !this.validateTime(start, "Start") ||
         !this.validateTime(stop, "Stop") ||
+        !this.validateDuration(start, stop) ||
         aktywnosc_id === "" ||
         !this.sprawdzPola())
     ) {
@@ -387,7 +429,8 @@ class PlanerAktywnosciForm extends Component {
     })
       .then(resp => resp.json())
       // .then(data => this.props.changeRange(data))
-      .then(() => {
+      .then(data => {
+        this.props.expanded(dataToString(data.kiedy));
         // this.fetchCosts();
         this.props.fetchuj();
       })
@@ -436,7 +479,11 @@ class PlanerAktywnosciForm extends Component {
           <Grid container spacing={24}>
             <Grid item xs={3}>
               <InputData
-                label="Kiedy"
+                label={
+                  this.state.errorKiedy ? "Data wysłana do raportu" : "Kiedy"
+                }
+                error={this.state.errorKiedy}
+                //label="Kiedy"
                 type="date"
                 edytuj={kiedy => this.setState({ kiedy })}
                 value={this.state.kiedy}
@@ -483,11 +530,23 @@ class PlanerAktywnosciForm extends Component {
               </Grid>
               {this.state.aktywnosc_id === 1 && (
                 <CitySearch
+                  test={miejsce_id =>
+                    this.setState({ miejsce_id_temp: miejsce_id })
+                  }
                   miejsceLabel={this.state.miejsceLabel}
                   edytuj={miejsce_id => this.setState({ miejsce_id })}
                   value={this.state.miejsce_id}
                   cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                  wybranoLabel={wybranoLabel =>
+                    this.setState({ miejsceLabel: wybranoLabel })
+                  }
                 />
+                // <CitySearch
+                //   miejsceLabel={this.state.miejsceLabel}
+                //   edytuj={miejsce_id => this.setState({ miejsce_id })}
+                //   value={this.state.miejsce_id}
+                //   cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                // />
               )}
 
               {/* <InputTime label="Koniec" /> */}

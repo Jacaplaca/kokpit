@@ -16,8 +16,6 @@ import InputSelectTextField from "./InputSelectTextField";
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.name, query);
   const parts = parse(suggestion.name, matches);
-  const { name } = suggestion;
-  console.log("render suggestion");
 
   return (
     <MenuItem selected={isHighlighted} component="div">
@@ -106,7 +104,6 @@ class InputSelectBaza extends React.Component {
     suggestions: [],
     isLoading: false,
     pokazujSugestie: true,
-    clear: false,
     fetchowane: []
     //focus: false
   };
@@ -122,16 +119,6 @@ class InputSelectBaza extends React.Component {
       this.props.daty(fetchowane);
     });
   }
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   const { value: value_prevState } = prevState;
-  //   const { value } = this.state;
-  //   if (value !== value_prevState) {
-  //     value !== ""
-  //       ? this.setState({ clear: true })
-  //       : this.setState({ clear: false });
-  //   }
-  // }
 
   onChange = (event, { newValue, method }) => {
     this.setState({
@@ -181,7 +168,7 @@ class InputSelectBaza extends React.Component {
       value: valueProps,
       error
     } = this.props;
-    const { value, suggestions, clear, focus } = this.state;
+    const { suggestions } = this.state;
 
     const inputProps = {
       //autoFocus: focus,
@@ -191,7 +178,6 @@ class InputSelectBaza extends React.Component {
       value: valueProps,
       onChange: this.onChange,
       error,
-      clear,
       clearValue: this.clearValue
     };
 

@@ -111,8 +111,7 @@ class CitySearch extends React.Component {
       single: "",
       popper: "",
       suggestions: [],
-      isLoading: false,
-      clear: false
+      isLoading: false
     };
 
     this.debouncedLoadSuggestions = debounce(this.loadSuggestions, 400); // 1000ms is chosen for demo purposes only.
@@ -247,13 +246,11 @@ class CitySearch extends React.Component {
 
   render() {
     const { classes, value, edytuj } = this.props;
-    const { clear } = this.state;
 
     const status = this.state.isLoading ? "Szukam..." : "Miejscowość";
 
     const inputProps = {
       clearValue: this.clearValue,
-      clear,
       classes,
       label: status,
       placeholder: "Zacznij wpisywać miejscowość",

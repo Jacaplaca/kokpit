@@ -17,7 +17,11 @@ export const podzielUnikalnymi = (array, key) => {
   const notUnique = array.map(el => el[key]);
   const unique = notUnique.filter(onlyUnique);
   const podzielone = unique.map(element => {
-    return { [key]: element, values: [] };
+    return {
+      [key]: element,
+      //expanded: element === expanded ? true : false,
+      values: []
+    };
   });
   array.map(element => {
     const ktoryIndex = podzielone => {
@@ -38,7 +42,6 @@ export const timeDiff = (start, stop) => {
 };
 
 export const sumaCzasow = czasy => {
-  console.log(czasy);
   let suma = 0;
   czasy.map(x => {
     suma = timeDiff(x.start, x.stop) + suma;

@@ -1,20 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import InputMask from "react-input-mask";
-import Autosuggest from "react-autosuggest";
-import { DebounceInput } from "react-debounce-input";
-import match from "autosuggest-highlight/match";
-import parse from "autosuggest-highlight/parse";
 import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import MenuItem from "@material-ui/core/MenuItem";
-import Popper from "@material-ui/core/Popper";
-import axios from "axios";
-import debounce from "lodash.debounce";
 import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
 import { withStyles } from "@material-ui/core/styles";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading

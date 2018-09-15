@@ -23,7 +23,8 @@ const styles = theme => ({
   row: {
     borderBottomColor: fade(theme.palette.primary.main, 0.22),
     borderBottomStyle: "solid",
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    width: "100%"
   },
   aktywnosc: {
     borderRadius: 5,
@@ -50,7 +51,7 @@ const styles = theme => ({
 });
 
 class PlanerAktywnosciSingle extends Component {
-  state = {};
+  state = { open: false };
 
   handleEdit = id => {
     this.props.edit(id);
@@ -112,7 +113,7 @@ class PlanerAktywnosciSingle extends Component {
             color="primary"
             className={classes.button}
             aria-label="Add to shopping cart"
-            disabled={wyslano && true}
+            disabled={wyslano ? true : false}
           >
             <Edit />
           </IconButton>
@@ -144,14 +145,14 @@ class PlanerAktywnosciSingle extends Component {
           </span>
           <IconButton
             style={{
-              position: "absolute",
+              //position: "absolute",
               right: "20px"
             }}
             className={classes.button}
             aria-label="Delete"
             // onClick={() => this.handleDelete(id)}
             onClick={() => this.setState({ open: true })}
-            disabled={wyslano && true}
+            disabled={wyslano ? true : false}
           >
             <DeleteIcon />
           </IconButton>

@@ -16,7 +16,6 @@ const styles = theme => ({
     flexWrap: "wrap"
   },
   formControl: {
-    //marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
     minWidth: 120,
     width: "100%"
@@ -28,43 +27,26 @@ class InputData extends React.Component {
     input: ""
   };
 
-  // handleChange = event => {
-  //   // this.setState({ [event.target.name]: event.target.value });
-  //   this.props.edytuj(event.target.value);
-  // };
-
   render() {
-    const { classes, label, edytuj, value } = this.props;
+    const { classes, label, edytuj, value, error } = this.props;
 
     return (
       <FormControl
         className={classes.formControl}
         aria-describedby="name-helper-text"
       >
-        {/* <DatePicker
-        // selected={this.state.startDate}
-        // onChange={this.handleChange}
-        /> */}
-        {/* <InputLabel htmlFor="name-helper">Name</InputLabel> */}
         <TextField
+          error={error}
           name="input"
           id="input"
           label={label}
           type="date"
-          // defaultValue="2017-05-24"
-          // value={this.state.input}
           value={value}
-          // className={classes.textField}
-          // onChange={this.handleChange}
           onChange={event => edytuj(event.target.value)}
           InputLabelProps={{
             shrink: true
           }}
-          // margin="normal"
         />
-        {/* <FormHelperText id="name-helper-text">
-          Some important helper text
-        </FormHelperText> */}
       </FormControl>
     );
   }

@@ -196,6 +196,29 @@ class PlanerAktywnosciForm extends Component {
     }
   };
 
+  validateDuration = (start, stop) => {
+    const startHours = Math.trunc(start.split(":")[0]);
+    const startMinutes = Math.trunc(start.split(":")[1]);
+    const stopHours = Math.trunc(stop.split(":")[0]);
+    const stopMinutes = Math.trunc(stop.split(":")[1]);
+
+    const startTotal = startHours * 60 + startMinutes;
+    const stopTotal = stopHours * 60 + stopMinutes;
+    if (
+      !Number.isNaN(startHours) &&
+      !Number.isNaN(startMinutes) &&
+      !Number.isNaN(stopHours) &&
+      !Number.isNaN(stopMinutes)
+    ) {
+      if (startTotal < stopTotal) {
+        return true;
+      }
+      this.setState({ errorStop: true });
+      return false;
+    }
+    return false;
+  };
+
   validateKiedy = data => {
     const nalezy =
       this.state.datyDoRaportu.filter(x => x.name === data).length === 1
@@ -257,6 +280,7 @@ class PlanerAktywnosciForm extends Component {
     if (start !== start_prevState || stop !== stop_prevState) {
       this.validateTime(start, "Start");
       this.validateTime(stop, "Stop");
+      this.validateDuration(start, stop);
     }
 
     if (kiedy !== kiedy_prevState) {
@@ -286,6 +310,7 @@ class PlanerAktywnosciForm extends Component {
       (this.validateKiedy(kiedy) &&
         this.validateTime(start, "Start") &&
         this.validateTime(stop, "Stop") &&
+        this.validateDuration(start, stop) &&
         aktywnosc_id !== "" &&
         this.sprawdzPola())
     ) {
@@ -301,6 +326,7 @@ class PlanerAktywnosciForm extends Component {
       (!this.validateKiedy(kiedy) ||
         !this.validateTime(start, "Start") ||
         !this.validateTime(stop, "Stop") ||
+        !this.validateDuration(start, stop) ||
         aktywnosc_id === "" ||
         !this.sprawdzPola())
     ) {
@@ -462,6 +488,7 @@ class PlanerAktywnosciForm extends Component {
   };
 
   handleSubmit = e => {
+    console.log("handluej submita planery raporty");
     //const { user_id, clientId } = this.props.auth;
     e.preventDefault();
     const {
@@ -503,8 +530,9 @@ class PlanerAktywnosciForm extends Component {
     })
       .then(resp => resp.json())
       // .then(data => this.props.changeRange(data))
-      .then(() => {
-        // this.fetchCosts();
+      .then(data => {
+        //this.fetchCosts();
+        //console.log(data);
         this.props.fetchuj();
       })
       .then(() => {

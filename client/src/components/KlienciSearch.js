@@ -91,8 +91,7 @@ class KlienciSearch extends React.Component {
       single: "",
       popper: "",
       suggestions: [],
-      isLoading: false,
-      clear: false
+      isLoading: false
     };
 
     this.debouncedLoadSuggestions = debounce(this.loadSuggestions, 400); // 1000ms is chosen for demo purposes only.
@@ -204,13 +203,13 @@ class KlienciSearch extends React.Component {
 
   render() {
     const { classes, value, edytuj, placeholder, miejsceLabel } = this.props;
-    const { clear, single } = this.state;
+    const { single } = this.state;
 
     const status = this.state.isLoading ? "Szukam..." : this.props.label;
 
     const inputProps = {
       clearValue: this.clearValue,
-      clear,
+      // clear,
       classes,
       label: status,
       placeholder: placeholder,
