@@ -523,6 +523,7 @@ class PlanerAktywnosciForm extends Component {
 
   renderAktywnosci = () => {
     const { classes } = this.props;
+    console.log(this.state);
     return this.state.aktyDaty.map(day => {
       const {
         id,
