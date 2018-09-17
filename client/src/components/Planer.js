@@ -43,7 +43,7 @@ import {
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 
 import PlanerAktywnosciForm from "./PlanerAktywnosciForm";
-import PlanerAktywnosciLista from "./PlanerAktywnosciLista";
+import PlanerLista from "./PlanerLista";
 import ModalWindow from "./ModalWindow";
 
 //poprawic wyszukiwanie po miescie bo dziwnie pokazuje lubartow ze jest w powiecie zaganskim, pewnie ma to zwiazek z tym że niektore wyniki pokazuje jako pierwsze
@@ -245,8 +245,6 @@ class Planer extends Component {
     categories: [],
     costs: [],
     editedId: "",
-    chmurka_group: [],
-    chmurka_category: [],
     city: "",
     rangeselection: {
       // startDate: defineds.startOfMonth,
@@ -358,9 +356,7 @@ class Planer extends Component {
   }
 
   fetchAktywnosci = range => {
-    console.log(range);
     const { startDate, endDate } = this.state.rangeselection;
-
     const poczatek = range ? range.rangeselection.startDate : startDate;
     const koniec = range ? range.rangeselection.endDate : endDate;
     axios
@@ -370,81 +366,14 @@ class Planer extends Component {
         )}`
       )
       .then(result => {
-        const podzielone = podzielUnikalnymi(
-          result.data,
-          "kiedy"
-          //this.state.expanded
-        );
+        const podzielone = podzielUnikalnymi(result.data, "kiedy");
         this.setState({
           aktywnosci: []
         });
         this.setState({
-          // aktywnosci: _.keyBy(result.data, "kiedy")
-          aktywnosci: podzielone.sort(this.dynamicSort("kiedy")).reverse()
+          aktywnosci: podzielone.sort(dynamicSort("kiedy")).reverse()
         });
       });
-  };
-
-  chmurka = (data, kolumna) => {
-    const nieUnikalneGrupy = data.map(el => {
-      return JSON.stringify({
-        id: el[`${kolumna}Id`],
-        name: el[kolumna].name,
-        clicked: true
-      });
-    });
-    const unikalneGrupyString = [...new Set(nieUnikalneGrupy)];
-    return unikalneGrupyString.map(el => JSON.parse(el));
-  };
-
-  // onlyUnique = (value, index, self) => {
-  //   return self.indexOf(value) === index;
-  // };
-
-  renderSelectNorm = select => {
-    const none = (
-      <MenuItem value="">
-        <em>Brak</em>
-      </MenuItem>
-    );
-    const doWyboru = select.map(elem => (
-      <MenuItem key={select} value={elem.id}>
-        {elem.name}
-      </MenuItem>
-    ));
-    return [none, ...doWyboru];
-  };
-
-  dynamicSort = property => {
-    let sortOrder = 1;
-    if (property[0] === "-") {
-      sortOrder = -1;
-      property = property.substr(1);
-    }
-    return function(a, b) {
-      const result =
-        a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-      return result * sortOrder;
-    };
-  };
-
-  renderSelect = select => {
-    const none = { label: "Brak", value: "" };
-    const doWyboru = select.map((elem, i) => ({
-      label: elem.name,
-      value: elem.id
-    }));
-    return doWyboru.sort(this.dynamicSort("label"));
-  };
-
-  renderSelectCity = select => {
-    console.log(select);
-    // const none = { label: 'Brak', value: '' };
-    // const doWyboru = select.map((elem, i) => ({
-    //   label: elem.name,
-    //   value: elem.id
-    // }));
-    // return doWyboru.sort(this.dynamicSort('label'));
   };
 
   handleEdit = id => {
@@ -638,16 +567,10 @@ class Planer extends Component {
             </Panel>
           </Collapse>
         </Paper>
-        <Paper
-          className={classes.accordionMain}
-          // style={{
-          //   marginBottom: 10,
-          //   border: '1px solid #000',
-          //   color: 'white'
-          // }}
-        />
+        <Paper className={classes.accordionMain} />
         <Paper>
-          <PlanerAktywnosciLista
+          <PlanerLista
+            wyslijDoPlanuButton
             aktywnosci={this.state.aktywnosci}
             edit={id => {
               this.setState({ openModal: true });
@@ -657,17 +580,9 @@ class Planer extends Component {
             fetchuj={() => this.fetchAktywnosci()}
             expanded={this.state.expanded}
             wyslanoDoPlanu={expanded => this.setState({ expanded })}
+            component="akt"
             // edit={id => console.log(id)}
           />
-          {/* <Paper>
-          </Paper> */}
-
-          {/* <CostsTable
-            costs={this.costs()}
-            fetch={() => this.fetchAktywnosci()}
-            edit={id => this.handleEdit(id)}
-            // range={this.state.rangeselection}
-          /> */}
         </Paper>
         <ModalWindow open={this.state.openModal} close={this.handleClose}>
           <PlanerAktywnosciForm
@@ -675,17 +590,8 @@ class Planer extends Component {
             editedId={this.state.editedId}
             closeModal={() => this.setState({ openModal: false })}
             fetchuj={() => this.fetchAktywnosci()}
+            expanded={expanded => this.setState({ expanded })}
           />
-          {/* <CostsForm
-            fetchuj={() => this.fetchCosts()}
-            groups={this.state.groups}
-            categories={this.state.categories}
-            changeRange={data => this.changeRange(data)}
-            editedId={this.state.editedId}
-            modal
-            closeModal={() => this.setState({ openModal: false })}
-            // clearForm={() => this.setState({ editedId: "" })}
-          /> */}
         </ModalWindow>
       </div>
     );
@@ -708,40 +614,3 @@ export default withStyles(styles, { withTheme: true })(
     // actions
   )(Planer)
 );
-
-// CREATE TABLE `planer_aktywnosci` (
-//   `id` int(11) NOT NULL AUTO_INCREMENT,
-//   `start` datetime(6) NOT NULL,
-//   `stop` datetime(6) NOT NULL,
-//   `miejsce_id` int(11) DEFAULT NULL,
-//   `aktywnosc_id` int(11) DEFAULT NULL,
-//   `inna` varchar(150) DEFAULT NULL,
-//   `uwagi` varchar(200) DEFAULT NULL,
-//   `wyslano` tinyint(1) NOT NULL,
-//   `user_id` int(11) NOT NULL DEFAULT "1",
-//   `klient_id` int(11) NOT NULL DEFAULT "1",
-//   PRIMARY KEY (`id`)
-// ) ENGINE=InnoDB AUTO_INCREMENT=894 DEFAULT CHARSET=utf8
-
-// CREATE TABLE `planer_klienci` (
-//   `id` int(11) NOT NULL AUTO_INCREMENT,
-//   `nazwa` varchar(150) NOT NULL,
-//   `adr_Kod` varchar(9) NOT NULL,
-//   `adr_Miejscowosc` varchar(60) NOT NULL,
-//   `kh_id` varchar(6) NOT NULL,
-//   `clientId` int(11) NOT NULL,
-//   `createdAt` date DEFAULT NULL,
-//   `updatedAt` date DEFAULT NULL,
-//   PRIMARY KEY (`id`),
-//   KEY `fk_planer_klienci_clients1_idx` (`clientId`),
-//   CONSTRAINT `fk_planer_klienci_clients1` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-// ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin2
-//
-// CREATE TABLE `myapp_klienci` (
-//   `id` int(11) NOT NULL AUTO_INCREMENT,
-//   `nazwa` varchar(150) NOT NULL,
-//   `adr_Kod` varchar(9) NOT NULL,
-//   `adr_Miejscowosc` varchar(60) NOT NULL,
-//   `kh_id` varchar(6) NOT NULL,
-//   PRIMARY KEY (`id`)
-// ) ENGINE=InnoDB AUTO_INCREMENT=100003 DEFAULT CHARSET=utf8

@@ -31,7 +31,7 @@ import InputData from "./InputData";
 import InputComponent from "./InputComponent";
 import KlienciSearch from "./KlienciSearch";
 
-import { wezGodzine, dynamicSort } from "../common/functions";
+import { wezGodzine, dynamicSort, dataToString } from "../common/functions";
 
 const styles = theme => ({
   aktyDoRaportu: {
@@ -122,7 +122,7 @@ const styles = theme => ({
   buttonChipNo: { background: "lightgray" }
 });
 
-class PlanerAktywnosciForm extends Component {
+class PlanerRaportyForm extends Component {
   state = {
     id: "",
     //datyUnikalne: [],
@@ -143,7 +143,7 @@ class PlanerAktywnosciForm extends Component {
     nawozy: false,
     nowyKlient: false,
     sprzedaz: false,
-    zmowienie: false,
+    zamowienie: false,
     zboza: false,
 
     miejsceLabel: "",
@@ -155,23 +155,15 @@ class PlanerAktywnosciForm extends Component {
     activities: [],
     edited: false,
     submitIsDisable: true,
+    //editedId: null,
 
     miejsce_id_temp: "",
     miejsceLabel_temp: ""
   };
 
   componentWillMount() {
-    // axios.get(`/api/table/dniDoRaportu`).then(result => {
-    //   const datyUnikalne = result.data;
-    //   this.setState({
-    //     datyUnikalne
-    //   });
-    //   // console.log("form zostal zamountowany");
-    //   // console.log(this.props.editedId);
-    //   // console.log(this.props.modal);
-    //   // this.state.id !== this.props.editedId &&
-    //   //   this.handleEdit(this.props.editedId);
-    // });
+    this.state.id !== this.props.editedId &&
+      this.handleEdit(this.props.editedId);
   }
 
   validateTime = (time, pole) => {
@@ -254,7 +246,6 @@ class PlanerAktywnosciForm extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     const {
-      kiedy: kiedy_prevState,
       start: start_prevState,
       stop: stop_prevState,
       aktywnosc_id: aktywnosc_id_prevState,
@@ -264,7 +255,6 @@ class PlanerAktywnosciForm extends Component {
       dataWybrana: dataWybrana_prevState
     } = prevState;
     const {
-      kiedy,
       start,
       stop,
       aktywnosc_id,
@@ -283,9 +273,9 @@ class PlanerAktywnosciForm extends Component {
       this.validateDuration(start, stop);
     }
 
-    if (kiedy !== kiedy_prevState) {
-      this.validateKiedy(kiedy);
-    }
+    // if (kiedy !== kiedy_prevState) {
+    //   this.validateKiedy(kiedy);
+    // }
 
     if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 1) {
       this.setState({ miejsceLabel: "", miejsce_id: "", klient_id: "" });
@@ -300,15 +290,13 @@ class PlanerAktywnosciForm extends Component {
     // }
 
     if (
-      (kiedy !== kiedy_prevState ||
-        start !== start_prevState ||
+      (start !== start_prevState ||
         stop !== stop_prevState ||
         aktywnosc_id !== aktywnosc_id_prevState ||
         miejsce_id !== miejsce_id_prevState ||
         inna !== inna_prevState) &&
       // kiedy.length >= 10
-      (this.validateKiedy(kiedy) &&
-        this.validateTime(start, "Start") &&
+      (this.validateTime(start, "Start") &&
         this.validateTime(stop, "Stop") &&
         this.validateDuration(start, stop) &&
         aktywnosc_id !== "" &&
@@ -316,15 +304,13 @@ class PlanerAktywnosciForm extends Component {
     ) {
       this.setState({ submitIsDisable: false });
     } else if (
-      (kiedy !== kiedy_prevState ||
-        start !== start_prevState ||
+      (start !== start_prevState ||
         stop !== stop_prevState ||
         aktywnosc_id !== aktywnosc_id_prevState ||
         inna !== inna_prevState ||
         miejsce_id !== miejsce_id_prevState) &&
       // kiedy === ""
-      (!this.validateKiedy(kiedy) ||
-        !this.validateTime(start, "Start") ||
+      (!this.validateTime(start, "Start") ||
         !this.validateTime(stop, "Stop") ||
         !this.validateDuration(start, stop) ||
         aktywnosc_id === "" ||
@@ -406,7 +392,12 @@ class PlanerAktywnosciForm extends Component {
       aktywnosc_id: "",
       uwagi: "",
       inna: "",
-      edited: false
+      edited: false,
+      nawozy: "",
+      nowyKlient: "",
+      sprzedaz: "",
+      zamowienie: "",
+      zboza: ""
     });
     this.props.modal && this.props.closeModal();
     // this.props.clearForm;
@@ -423,7 +414,7 @@ class PlanerAktywnosciForm extends Component {
 
   handleEdit = id => {
     console.log("handluje edita");
-    axios.get(`/api/id/akt/${id}`).then(result => {
+    axios.get(`/api/id/planerRaporty/${id}`).then(result => {
       const {
         kiedy,
         start,
@@ -432,6 +423,11 @@ class PlanerAktywnosciForm extends Component {
         miejsce_id,
         inna,
         uwagi,
+        nawozy,
+        nowyKlient,
+        sprzedaz,
+        zamowienie,
+        zboza,
         gus_simc
       } = result.data;
       this.setState({
@@ -446,8 +442,14 @@ class PlanerAktywnosciForm extends Component {
         // categoryId: { label: category.name, value: category.id },
         // groupId: { label: group.name, value: group.id },
         edited: true,
-        miejsce_id_temp: miejsce_id
+        miejsce_id_temp: miejsce_id,
+        nawozy,
+        nowyKlient,
+        sprzedaz,
+        zamowienie,
+        zboza
       });
+      this.fetchujDate(kiedy);
     });
   };
 
@@ -460,9 +462,14 @@ class PlanerAktywnosciForm extends Component {
       aktywnosc_id,
       miejsce_id,
       inna,
-      uwagi
+      uwagi,
+      nawozy,
+      nowyKlient,
+      sprzedaz,
+      zamowienie,
+      zboza
     } = this.state;
-    const url = `/api/akt/edit/${this.props.editedId}`;
+    const url = `/api/planerRaporty/edit/${this.props.editedId}`;
 
     fetch(url, {
       method: "POST",
@@ -475,11 +482,17 @@ class PlanerAktywnosciForm extends Component {
         aktywnosc_id,
         miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
         inna: aktywnosc_id === 5 ? inna : "",
-        uwagi
+        uwagi,
+        nawozy,
+        nowyKlient,
+        sprzedaz,
+        zamowienie,
+        zboza
       })
     })
       .then(() => {
         // this.fetchCosts();
+        this.props.expanded(dataToString(kiedy));
         this.props.fetchuj();
       })
       .then(() => {
@@ -503,7 +516,7 @@ class PlanerAktywnosciForm extends Component {
       nawozy,
       nowyKlient,
       sprzedaz,
-      zmowienie,
+      zamowienie,
       zboza
     } = this.state;
     const url = "/api/planerRaporty";
@@ -524,7 +537,7 @@ class PlanerAktywnosciForm extends Component {
         nawozy,
         nowyKlient,
         sprzedaz,
-        zmowienie,
+        zamowienie,
         zboza
       })
     })
@@ -533,6 +546,7 @@ class PlanerAktywnosciForm extends Component {
       .then(data => {
         //this.fetchCosts();
         //console.log(data);
+        this.props.expanded(dataToString(data.kiedy));
         this.props.fetchuj();
       })
       .then(() => {
@@ -595,8 +609,15 @@ class PlanerAktywnosciForm extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { nawozy, nowyKlient, sprzedaz, zamowienie, zboza } = this.state;
+    const { classes, modal } = this.props;
+    const {
+      nawozy,
+      nowyKlient,
+      sprzedaz,
+      zamowienie,
+      zboza,
+      kiedy
+    } = this.state;
     const pola = [
       { pole: "nawozy", nazwa: "Nawozy" },
       { pole: "nowyKlient", nazwa: "Nowy klient" },
@@ -610,31 +631,25 @@ class PlanerAktywnosciForm extends Component {
         <form onSubmit={e => this.handleSubmit(e)}>
           <Grid container spacing={24}>
             <Grid item xs={3}>
-              {/* <InputSelectBaza
-                array={this.state.datyUnikalne}
-                zwracam="label"
-                wybrano={kiedy => {
-                  this.fetchujDate(kiedy);
-                  this.setState({ kiedy });
-                }}
-                //edytuj={start => this.setState({ kiedy })}
-                value={this.state.kiedy}
-              /> */}
-              <InputSelectBaza
-                daty={datyDoRaportu => this.setState({ datyDoRaportu })}
-                error={this.state.errorKiedy}
-                miejsceLabel={this.state.miejsceLabel}
-                // miejsceLabel="lublin"
-                edytuj={kiedy => {
-                  console.log("input select baza");
-                  this.fetchujDate(kiedy);
-                  this.setState({ kiedy });
-                }}
-                value={this.state.kiedy}
-                //cancelLabel={() => this.setState({ miejsceLabel: "" })}
-                label="Kiedy"
-                placeholder="Dzień"
-              />
+              {modal ? (
+                <p>{kiedy}</p>
+              ) : (
+                <InputSelectBaza
+                  daty={datyDoRaportu => this.setState({ datyDoRaportu })}
+                  error={this.state.errorKiedy}
+                  miejsceLabel={this.state.miejsceLabel}
+                  // miejsceLabel="lublin"
+                  edytuj={kiedy => {
+                    console.log("input select baza");
+                    this.fetchujDate(kiedy);
+                    this.setState({ kiedy });
+                  }}
+                  value={this.state.kiedy}
+                  //cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                  label="Kiedy"
+                  placeholder="Dzień"
+                />
+              )}
               <div className={classes.aktyDoRaportu}>
                 {this.renderAktywnosci()}
               </div>
@@ -710,29 +725,31 @@ class PlanerAktywnosciForm extends Component {
                 edytuj={uwagi => this.setState({ uwagi })}
                 value={this.state.uwagi}
               />
-              <div className={classes.chipsContainer}>
-                {pola.map((pole, i) => {
-                  const co = pole.pole;
-                  const nazwa = pole.nazwa;
-                  return (
-                    <Button
-                      key={i}
-                      onClick={() => this.chipClick(co)}
-                      variant="contained"
-                      size="small"
-                      className={classNames(
-                        classes.buttonChip,
-                        this.state[co]
-                          ? classes.buttonChipYes
-                          : classes.buttonChipNo
-                      )}
-                    >
-                      {nazwa}
-                      {this.state[co] ? <DoneIcon /> : <Cancel />}
-                    </Button>
-                  );
-                })}
-              </div>
+              {this.state.aktywnosc_id === 1 && (
+                <div className={classes.chipsContainer}>
+                  {pola.map((pole, i) => {
+                    const co = pole.pole;
+                    const nazwa = pole.nazwa;
+                    return (
+                      <Button
+                        key={i}
+                        onClick={() => this.chipClick(co)}
+                        variant="contained"
+                        size="small"
+                        className={classNames(
+                          classes.buttonChip,
+                          this.state[co]
+                            ? classes.buttonChipYes
+                            : classes.buttonChipNo
+                        )}
+                      >
+                        {nazwa}
+                        {this.state[co] ? <DoneIcon /> : <Cancel />}
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
             </Grid>
 
             <div style={{ width: "100%", display: "block" }}>
@@ -753,10 +770,10 @@ class PlanerAktywnosciForm extends Component {
                   disabled={this.state.submitIsDisable}
                   onClick={() => this.onEdit()}
                   variant="contained"
-                  color="default"
+                  color="primary"
                   className={classes.button}
                 >
-                  Edytuj koszt
+                  Edytuj raport
                   <Edit style={{ marginLeft: 10 }} />
                 </Button>
               )}
@@ -764,7 +781,7 @@ class PlanerAktywnosciForm extends Component {
                 <Button
                   variant="contained"
                   className={classes.button}
-                  onClick={() => this.clearForm()}
+                  onClick={this.clearForm}
                 >
                   Anuluj
                   <Cancel style={{ marginLeft: 10 }} />
@@ -778,7 +795,7 @@ class PlanerAktywnosciForm extends Component {
   }
 }
 
-PlanerAktywnosciForm.propTypes = {
+PlanerRaportyForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
@@ -792,7 +809,7 @@ export default withStyles(styles, { withTheme: true })(
   connect(
     mapStateToProps
     // actions
-  )(PlanerAktywnosciForm)
+  )(PlanerRaportyForm)
 );
 
 // export default withStyles(styles)(Costs);

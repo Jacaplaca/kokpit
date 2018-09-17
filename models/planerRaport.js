@@ -31,7 +31,7 @@ module.exports = (sequelize, Sequelize) => {
       nawozy: {
         type: Sequelize.TINYINT
       },
-      nowyklient: {
+      nowyKlient: {
         type: Sequelize.TINYINT
       },
       sprzedaz: {

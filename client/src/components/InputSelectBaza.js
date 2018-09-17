@@ -167,6 +167,7 @@ class InputSelectBaza extends React.Component {
       placeholder,
       value: valueProps,
       error
+      // disabled
     } = this.props;
     const { suggestions } = this.state;
 

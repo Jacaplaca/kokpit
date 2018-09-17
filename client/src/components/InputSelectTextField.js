@@ -6,6 +6,7 @@ import IconCancel from "@material-ui/icons/Clear";
 
 const InputSelectTextField = inputProps => {
   const {
+    // disabled,
     clearValue,
     error,
     classes,
@@ -16,6 +17,7 @@ const InputSelectTextField = inputProps => {
 
   return (
     <TextField
+      // disabled={disabled ? true : false}
       error={error ? true : false}
       fullWidth
       InputProps={{

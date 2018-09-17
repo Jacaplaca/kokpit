@@ -51,7 +51,7 @@ const styles = theme => ({
 });
 
 class PlanerAktywnosciSingle extends Component {
-  state = { open: false };
+  state = { open: false, id: null };
 
   handleEdit = id => {
     this.props.edit(id);
@@ -65,7 +65,7 @@ class PlanerAktywnosciSingle extends Component {
   };
 
   handleDelete = id => {
-    const url = `/api/akt/remove/${id}`;
+    const url = `/api/${this.props.component}/remove/${id}`;
     this.setState({ delete: "", open: false });
     fetch(url, {
       method: "POST",
@@ -77,88 +77,86 @@ class PlanerAktywnosciSingle extends Component {
     });
   };
 
-  // renderDay = () => {
-  //   const { classes } = this.props;
-  //
-  // };
-
   render() {
     const { classes } = this.props;
 
-    // return this.renderDay();
-    return this.props.day.map(day => {
-      const {
-        id,
-        kiedy,
-        start,
-        stop,
-        aktywnosc_id,
-        planer_akt_rodz,
-        miejsce_id,
-        gus_simc,
-        inna,
-        uwagi,
-        wyslano
-      } = day;
-      return (
-        <div key={id} className={classes.row}>
-          <Confirmation
-            open={this.state.open}
-            close={this.handleClose}
-            action={() => this.handleDelete(id)}
-            komunikat="Czy na pewno chcesz usunąć tę aktywność?"
-          />
-          <IconButton
-            onClick={() => this.handleEdit(id)}
-            color="primary"
-            className={classes.button}
-            aria-label="Add to shopping cart"
-            disabled={wyslano ? true : false}
-          >
-            <Edit />
-          </IconButton>
-          {/* <div style={{ display: "inline" }}> */}
-          <span className={classes.hours}>
-            {wezGodzine(start)} - {wezGodzine(stop)}
-          </span>
-          {/* </div> */}
-          <span>
-            <Icon
-              color="primary"
-              style={{
-                //position: "relative",
-                verticalAlign: "sub",
-                // marginTop: 3,
-                // width: 15,
-                opacity: "0.4",
-                marginLeft: 20,
-                marginRight: 5
-              }}
-            >
-              <ClockIcon style={{ fontSize: 17 }} />
-            </Icon>
-            {minutes2hours(timeDiff(start, stop))}
-          </span>
-          <span className={classes.aktywnosc}>
-            {aktywnosc_id === 5 ? inna : planer_akt_rodz.name}{" "}
-            {aktywnosc_id === 1 && gus_simc.nazwa}
-          </span>
-          <IconButton
-            style={{
-              //position: "absolute",
-              right: "20px"
-            }}
-            className={classes.button}
-            aria-label="Delete"
-            // onClick={() => this.handleDelete(id)}
-            onClick={() => this.setState({ open: true })}
-            disabled={wyslano ? true : false}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      );
-    });
+    return (
+      <div>
+        <Confirmation
+          open={this.state.open}
+          close={this.handleClose}
+          action={() => this.handleDelete(this.state.id)}
+          komunikat="Czy na pewno chcesz usunąć tę aktywność?"
+        />
+        {this.props.day.map(day => {
+          const {
+            id,
+            kiedy,
+            start,
+            stop,
+            aktywnosc_id,
+            planer_akt_rodz,
+            miejsce_id,
+            gus_simc,
+            inna,
+            uwagi,
+            wyslano
+          } = day;
+          return (
+            <div key={id} className={classes.row}>
+              <IconButton
+                onClick={() => this.handleEdit(id)}
+                color="primary"
+                className={classes.button}
+                aria-label="Add to shopping cart"
+                disabled={wyslano ? true : false}
+              >
+                <Edit />
+              </IconButton>
+              {/* <div style={{ display: "inline" }}> */}
+              <span className={classes.hours}>
+                {wezGodzine(start)} - {wezGodzine(stop)}
+              </span>
+              {/* </div> */}
+              <span>
+                <Icon
+                  color="primary"
+                  style={{
+                    //position: "relative",
+                    verticalAlign: "sub",
+                    // marginTop: 3,
+                    // width: 15,
+                    opacity: "0.4",
+                    marginLeft: 20,
+                    marginRight: 5
+                  }}
+                >
+                  <ClockIcon style={{ fontSize: 17 }} />
+                </Icon>
+                {minutes2hours(timeDiff(start, stop))}
+              </span>
+              <span className={classes.aktywnosc}>
+                {aktywnosc_id === 5 ? inna : planer_akt_rodz.name}{" "}
+                {aktywnosc_id === 1 && gus_simc.nazwa}
+              </span>
+              <IconButton
+                style={{
+                  //position: "absolute",
+                  right: "20px"
+                }}
+                className={classes.button}
+                aria-label="Delete"
+                // onClick={() => this.handleDelete(id)}
+                onClick={() => this.setState({ open: true, id })}
+                disabled={wyslano ? true : false}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 }
 

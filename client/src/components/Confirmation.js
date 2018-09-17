@@ -19,7 +19,12 @@ const styles = theme => ({
 class Confirmation extends Component {
   render() {
     return (
-      <Dialog open={this.props.open} aria-labelledby="form-dialog-title">
+      <Dialog
+        //disableBackdropClick
+        //disableEscapeKeyDown
+        open={this.props.open}
+        aria-labelledby="form-dialog-title"
+      >
         <DialogTitle id="form-dialog-title">{this.props.komunikat}</DialogTitle>
         <DialogContent>
           {/* <DialogContentText>

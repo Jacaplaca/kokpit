@@ -243,9 +243,10 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/akt/edit/:id", (req, res, next) => {
+  app.post("/api/:table/edit/:id", (req, res, next) => {
     console.log("edytuje aktywnosc api");
-    const id = req.params.id;
+    // const id = req.params.id;
+    const { table, id } = req.params;
     if (!req.user) {
       console.log("przekierowanie");
       return res.redirect("/");
@@ -262,27 +263,65 @@ module.exports = app => {
     const { user_id, clientId } = req.user;
     const cleanStart = start.replace(" ", "").replace(" ", "");
     const cleanStop = stop.replace(" ", "").replace(" ", "");
-    Aktywnosci.update(
-      {
-        kiedy,
-        start: `${kiedy} ${cleanStart.split(":")[0]}:${
-          cleanStart.split(":")[1]
-        }`,
-        stop: `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`,
-        aktywnosc_id,
-        miejsce_id: miejsce_id === "" ? null : miejsce_id,
-        inna,
-        uwagi
-      },
-      {
-        where: { user_id, id }
-      }
-    )
-      .then(() => res.end())
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
+    switch (table) {
+      case "akt":
+        Aktywnosci.update(
+          {
+            kiedy,
+            start: `${kiedy} ${cleanStart.split(":")[0]}:${
+              cleanStart.split(":")[1]
+            }`,
+            stop: `${kiedy} ${cleanStop.split(":")[0]}:${
+              cleanStop.split(":")[1]
+            }`,
+            aktywnosc_id,
+            miejsce_id: miejsce_id === "" ? null : miejsce_id,
+            inna,
+            uwagi
+          },
+          {
+            where: { user_id, id }
+          }
+        )
+          .then(() => res.end())
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "planerRaporty":
+        const { nawozy, nowyKlient, sprzedaz, zamowienie, zboza } = req.body;
+        Raporty.update(
+          {
+            kiedy,
+            start: `${kiedy} ${cleanStart.split(":")[0]}:${
+              cleanStart.split(":")[1]
+            }`,
+            stop: `${kiedy} ${cleanStop.split(":")[0]}:${
+              cleanStop.split(":")[1]
+            }`,
+            aktywnosc_id,
+            miejsce_id: miejsce_id === "" ? null : miejsce_id,
+            inna,
+            uwagi,
+            nawozy,
+            nowyKlient,
+            sprzedaz,
+            zamowienie,
+            zboza
+          },
+          {
+            where: { user_id, id }
+          }
+        )
+          .then(() => res.end())
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      default:
+    }
   });
 
   app.post("/api/cost/remove/:id", (req, res, next) => {
@@ -300,19 +339,32 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/akt/remove/:id", (req, res, next) => {
-    const id = req.params.id;
+  app.post("/api/:table/remove/:id", (req, res, next) => {
+    const { id, table } = req.params;
     if (!req.user) {
       console.log("przekierowanie");
       return res.redirect("/");
     }
     const { user_id, clientId } = req.user;
-    Aktywnosci.destroy({ where: { user_id, id } })
-      .then(() => res.end())
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
+    switch (table) {
+      case "akt":
+        Aktywnosci.destroy({ where: { user_id, id } })
+          .then(() => res.end())
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "planerRaporty":
+        Raporty.destroy({ where: { user_id, id } })
+          .then(() => res.end())
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      default:
+    }
   });
 
   app.post("/api/akt/planned/:day", (req, res, next) => {
@@ -366,6 +418,23 @@ module.exports = app => {
         break;
       case "akt":
         Aktywnosci.find({
+          include: [
+            // { model: User },
+            { model: RodzajAktywnosci, attributes: ["name"] },
+            { model: City, attributes: ["nazwa"] }
+          ],
+          where: { user_id, id }
+        })
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "planerRaporty":
+        Raporty.find({
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
@@ -505,7 +574,7 @@ module.exports = app => {
       nawozy,
       nowyKlient,
       sprzedaz,
-      zmowienie,
+      zamowienie,
       zboza
     } = req.body;
     console.log(miejsce_id);
@@ -525,7 +594,7 @@ module.exports = app => {
       nawozy,
       nowyKlient,
       sprzedaz,
-      zmowienie,
+      zamowienie,
       zboza
     })
       .then(results => {
@@ -553,6 +622,29 @@ module.exports = app => {
     switch (table.table) {
       case "planerAktywnosci":
         Aktywnosci.findAll({
+          include: [
+            // { model: User },
+            { model: RodzajAktywnosci, attributes: ["name"] },
+            { model: City, attributes: ["nazwa"] }
+          ],
+          where: {
+            user_id,
+            start: {
+              [Op.gte]: startDate
+            },
+            stop: {
+              [Op.lte]: stopDate
+            }
+          }
+        })
+          .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "planerRaporty":
+        Raporty.findAll({
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },

@@ -28,7 +28,7 @@ class InputData extends React.Component {
   };
 
   render() {
-    const { classes, label, edytuj, value, error } = this.props;
+    const { classes, label, edytuj, value, error, disabled } = this.props;
 
     return (
       <FormControl
@@ -36,6 +36,7 @@ class InputData extends React.Component {
         aria-describedby="name-helper-text"
       >
         <TextField
+          disabled={disabled ? true : false}
           error={error}
           name="input"
           id="input"

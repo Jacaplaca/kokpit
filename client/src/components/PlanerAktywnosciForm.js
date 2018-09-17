@@ -392,6 +392,7 @@ class PlanerAktywnosciForm extends Component {
     })
       .then(() => {
         // this.fetchCosts();
+        this.props.expanded(dataToString(kiedy));
         this.props.fetchuj();
       })
       .then(() => {
@@ -471,7 +472,7 @@ class PlanerAktywnosciForm extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, modal } = this.props;
 
     return (
       <Paper style={{ padding: 20 }}>
@@ -479,6 +480,7 @@ class PlanerAktywnosciForm extends Component {
           <Grid container spacing={24}>
             <Grid item xs={3}>
               <InputData
+                disabled={modal ? true : false}
                 label={
                   this.state.errorKiedy ? "Data wysłana do raportu" : "Kiedy"
                 }

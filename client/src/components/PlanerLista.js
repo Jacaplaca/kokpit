@@ -46,11 +46,6 @@ const styles = theme => ({
   wyslanoPasek: {
     backgroundColor: fade(theme.palette.secondary.light, 0.1)
   },
-  // accordionClass: {
-  //   backgroundColor: fade(theme.palette.primary.main, 0.15)
-  //   // borderColor: theme.palette.primary.main,
-  //   // color: 'white'
-  // },
   button: {
     margin: theme.spacing.unit
   },
@@ -97,7 +92,7 @@ const styles = theme => ({
   }
 });
 
-class PlanerAktywnosciLista extends Component {
+class PlanerLista extends Component {
   state = {
     open: false,
     kiedy: ""
@@ -127,12 +122,12 @@ class PlanerAktywnosciLista extends Component {
   };
 
   render() {
-    const { classes, expanded } = this.props;
+    const { classes, expanded, wyslijDoPlanuButton } = this.props;
     //const { expanded } = this.state;
     console.log("lista dni");
 
     return (
-      <div>
+      <div style={{ marginTop: 20 }}>
         <Confirmation
           open={this.state.open}
           close={this.handleClose}
@@ -176,31 +171,33 @@ class PlanerAktywnosciLista extends Component {
                         />
                       </Icon>{" "}
                       {minutes2hours(sumaCzasow(day.values))}
-                      <Button
-                        onClick={() =>
-                          this.setState({ open: true, kiedy: day.kiedy })
-                        }
-                        classes={{
-                          root: day.values[0].wyslano
-                            ? classes.buttonRootDisabled
-                            : classes.buttonRoot,
-                          label: classes.label,
-                          text: classes.text // class name, e.g. `classes-nesting-label-x`
-                        }}
-                        style={{
-                          position: "absolute",
-                          right: "28px",
-                          marginTop: "-5px"
-                        }}
-                        //variant="outlined"
-                        size="small"
-                        disabled={day.values[0].wyslano ? true : false}
-                        // className={classes.button}
-                      >
-                        {day.values[0].wyslano
-                          ? "Wysłano do planu"
-                          : "Wyślij do planu"}
-                      </Button>
+                      {wyslijDoPlanuButton && (
+                        <Button
+                          onClick={() =>
+                            this.setState({ open: true, kiedy: day.kiedy })
+                          }
+                          classes={{
+                            root: day.values[0].wyslano
+                              ? classes.buttonRootDisabled
+                              : classes.buttonRoot,
+                            label: classes.label,
+                            text: classes.text // class name, e.g. `classes-nesting-label-x`
+                          }}
+                          style={{
+                            position: "absolute",
+                            right: "28px",
+                            marginTop: "-5px"
+                          }}
+                          //variant="outlined"
+                          size="small"
+                          disabled={day.values[0].wyslano ? true : false}
+                          // className={classes.button}
+                        >
+                          {day.values[0].wyslano
+                            ? "Wysłano do planu"
+                            : "Wyślij do planu"}
+                        </Button>
+                      )}
                     </span>
                   </Typography>
                 </ExpansionPanelSummary>
@@ -212,91 +209,12 @@ class PlanerAktywnosciLista extends Component {
                     fetch={() => this.props.fetchuj()}
                     day={day.values}
                     edit={id => this.props.edit(id)}
+                    component={this.props.component}
                     //delete={id => this.props.delete(id)}
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             </div>
-            // <Collapse
-            //   key={`day_${day.kiedy}`}
-            //   // key={day.kiedy}
-            //   accordion={true}
-            //   //activeKey="0"
-            //   //defaultActiveKey="0"
-            //   onMouseEnter={() => console.log("Collapse")}
-            //   // style={{
-            //   //   backgroundColor: day.values[0].wyslano && "rgb(125, 24, 24)"
-            //   // }}
-            //   className={day.values[0].wyslano ? classes.wyslanoPasek : ""}
-            // >
-            //   <Panel
-            //     key={day.kiedy}
-            //     // key={0}
-            //     header={
-            //       <span
-            //         style={{
-            //           fontWeight: "600",
-            //           opacity: day.values[0].wyslano ? "0.65" : "1"
-            //         }}
-            //       >
-            //         {day.kiedy}{" "}
-            //         <Icon
-            //           //color="white"
-            //           style={{
-            //             //position: "relative"
-            //             verticalAlign: "middle",
-            //             //paddingBottom: 23,
-            //             // width: 15,
-            //             opacity: "0.4",
-            //             marginLeft: 15
-            //           }}
-            //         >
-            //           <ClockIcon
-            //             style={{
-            //               paddingBottom: 4,
-            //               fontSize: 20
-            //             }}
-            //           />
-            //         </Icon>{" "}
-            //         {minutes2hours(sumaCzasow(day.values))}
-            //         <Button
-            //           onClick={() =>
-            //             this.setState({ open: true, kiedy: day.kiedy })
-            //           }
-            //           classes={{
-            //             root: day.values[0].wyslano
-            //               ? classes.buttonRootDisabled
-            //               : classes.buttonRoot,
-            //             label: classes.label,
-            //             text: classes.text // class name, e.g. `classes-nesting-label-x`
-            //           }}
-            //           style={{
-            //             position: "absolute",
-            //             right: "28px",
-            //             marginTop: "3px"
-            //           }}
-            //           //variant="outlined"
-            //           size="small"
-            //           disabled={day.values[0].wyslano ? true : false}
-            //           // className={classes.button}
-            //         >
-            //           {day.values[0].wyslano
-            //             ? "Wysłano do planu"
-            //             : "Wyślij do planu"}
-            //         </Button>
-            //       </span>
-            //     }
-            //     //headerClass={classes.accordionClass}
-            //     style={{ color: "white" }}
-            //   >
-            //     <PlanerAktywnosciSingle
-            //       fetch={() => this.props.fetchuj()}
-            //       day={day.values}
-            //       edit={id => this.props.edit(id)}
-            //       //delete={id => this.props.delete(id)}
-            //     />
-            //   </Panel>
-            // </Collapse>
           );
         })}
       </div>
@@ -304,7 +222,7 @@ class PlanerAktywnosciLista extends Component {
   }
 }
 
-PlanerAktywnosciLista.propTypes = {
+PlanerLista.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
@@ -316,5 +234,5 @@ export default withStyles(styles, { withTheme: true })(
   connect(
     mapStateToProps
     // actions
-  )(PlanerAktywnosciLista)
+  )(PlanerLista)
 );
