@@ -29,10 +29,18 @@ const styles = theme => ({
   aktywnosc: {
     borderRadius: 5,
     backgroundColor: fade(theme.palette.primary.main, 0.1),
-    marginLeft: 20,
-    marginRight: 20,
+    marginLeft: 15,
+    marginRight: 10,
     padding: 4,
     fontWeight: "600"
+  },
+  klient: {
+    borderRadius: 5,
+    //backgroundColor: fade(theme.palette.primary.main, 0.1),
+    //marginLeft: 20,
+    marginRight: 10,
+    padding: 4,
+    fontWeight: "200"
   },
   hours: {
     backgroundColor: fade(theme.palette.primary.main, 0.15),
@@ -100,7 +108,8 @@ class PlanerAktywnosciSingle extends Component {
             gus_simc,
             inna,
             uwagi,
-            wyslano
+            wyslano,
+            planer_klienci
           } = day;
           return (
             <div key={id} className={classes.row}>
@@ -139,11 +148,16 @@ class PlanerAktywnosciSingle extends Component {
                 {aktywnosc_id === 5 ? inna : planer_akt_rodz.name}{" "}
                 {aktywnosc_id === 1 && gus_simc.nazwa}
               </span>
+              <span className={classes.klient}>
+                {planer_klienci && planer_klienci.nazwa}
+              </span>
               <IconButton
-                style={{
-                  //position: "absolute",
-                  right: "20px"
-                }}
+                style={
+                  {
+                    //position: "absolute",
+                    //right: "20px"
+                  }
+                }
                 className={classes.button}
                 aria-label="Delete"
                 // onClick={() => this.handleDelete(id)}

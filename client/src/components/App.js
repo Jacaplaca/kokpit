@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Link } from "react-router-dom";
 import { connect } from "react-redux";
 
 import * as actions from "../actions";
@@ -25,19 +25,25 @@ class App extends Component {
 
   render() {
     return (
+      // <MiniDrawer />
       // <div className="container">
       <BrowserRouter>
         <div>
+          {/* <div>
+            <Link to="/costs">Koszty</Link>
+            <Link to="/planer">Planer</Link>
+            <Link to="/planerRaporty">Raporty</Link>
+          </div> */}
           {/* <Header /> */}
           {/* <MiniDrawer2 /> */}
           <MiniDrawer>
             <Route path="/login" component={Login} />
-            <Route exact path="/" component={Landing} />
+            {/* <Route exact path="/" component={Landing} /> */}
             <Route path="/register" component={Register} />
             <Route path="/reset" component={ResetPassword} />
-            <Route path="/costs" component={Costs} />
+            {/* <Route path="/costs" component={Costs} />
             <Route path="/planer" component={Planer} />
-            <Route path="/planerRaporty" component={PlanerRaport} />
+            <Route path="/raporty" component={PlanerRaport} /> */}
           </MiniDrawer>
           {/* <Route exact path="/surveys" component={Dashboard} /> */}
           {/* <Route path="/surveys/new" component={SurveyNew} /> */}

@@ -14,7 +14,7 @@ const Street = db.gus_ulic;
 const Terc = db.gus_terc;
 const Wojewodztwo = db.gus_terc_woj;
 const Powiat = db.gus_terc_pow;
-const Klienci = db.planer_klienci;
+const PlanerKlienci = db.planer_klienci;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const axios = require("axios");
@@ -171,7 +171,7 @@ module.exports = app => {
     if (query.length < 3) {
       res.json([]);
     } else {
-      Klienci.findAll({
+      PlanerKlienci.findAll({
         // where: {
         //   adr_Miejscowosc: { [Op.like]: `${query}%` },
         //   clientId
@@ -290,7 +290,14 @@ module.exports = app => {
           });
         break;
       case "planerRaporty":
-        const { nawozy, nowyKlient, sprzedaz, zamowienie, zboza } = req.body;
+        const {
+          planer_klienci_id,
+          nawozy,
+          nowyKlient,
+          sprzedaz,
+          zamowienie,
+          zboza
+        } = req.body;
         Raporty.update(
           {
             kiedy,
@@ -302,6 +309,8 @@ module.exports = app => {
             }`,
             aktywnosc_id,
             miejsce_id: miejsce_id === "" ? null : miejsce_id,
+            planer_klienci_id:
+              planer_klienci_id === "" ? null : planer_klienci_id,
             inna,
             uwagi,
             nawozy,
@@ -434,11 +443,13 @@ module.exports = app => {
           });
         break;
       case "planerRaporty":
+        console.log("raport");
         Raporty.find({
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
-            { model: City, attributes: ["nazwa"] }
+            { model: City, attributes: ["nazwa"] },
+            { model: PlanerKlienci, attributes: ["nazwa"] }
           ],
           where: { user_id, id }
         })
@@ -648,7 +659,8 @@ module.exports = app => {
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
-            { model: City, attributes: ["nazwa"] }
+            { model: City, attributes: ["nazwa"] },
+            { model: PlanerKlienci, attributes: ["nazwa"] }
           ],
           where: {
             user_id,

@@ -172,7 +172,7 @@ class CitySearch extends React.Component {
     const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
     // if (this.state.single !== "") {
     // }
-    this.props.test(id);
+    //this.props.test(id);
     this.props.edytuj(id);
     this.props.wybranoLabel(miasto);
     this.setState({ calaNazwa: miasto, clear: true });

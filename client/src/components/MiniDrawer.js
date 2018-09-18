@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { BrowserRouter, Route, Link, Redirect } from "react-router-dom";
 import classNames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -18,6 +19,10 @@ import MoneyIcon from "@material-ui/icons/AttachMoney";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import * as actions from "../actions";
+
+import Costs from "./Costs";
+import Planer from "./Planer";
+import PlanerRaport from "./PlanerRaporty";
 
 let drawerWidth = 240;
 
@@ -176,102 +181,139 @@ class MiniDrawer extends React.Component {
     const { classes, theme } = this.props;
     // console.log(this.props.auth);
     return (
-      <div className={classes.root}>
-        <AppBar
-          position="absolute"
-          className={classNames(
-            classes.appBar,
-            this.state.open && classes.appBarShift,
-            !this.props.auth && classes.appBarShiftHide
-          )}
-        >
-          <Toolbar disableGutters={!this.state.open}>
-            <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerOpen}
-              className={classNames(
-                classes.menuButton,
-                this.state.open && classes.hide
-              )}
-            >
-              <MenuIcon />
-            </IconButton>
-            {/* <Header /> */}
-            {/* <Typography variant="title" color="inherit" noWrap>
+      <BrowserRouter>
+        <div className={classes.root}>
+          <AppBar
+            position="absolute"
+            className={classNames(
+              classes.appBar,
+              this.state.open && classes.appBarShift,
+              !this.props.auth && classes.appBarShiftHide
+            )}
+          >
+            <Toolbar disableGutters={!this.state.open}>
+              <IconButton
+                color="inherit"
+                aria-label="Open drawer"
+                onClick={this.handleDrawerOpen}
+                className={classNames(
+                  classes.menuButton,
+                  this.state.open && classes.hide
+                )}
+              >
+                <MenuIcon />
+              </IconButton>
+              {/* <Header /> */}
+              {/* <Typography variant="title" color="inherit" noWrap>
               Mini variant drawer
             </Typography> */}
-            <div variant="title" color="inherit" className={classes.flex}>
-              <Button
-                key="2"
-                color="inherit"
-                href="/"
-                className={classes.button}
-              >
-                Świadoma Firma
-              </Button>
-            </div>
-            {/* <Button color="inherit">Login</Button> */}
-            <ul className="right">{this.renderContent()}</ul>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classNames(
-              classes.drawerPaper,
-              !this.state.open && classes.drawerPaperClose,
-              !this.props.auth && classes.drawerPaperHide
-            )
-          }}
-          open={this.state.open}
-        >
-          <div className={classes.toolbar}>
-            {this.props.auth && this.props.auth.email.split("@")[0]}
-            <IconButton onClick={this.handleDrawerClose}>
-              {theme.direction === "rtl" ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
-          </div>
-          <ListItem button onClick={() => this.handleClickWhere("costs")}>
-            <ListItemIcon>
-              <MoneyIcon />
-            </ListItemIcon>
-            <ListItemText primary="Koszty" />
-          </ListItem>
-
-          <ListItem button onClick={() => this.handleClickWhere("planer")}>
-            <ListItemIcon>
-              <MoneyIcon />
-            </ListItemIcon>
-            <ListItemText primary="Aktywności" />
-          </ListItem>
-
-          <ListItem
-            button
-            onClick={() => this.handleClickWhere("planerRaporty")}
+              <div variant="title" color="inherit" className={classes.flex}>
+                <Button
+                  key="2"
+                  color="inherit"
+                  href="/"
+                  className={classes.button}
+                >
+                  Świadoma Firma
+                </Button>
+              </div>
+              {/* <Button color="inherit">Login</Button> */}
+              <ul className="right">{this.renderContent()}</ul>
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: classNames(
+                classes.drawerPaper,
+                !this.state.open && classes.drawerPaperClose,
+                !this.props.auth && classes.drawerPaperHide
+              )
+            }}
+            open={this.state.open}
           >
-            <ListItemIcon>
-              <MoneyIcon />
-            </ListItemIcon>
-            <ListItemText primary="Raporty" />
-          </ListItem>
+            <div className={classes.toolbar}>
+              {this.props.auth && this.props.auth.email.split("@")[0]}
+              <IconButton onClick={this.handleDrawerClose}>
+                {theme.direction === "rtl" ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            </div>
 
-          {/* <Divider />
+            <div>
+              {/* <ul>
+                <li>
+                  <Link to="/costs">Koszty</Link>
+                </li>
+                <li>
+                  <Link to="/planer">Planer</Link>
+                </li>
+                <li>
+                  <Link to="/planerRaport">Raporty</Link>
+                </li>
+                <li>
+                  <a href="/costs">AAA koszty</a>
+                </li>
+                <li>
+                  <a href="/planer">AAA Planer</a>
+                </li>
+                <li>
+                  <a href="/planerRaporty">AAA Raporty</a>
+                </li>
+              </ul> */}
+              <Link to="/costs">
+                <ListItem
+                  button
+                  //onClick={() => {this.handleClickWhere("costs")}}
+                >
+                  <ListItemIcon>
+                    <MoneyIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Koszty" />
+                </ListItem>
+              </Link>
+              <Link to="/planer">
+                <ListItem
+                  button
+                  //onClick={() => this.handleClickWhere("planer")}
+                >
+                  <ListItemIcon>
+                    <MoneyIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Aktywności" />
+                </ListItem>
+              </Link>
+              <Link to="/raporty">
+                <ListItem
+                  button
+                  //onClick={() => this.handleClickWhere("planerRaporty")}
+                >
+                  <ListItemIcon>
+                    <MoneyIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Raporty" />
+                </ListItem>
+              </Link>
+            </div>
+
+            {/* <Divider />
           <List>{mailFolderListItems}</List>
           <Divider />
           <List>{otherMailFolderListItems}</List> */}
-        </Drawer>
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          {/* <Typography noWrap>
+          </Drawer>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Route path="/costs" component={Costs} />
+            <Route path="/planer" component={Planer} />
+            <Route path="/raporty" component={PlanerRaport} />
+            {/* <Typography noWrap>
             {'You think water moves fast? You should see ice.'}
           </Typography> */}
-          {this.props.children}
-          {/* <Iframe
+            {this.props.children}
+            {/* <Iframe
             url="https://www.spidersweb.pl/"
             width="100%"
             height="100%"
@@ -281,14 +323,15 @@ class MiniDrawer extends React.Component {
             position="relative"
             allowFullScreen
           /> */}
-          {/* <iframe
+            {/* <iframe
             sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
             src="https://antyweb.pl/"
             style={{ width: 500, height: 600 }}
             // s="border: 0; width:130px; height:20px;"
           /> */}
-        </main>
-      </div>
+          </main>
+        </div>
+      </BrowserRouter>
     );
   }
 }

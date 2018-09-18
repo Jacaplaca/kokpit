@@ -114,7 +114,7 @@ class InputSelectBaza extends React.Component {
       const fetchowane = result.data;
       this.setState({
         isLoading: false,
-        fetchowane
+        fetchowane: fetchowane.reverse()
       });
       this.props.daty(fetchowane);
     });

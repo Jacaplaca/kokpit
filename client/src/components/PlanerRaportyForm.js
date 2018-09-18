@@ -135,7 +135,7 @@ class PlanerRaportyForm extends Component {
     stop: "",
     miejsce_id: "",
     aktywnosc_id: "",
-    klient_id: "",
+    planer_klienci_id: "",
     inna: "",
     uwagi: "",
     wyslano: "",
@@ -147,6 +147,7 @@ class PlanerRaportyForm extends Component {
     zboza: false,
 
     miejsceLabel: "",
+    klientLabel: "",
 
     errorStart: false,
     errorStop: false,
@@ -278,7 +279,11 @@ class PlanerRaportyForm extends Component {
     // }
 
     if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 1) {
-      this.setState({ miejsceLabel: "", miejsce_id: "", klient_id: "" });
+      this.setState({
+        miejsceLabel: "",
+        miejsce_id: "",
+        planer_klienci_id: ""
+      });
     }
 
     if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 5) {
@@ -367,10 +372,20 @@ class PlanerRaportyForm extends Component {
       stop,
       miejsce_id,
       aktywnosc_id,
+      planer_klienci_id,
       uwagi,
       inna
     } = this.state;
-    if (kiedy || start || stop || miejsce_id || aktywnosc_id || uwagi || inna) {
+    if (
+      kiedy ||
+      start ||
+      stop ||
+      miejsce_id ||
+      aktywnosc_id ||
+      uwagi ||
+      inna ||
+      planer_klienci_id
+    ) {
       return true;
     } else {
       return false;
@@ -383,12 +398,13 @@ class PlanerRaportyForm extends Component {
       id: "",
       dataWybrana: "",
       miejsceLabel: "",
+      klientLabel: "",
       aktyDaty: [],
       kiedy: "",
       start: "",
       stop: "",
       miejsce_id: "",
-      klient_id: "",
+      planer_klienci_id: "",
       aktywnosc_id: "",
       uwagi: "",
       inna: "",
@@ -421,6 +437,7 @@ class PlanerRaportyForm extends Component {
         stop,
         aktywnosc_id,
         miejsce_id,
+        planer_klienci_id,
         inna,
         uwagi,
         nawozy,
@@ -428,7 +445,8 @@ class PlanerRaportyForm extends Component {
         sprzedaz,
         zamowienie,
         zboza,
-        gus_simc
+        gus_simc,
+        planer_klienci
       } = result.data;
       this.setState({
         kiedy,
@@ -443,6 +461,8 @@ class PlanerRaportyForm extends Component {
         // groupId: { label: group.name, value: group.id },
         edited: true,
         miejsce_id_temp: miejsce_id,
+        planer_klienci_id,
+        klientLabel: planer_klienci ? planer_klienci.nazwa : "",
         nawozy,
         nowyKlient,
         sprzedaz,
@@ -461,6 +481,7 @@ class PlanerRaportyForm extends Component {
       stop,
       aktywnosc_id,
       miejsce_id,
+      planer_klienci_id,
       inna,
       uwagi,
       nawozy,
@@ -481,6 +502,7 @@ class PlanerRaportyForm extends Component {
         stop,
         aktywnosc_id,
         miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
+        planer_klienci_id,
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi,
         nawozy,
@@ -510,7 +532,7 @@ class PlanerRaportyForm extends Component {
       stop,
       aktywnosc_id,
       miejsce_id,
-      klient_id,
+      planer_klienci_id,
       inna,
       uwagi,
       nawozy,
@@ -530,7 +552,7 @@ class PlanerRaportyForm extends Component {
         start,
         stop,
         aktywnosc_id,
-        klient_id,
+        planer_klienci_id,
         miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi,
@@ -696,9 +718,9 @@ class PlanerRaportyForm extends Component {
               {this.state.aktywnosc_id === 1 && (
                 <div>
                   <CitySearch
-                    test={miejsce_id =>
-                      this.setState({ miejsce_id_temp: miejsce_id })
-                    }
+                    // test={miejsce_id =>
+                    //   this.setState({ miejsce_id_temp: miejsce_id })
+                    // }
                     miejsceLabel={this.state.miejsceLabel}
                     edytuj={miejsce_id => this.setState({ miejsce_id })}
                     value={this.state.miejsce_id}
@@ -709,9 +731,11 @@ class PlanerRaportyForm extends Component {
                   />
                   <KlienciSearch
                     miejsceLabel={this.state.miejsceLabel}
+                    klientLabel={this.state.klientLabel}
+                    clearLabel={() => this.setState({ klientLabel: "" })}
                     // miejsceLabel="lublin"
-                    edytuj={id => this.setState({ klient_id: id })}
-                    //value={this.state.miejsce_id}
+                    edytuj={id => this.setState({ planer_klienci_id: id })}
+                    value={this.state.planer_klienci_id}
                     //cancelLabel={() => this.setState({ miejsceLabel: "" })}
                     label="Klient"
                     placeholder="Zacznij wpisywać klienta"

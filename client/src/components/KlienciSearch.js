@@ -91,7 +91,8 @@ class KlienciSearch extends React.Component {
       single: "",
       popper: "",
       suggestions: [],
-      isLoading: false
+      isLoading: false,
+      czysc: false
     };
 
     this.debouncedLoadSuggestions = debounce(this.loadSuggestions, 400); // 1000ms is chosen for demo purposes only.
@@ -182,23 +183,32 @@ class KlienciSearch extends React.Component {
   };
 
   clearValue = () => {
-    this.setState({ single: "", clear: false });
+    this.setState({ single: "" });
     this.props.edytuj("");
     this.input.focus();
+    this.props.clearLabel();
+    this.setState({ single: "" });
   };
-
-  // editMiejsceLabel = () => {
-  //   if (this.props.miejsceLabel !== "" && this.state.single === "") {
-  //     return this.props.miejsceLabel;
-  //   } else {
-  //     return this.state.single;
-  //   }
-  // };
 
   storeInputReference = autosuggest => {
     if (autosuggest !== null) {
       this.input = autosuggest.input;
     }
+  };
+
+  editKlientLabel = () => {
+    if (this.props.klientLabel !== "") {
+      return this.props.klientLabel;
+    } else {
+      return this.state.single;
+    }
+  };
+
+  onFocus = () => {
+    if (this.state.single === "") {
+      this.setState({ single: this.props.miejsceLabel });
+    }
+    return this.loadSuggestions(this.props.miejsceLabel);
   };
 
   render() {
@@ -214,16 +224,11 @@ class KlienciSearch extends React.Component {
       label: status,
       placeholder: placeholder,
       //value: this.editMiejsceLabel(),
-      value: single,
+      value: this.editKlientLabel(),
       onChange: this.handleChange("single"),
       // value: value
       // onChange: event => edytuj(event.target.value)
-      onFocus: () => {
-        if (single === "") {
-          this.setState({ single: miejsceLabel });
-        }
-        return this.loadSuggestions(miejsceLabel);
-      }
+      onFocus: this.onFocus
     };
 
     const autosuggestProps = {

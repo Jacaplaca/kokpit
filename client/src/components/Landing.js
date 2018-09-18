@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { BrowserRouter, Route, Link } from "react-router-dom";
 import Costs from "./Costs";
 import Planer from "./Planer";
 import PlanerRaporty from "./PlanerRaporty";
@@ -32,6 +33,15 @@ class Landing extends Component {
 
   render() {
     return this.whatToShow();
+    // return (
+    //   <BrowserRouter>
+    //     <div>
+    //       <Route path="/costs" component={Costs} />
+    //       <Route path="/planer" component={Planer} />
+    //       <Route path="/planerRaporty" component={PlanerRaporty} />
+    //     </div>
+    //   </BrowserRouter>
+    // );
   }
 }
 

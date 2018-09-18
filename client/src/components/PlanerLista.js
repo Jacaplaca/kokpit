@@ -136,89 +136,118 @@ class PlanerLista extends Component {
         />
         {this.props.aktywnosci.map((day, i) => {
           return (
-            <div className={classes.root} key={day.kiedy}>
-              <ExpansionPanel
-                defaultExpanded={expanded === day.kiedy ? true : false}
+            // <div className={classes.root} key={day.kiedy}>
+            <ExpansionPanel
+              key={day.kiedy}
+              defaultExpanded={expanded === day.kiedy ? true : false}
+            >
+              <ExpansionPanelSummary
+                className={day.values[0].wyslano ? classes.wyslanoPasek : ""}
+                expandIcon={<ExpandMoreIcon />}
               >
-                <ExpansionPanelSummary
-                  className={day.values[0].wyslano ? classes.wyslanoPasek : ""}
-                  //expandIcon={<ExpandMoreIcon />}
-                >
-                  <Typography className={classes.heading}>
-                    <span
+                <Typography className={classes.heading}>
+                  <span
+                    style={{
+                      fontWeight: "600",
+                      opacity: day.values[0].wyslano ? "0.65" : "1"
+                    }}
+                  >
+                    {day.kiedy}{" "}
+                    <Icon
+                      //color="white"
                       style={{
-                        fontWeight: "600",
-                        opacity: day.values[0].wyslano ? "0.65" : "1"
+                        //position: "relative"
+                        verticalAlign: "middle",
+                        //paddingBottom: 23,
+                        // width: 15,
+                        opacity: "0.4",
+                        marginLeft: 15
                       }}
                     >
-                      {day.kiedy}{" "}
-                      <Icon
-                        //color="white"
+                      <ClockIcon
                         style={{
-                          //position: "relative"
-                          verticalAlign: "middle",
-                          //paddingBottom: 23,
-                          // width: 15,
-                          opacity: "0.4",
-                          marginLeft: 15
+                          paddingBottom: 4,
+                          fontSize: 20
                         }}
+                      />
+                    </Icon>{" "}
+                    {minutes2hours(sumaCzasow(day.values))}
+                    {wyslijDoPlanuButton && (
+                      <Button
+                        onClick={() =>
+                          this.setState({ open: true, kiedy: day.kiedy })
+                        }
+                        classes={{
+                          root: day.values[0].wyslano
+                            ? classes.buttonRootDisabled
+                            : classes.buttonRoot,
+                          label: classes.label,
+                          text: classes.text // class name, e.g. `classes-nesting-label-x`
+                        }}
+                        style={{
+                          position: "absolute",
+                          right: "50px",
+                          marginTop: "-5px"
+                        }}
+                        //variant="outlined"
+                        size="small"
+                        disabled={day.values[0].wyslano ? true : false}
+                        // className={classes.button}
                       >
-                        <ClockIcon
-                          style={{
-                            paddingBottom: 4,
-                            fontSize: 20
-                          }}
-                        />
-                      </Icon>{" "}
-                      {minutes2hours(sumaCzasow(day.values))}
-                      {wyslijDoPlanuButton && (
-                        <Button
-                          onClick={() =>
-                            this.setState({ open: true, kiedy: day.kiedy })
-                          }
-                          classes={{
-                            root: day.values[0].wyslano
-                              ? classes.buttonRootDisabled
-                              : classes.buttonRoot,
-                            label: classes.label,
-                            text: classes.text // class name, e.g. `classes-nesting-label-x`
-                          }}
-                          style={{
-                            position: "absolute",
-                            right: "28px",
-                            marginTop: "-5px"
-                          }}
-                          //variant="outlined"
-                          size="small"
-                          disabled={day.values[0].wyslano ? true : false}
-                          // className={classes.button}
-                        >
-                          {day.values[0].wyslano
-                            ? "Wysłano do planu"
-                            : "Wyślij do planu"}
-                        </Button>
-                      )}
-                    </span>
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails
-                  style={{ display: "block" }}
-                  className={day.values[0].wyslano ? classes.wyslanoPasek : ""}
-                >
-                  <PlanerAktywnosciSingle
-                    fetch={() => this.props.fetchuj()}
-                    day={day.values}
-                    edit={id => this.props.edit(id)}
-                    component={this.props.component}
-                    //delete={id => this.props.delete(id)}
-                  />
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            </div>
+                        {day.values[0].wyslano
+                          ? "Wysłano do planu"
+                          : "Wyślij do planu"}
+                      </Button>
+                    )}
+                  </span>
+                </Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails
+                style={{ display: "block" }}
+                className={day.values[0].wyslano ? classes.wyslanoPasek : ""}
+              >
+                <PlanerAktywnosciSingle
+                  fetch={() => this.props.fetchuj()}
+                  day={day.values}
+                  edit={id => this.props.edit(id)}
+                  component={this.props.component}
+                  //delete={id => this.props.delete(id)}
+                />
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+            //</div>
           );
         })}
       </div>
     );
+    // return (
+    //   <div>
+    //     <ExpansionPanel>
+    //       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+    //         <Typography>Expansion Panel 1</Typography>
+    //       </ExpansionPanelSummary>
+    //       <ExpansionPanelDetails>
+    //         <Typography>
+    //           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    //           Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+    //           eget.
+    //         </Typography>
+    //       </ExpansionPanelDetails>
+    //     </ExpansionPanel>
+    //     <ExpansionPanel>
+    //       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+    //         <Typography>Expansion Panel 2</Typography>
+    //       </ExpansionPanelSummary>
+    //       <ExpansionPanelDetails>
+    //         <Typography>
+    //           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    //           Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+    //           eget.
+    //         </Typography>
+    //       </ExpansionPanelDetails>
+    //     </ExpansionPanel>
+    //   </div>
+    // );
   }
 }
 

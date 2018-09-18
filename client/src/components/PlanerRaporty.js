@@ -259,98 +259,6 @@ class PlanerRaporty extends Component {
     expanded: ""
   };
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const {
-      nr_dokumentu: nr_dokumentu_prevState,
-      data_wystawienia: data_wystawienia_prevState,
-      nazwa_pozycji: nazwa_pozycji_prevState,
-      kwota_netto: kwota_netto_prevState,
-      categoryId: categoryId_prevState,
-      groupId: groupId_prevState
-    } = prevState;
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu !== "" &&
-        data_wystawienia !== "" &&
-        nazwa_pozycji !== "" &&
-        kwota_netto !== "" &&
-        (categoryId ? categoryId.value !== "" : categoryId !== "") &&
-        (groupId ? groupId.value !== "" : groupId !== ""))
-      // categoryId.value !== '' &&
-      // groupId.value !== ''
-    ) {
-      this.setState({ submitIsDisable: false });
-    } else if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu === "" ||
-        data_wystawienia === "" ||
-        nazwa_pozycji === "" ||
-        kwota_netto === "" ||
-        (categoryId ? categoryId.value === "" : categoryId === "") ||
-        (groupId ? groupId.value === "" : groupId === ""))
-    ) {
-      this.setState({ submitIsDisable: true });
-    } else {
-      return;
-    }
-  }
-
-  czyWypelniony = () => {
-    const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      id ||
-      nr_dokumentu ||
-      data_wystawienia ||
-      nazwa_pozycji ||
-      kwota_netto ||
-      categoryId ||
-      groupId
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  clearForm = () => {
-    this.setState({
-      id: "",
-      nr_dokumentu: "",
-      data_wystawienia: "",
-      nazwa_pozycji: "",
-      kwota_netto: "",
-      categoryId: "",
-      groupId: "",
-      edited: false
-    });
-  };
-
   componentWillMount() {
     this.fetchRaporty();
   }
@@ -368,6 +276,7 @@ class PlanerRaporty extends Component {
         )}`
       )
       .then(result => {
+        console.log(result);
         const podzielone = podzielUnikalnymi(
           result.data,
           "kiedy"
@@ -382,109 +291,6 @@ class PlanerRaporty extends Component {
         });
       });
   };
-
-  handleEdit = id => {
-    axios.get(`/api/cost/${id}`).then(result => {
-      const {
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        category,
-        group
-      } = result.data;
-      this.setState({
-        id,
-        nr_dokumentu,
-        kwota_netto,
-        nazwa_pozycji,
-        data_wystawienia,
-        categoryId: { label: category.name, value: category.id },
-        groupId: { label: group.name, value: group.id },
-        edited: true
-      });
-    });
-  };
-
-  onEdit = () => {
-    const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    const url = `/api/cost/edit/${id}`;
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
-      })
-    })
-      .then(() => {
-        this.fetchRaporty();
-      })
-      .then(() => {
-        this.clearForm();
-      });
-  };
-
-  handleSubmit = e => {
-    const { user_id, clientId } = this.props.auth;
-    e.preventDefault();
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    const url = "/api/cost";
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
-      })
-    })
-      .then(resp => resp.json())
-      .then(data => {
-        const dataWystawienia = data.data_wystawienia;
-        const startDate = startOfMonth(dataWystawienia);
-        const endDate = endOfMonth(dataWystawienia);
-        const rangeselection = { endDate, startDate, key: "rangeselection" };
-        this.setState({ rangeselection });
-        // return console.log(startDate);
-      })
-      .then(() => {
-        this.fetchRaporty();
-      })
-      .then(() => {
-        this.clearForm();
-      });
-  };
-
-  // onChange = data => {
-  //   this.setState({ phone: data.target.value });
-  // };
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
