@@ -1,3 +1,16 @@
+import {
+  addDays,
+  endOfDay,
+  startOfDay,
+  startOfMonth,
+  endOfMonth,
+  addMonths,
+  startOfWeek,
+  endOfWeek,
+  isSameDay,
+  differenceInCalendarDays
+} from "date-fns";
+
 export const dataToString = element => {
   const data = new Date(element);
   const dzien =
@@ -77,4 +90,19 @@ export const dynamicSort = property => {
       a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
     return result * sortOrder;
   };
+};
+
+export const defineds = {
+  startOfWeek: startOfWeek(new Date()),
+  endOfWeek: endOfWeek(new Date()),
+  startOfLastWeek: startOfWeek(addDays(new Date(), -7)),
+  endOfLastWeek: endOfWeek(addDays(new Date(), -7)),
+  startOfToday: startOfDay(new Date()),
+  endOfToday: endOfDay(new Date()),
+  startOfYesterday: startOfDay(addDays(new Date(), -1)),
+  endOfYesterday: endOfDay(addDays(new Date(), -1)),
+  startOfMonth: startOfMonth(new Date()),
+  endOfMonth: endOfMonth(new Date()),
+  startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
+  endOfLastMonth: endOfMonth(addMonths(new Date(), -1))
 };

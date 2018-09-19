@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   BarChart,
   Bar,
@@ -10,21 +10,21 @@ import {
   Cell,
   LabelList,
   ResponsiveContainer
-} from 'recharts';
-import { scaleLog } from 'd3-scale';
+} from "recharts";
+import { scaleLog } from "d3-scale";
 const scale = scaleLog().base(Math.E);
 
 const colors = [
-  '#1f77b4',
-  '#ff7f0e',
-  '#2ca02c',
-  '#d62728',
-  '#9467bd',
-  '#8c564b',
-  '#e377c2',
-  '#7f7f7f',
-  '#bcbd22',
-  '#17becf'
+  "#1f77b4",
+  "#ff7f0e",
+  "#2ca02c",
+  "#d62728",
+  "#9467bd",
+  "#8c564b",
+  "#e377c2",
+  "#7f7f7f",
+  "#bcbd22",
+  "#17becf"
 ];
 // const data = [
 //   { name: 'Page A', uv: 4000, female: 2400, male: 2400 },
@@ -73,14 +73,15 @@ class PieChart1 extends Component {
     const data = this.props.dane;
     const nazwa = this.props.label;
     return (
-      <div style={{ height: '190px', width: '100%' }}>
+      <div style={{ height: "190px", width: "100%" }}>
         {/* <h3>{this.props.label}</h3> */}
-        <ResponsiveContainer width="100%">
+        <ResponsiveContainer width="90%">
           <BarChart
-            // width={'50%'}
+            // width={400}
             height={190}
             data={data}
-            margin={{ top: 20, right: 30, left: 20, bottom: 35 }}>
+            margin={{ top: 20, right: 30, left: 20, bottom: 35 }}
+          >
             <XAxis
               angle={-11}
               // width={5}
@@ -93,7 +94,7 @@ class PieChart1 extends Component {
               dataKey="name"
               label={{
                 value: nazwa,
-                position: 'insideBottomRight',
+                position: "insideBottomRight",
                 offset: -15
               }}
               // scale={scale}
@@ -114,7 +115,7 @@ class PieChart1 extends Component {
                 dataKey="value_format"
                 position="top"
                 formatter={val => {
-                  const splituje = val.split(',');
+                  const splituje = val.split(",");
                   return `${splituje[0]}`;
                 }}
               />

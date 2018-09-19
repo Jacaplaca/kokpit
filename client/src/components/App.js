@@ -5,12 +5,12 @@ import { connect } from "react-redux";
 import * as actions from "../actions";
 
 import Register from "./Register";
+import Login from "./Login";
+import ResetPassword from "./ResetPassword";
 // import Header from "./Header";
 import Landing from "./Landing";
-import Login from "./Login";
 import MiniDrawer from "./MiniDrawer";
 // import MiniDrawer2 from "./MiniDrawer2";
-import ResetPassword from "./ResetPassword";
 import Costs from "./Costs";
 import Planer from "./Planer";
 import PlanerRaport from "./PlanerRaporty";
@@ -25,32 +25,13 @@ class App extends Component {
 
   render() {
     return (
-      // <MiniDrawer />
-      // <div className="container">
       <BrowserRouter>
-        <div>
-          {/* <div>
-            <Link to="/costs">Koszty</Link>
-            <Link to="/planer">Planer</Link>
-            <Link to="/planerRaporty">Raporty</Link>
-          </div> */}
-          {/* <Header /> */}
-          {/* <MiniDrawer2 /> */}
-          <MiniDrawer>
-            <Route path="/login" component={Login} />
-            {/* <Route exact path="/" component={Landing} /> */}
-            <Route path="/register" component={Register} />
-            <Route path="/reset" component={ResetPassword} />
-            {/* <Route path="/costs" component={Costs} />
-            <Route path="/planer" component={Planer} />
-            <Route path="/raporty" component={PlanerRaport} /> */}
-          </MiniDrawer>
-          {/* <Route exact path="/surveys" component={Dashboard} /> */}
-          {/* <Route path="/surveys/new" component={SurveyNew} /> */}
-          {/* <Route path="/login" component={Login} /> */}
-        </div>
+        <MiniDrawer>
+          <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
+          <Route path="/reset" component={ResetPassword} />
+        </MiniDrawer>
       </BrowserRouter>
-      // </div>
     );
   }
 }

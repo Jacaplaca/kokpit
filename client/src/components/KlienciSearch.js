@@ -16,6 +16,10 @@ import InputSelectTextField from "./InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
+function renderSuggestionsContainer({ containerProps, children, query }) {
+  return <div {...containerProps}>{children}</div>;
+}
+
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.nazwa, query);
   const parts = parse(suggestion.nazwa, matches);
@@ -65,7 +69,8 @@ const styles = theme => ({
     left: 0,
     right: 0,
     maxHeight: 300,
-    overflowY: "auto"
+    overflowY: "auto",
+    background: "white"
   },
   suggestion: {
     display: "block"
@@ -168,6 +173,7 @@ class KlienciSearch extends React.Component {
   };
 
   handleSuggestionsClearRequested = () => {
+    console.log("onSuggestionsClearRequested");
     this.setState({
       suggestions: []
     });
@@ -236,13 +242,16 @@ class KlienciSearch extends React.Component {
       suggestions: this.state.suggestions,
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
+      // onSuggestionsClearRequested: () => console.log("clear"),
       getSuggestionValue: this.getSuggestionValue,
-      renderSuggestion
+      renderSuggestion,
+      renderSuggestionsContainer
     };
 
     return (
       <div className={classes.root}>
         <Autosuggest
+          //alwaysRenderSuggestions
           // focusInputOnSuggestionClick
           {...autosuggestProps}
           // inputProps={{
@@ -259,11 +268,11 @@ class KlienciSearch extends React.Component {
             suggestionsList: classes.suggestionsList,
             suggestion: classes.suggestion
           }}
-          renderSuggestionsContainer={options => (
-            <Paper {...options.containerProps} square>
-              {options.children}
-            </Paper>
-          )}
+          // renderSuggestionsContainer={options => (
+          //   <Paper {...options.containerProps} square>
+          //     {/* {options.children} */}
+          //   </Paper>
+          // )}
           inputProps={inputProps}
           ref={this.storeInputReference}
           // shouldRenderSuggestions={() =>

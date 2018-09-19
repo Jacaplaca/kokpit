@@ -409,11 +409,11 @@ class PlanerRaportyForm extends Component {
       uwagi: "",
       inna: "",
       edited: false,
-      nawozy: "",
-      nowyKlient: "",
-      sprzedaz: "",
-      zamowienie: "",
-      zboza: ""
+      nawozy: false,
+      nowyKlient: false,
+      sprzedaz: false,
+      zamowienie: false,
+      zboza: false
     });
     this.props.modal && this.props.closeModal();
     // this.props.clearForm;

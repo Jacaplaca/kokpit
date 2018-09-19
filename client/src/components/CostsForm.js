@@ -1,27 +1,16 @@
 import React, { Component } from "react";
-// import { DateRange } from 'react-date-range';
-import "react-date-range/dist/styles.css"; // main style file
-import "react-date-range/dist/theme/default.css"; // theme css file
-import _ from "lodash";
-import currency from "currency.js";
 import { connect } from "react-redux";
-import { startOfMonth, endOfMonth } from "date-fns";
 
 import NumberFormat from "react-number-format";
-
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-// import NoSsr from '@material-ui/core/NoSsr';
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-// import Select from '@material-ui/core/Select';
 import Select from "react-select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
@@ -86,16 +75,8 @@ const styles = theme => ({
     left: 2,
     fontSize: 16
   },
-  // accordionClass: {
-  //   backgroundColor: fade(theme.palette.primary.main, 0.15)
-  //   // borderColor: theme.palette.primary.main,
-  //   // color: 'white'
-  // },
   button: {
     margin: theme.spacing.unit
-  },
-  rightIcon: {
-    marginLeft: theme.spacing.unit
   },
   container: {
     display: "inline-block",
@@ -108,37 +89,6 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit
-  },
-  mojChipClickedRoot: {
-    color: "white",
-    margin: theme.spacing.unit / 2,
-    backgroundColor: theme.palette.primary.main
-  },
-  mojChipRoot: {
-    margin: theme.spacing.unit / 2,
-    backgroundColor: "lightgray"
-  },
-  mojChipClicked: {
-    "&:hover, &:focus": {
-      margin: theme.spacing.unit / 2,
-      backgroundColor: "lightgray"
-    },
-    "&:active": {
-      color: "white",
-      margin: theme.spacing.unit / 2,
-      backgroundColor: theme.palette.primary.main
-    }
-  },
-  mojChip: {
-    "&:hover, &:focus": {
-      color: "white",
-      margin: theme.spacing.unit / 2,
-      backgroundColor: theme.palette.primary.main
-    },
-    "&:active": {
-      margin: theme.spacing.unit / 2,
-      backgroundColor: "lightgray"
-    }
   }
 });
 
@@ -157,12 +107,9 @@ function NumberFormatCustom(props) {
           }
         });
       }}
-      // removeFormatting={formattedValue => `{}`}
       decimalSeparator=","
       thousandSeparator=" "
-      // format="### ### ### ###"
       decimalScale={2}
-      // prefix="$"
       suffix="  zł"
     />
   );
@@ -170,14 +117,11 @@ function NumberFormatCustom(props) {
 
 class CostsForm extends Component {
   state = {
-    // numberformat: '',
     id: "",
     nr_dokumentu: "",
     data_wystawienia: "",
     nazwa_pozycji: "",
     kwota_netto: "",
-    // categoryId: { label: '', value: '' },
-    // groupId: { label: '', value: '' },
     categoryId: "",
     groupId: "",
     groups: [],
@@ -190,14 +134,8 @@ class CostsForm extends Component {
   };
 
   componentWillMount() {
-    console.log("form zostal zamountowany");
-    console.log(this.props.editedId);
-    console.log(this.props.modal);
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
-    // this.props.modal && (
-    //
-    // )
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -253,10 +191,6 @@ class CostsForm extends Component {
       return;
     }
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   this.state.id !== nextProps.editedId && this.handleEdit(nextProps.editedId);
-  // }
 
   czyWypelniony = () => {
     const {
@@ -322,7 +256,6 @@ class CostsForm extends Component {
   };
 
   handleEdit = id => {
-    console.log("handluje edita");
     axios.get(`/api/id/cost/${id}`).then(result => {
       const {
         nr_dokumentu,
@@ -346,7 +279,6 @@ class CostsForm extends Component {
   };
 
   onEdit = () => {
-    console.log("on edit");
     const {
       id,
       nr_dokumentu,
@@ -372,7 +304,6 @@ class CostsForm extends Component {
       })
     })
       .then(() => {
-        // this.fetchCosts();
         this.props.fetchuj();
       })
       .then(() => {
@@ -381,7 +312,6 @@ class CostsForm extends Component {
   };
 
   handleSubmit = e => {
-    const { user_id, clientId } = this.props.auth;
     e.preventDefault();
     const {
       nr_dokumentu,
@@ -428,26 +358,9 @@ class CostsForm extends Component {
   };
 
   handleChangeSelect = name => value => {
-    console.log(name);
-    console.log(value);
     this.setState({
       [name]: value
     });
-  };
-
-  costs = () => {
-    const koszty = this.state.costs;
-    const { startDate, endDate } = this.state.rangeselection;
-    const kosztyFiltered = koszty.filter(x => {
-      const data = new Date(x.data_wystawienia);
-      return data >= startDate && data <= endDate;
-    });
-    const costsInt = kosztyFiltered.map(x =>
-      Object.assign(x, {
-        kwota_netto: parseFloat(x.kwota_netto)
-      })
-    );
-    return costsInt;
   };
 
   handleSelect = ranges => {
@@ -456,70 +369,12 @@ class CostsForm extends Component {
     });
   };
 
-  sumOfKey = (data, key) => {
-    let dane;
-    let sorting;
-    switch (key) {
-      case "category":
-        dane = _(data)
-          .groupBy("category.name")
-          .map((v, k) => {
-            const suma = _.sumBy(v, "kwota_netto");
-            return {
-              name: k,
-              value: Math.round(suma),
-              value_format: `${currency(Math.round(suma), {
-                separator: " ",
-                decimal: ","
-              }).format()}`
-            };
-          })
-          .value();
-
-        sorting = dane.sort(function(a, b) {
-          return a.value - b.value;
-        });
-
-        return sorting.reverse();
-
-        break;
-      case "group":
-        dane = _(data)
-          .groupBy("group.name")
-          .map((v, k) => {
-            const suma = _.sumBy(v, "kwota_netto");
-            return {
-              name: k,
-              value: suma,
-              value_format: `${currency(Math.round(suma), {
-                separator: " ",
-                decimal: ","
-              }).format()}`
-            };
-          })
-          .value();
-
-        sorting = dane.sort(function(a, b) {
-          return a.value - b.value;
-        });
-
-        return sorting.reverse();
-
-        break;
-      default:
-    }
-  };
-
   render() {
     const { classes } = this.props;
 
     return (
       <Paper style={{ padding: 20 }}>
-        <form
-          onSubmit={e => this.handleSubmit(e)}
-          // method="POST"
-          // action="/api/cost/"
-        >
+        <form onSubmit={e => this.handleSubmit(e)}>
           <FormControl
             className={classes.formControl}
             aria-describedby="name-helper-text"
@@ -531,15 +386,11 @@ class CostsForm extends Component {
               value={this.state.nr_dokumentu}
               onChange={this.handleChange}
             />
-            {/* <FormHelperText id="name-helper-text">
-            Some important helper text
-          </FormHelperText> */}
           </FormControl>
           <FormControl
             className={classes.formControl}
             aria-describedby="name-helper-text"
           >
-            {/* <InputLabel htmlFor="name-helper">Name</InputLabel> */}
             <TextField
               name="data_wystawienia"
               id="date"
@@ -553,9 +404,6 @@ class CostsForm extends Component {
                 shrink: true
               }}
             />
-            {/* <FormHelperText id="name-helper-text">
-            Some important helper text
-          </FormHelperText> */}
           </FormControl>
           <FormControl
             className={classes.formControl}
@@ -569,82 +417,38 @@ class CostsForm extends Component {
               onChange={this.handleChange}
               style={{ width: 300 }}
             />
-            {/* <FormHelperText id="name-helper-text">
-            Some important helper text
-          </FormHelperText> */}
           </FormControl>
 
           <FormControl className={classes.formControl}>
-            {/* <InputLabel htmlFor="adornment-password">Kwota netto</InputLabel> */}
             <TextField
               className={classes.formControl}
               name="kwota_netto"
               label="Kwota netto"
               value={this.state.kwota_netto.replace(".", ",")}
-              // onChange={this.handleChange}
-              // value={this.state.kwota_netto}
               onChange={this.handleChangeKwota("kwota_netto")}
               id="formatted-numberformat-input"
               InputProps={{
                 inputComponent: NumberFormatCustom
               }}
-              // endAdornment={
-              //   <InputAdornment position="end">PLN</InputAdornment>
-              // }
             />
-            {/* <Input
-                name="kwota_netto"
-                id="adornment-password"
-                // type={this.state.showPassword ? 'text' : 'password'}
-                value={this.state.kwota_netto.replace('.', ',')}
-                onChange={this.handleChange}
-                style={{ width: 150 }}
-                endAdornment={
-                  <InputAdornment position="end">PLN</InputAdornment>
-                }
-              /> */}
           </FormControl>
           <div style={{ display: "flex" }}>
             <div style={{ width: 410, marginRight: 22 }}>
-              {/* <FormControl required className={classes.formControl}> */}
               <InputLabel htmlFor="categoryId">Kategoria</InputLabel>
               <Select
-                // label="Kategoria"
                 placeholder="Wybierz..."
                 components={components}
                 classes={classes}
                 name="categoryId"
-                // label="asdf"
                 id="categoryId"
-                // defaultValue="asdf"
-                // InputLabelProps={{
-                //   shrink: true
-                // }}
-                // value={this.state.age}
                 value={this.state.categoryId}
-                // value="Brak"
                 onChange={this.handleChangeSelect("categoryId")}
-                // name="age"
-                // inputProps={{
-                //   id: 'age-required'
-                // }}
                 className={classes.selectEmpty}
-                // style={{ width: 200 }}
                 options={this.renderSelect(this.props.categories)}
-                // options={[
-                //   { label: 'aa', value: 1 },
-                //   { label: 'bb', value: 2 }
-                // ]}
-              >
-                {/* {this.renderSelect(this.state.categories)} */}
-              </Select>
-              {/* <FormHelperTex  t>Required</FormHelperText> */}
-              {/* </FormControl> */}
+              />
             </div>
             <div style={{ width: 305 }}>
-              {/* <FormControl required className={classes.formControl}> */}
               <InputLabel htmlFor="age-required">Grupa</InputLabel>
-              {/* <NoSsr> */}
               <Select
                 placeholder="Wybierz..."
                 name="groupId"
@@ -654,18 +458,6 @@ class CostsForm extends Component {
                 value={this.state.groupId}
                 onChange={this.handleChangeSelect("groupId")}
               />
-              {/* <Select
-      name="groupId"
-      id="age-required"
-      value={this.state.groupId}
-      onChange={this.handleChange}
-      className={classes.selectEmpty}
-      style={{ width: 200 }}>
-      {this.renderSelect(this.state.groups)}
-    </Select> */}
-              {/* </NoSsr> */}
-              {/* <FormHelperTex  t>Required</FormHelperText> */}
-              {/* </FormControl> */}
             </div>
           </div>
           {!this.state.edited ? (
@@ -681,7 +473,6 @@ class CostsForm extends Component {
             </Button>
           ) : (
             <Button
-              // type="submit"
               disabled={this.state.submitIsDisable}
               onClick={() => this.onEdit()}
               variant="contained"

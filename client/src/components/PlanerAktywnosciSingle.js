@@ -1,23 +1,17 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
-import Collapse from "rc-collapse";
-import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ClockIcon from "@material-ui/icons/WatchLater";
 import Edit from "@material-ui/icons/Edit";
-import Cancel from "@material-ui/icons/Clear";
 import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import { timeDiff, wezGodzine, minutes2hours } from "../common/functions";
 //import Paper from "@material-ui/core/Paper";
 
 import Confirmation from "./Confirmation";
-
-const Panel = Collapse.Panel;
 
 const styles = theme => ({
   row: {

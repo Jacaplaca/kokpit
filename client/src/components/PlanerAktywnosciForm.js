@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-// import { DateRange } from 'react-date-range';
-import "react-date-range/dist/styles.css"; // main style file
-import "react-date-range/dist/theme/default.css"; // theme css file
+
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
@@ -54,37 +52,6 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit
-  },
-  mojChipClickedRoot: {
-    color: "white",
-    margin: theme.spacing.unit / 2,
-    backgroundColor: theme.palette.primary.main
-  },
-  mojChipRoot: {
-    margin: theme.spacing.unit / 2,
-    backgroundColor: "lightgray"
-  },
-  mojChipClicked: {
-    "&:hover, &:focus": {
-      margin: theme.spacing.unit / 2,
-      backgroundColor: "lightgray"
-    },
-    "&:active": {
-      color: "white",
-      margin: theme.spacing.unit / 2,
-      backgroundColor: theme.palette.primary.main
-    }
-  },
-  mojChip: {
-    "&:hover, &:focus": {
-      color: "white",
-      margin: theme.spacing.unit / 2,
-      backgroundColor: theme.palette.primary.main
-    },
-    "&:active": {
-      margin: theme.spacing.unit / 2,
-      backgroundColor: "lightgray"
-    }
   }
 });
 
@@ -95,7 +62,7 @@ class PlanerAktywnosciForm extends Component {
     kiedy: "2018-09-20",
     start: "09:00",
     stop: "10:00",
-    miejsce_id: "",
+    miejsce_id: null,
     aktywnosc_id: 2,
     inna: "",
     uwagi: "",
@@ -204,7 +171,7 @@ class PlanerAktywnosciForm extends Component {
     const { aktywnosc_id, miejsce_id, inna } = this.state;
     switch (aktywnosc_id) {
       case 1:
-        return miejsce_id === "" ? false : true;
+        return !miejsce_id ? false : true;
         break;
       case 5:
         return inna === "" ? false : true;
@@ -301,7 +268,7 @@ class PlanerAktywnosciForm extends Component {
       kiedy: "",
       start: "",
       stop: "",
-      miejsce_id: "",
+      miejsce_id: null,
       aktywnosc_id: "",
       uwagi: "",
       inna: "",
@@ -385,7 +352,7 @@ class PlanerAktywnosciForm extends Component {
         start,
         stop,
         aktywnosc_id,
-        miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
+        miejsce_id: aktywnosc_id === 1 ? miejsce_id : null,
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi
       })
@@ -423,7 +390,7 @@ class PlanerAktywnosciForm extends Component {
         start,
         stop,
         aktywnosc_id,
-        miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
+        miejsce_id: aktywnosc_id === 1 ? miejsce_id : null,
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi
       })

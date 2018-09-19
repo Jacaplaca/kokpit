@@ -124,7 +124,7 @@ const RemoteFilter = props => {
         return {
           width: "170px",
           // textAlign: 'center',
-          verticalAlign: "middle"
+          verticalAlign: "bottom"
         };
       }
     },
@@ -137,7 +137,7 @@ const RemoteFilter = props => {
         return columnStyleKwota;
       },
       headerStyle: (colum, colIndex) => {
-        return { width: "170px", verticalAlign: "middle" };
+        return { width: "170px", verticalAlign: "bottom" };
       }
     },
     {
@@ -147,7 +147,7 @@ const RemoteFilter = props => {
         return columnStyleMain;
       },
       headerStyle: (colum, colIndex) => {
-        return { verticalAlign: "middle" };
+        return { verticalAlign: "bottom" };
       },
       filter: mojTextFilter,
       sort: true
@@ -200,7 +200,7 @@ const RemoteFilter = props => {
         return columnStyleKwota;
       },
       headerStyle: (colum, colIndex) => {
-        return { verticalAlign: "middle" };
+        return { verticalAlign: "bottom" };
       },
       formatter: cell => {
         let liczba = cell;
@@ -217,7 +217,7 @@ const RemoteFilter = props => {
         style: { display: "inline-grid", marginTop: 5 },
         comparatorStyle: {}, // custom the style on comparator select
         // comparatorClassName: 'custom-comparator-class',  // custom the class on comparator select
-        numberStyle: { margin: "0px", marginTop: 5 } // custom the style on number input/select
+        numberStyle: { margin: "0px", marginTop: 5, width: "100%" } // custom the style on number input/select
         // numberClassName: 'custom-number-class',  // custom the class on ber input/select
       })
       // filter: customFilter(),
