@@ -3,16 +3,20 @@ import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
-import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
-
+import { dynamicSort } from "../../common/functions";
 import InputSelectTextField from "./InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
 //
+
+function renderSuggestionsContainer({ containerProps, children, query }) {
+  return <div {...containerProps}>{children}</div>;
+}
+
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.name, query);
   const parts = parse(suggestion.name, matches);
@@ -47,9 +51,11 @@ function getSuggestions(fetchowane, value) {
   // const sugestie = [...suggestions];
   const escapedValue = escapeRegexCharacters(value.trim());
   //const regex = new RegExp("^" + escapedValue, "i");
-  const regex = new RegExp(value);
+  const regex = new RegExp(value.toLowerCase());
 
-  return fetchowane.filter(suggestion => regex.test(suggestion.name));
+  return fetchowane.filter(suggestion =>
+    regex.test(suggestion.name.toLowerCase())
+  );
 }
 
 function getSuggestionValue(suggestion) {
@@ -77,7 +83,9 @@ const styles = theme => ({
     left: 0,
     right: 0,
     maxHeight: 300,
-    overflowY: "auto"
+    overflowY: "auto",
+    background: "white",
+    boxShadow: theme.shadows[5]
   },
   suggestion: {
     display: "block"
@@ -104,30 +112,36 @@ class InputSelectBaza extends React.Component {
     suggestions: [],
     isLoading: false,
     pokazujSugestie: true,
+    // fetchowane: [{ id: 1, name: "aaa" }, { id: 2, name: "bbb" }]
     fetchowane: []
     //focus: false
   };
 
   componentWillMount() {
-    //   // axios.get(`/api/dniDoRaportu/${value}`).then(result => {
-    axios.get(`/api/table/dniDoRaportu`).then(result => {
-      const fetchowane = result.data;
-      this.setState({
-        isLoading: false,
-        fetchowane: fetchowane.reverse()
-      });
+    axios.get(`/api/table/${this.props.przeszukuje}`).then(result => {
+      const fetchowane = this.props.reverse
+        ? result.data.sort(dynamicSort("name")).reverse()
+        : result.data.sort(dynamicSort("name"));
+      this.setState({ fetchowane, isLoading: false });
       this.props.daty(fetchowane);
     });
   }
 
   onChange = (event, { newValue, method }) => {
+    console.log(newValue);
+    const wybrano = this.state.fetchowane.filter(x => x.name === newValue)[0];
+    console.log(wybrano);
     this.setState({
       value: newValue
     });
     newValue !== ""
       ? this.setState({ clear: true })
       : this.setState({ clear: false });
+
+    wybrano ? this.props.wybrano(wybrano) : this.props.wybrano("");
     this.props.edytuj(newValue);
+    // wybrano ? this.props.edytujValue(wybrano)
+    //this.props.edytuj({ name: wybrano ? wybrano.namenewValue });
   };
 
   clearValue = () => {
@@ -135,7 +149,7 @@ class InputSelectBaza extends React.Component {
       value: "",
       clear: false
     });
-    this.props.edytuj("");
+    this.props.czysc();
     this.input.focus();
     this.setState({
       suggestions: this.state.fetchowane
@@ -169,7 +183,7 @@ class InputSelectBaza extends React.Component {
       error
       // disabled
     } = this.props;
-    const { suggestions } = this.state;
+    const { suggestions, value, single } = this.state;
 
     const inputProps = {
       //autoFocus: focus,
@@ -177,6 +191,7 @@ class InputSelectBaza extends React.Component {
       placeholder,
       classes,
       value: valueProps,
+      //value: value,
       onChange: this.onChange,
       error,
       clearValue: this.clearValue
@@ -194,12 +209,6 @@ class InputSelectBaza extends React.Component {
           suggestionsList: classes.suggestionsList,
           suggestion: classes.suggestion
         }}
-        renderSuggestionsContainer={options => (
-          <Paper {...options.containerProps} square>
-            {options.children}
-          </Paper>
-        )}
-        // renderInputComponent={renderInputComponent}
         renderInputComponent={InputSelectTextField}
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
@@ -208,6 +217,7 @@ class InputSelectBaza extends React.Component {
         shouldRenderSuggestions={shouldRenderSuggestions}
         renderSuggestion={renderSuggestion}
         inputProps={inputProps}
+        renderSuggestionsContainer={renderSuggestionsContainer}
         ref={this.storeInputReference}
       />
     );

@@ -146,7 +146,11 @@ class PlanerRaporty extends Component {
             // edit={id => console.log(id)}
           />
         </Paper>
-        <ModalWindow open={this.state.openModal} close={this.handleClose}>
+        <ModalWindow
+          open={this.state.openModal}
+          close={this.handleClose}
+          maxWidth={900}
+        >
           <PlanerRaportyForm
             modal
             editedId={this.state.editedId}

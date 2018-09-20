@@ -221,16 +221,14 @@ module.exports = app => {
     } = req.body;
     console.log(req.body);
     const { user_id, clientId } = req.user;
-    console.log(req.params);
-    console.log(clientId);
     Cost.update(
       {
         nr_dokumentu,
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto: kwota_netto.replace(",", ".").replace("zł", ""),
-        categoryId: categoryId.value,
-        groupId: groupId.value
+        categoryId,
+        groupId
       },
       {
         where: { clientId, id }
@@ -513,8 +511,8 @@ module.exports = app => {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto: kwota_netto.replace(",", ".").replace("zł", ""),
-      categoryId: categoryId.value,
-      groupId: groupId.value,
+      categoryId: categoryId,
+      groupId: groupId,
       clientId,
       userId: user_id
     })
@@ -579,7 +577,7 @@ module.exports = app => {
       stop,
       aktywnosc_id,
       miejsce_id,
-      klient_id,
+      planer_klienci_id,
       inna,
       uwagi,
       nawozy,
@@ -600,7 +598,7 @@ module.exports = app => {
       inna,
       uwagi,
       firma_id: clientId,
-      planer_klienci_id: klient_id === "" ? null : klient_id,
+      planer_klienci_id: planer_klienci_id === "" ? null : planer_klienci_id,
       user_id,
       nawozy,
       nowyKlient,

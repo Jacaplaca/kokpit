@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
-import FormControl from '@material-ui/core/FormControl';
-import Paper from '@material-ui/core/Paper';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
-import Key from '@material-ui/icons/VpnKey';
+import Paper from "@material-ui/core/Paper";
+import Input from "@material-ui/core/Input";
+import Button from "@material-ui/core/Button";
+import Key from "@material-ui/icons/VpnKey";
 
-import PropTypes from 'prop-types';
-import * as actions from '../actions';
+import PropTypes from "prop-types";
+import * as actions from "../actions";
+
+import InputComponent from "../common/inputs/InputComponent";
+import ButtonMy from "../common/ButtonMy";
 
 class Login extends Component {
   state = {
-    email: ''
+    email: ""
   };
 
   componentWillMount = () => {
@@ -22,7 +23,7 @@ class Login extends Component {
 
   componentDidUpdate = () => {
     if (
-      this.state.email === '' &&
+      this.state.email === "" &&
       this.props.formTemp.length > 0 &&
       this.props.formTemp[0].email !== this.state.email
     ) {
@@ -36,18 +37,19 @@ class Login extends Component {
 
   render() {
     return (
-      <div style={{ textAlign: 'center', padding: 20 }}>
+      <div style={{ textAlign: "center", padding: 20 }}>
         <Paper
           style={{
-            textAlign: 'center',
+            textAlign: "center",
             width: 500,
             padding: 30,
-            margin: 'auto'
-          }}>
+            margin: "auto"
+          }}
+        >
           {this.props.formTemp[0] ? (
             <div>
               {this.props.formTemp[0].errors}
-              {'email' in this.props.formTemp[0] && (
+              {"email" in this.props.formTemp[0] && (
                 <form method="POST" action="/auth/reset">
                   <input name="email" type="hidden" value={this.state.email} />
                   <button type="submit" className="btn btn-primary">
@@ -58,80 +60,30 @@ class Login extends Component {
             </div>
           ) : null}
           <form method="POST" action="/auth/login">
-            <FormControl
-              // className={classes.formControl}
-              aria-describedby="name-helper-text">
-              <InputLabel htmlFor="email">Email</InputLabel>
-              <Input
-                onChange={this.onChangeEmail}
-                name="email"
-                type="email"
-                value={this.state.email}
-                // name="nazwa_pozycji"
-                id="email"
-                // value={this.state.nazwa_pozycji}
-                // onChange={this.handleChange}
-                style={{ width: 300 }}
-              />
-              {/* <FormHelperText id="name-helper-text">
-        Some important helper text
-      </FormHelperText> */}
-            </FormControl>
-            <FormControl
-              style={{ marginTop: 20 }}
-              // className={classes.formControl}
-              aria-describedby="name-helper-text">
-              <InputLabel htmlFor="pass">Password</InputLabel>
-              <Input
-                name="password"
-                type="password"
-                // name="nazwa_pozycji"
-                id="pass"
-                // value={this.state.nazwa_pozycji}
-                // onChange={this.handleChange}
-                style={{ width: 300 }}
-              />
-              {/* <FormHelperText id="name-helper-text">
-        Some important helper text
-      </FormHelperText> */}
-            </FormControl>
-            {/* <div className="form-group">
-            <label htmlFor="exampleInputEmail1">Email address</label>
-            <input
-              onChange={this.onChangeEmail}
+            <Input name="email" type="email" value={this.state.email} hidden />
+            <InputComponent
               name="email"
+              label="Email"
               type="email"
+              edytuj={email => this.setState({ email })}
               value={this.state.email}
-              className="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-              placeholder="Podaj adres email"
             />
-            <small id="emailHelp" className="form-text text-muted">
-              We&apos;ll never share your email with anyone else.
-            </small>
-          </div> */}
-            {/* <div className="form-group">
-            <label htmlFor="exampleInputPassword1">Password</label>
-            <input
+            <InputComponent
+              name="password"
+              label="Password"
+              type="password"
+              edytuj={password => this.setState({ password })}
+              value={this.state.password}
+              password
+            />
+            <Input
               name="password"
               type="password"
-              className="form-control"
-              id="exampleInputPassword1"
-              placeholder="Password"
+              value={this.state.password}
+              hidden
             />
-          </div> */}
-            {/* <button type="submit" className="btn btn-primary">
-            Zaloguj się
-          </button> */}
-            <div style={{ width: '100%', marginTop: 40 }}>
-              <Button
-                // style={{mar}}
-                type="submit"
-                variant="contained"
-                color="primary"
-                // className={classes.button}
-              >
+            <div style={{ width: "100%", marginTop: 40 }}>
+              <Button type="submit" variant="contained" color="primary">
                 Zaloguj się
                 <Key style={{ marginLeft: 10 }} />
               </Button>

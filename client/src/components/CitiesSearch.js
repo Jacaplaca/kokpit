@@ -1,23 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
-import { DebounceInput } from "react-debounce-input";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import Popper from "@material-ui/core/Popper";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import { withStyles } from "@material-ui/core/styles";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import IconButton from "@material-ui/core/IconButton";
-import IconCancel from "@material-ui/icons/Clear";
 
-import InputSelectTextField from "./InputSelectTextField";
+import InputSelectTextField from "../common/inputs/InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
+
+function renderSuggestionsContainer({ containerProps, children, query }) {
+  return <div {...containerProps}>{children}</div>;
+}
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.nazwa, query);
@@ -84,7 +81,11 @@ const styles = theme => ({
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,
-    right: 0
+    right: 0,
+    maxHeight: 300,
+    overflowY: "auto",
+    background: "white",
+    boxShadow: theme.shadows[5]
   },
   suggestion: {
     display: "block"
@@ -269,7 +270,8 @@ class CitySearch extends React.Component {
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
       getSuggestionValue: this.getSuggestionValue,
-      renderSuggestion
+      renderSuggestion,
+      renderSuggestionsContainer
     };
 
     return (
@@ -290,11 +292,6 @@ class CitySearch extends React.Component {
             suggestionsList: classes.suggestionsList,
             suggestion: classes.suggestion
           }}
-          renderSuggestionsContainer={options => (
-            <Paper {...options.containerProps} square>
-              {options.children}
-            </Paper>
-          )}
           inputProps={inputProps}
           ref={this.storeInputReference}
           //renderInputComponent={renderSearchInput}

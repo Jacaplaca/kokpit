@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import ClockIcon from "@material-ui/icons/WatchLater";
 import { fade } from "@material-ui/core/styles/colorManipulator";
@@ -17,6 +16,7 @@ import { sumaCzasow, minutes2hours } from "../common/functions";
 import Confirmation from "./Confirmation";
 
 import PlanerAktywnosciSingle from "./PlanerAktywnosciSingle";
+import ButtonMy from "../common/ButtonMy";
 
 const styles = theme => ({
   root: {
@@ -28,22 +28,6 @@ const styles = theme => ({
   },
   wyslanoPasek: {
     backgroundColor: fade(theme.palette.secondary.light, 0.1)
-  },
-  buttonRoot: {
-    background: `linear-gradient(45deg, ${fade(
-      theme.palette.secondary.main,
-      1
-    )} 30%, ${fade(theme.palette.secondary.light, 1)} 90%)`,
-    borderRadius: 3,
-    color: "white",
-    height: 22,
-    padding: "0 20px"
-  },
-  label: {
-    borderColor: "gray"
-  },
-  text: {
-    height: 4
   }
 });
 
@@ -122,31 +106,22 @@ class PlanerLista extends Component {
                     </Icon>{" "}
                     {minutes2hours(sumaCzasow(day.values))}
                     {wyslijDoPlanuButton && (
-                      <Button
+                      <ButtonMy
                         onClick={() =>
                           this.setState({ open: true, kiedy: day.kiedy })
                         }
-                        classes={{
-                          root: day.values[0].wyslano
-                            ? classes.buttonRootDisabled
-                            : classes.buttonRoot,
-                          label: classes.label,
-                          text: classes.text // class name, e.g. `classes-nesting-label-x`
-                        }}
                         style={{
                           position: "absolute",
                           right: "50px",
                           marginTop: "-5px"
                         }}
-                        //variant="outlined"
                         size="small"
                         disabled={day.values[0].wyslano ? true : false}
-                        // className={classes.button}
                       >
                         {day.values[0].wyslano
                           ? "Wysłano do planu"
                           : "Wyślij do planu"}
-                      </Button>
+                      </ButtonMy>
                     )}
                   </span>
                 </Typography>

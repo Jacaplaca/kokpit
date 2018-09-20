@@ -35,6 +35,8 @@ class ModalWindow extends Component {
 
   getModalStyle = () => {
     return {
+      maxWidth: this.props.maxWidth,
+      width: "100%",
       top: `${50}%`,
       left: `${50}%`,
       transform: `translate(-${50}%, -${50}%)`
@@ -61,6 +63,12 @@ class ModalWindow extends Component {
 
 ModalWindow.propTypes = {
   classes: PropTypes.object.isRequired
+};
+
+ModalWindow.defaultProps = {
+  maxWidth: 500,
+  vertical: 50,
+  horizontal: 50
 };
 
 function mapStateToProps({ auth }) {

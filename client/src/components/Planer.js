@@ -332,7 +332,11 @@ class Planer extends Component {
             // edit={id => console.log(id)}
           />
         </Paper>
-        <ModalWindow open={this.state.openModal} close={this.handleClose}>
+        <ModalWindow
+          open={this.state.openModal}
+          close={this.handleClose}
+          maxWidth={900}
+        >
           <PlanerAktywnosciForm
             modal
             editedId={this.state.editedId}

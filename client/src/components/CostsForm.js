@@ -1,69 +1,19 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
-import NumberFormat from "react-number-format";
+import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import Select from "react-select";
-import MenuItem from "@material-ui/core/MenuItem";
+
 import Button from "@material-ui/core/Button";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
-import { dynamicSort } from "../common/functions";
-
-function inputComponent({ inputRef, ...props }) {
-  return <div ref={inputRef} {...props} />;
-}
-
-function Control(props) {
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputComponent,
-        inputProps: {
-          className: props.selectProps.classes.input,
-          inputRef: props.innerRef,
-          children: props.children,
-          ...props.innerProps
-        }
-      }}
-      {...props.selectProps.textFieldProps}
-    />
-  );
-}
-
-function Placeholder(props) {
-  return (
-    <Typography
-      color="textSecondary"
-      className={props.selectProps.classes.placeholder}
-      {...props.innerProps}
-    >
-      {props.children}
-    </Typography>
-  );
-}
-
-const components = {
-  // Option,
-  Control,
-  // NoOptionsMessage,
-  Placeholder
-  //SingleValue,
-  //MultiValue,
-  //ValueContainer,
-  //Menu,
-};
+import InputComponent from "../common/inputs/InputComponent";
+import InputSelectBaza from "../common/inputs/InputSelectBaza";
+import InputData from "../common/inputs/InputData";
 
 const styles = theme => ({
   input: {
@@ -92,36 +42,13 @@ const styles = theme => ({
   }
 });
 
-function NumberFormatCustom(props) {
-  const { inputRef, onChange, ...other } = props;
-  // console.log(props);
-
-  return (
-    <NumberFormat
-      {...other}
-      getInputRef={inputRef}
-      onValueChange={values => {
-        onChange({
-          target: {
-            value: values.formattedValue.replace(/ /g, "")
-          }
-        });
-      }}
-      decimalSeparator=","
-      thousandSeparator=" "
-      decimalScale={2}
-      suffix="  zł"
-    />
-  );
-}
-
 class CostsForm extends Component {
   state = {
     id: "",
-    nr_dokumentu: "",
-    data_wystawienia: "",
-    nazwa_pozycji: "",
-    kwota_netto: "",
+    nr_dokumentu: "nr32423/sadf",
+    data_wystawienia: "2018-09-07",
+    nazwa_pozycji: "nazwa",
+    kwota_netto: "125",
     categoryId: "",
     groupId: "",
     groups: [],
@@ -130,7 +57,10 @@ class CostsForm extends Component {
     edited: false,
     chmurka_group: [],
     chmurka_category: [],
-    submitIsDisable: true
+    submitIsDisable: true,
+
+    categoryText: "",
+    groupText: ""
   };
 
   componentWillMount() {
@@ -226,33 +156,12 @@ class CostsForm extends Component {
       kwota_netto: "",
       categoryId: "",
       groupId: "",
-      edited: false
+      edited: false,
+      categoryText: "",
+      groupText: ""
     });
     this.props.modal && this.props.closeModal();
     // this.props.clearForm;
-  };
-
-  renderSelectNorm = select => {
-    const none = (
-      <MenuItem value="">
-        <em>Brak</em>
-      </MenuItem>
-    );
-    const doWyboru = select.map(elem => (
-      <MenuItem key={select} value={elem.id}>
-        {elem.name}
-      </MenuItem>
-    ));
-    return [none, ...doWyboru];
-  };
-
-  renderSelect = select => {
-    const none = { label: "Brak", value: "" };
-    const doWyboru = select.map((elem, i) => ({
-      label: elem.name,
-      value: elem.id
-    }));
-    return doWyboru.sort(dynamicSort("label"));
   };
 
   handleEdit = id => {
@@ -262,6 +171,8 @@ class CostsForm extends Component {
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto,
+        categoryId,
+        groupId,
         category,
         group
       } = result.data;
@@ -271,9 +182,11 @@ class CostsForm extends Component {
         kwota_netto,
         nazwa_pozycji,
         data_wystawienia,
-        categoryId: { label: category.name, value: category.id },
-        groupId: { label: group.name, value: group.id },
-        edited: true
+        categoryId,
+        groupId,
+        edited: true,
+        categoryText: category.name,
+        groupText: group.name
       });
     });
   };
@@ -375,91 +288,85 @@ class CostsForm extends Component {
     return (
       <Paper style={{ padding: 20 }}>
         <form onSubmit={e => this.handleSubmit(e)}>
-          <FormControl
-            className={classes.formControl}
-            aria-describedby="name-helper-text"
-          >
-            <InputLabel htmlFor="name-helper">Nr dokumentu</InputLabel>
-            <Input
-              name="nr_dokumentu"
-              id="name-helper"
-              value={this.state.nr_dokumentu}
-              onChange={this.handleChange}
-            />
-          </FormControl>
-          <FormControl
-            className={classes.formControl}
-            aria-describedby="name-helper-text"
-          >
-            <TextField
-              name="data_wystawienia"
-              id="date"
-              label="Data wystawienia"
-              type="date"
-              // defaultValue="2017-05-24"
-              value={this.state.data_wystawienia}
-              className={classes.textField}
-              onChange={this.handleChange}
-              InputLabelProps={{
-                shrink: true
-              }}
-            />
-          </FormControl>
-          <FormControl
-            className={classes.formControl}
-            aria-describedby="name-helper-text"
-          >
-            <InputLabel htmlFor="name-helper">Nazwa pozycji</InputLabel>
-            <Input
-              name="nazwa_pozycji"
-              id="name-helper"
-              value={this.state.nazwa_pozycji}
-              onChange={this.handleChange}
-              style={{ width: 300 }}
-            />
-          </FormControl>
-
-          <FormControl className={classes.formControl}>
-            <TextField
-              className={classes.formControl}
-              name="kwota_netto"
-              label="Kwota netto"
-              value={this.state.kwota_netto.replace(".", ",")}
-              onChange={this.handleChangeKwota("kwota_netto")}
-              id="formatted-numberformat-input"
-              InputProps={{
-                inputComponent: NumberFormatCustom
-              }}
-            />
-          </FormControl>
-          <div style={{ display: "flex" }}>
-            <div style={{ width: 410, marginRight: 22 }}>
-              <InputLabel htmlFor="categoryId">Kategoria</InputLabel>
-              <Select
-                placeholder="Wybierz..."
-                components={components}
-                classes={classes}
-                name="categoryId"
-                id="categoryId"
-                value={this.state.categoryId}
-                onChange={this.handleChangeSelect("categoryId")}
-                className={classes.selectEmpty}
-                options={this.renderSelect(this.props.categories)}
+          <Grid container spacing={24}>
+            <Grid item xs={4}>
+              <InputComponent
+                name="nr_dokumentu"
+                label="Nr dokumentu"
+                type="text"
+                edytuj={nr_dokumentu => this.setState({ nr_dokumentu })}
+                value={this.state.nr_dokumentu}
               />
-            </div>
-            <div style={{ width: 305 }}>
-              <InputLabel htmlFor="age-required">Grupa</InputLabel>
-              <Select
-                placeholder="Wybierz..."
-                name="groupId"
-                components={components}
-                classes={classes}
-                options={this.renderSelect(this.props.groups)}
-                value={this.state.groupId}
-                onChange={this.handleChangeSelect("groupId")}
+            </Grid>
+            <Grid item xs={4}>
+              <InputData
+                id="date"
+                name="data_wystawienia"
+                //disabled={modal ? true : false}
+                label="Data wystawienia"
+                //error={this.state.errorKiedy}
+                //label="Kiedy"
+                type="date"
+                edytuj={data_wystawienia => this.setState({ data_wystawienia })}
+                value={this.state.data_wystawienia}
               />
-            </div>
-          </div>
+            </Grid>
+            <Grid item xs={4}>
+              <InputComponent
+                name="nazwa_pozycji"
+                label="Nazwa pozycji"
+                type="text"
+                edytuj={nazwa_pozycji => this.setState({ nazwa_pozycji })}
+                value={this.state.nazwa_pozycji}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={24}>
+            <Grid item xs={4}>
+              <InputSelectBaza
+                daty={datyDoRaportu => this.setState({ datyDoRaportu })}
+                wybrano={category => {
+                  category && this.setState({ categoryId: category.id });
+                }}
+                edytuj={categoryText => {
+                  this.setState({ categoryText });
+                }}
+                czysc={() =>
+                  this.setState({ categoryId: "", categoryText: "" })
+                }
+                value={this.state.categoryText}
+                label="Kategorie"
+                placeholder="Kategorie kosztowe"
+                przeszukuje="category"
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <InputSelectBaza
+                daty={datyDoRaportu => this.setState({ datyDoRaportu })}
+                wybrano={group => {
+                  group && this.setState({ groupId: group.id });
+                }}
+                edytuj={groupText => {
+                  this.setState({ groupText });
+                }}
+                czysc={() => this.setState({ groupId: "", groupText: "" })}
+                value={this.state.groupText}
+                label="Grupy"
+                placeholder="Grupy kosztowe"
+                przeszukuje="group"
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <InputComponent
+                name="kwota_netto"
+                label="Kwota netto"
+                type="text"
+                edytuj={kwota_netto => this.setState({ kwota_netto })}
+                value={this.state.kwota_netto.replace(".", ",")}
+                kwota
+              />
+            </Grid>
+          </Grid>
           {!this.state.edited ? (
             <Button
               disabled={this.state.submitIsDisable}

@@ -1,11 +1,7 @@
 import React, { Component } from "react";
-// import { DateRange } from 'react-date-range';
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
-import _ from "lodash";
-import currency from "currency.js";
 import { connect } from "react-redux";
-import { startOfMonth, endOfMonth } from "date-fns";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -13,22 +9,19 @@ import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import classNames from "classnames";
 import Paper from "@material-ui/core/Paper";
-import Select from "react-select";
-import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
-import Chip from "@material-ui/core/Chip";
 import DoneIcon from "@material-ui/icons/Done";
 
 import CitySearch from "./CitiesSearch";
-import InputWyborBaza from "./InputWyborBaza";
-import InputSelectBaza from "./InputSelectBaza";
-import InputTime from "./InputTime";
-import InputData from "./InputData";
-import InputComponent from "./InputComponent";
+import InputWyborBaza from "../common/inputs/InputWyborBaza";
+import InputSelectBaza from "../common/inputs/InputSelectBaza";
+import InputTime from "../common/inputs/InputTime";
+import InputComponent from "../common/inputs/InputComponent";
+
 import KlienciSearch from "./KlienciSearch";
 
 import { wezGodzine, dynamicSort, dataToString } from "../common/functions";
@@ -213,11 +206,16 @@ class PlanerRaportyForm extends Component {
   };
 
   validateKiedy = data => {
+    //return this.props.modal && true;
+    if (this.props.modal) {
+      return true;
+    }
     const nalezy =
       this.state.datyDoRaportu.filter(x => x.name === data).length === 1
         ? true
         : false;
     const pelnaData = data.length === 10 ? true : false;
+    console.log(data);
 
     if (pelnaData) {
       if (nalezy) {
@@ -247,6 +245,7 @@ class PlanerRaportyForm extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     const {
+      kiedy: kiedy_prevState,
       start: start_prevState,
       stop: stop_prevState,
       aktywnosc_id: aktywnosc_id_prevState,
@@ -256,6 +255,7 @@ class PlanerRaportyForm extends Component {
       dataWybrana: dataWybrana_prevState
     } = prevState;
     const {
+      kiedy,
       start,
       stop,
       aktywnosc_id,
@@ -274,9 +274,9 @@ class PlanerRaportyForm extends Component {
       this.validateDuration(start, stop);
     }
 
-    // if (kiedy !== kiedy_prevState) {
-    //   this.validateKiedy(kiedy);
-    // }
+    if (kiedy !== kiedy_prevState) {
+      this.validateKiedy(kiedy);
+    }
 
     if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 1) {
       this.setState({
@@ -295,13 +295,15 @@ class PlanerRaportyForm extends Component {
     // }
 
     if (
-      (start !== start_prevState ||
+      (kiedy !== kiedy_prevState ||
+        start !== start_prevState ||
         stop !== stop_prevState ||
         aktywnosc_id !== aktywnosc_id_prevState ||
         miejsce_id !== miejsce_id_prevState ||
         inna !== inna_prevState) &&
       // kiedy.length >= 10
-      (this.validateTime(start, "Start") &&
+      (this.validateKiedy(kiedy) &&
+        this.validateTime(start, "Start") &&
         this.validateTime(stop, "Stop") &&
         this.validateDuration(start, stop) &&
         aktywnosc_id !== "" &&
@@ -309,13 +311,15 @@ class PlanerRaportyForm extends Component {
     ) {
       this.setState({ submitIsDisable: false });
     } else if (
-      (start !== start_prevState ||
+      (kiedy !== kiedy_prevState ||
+        start !== start_prevState ||
         stop !== stop_prevState ||
         aktywnosc_id !== aktywnosc_id_prevState ||
         inna !== inna_prevState ||
         miejsce_id !== miejsce_id_prevState) &&
       // kiedy === ""
-      (!this.validateTime(start, "Start") ||
+      (!this.validateKiedy(kiedy) ||
+        !this.validateTime(start, "Start") ||
         !this.validateTime(stop, "Stop") ||
         !this.validateDuration(start, stop) ||
         aktywnosc_id === "" ||
@@ -632,14 +636,7 @@ class PlanerRaportyForm extends Component {
 
   render() {
     const { classes, modal } = this.props;
-    const {
-      nawozy,
-      nowyKlient,
-      sprzedaz,
-      zamowienie,
-      zboza,
-      kiedy
-    } = this.state;
+    const { kiedy } = this.state;
     const pola = [
       { pole: "nawozy", nazwa: "Nawozy" },
       { pole: "nowyKlient", nazwa: "Nowy klient" },
@@ -661,15 +658,24 @@ class PlanerRaportyForm extends Component {
                   error={this.state.errorKiedy}
                   miejsceLabel={this.state.miejsceLabel}
                   // miejsceLabel="lublin"
+                  // edytujValue={kiedy => {
+                  //   this.setState({ kiedy });
+                  //   this.fetchujDate(kiedy);
+                  // }}
+                  wybrano={wybrano => {
+                    wybrano && this.fetchujDate(wybrano.name);
+                    // this.setState({})
+                  }}
                   edytuj={kiedy => {
-                    console.log("input select baza");
-                    this.fetchujDate(kiedy);
                     this.setState({ kiedy });
                   }}
+                  czysc={() => this.setState({ kiedy: "" })}
                   value={this.state.kiedy}
                   //cancelLabel={() => this.setState({ miejsceLabel: "" })}
                   label="Kiedy"
                   placeholder="Dzień"
+                  przeszukuje="dniDoRaportu"
+                  reverse
                 />
               )}
               <div className={classes.aktyDoRaportu}>

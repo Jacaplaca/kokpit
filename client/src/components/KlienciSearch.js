@@ -1,18 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
-import { DebounceInput } from "react-debounce-input";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import Popper from "@material-ui/core/Popper";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import { withStyles } from "@material-ui/core/styles";
 
-import InputSelectTextField from "./InputSelectTextField";
+import InputSelectTextField from "../common/inputs/InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
@@ -70,7 +66,8 @@ const styles = theme => ({
     right: 0,
     maxHeight: 300,
     overflowY: "auto",
-    background: "white"
+    background: "white",
+    boxShadow: theme.shadows[5]
   },
   suggestion: {
     display: "block"

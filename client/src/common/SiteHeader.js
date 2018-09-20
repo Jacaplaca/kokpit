@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
-const styles = {
+const styles = theme => ({
   root: {
     width: "100%",
     maxWidth: "100%",
@@ -15,7 +15,7 @@ const styles = {
     fontSize: 30,
     fontWeight: "300"
   }
-};
+});
 
 function SiteHeader(props) {
   const { classes, text } = props;
@@ -42,4 +42,4 @@ SiteHeader.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(SiteHeader);
+export default withStyles(styles, { withTheme: true })(SiteHeader);

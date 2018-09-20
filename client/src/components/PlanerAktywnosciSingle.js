@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
+import SvgIcon from "@material-ui/core/SvgIcon";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ClockIcon from "@material-ui/icons/WatchLater";
 import Edit from "@material-ui/icons/Edit";
@@ -11,6 +12,7 @@ import { fade } from "@material-ui/core/styles/colorManipulator";
 import { timeDiff, wezGodzine, minutes2hours } from "../common/functions";
 //import Paper from "@material-ui/core/Paper";
 
+import RaportyAkcjeIndicator from "./RaportyAkcjeIndicator";
 import Confirmation from "./Confirmation";
 
 const styles = theme => ({
@@ -103,6 +105,11 @@ class PlanerAktywnosciSingle extends Component {
             inna,
             uwagi,
             wyslano,
+            nawozy,
+            nowyKlient,
+            sprzedaz,
+            zamowienie,
+            zboza,
             planer_klienci
           } = day;
           return (
@@ -145,6 +152,7 @@ class PlanerAktywnosciSingle extends Component {
               <span className={classes.klient}>
                 {planer_klienci && planer_klienci.nazwa}
               </span>
+
               <IconButton
                 style={
                   {

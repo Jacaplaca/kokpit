@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { startOfMonth, endOfMonth } from "date-fns";
-import NumberFormat from "react-number-format";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -52,8 +51,8 @@ class Costs extends Component {
     chmurka_group: [],
     chmurka_category: [],
     rangeselection: {
-      startDate: defineds.startOfLastMonth,
-      endDate: defineds.endOfLastMonth,
+      startDate: defineds.startOfMonth,
+      endDate: defineds.endOfMonth,
       key: "rangeselection"
     },
     submitIsDisable: true
@@ -152,13 +151,13 @@ class Costs extends Component {
   };
 
   componentWillMount() {
-    axios
-      .get("/api/table/group")
-      .then(result => this.setState({ groups: result.data }));
-    // .then(result => this.renderSelect(result.data));
-    axios
-      .get("/api/table/category")
-      .then(result => this.setState({ categories: result.data }));
+    // axios
+    //   .get("/api/table/group")
+    //   .then(result => this.setState({ groups: result.data }));
+    // // .then(result => this.renderSelect(result.data));
+    // axios
+    //   .get("/api/table/category")
+    //   .then(result => this.setState({ categories: result.data }));
     this.fetchCosts();
   }
 
@@ -277,11 +276,15 @@ class Costs extends Component {
     return (
       <div className={classes.container}>
         <SiteHeader text={"Dodaj koszty"} />
-        <ModalWindow open={this.state.openModal} close={this.handleClose}>
+        <ModalWindow
+          open={this.state.openModal}
+          close={this.handleClose}
+          maxWidth={900}
+        >
           <CostsForm
             fetchuj={() => this.fetchCosts()}
-            groups={this.state.groups}
-            categories={this.state.categories}
+            //groups={this.state.groups}
+            //categories={this.state.categories}
             changeRange={data => this.changeRange(data)}
             editedId={this.state.editedId}
             modal

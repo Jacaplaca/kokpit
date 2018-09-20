@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-// import NoSsr from '@material-ui/core/NoSsr';
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Send from "@material-ui/icons/Send";
@@ -13,10 +12,11 @@ import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
 import CitySearch from "./CitiesSearch";
-import InputWyborBaza from "./InputWyborBaza";
-import InputTime from "./InputTime";
-import InputData from "./InputData";
-import InputComponent from "./InputComponent";
+
+import InputWyborBaza from "../common/inputs/InputWyborBaza";
+import InputTime from "../common/inputs/InputTime";
+import InputData from "../common/inputs/InputData";
+import InputComponent from "../common/inputs/InputComponent";
 
 import { wezGodzine, dataToString } from "../common/functions";
 
