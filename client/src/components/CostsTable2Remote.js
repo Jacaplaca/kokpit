@@ -9,13 +9,14 @@ import filterFactory, {
   Comparator
 } from "react-bootstrap-table2-filter";
 import "bootstrap/dist/css/bootstrap.css";
+import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 import currency from "currency.js";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import FilterNoneIcon from "@material-ui/icons/FilterNone";
 
 import Confirmation from "./Confirmation";
 
@@ -87,6 +88,11 @@ const RemoteFilter = props => {
   const handleDeleteConfirm = id => {
     props.open();
     props.setDelete(id);
+  };
+
+  const handleDuplicateConfirm = id => {
+    props.open();
+    props.setDuplicate(id);
   };
 
   const columnStyleMain = {
@@ -249,7 +255,7 @@ const RemoteFilter = props => {
       },
       headerStyle: (colum, colIndex) => {
         return {
-          width: "130px",
+          width: "170px",
           textAlign: "center",
           verticalAlign: "middle"
           // display: 'inline'
@@ -266,6 +272,12 @@ const RemoteFilter = props => {
             </IconButton>
             <IconButton aria-label="Edit" onClick={() => props.edit(cell)}>
               <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="Duplicate"
+              onClick={() => handleDuplicateConfirm(cell)}
+            >
+              <FilterNoneIcon />
             </IconButton>
           </div>
         );
@@ -292,37 +304,45 @@ const RemoteFilter = props => {
 };
 
 class CostsTable extends Component {
-  _isMounted = false;
+  //_isMounted = false;
   state = {
     data: [],
     suma: 0,
     open: false,
-    delete: ""
+    deleteRow: null,
+    duplicate: null
   };
 
-  componentDidMount() {
-    this._isMounted = true;
-  }
+  // componentDidMount() {
+  //   this._isMounted = true;
+  // }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
+    console.log("costs table remote receive props");
+    console.log(nextProps.costs);
+    console.log(this.props.costs);
     // console.log('component props');
     // console.log(this.props);
-    this.receiveProps();
+    this.setState({
+      data: this.props.costs,
+      suma: this.sumuj(this.props.costs)
+    });
+    //this.receiveProps();
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+  // componentWillUnmount() {
+  //   this._isMounted = false;
+  // }
 
-  receiveProps() {
-    if (this._isMounted) {
-      console.log("cost table2remote is mounted");
-      this.setState({
-        data: this.props.costs,
-        suma: this.sumuj(this.props.costs)
-      });
-    }
-  }
+  // receiveProps() {
+  //   if (this._isMounted) {
+  //     console.log("cost table2remote is mounted");
+  //     this.setState({
+  //       data: this.props.costs,
+  //       suma: this.sumuj(this.props.costs)
+  //     });
+  //   }
+  // }
 
   handleTableChange = (type, { filters }) => {
     console.log(type);
@@ -407,12 +427,50 @@ class CostsTable extends Component {
     this.setState({ open: false });
   };
 
+  handleDuplicate = () => {
+    console.log("duplicate");
+    axios.get(`/api/id/cost/${this.state.duplicate}`).then(result => {
+      const {
+        nr_dokumentu,
+        data_wystawienia,
+        nazwa_pozycji,
+        kwota_netto,
+        categoryId,
+        groupId
+      } = result.data;
+      //e.preventDefault();
+
+      const url = "/api/cost";
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          nr_dokumentu,
+          data_wystawienia,
+          nazwa_pozycji,
+          kwota_netto,
+          categoryId,
+          groupId
+        })
+      })
+        .then(resp => resp.json())
+        .then(() => {
+          this.props.fetch();
+        })
+        .then(() => {
+          this.setState({ duplicate: null, open: false });
+        });
+    });
+  };
+
   handleDelete = () => {
     // console.log("handleDelete");
     // console.log(id);
 
-    const url = `/api/cost/remove/${this.state.delete}`;
-    this.setState({ delete: "", open: false });
+    const url = `/api/cost/remove/${this.state.deleteRow}`;
+    this.setState({ deleteRow: null, open: false });
     fetch(url, {
       method: "POST",
       // body: JSON.stringify({ aa: 'aaa' }),
@@ -425,28 +483,39 @@ class CostsTable extends Component {
 
   jakieDane = () => {
     if (this.state.data.length === 0 || this.props.costs === this.state.data) {
-      // console.log("state.data = 0 lub props.cost = state.data");
+      console.log("state.data = 0 lub props.cost = state.data");
       return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
     } else if (
       this.props.costs.length === this.state.data.length &&
       this.props.costs !== this.state.data
     ) {
-      // console.log("zmienila sie wartosc ale nie dlugosc tabeli bo byla edycja");
+      console.log("zmienila sie wartosc ale nie dlugosc tabeli bo byla edycja");
       return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
+      // } else if (this.props.costs.length !== this.state.data.length) {
+      //   console.log("inna dlugosc");
+      //   return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
     } else {
-      // console.log("jakie dane rozne nie 0");
+      console.log("jakie dane rozne nie 0");
       return { costs: this.state.data, sumuj: this.sumuj(this.state.data) };
     }
   };
 
   render() {
+    const { open, deleteRow } = this.state;
+    console.log("koszty render");
+    console.log(this.state.data);
+    console.log(this.props.costs);
     return (
       <div>
         <Confirmation
-          open={this.state.open}
+          open={open}
           close={this.handleClose}
-          action={this.handleDelete}
-          komunikat="Czy na pewno chcesz usunąć tę pozycję kosztową?"
+          action={deleteRow ? this.handleDelete : this.handleDuplicate}
+          komunikat={
+            deleteRow
+              ? "Czy na pewno chcesz usunąć tę pozycję kosztową?"
+              : "Czy na pewno chcesz powielić ten koszt?"
+          }
         />
         <RemoteFilter
           data={this.jakieDane().costs}
@@ -455,8 +524,10 @@ class CostsTable extends Component {
           onTableChange={this.handleTableChange}
           fetch={() => this.props.fetch()}
           edit={id => this.props.edit(id)}
-          setDelete={id => this.setState({ delete: id })}
-          delete={this.state.delete}
+          setDelete={id => this.setState({ deleteRow: id })}
+          setDuplicate={id => this.setState({ duplicate: id })}
+          duplicate={this.state.duplicate}
+          delete={deleteRow}
           open={() => this.setState({ open: true })}
           classes={this.props.classes}
         />
