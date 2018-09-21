@@ -531,7 +531,7 @@ class PlanerAktywnosciForm extends Component {
                   color="primary"
                   className={classes.button}
                 >
-                  Dodaj koszt
+                  Zaplanuj aktywność
                   <Send style={{ marginLeft: 10 }} />
                 </Button>
               ) : (
@@ -543,7 +543,7 @@ class PlanerAktywnosciForm extends Component {
                   color="primary"
                   className={classes.button}
                 >
-                  Edytuj koszt
+                  Edytuj aktywność
                   <Edit style={{ marginLeft: 10 }} />
                 </Button>
               )}
