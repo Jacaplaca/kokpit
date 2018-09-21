@@ -18,14 +18,14 @@ const styles = theme => ({
 });
 
 function SiteHeader(props) {
-  const { classes, text } = props;
+  const { classes, text, align } = props;
 
   return (
     <div className={classes.root}>
       <Typography
         variant="display1"
         gutterBottom
-        // align="right"
+        align={align}
         classes={{
           //root: classes.rootButton,
           //label: classes.labelButton,
@@ -40,6 +40,10 @@ function SiteHeader(props) {
 
 SiteHeader.propTypes = {
   classes: PropTypes.object.isRequired
+};
+
+SiteHeader.defaultProps = {
+  align: "left"
 };
 
 export default withStyles(styles, { withTheme: true })(SiteHeader);

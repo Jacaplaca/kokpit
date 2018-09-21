@@ -59,11 +59,11 @@ class PlanerAktywnosciForm extends Component {
   state = {
     id: "",
 
-    kiedy: "2018-09-20",
-    start: "09:00",
-    stop: "10:00",
+    kiedy: "",
+    start: "",
+    stop: "",
     miejsce_id: null,
-    aktywnosc_id: 2,
+    aktywnosc_id: "",
     inna: "",
     uwagi: "",
     wyslano: "",
@@ -183,7 +183,7 @@ class PlanerAktywnosciForm extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     const {
-      kiedy: kiedy_prevState,
+      // kiedy: kiedy_prevState,
       start: start_prevState,
       stop: stop_prevState,
       aktywnosc_id: aktywnosc_id_prevState,
@@ -191,7 +191,9 @@ class PlanerAktywnosciForm extends Component {
       inna: inna_prevState,
       uwagi: uwagi_prevState
     } = prevState;
-    const { kiedy, start, stop, aktywnosc_id, miejsce_id, inna } = this.state;
+    const { kiedy: kiedy_prevState } = prevProps;
+    const { start, stop, aktywnosc_id, miejsce_id, inna } = this.state;
+    const { kiedy } = this.props;
 
     if (start !== start_prevState || stop !== stop_prevState) {
       this.validateTime(start, "Start");
@@ -245,15 +247,8 @@ class PlanerAktywnosciForm extends Component {
   // }
 
   czyWypelniony = () => {
-    const {
-      kiedy,
-      start,
-      stop,
-      miejsce_id,
-      aktywnosc_id,
-      uwagi,
-      inna
-    } = this.state;
+    const { start, stop, miejsce_id, aktywnosc_id, uwagi, inna } = this.state;
+    const { kiedy } = this.props;
     if (kiedy || start || stop || miejsce_id || aktywnosc_id || uwagi || inna) {
       return true;
     } else {
@@ -265,7 +260,7 @@ class PlanerAktywnosciForm extends Component {
     console.log("clearform");
     this.setState({
       id: "",
-      kiedy: "",
+      //kiedy: "",
       start: "",
       stop: "",
       miejsce_id: null,
@@ -274,6 +269,7 @@ class PlanerAktywnosciForm extends Component {
       inna: "",
       edited: false
     });
+    this.props.edytuj("");
     this.props.modal && this.props.closeModal();
     // this.props.clearForm;
   };
@@ -314,7 +310,7 @@ class PlanerAktywnosciForm extends Component {
         gus_simc
       } = result.data;
       this.setState({
-        kiedy,
+        //kiedy,
         start: wezGodzine(start),
         stop: wezGodzine(stop),
         aktywnosc_id,
@@ -327,13 +323,14 @@ class PlanerAktywnosciForm extends Component {
         edited: true,
         miejsce_id_temp: miejsce_id
       });
+      this.props.edytuj(kiedy);
     });
   };
 
   onEdit = () => {
     console.log("on edit");
     const {
-      kiedy,
+      //kiedy,
       start,
       stop,
       aktywnosc_id,
@@ -341,6 +338,7 @@ class PlanerAktywnosciForm extends Component {
       inna,
       uwagi
     } = this.state;
+    const { kiedy } = this.props;
     const url = `/api/akt/edit/${this.props.editedId}`;
 
     fetch(url, {
@@ -371,7 +369,7 @@ class PlanerAktywnosciForm extends Component {
     const { user_id, clientId } = this.props.auth;
     e.preventDefault();
     const {
-      kiedy,
+      //kiedy,
       start,
       stop,
       aktywnosc_id,
@@ -379,6 +377,7 @@ class PlanerAktywnosciForm extends Component {
       inna,
       uwagi
     } = this.state;
+    const { kiedy } = this.props;
     const url = "/api/aktywnosci";
 
     fetch(url, {
@@ -439,7 +438,7 @@ class PlanerAktywnosciForm extends Component {
   };
 
   render() {
-    const { classes, modal } = this.props;
+    const { classes, modal, edytuj, kiedy } = this.props;
 
     return (
       <Paper style={{ padding: 20 }}>
@@ -454,8 +453,10 @@ class PlanerAktywnosciForm extends Component {
                 error={this.state.errorKiedy}
                 //label="Kiedy"
                 type="date"
-                edytuj={kiedy => this.setState({ kiedy })}
-                value={this.state.kiedy}
+                //edytuj={kiedy => this.setState({ kiedy })}
+                edytuj={kiedy => edytuj(kiedy)}
+                value={kiedy}
+                //value={this.state.kiedy}
               />
               <InputTime
                 label={
@@ -510,12 +511,6 @@ class PlanerAktywnosciForm extends Component {
                     this.setState({ miejsceLabel: wybranoLabel })
                   }
                 />
-                // <CitySearch
-                //   miejsceLabel={this.state.miejsceLabel}
-                //   edytuj={miejsce_id => this.setState({ miejsce_id })}
-                //   value={this.state.miejsce_id}
-                //   cancelLabel={() => this.setState({ miejsceLabel: "" })}
-                // />
               )}
 
               {/* <InputTime label="Koniec" /> */}

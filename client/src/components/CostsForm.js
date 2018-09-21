@@ -11,6 +11,7 @@ import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
+import SiteHeader from "../common/SiteHeader";
 import InputComponent from "../common/inputs/InputComponent";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputData from "../common/inputs/InputData";
@@ -45,10 +46,10 @@ const styles = theme => ({
 class CostsForm extends Component {
   state = {
     id: "",
-    nr_dokumentu: "nr32423/sadf",
-    data_wystawienia: "2018-09-07",
-    nazwa_pozycji: "nazwa",
-    kwota_netto: "125",
+    nr_dokumentu: "",
+    data_wystawienia: "",
+    nazwa_pozycji: "",
+    kwota_netto: "",
     categoryId: "",
     groupId: "",
     groups: [],
@@ -283,11 +284,15 @@ class CostsForm extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, duplicate, modal } = this.props;
+    const { edited, submitIsDisable } = this.state;
 
     return (
       <Paper style={{ padding: 20 }}>
-        <form onSubmit={e => this.handleSubmit(e)}>
+        {modal && (
+          <SiteHeader text={duplicate ? "Utwórz nowy koszt" : "Edytuj koszt"} />
+        )}
+        <form>
           <Grid container spacing={24}>
             <Grid item xs={4}>
               <InputComponent
@@ -367,29 +372,26 @@ class CostsForm extends Component {
               />
             </Grid>
           </Grid>
-          {!this.state.edited ? (
-            <Button
-              disabled={this.state.submitIsDisable}
-              type="submit"
-              variant="contained"
-              color="primary"
-              className={classes.button}
-            >
-              Dodaj koszt
-              <Send style={{ marginLeft: 10 }} />
-            </Button>
-          ) : (
-            <Button
-              disabled={this.state.submitIsDisable}
-              onClick={() => this.onEdit()}
-              variant="contained"
-              color="primary"
-              className={classes.button}
-            >
-              Edytuj koszt
-              <Edit style={{ marginLeft: 10 }} />
-            </Button>
-          )}
+          <Button
+            disabled={submitIsDisable}
+            onClick={e => {
+              if (edited && !duplicate) {
+                this.onEdit();
+              } else if ((edited && duplicate) || !edited) {
+                this.handleSubmit(e);
+              }
+            }}
+            variant="contained"
+            color="primary"
+            className={classes.button}
+          >
+            {duplicate
+              ? "Dodaj koszt"
+              : edited
+                ? "Edytuj koszt"
+                : "Dodaj koszt"}
+            <Send style={{ marginLeft: 10 }} />
+          </Button>
           {this.czyWypelniony() && (
             <Button
               variant="contained"

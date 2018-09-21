@@ -22,6 +22,7 @@ import { connect } from "react-redux";
 import * as actions from "../actions";
 
 import ButtonNavBar from "./ButtonNavBar";
+// import LinearProgress from "./LinearProgress";
 
 let drawerWidth = 240;
 

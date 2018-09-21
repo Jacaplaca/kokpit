@@ -12,6 +12,7 @@ import DrawerMy from "../common/DrawerMy";
 import Costs from "./Costs";
 import Planer from "./Planer";
 import PlanerRaport from "./PlanerRaporty";
+// import LinearProgress from "../common/LinearProgress";
 
 let drawerWidth = 240;
 
@@ -65,6 +66,7 @@ class MiniDrawer extends React.Component {
     return (
       <BrowserRouter>
         <div className={classes.root}>
+          {/* <LinearProgress /> */}
           <TopNavBar
             open={this.state.open}
             handleDrawerOpen={this.handleDrawerOpen}

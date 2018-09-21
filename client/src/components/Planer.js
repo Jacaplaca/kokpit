@@ -5,6 +5,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import * as actions from "../actions";
 import {
   dataToString,
   podzielUnikalnymi,
@@ -57,7 +58,9 @@ class Planer extends Component {
     edited: false,
     submitIsDisable: true,
     openModal: false,
-    expanded: ""
+    expanded: "",
+
+    kiedy: ""
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -157,6 +160,7 @@ class Planer extends Component {
   }
 
   fetchAktywnosci = range => {
+    this.props.loading(true);
     const { startDate, endDate } = this.state.rangeselection;
     const poczatek = range ? range.rangeselection.startDate : startDate;
     const koniec = range ? range.rangeselection.endDate : endDate;
@@ -174,7 +178,8 @@ class Planer extends Component {
         this.setState({
           aktywnosci: podzielone.sort(dynamicSort("kiedy")).reverse()
         });
-      });
+      })
+      .then(() => this.props.loading(false));
   };
 
   handleEdit = id => {
@@ -311,6 +316,8 @@ class Planer extends Component {
           editedId={this.state.editedId}
           expanded={expanded => this.setState({ expanded })}
           fetchuj={() => this.fetchAktywnosci()}
+          edytuj={kiedy => this.setState({ kiedy })}
+          kiedy={this.state.kiedy}
         />
         <DateRangePickerMy
           range={[this.state.rangeselection]}
@@ -318,6 +325,7 @@ class Planer extends Component {
         />
         <Paper>
           <PlanerLista
+            dodajDoDnia={kiedy => this.setState({ openModal: true, kiedy })}
             wyslijDoPlanuButton
             aktywnosci={this.state.aktywnosci}
             edit={id => {
@@ -343,6 +351,8 @@ class Planer extends Component {
             closeModal={() => this.setState({ openModal: false })}
             fetchuj={() => this.fetchAktywnosci()}
             expanded={expanded => this.setState({ expanded })}
+            edytuj={kiedy => this.setState({ kiedy })}
+            kiedy={this.state.kiedy}
           />
         </ModalWindow>
       </div>
@@ -362,7 +372,7 @@ function mapStateToProps({ auth }) {
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    mapStateToProps
-    // actions
+    mapStateToProps,
+    actions
   )(Planer)
 );

@@ -245,7 +245,7 @@ class PlanerRaportyForm extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     const {
-      kiedy: kiedy_prevState,
+      //kiedy: kiedy_prevState,
       start: start_prevState,
       stop: stop_prevState,
       aktywnosc_id: aktywnosc_id_prevState,
@@ -254,8 +254,9 @@ class PlanerRaportyForm extends Component {
       uwagi: uwagi_prevState,
       dataWybrana: dataWybrana_prevState
     } = prevState;
+    const { kiedy: kiedy_prevState } = prevProps;
     const {
-      kiedy,
+      //kiedy,
       start,
       stop,
       aktywnosc_id,
@@ -263,6 +264,7 @@ class PlanerRaportyForm extends Component {
       inna,
       dataWybrana
     } = this.state;
+    const { kiedy } = this.props;
 
     // if (dataWybrana_prevState !== dataWybrana) {
     //   this.fetchujDate(dataWybrana);
@@ -342,7 +344,7 @@ class PlanerRaportyForm extends Component {
     axios.get(`/api/id/akt/${id}`).then(result => {
       console.log(result.data);
       const {
-        kiedy,
+        //kiedy,
         start,
         stop,
         aktywnosc_id,
@@ -351,8 +353,8 @@ class PlanerRaportyForm extends Component {
         uwagi,
         gus_simc
       } = result.data;
+      const { kiedy } = this.props;
       this.setState({
-        kiedy,
         start: wezGodzine(start),
         stop: wezGodzine(stop),
         aktywnosc_id,
@@ -362,6 +364,7 @@ class PlanerRaportyForm extends Component {
         miejsceLabel: gus_simc ? gus_simc.nazwa : ""
         //edited: true
       });
+      this.props.edytuj(kiedy);
     });
   };
 
@@ -371,7 +374,7 @@ class PlanerRaportyForm extends Component {
 
   czyWypelniony = () => {
     const {
-      kiedy,
+      //kiedy,
       start,
       stop,
       miejsce_id,
@@ -380,6 +383,7 @@ class PlanerRaportyForm extends Component {
       uwagi,
       inna
     } = this.state;
+    const { kiedy } = this.props;
     if (
       kiedy ||
       start ||
@@ -404,7 +408,7 @@ class PlanerRaportyForm extends Component {
       miejsceLabel: "",
       klientLabel: "",
       aktyDaty: [],
-      kiedy: "",
+      //kiedy: "",
       start: "",
       stop: "",
       miejsce_id: "",
@@ -419,6 +423,7 @@ class PlanerRaportyForm extends Component {
       zamowienie: false,
       zboza: false
     });
+    this.props.edytuj("");
     this.props.modal && this.props.closeModal();
     // this.props.clearForm;
   };
@@ -452,8 +457,9 @@ class PlanerRaportyForm extends Component {
         gus_simc,
         planer_klienci
       } = result.data;
+      this.props.edytuj(kiedy);
       this.setState({
-        kiedy,
+        //kiedy,
         start: wezGodzine(start),
         stop: wezGodzine(stop),
         aktywnosc_id,
@@ -480,7 +486,7 @@ class PlanerRaportyForm extends Component {
   onEdit = () => {
     console.log("on edit");
     const {
-      kiedy,
+      //kiedy,
       start,
       stop,
       aktywnosc_id,
@@ -494,6 +500,7 @@ class PlanerRaportyForm extends Component {
       zamowienie,
       zboza
     } = this.state;
+    const { kiedy } = this.props;
     const url = `/api/planerRaporty/edit/${this.props.editedId}`;
 
     fetch(url, {
@@ -531,7 +538,7 @@ class PlanerRaportyForm extends Component {
     //const { user_id, clientId } = this.props.auth;
     e.preventDefault();
     const {
-      kiedy,
+      //kiedy,
       start,
       stop,
       aktywnosc_id,
@@ -545,6 +552,7 @@ class PlanerRaportyForm extends Component {
       zamowienie,
       zboza
     } = this.state;
+    const { kiedy } = this.props;
     const url = "/api/planerRaporty";
 
     fetch(url, {
@@ -635,8 +643,8 @@ class PlanerRaportyForm extends Component {
   };
 
   render() {
-    const { classes, modal } = this.props;
-    const { kiedy } = this.state;
+    const { classes, modal, edytuj, kiedy } = this.props;
+    //const { kiedy } = this.state;
     const pola = [
       { pole: "nawozy", nazwa: "Nawozy" },
       { pole: "nowyKlient", nazwa: "Nowy klient" },
@@ -666,11 +674,16 @@ class PlanerRaportyForm extends Component {
                     wybrano && this.fetchujDate(wybrano.name);
                     // this.setState({})
                   }}
+                  // edytuj={kiedy => {
+                  //   this.setState({ kiedy });
+                  // }}
                   edytuj={kiedy => {
-                    this.setState({ kiedy });
+                    edytuj(kiedy);
                   }}
-                  czysc={() => this.setState({ kiedy: "" })}
-                  value={this.state.kiedy}
+                  //czysc={() => this.setState({ kiedy: "" })}
+                  czysc={() => edytuj("")}
+                  //value={this.state.kiedy}
+                  value={kiedy}
                   //cancelLabel={() => this.setState({ miejsceLabel: "" })}
                   label="Kiedy"
                   placeholder="Dzień"
@@ -694,6 +707,8 @@ class PlanerRaportyForm extends Component {
                     error={this.state.errorStart}
                     edytuj={start => this.setState({ start })}
                     value={this.state.start}
+                    // edytuj={kiedy => edytuj(kiedy)}
+                    // value={kiedy}
                   />
                   <InputWyborBaza
                     table="rodzajAktywnosci"

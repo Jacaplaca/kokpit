@@ -90,10 +90,10 @@ const RemoteFilter = props => {
     props.setDelete(id);
   };
 
-  const handleDuplicateConfirm = id => {
-    props.open();
-    props.setDuplicate(id);
-  };
+  // const handleDuplicateConfirm = id => {
+  //   props.open();
+  //   props.setDuplicate(id);
+  // };
 
   const columnStyleMain = {
     verticalAlign: "middle",
@@ -180,16 +180,6 @@ const RemoteFilter = props => {
       style: (cell, row, rowIndex, colIndex) => {
         return columnStyleMain;
       },
-      // headerFormatter: (column, colIndex, { sortElement, filterElement }) => {
-      //   return (
-      //     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      //       {column.text}
-      //       {sortElement}
-      //       <span>as</span>
-      //       {filterElement}
-      //     </div>
-      //   );
-      // },
       filter: multiSelectFilter({
         placeholder: "wszystko...",
         style: { marginTop: 5 },
@@ -270,12 +260,17 @@ const RemoteFilter = props => {
             >
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="Edit" onClick={() => props.edit(cell)}>
+            <IconButton
+              aria-label="Edit"
+              onClick={() => {
+                props.edit(cell);
+              }}
+            >
               <EditIcon />
             </IconButton>
             <IconButton
               aria-label="Duplicate"
-              onClick={() => handleDuplicateConfirm(cell)}
+              onClick={() => props.duplicate(cell)}
             >
               <FilterNoneIcon />
             </IconButton>
@@ -311,6 +306,7 @@ class CostsTable extends Component {
     open: false,
     deleteRow: null,
     duplicate: null
+    //fetchTemporary: true
   };
 
   // componentDidMount() {
@@ -321,12 +317,13 @@ class CostsTable extends Component {
     console.log("costs table remote receive props");
     console.log(nextProps.costs);
     console.log(this.props.costs);
-    // console.log('component props');
-    // console.log(this.props);
-    this.setState({
-      data: this.props.costs,
-      suma: this.sumuj(this.props.costs)
-    });
+    // this.setState({
+    //   data: this.props.costs,
+    //   suma: this.sumuj(this.props.costs)
+    // });
+    // this.setState({
+    //   fetchTemporary: true
+    // });
     //this.receiveProps();
   }
 
@@ -406,9 +403,10 @@ class CostsTable extends Component {
       });
       this.setState(() => ({
         data: result,
-        suma: this.sumuj(result)
+        suma: this.sumuj(result),
+        fetchTemporary: false
       }));
-    }, 1000);
+    }, 500);
   };
 
   sumuj = koszty => {
@@ -420,55 +418,14 @@ class CostsTable extends Component {
     return suma;
   };
 
-  //state.data pochodzi z filtrowania lub obecnie wyswietlane
   //props.costs z fetchowania
+  //state.data pochodzi z filtrowania lub obecnie wyswietlane
 
   handleClose = () => {
     this.setState({ open: false });
   };
 
-  handleDuplicate = () => {
-    console.log("duplicate");
-    axios.get(`/api/id/cost/${this.state.duplicate}`).then(result => {
-      const {
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
-      } = result.data;
-      //e.preventDefault();
-
-      const url = "/api/cost";
-
-      fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({
-          nr_dokumentu,
-          data_wystawienia,
-          nazwa_pozycji,
-          kwota_netto,
-          categoryId,
-          groupId
-        })
-      })
-        .then(resp => resp.json())
-        .then(() => {
-          this.props.fetch();
-        })
-        .then(() => {
-          this.setState({ duplicate: null, open: false });
-        });
-    });
-  };
-
   handleDelete = () => {
-    // console.log("handleDelete");
-    // console.log(id);
-
     const url = `/api/cost/remove/${this.state.deleteRow}`;
     this.setState({ deleteRow: null, open: false });
     fetch(url, {
@@ -478,44 +435,27 @@ class CostsTable extends Component {
       credentials: "same-origin"
     }).then(() => {
       this.props.fetch();
+      this.setState({ fetchTemporary: true });
     });
   };
 
   jakieDane = () => {
-    if (this.state.data.length === 0 || this.props.costs === this.state.data) {
-      console.log("state.data = 0 lub props.cost = state.data");
+    if (this.state.fetchTemporary) {
       return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
-    } else if (
-      this.props.costs.length === this.state.data.length &&
-      this.props.costs !== this.state.data
-    ) {
-      console.log("zmienila sie wartosc ale nie dlugosc tabeli bo byla edycja");
-      return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
-      // } else if (this.props.costs.length !== this.state.data.length) {
-      //   console.log("inna dlugosc");
-      //   return { costs: this.props.costs, sumuj: this.sumuj(this.props.costs) };
     } else {
-      console.log("jakie dane rozne nie 0");
       return { costs: this.state.data, sumuj: this.sumuj(this.state.data) };
     }
   };
 
   render() {
     const { open, deleteRow } = this.state;
-    console.log("koszty render");
-    console.log(this.state.data);
-    console.log(this.props.costs);
     return (
       <div>
         <Confirmation
           open={open}
           close={this.handleClose}
-          action={deleteRow ? this.handleDelete : this.handleDuplicate}
-          komunikat={
-            deleteRow
-              ? "Czy na pewno chcesz usunąć tę pozycję kosztową?"
-              : "Czy na pewno chcesz powielić ten koszt?"
-          }
+          action={this.handleDelete}
+          komunikat={"Czy na pewno chcesz usunąć tę pozycję kosztową?"}
         />
         <RemoteFilter
           data={this.jakieDane().costs}
@@ -523,10 +463,17 @@ class CostsTable extends Component {
           dataCalosc={this.props.costs}
           onTableChange={this.handleTableChange}
           fetch={() => this.props.fetch()}
-          edit={id => this.props.edit(id)}
+          edit={id => {
+            this.setState({ fetchTemporary: true });
+            this.props.edit(id);
+          }}
+          duplicate={id => {
+            this.setState({ fetchTemporary: true });
+            this.props.duplicate(id);
+          }}
           setDelete={id => this.setState({ deleteRow: id })}
-          setDuplicate={id => this.setState({ duplicate: id })}
-          duplicate={this.state.duplicate}
+          //setDuplicate={id => this.setState({ duplicate: id })}
+          //duplicate={this.state.duplicate}
           delete={deleteRow}
           open={() => this.setState({ open: true })}
           classes={this.props.classes}

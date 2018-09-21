@@ -6,6 +6,8 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
+
+import * as actions from "../actions";
 import { dataToString, defineds, dynamicSort } from "../common/functions";
 import SiteHeader from "../common/SiteHeader";
 import CostsTable from "./CostsTable2Remote";
@@ -47,6 +49,7 @@ class Costs extends Component {
     categories: [],
     costs: [],
     editedId: "",
+    duplicate: false,
     edited: false,
     chmurka_group: [],
     chmurka_category: [],
@@ -162,6 +165,7 @@ class Costs extends Component {
   }
 
   fetchCosts = range => {
+    this.props.loading(true);
     console.log(range);
     const { startDate, endDate } = this.state.rangeselection;
 
@@ -182,7 +186,8 @@ class Costs extends Component {
           chmurka_group: this.chmurka(koszty, "group"),
           chmurka_category: this.chmurka(koszty, "category")
         });
-      });
+      })
+      .then(() => this.props.loading(false));
   };
 
   chmurka = (data, kolumna) => {
@@ -288,6 +293,7 @@ class Costs extends Component {
             changeRange={data => this.changeRange(data)}
             editedId={this.state.editedId}
             modal
+            duplicate={this.state.duplicate}
             closeModal={() => this.setState({ openModal: false })}
           />
         </ModalWindow>
@@ -308,8 +314,14 @@ class Costs extends Component {
             costs={this.costs()}
             fetch={() => this.fetchCosts()}
             edit={id => {
-              this.setState({ openModal: true });
-              this.setState({ editedId: id });
+              this.setState({
+                openModal: true,
+                editedId: id,
+                duplicate: false
+              });
+            }}
+            duplicate={id => {
+              this.setState({ openModal: true, editedId: id, duplicate: true });
             }}
           />
         </Paper>
@@ -328,7 +340,7 @@ function mapStateToProps({ auth }) {
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    mapStateToProps
-    // actions
+    mapStateToProps,
+    actions
   )(Costs)
 );

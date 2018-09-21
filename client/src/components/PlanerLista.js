@@ -58,7 +58,7 @@ class PlanerLista extends Component {
   };
 
   render() {
-    const { classes, expanded, wyslijDoPlanuButton } = this.props;
+    const { classes, expanded, wyslijDoPlanuButton, dodajDoDnia } = this.props;
 
     return (
       <div>
@@ -137,6 +137,26 @@ class PlanerLista extends Component {
                   component={this.props.component}
                   //delete={id => this.props.delete(id)}
                 />
+                <div
+                  style={{
+                    width: "100%",
+                    textAlign: "end"
+                  }}
+                >
+                  {!day.values[0].wyslano && (
+                    <ButtonMy
+                      onClick={() => dodajDoDnia(day.kiedy)}
+                      //this.setState({ open: true, kiedy: day.kiedy })
+                      style={{
+                        //position: "relative",
+                        //right: "50px",
+                        marginTop: "10px"
+                      }}
+                    >
+                      Dodaj do dnia
+                    </ButtonMy>
+                  )}
+                </div>
               </ExpansionPanelDetails>
             </ExpansionPanel>
           );

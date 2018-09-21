@@ -5,6 +5,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import * as actions from "../actions";
 import {
   dataToString,
   podzielUnikalnymi,
@@ -55,7 +56,9 @@ class PlanerRaporty extends Component {
     edited: false,
     submitIsDisable: true,
     openModal: false,
-    expanded: ""
+    expanded: "",
+
+    kiedy: ""
   };
 
   componentWillMount() {
@@ -63,6 +66,7 @@ class PlanerRaporty extends Component {
   }
 
   fetchRaporty = range => {
+    this.props.loading(true);
     const { startDate, endDate } = this.state.rangeselection;
 
     const poczatek = range ? range.rangeselection.startDate : startDate;
@@ -86,7 +90,8 @@ class PlanerRaporty extends Component {
           // aktywnosci: _.keyBy(result.data, "kiedy")
           aktywnosci: podzielone.sort(dynamicSort("kiedy")).reverse()
         });
-      });
+      })
+      .then(() => this.props.loading(false));
   };
 
   handleChange = event => {
@@ -126,6 +131,8 @@ class PlanerRaporty extends Component {
           editedId={this.state.editedId}
           expanded={expanded => this.setState({ expanded })}
           fetchuj={() => this.fetchRaporty()}
+          edytuj={kiedy => this.setState({ kiedy })}
+          kiedy={this.state.kiedy}
         />
         <DateRangePickerMy
           range={[this.state.rangeselection]}
@@ -133,6 +140,7 @@ class PlanerRaporty extends Component {
         />
         <Paper>
           <PlanerLista
+            dodajDoDnia={kiedy => this.setState({ openModal: true, kiedy })}
             aktywnosci={this.state.aktywnosci}
             edit={id => {
               this.setState({ openModal: true });
@@ -157,6 +165,8 @@ class PlanerRaporty extends Component {
             closeModal={() => this.setState({ openModal: false })}
             fetchuj={() => this.fetchRaporty()}
             expanded={expanded => this.setState({ expanded })}
+            edytuj={kiedy => this.setState({ kiedy })}
+            kiedy={this.state.kiedy}
           />
         </ModalWindow>
       </div>
@@ -176,7 +186,7 @@ function mapStateToProps({ auth }) {
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    mapStateToProps
-    // actions
+    mapStateToProps,
+    actions
   )(PlanerRaporty)
 );
