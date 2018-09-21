@@ -11,7 +11,7 @@ import { withStyles } from "@material-ui/core/styles";
 import InputSelectTextField from "../common/inputs/InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
-
+//z lapa
 function renderSuggestionsContainer({ containerProps, children, query }) {
   return <div {...containerProps}>{children}</div>;
 }
@@ -27,7 +27,6 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
     nazwa_1,
     nazwa_2
   } = suggestion;
-  // console.log(suggestion);
 
   return (
     <MenuItem selected={isHighlighted} component="div">
@@ -61,14 +60,12 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
           <span style={{ fontSize: 15 }}>{gus_terc.nazwa} </span>
         </span>
       </div>
-      {/* <span>{gmina}</span> */}
     </MenuItem>
   );
 }
 
 const styles = theme => ({
   root: {
-    // height: 250,
     width: "100%",
     // flexGrow: 1,
     marginBottom: theme.spacing.unit / 2
@@ -98,9 +95,6 @@ const styles = theme => ({
   divider: {
     height: theme.spacing.unit * 1
   }
-  // input: {
-  //   margin: 44
-  // }
 });
 
 class CitySearch extends React.Component {
