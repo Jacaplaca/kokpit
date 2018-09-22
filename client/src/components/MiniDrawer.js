@@ -12,6 +12,8 @@ import DrawerMy from "../common/DrawerMy";
 import Costs from "./Costs";
 import Planer from "./Planer";
 import PlanerRaport from "./PlanerRaporty";
+import Login from "./Login";
+import PromowaneProdukty from "./PromowaneProdukty";
 // import LinearProgress from "../common/LinearProgress";
 
 let drawerWidth = 240;
@@ -61,7 +63,7 @@ class MiniDrawer extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, auth } = this.props;
     // console.log(this.props.auth);
     return (
       <BrowserRouter>
@@ -77,9 +79,20 @@ class MiniDrawer extends React.Component {
           />
           <main className={classes.content}>
             <div className={classes.toolbar} />
-            <Route path="/costs" component={Costs} />
-            <Route path="/planer" component={Planer} />
-            <Route path="/raporty" component={PlanerRaport} />
+            {!auth ? (
+              <Route path="/" exact component={Login} />
+            ) : (
+              <Route path="/" exact component={PromowaneProdukty} />
+            )}
+            {auth && auth.costs ? (
+              <Route path="/costs" component={Costs} />
+            ) : null}
+            {auth && auth.planer ? (
+              <Route path="/planer" component={Planer} />
+            ) : null}
+            {auth && auth.raporty ? (
+              <Route path="/raporty" component={PlanerRaport} />
+            ) : null}
             {this.props.children}
           </main>
         </div>

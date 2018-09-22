@@ -1,7 +1,7 @@
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-var bcrypt = require('bcrypt');
-const db = require('../models/index');
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+var bcrypt = require("bcrypt");
+const db = require("../models/index");
 const User = db.users;
 // var User = require('../models/user');
 // const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -24,15 +24,25 @@ passport.deserializeUser((user_id, done) => {
   User.findById(id)
     .then(project => {
       const result = JSON.parse(JSON.stringify(project));
-      const { clientId, email, role } = result;
+      const { clientId, email, role, costs, planer, raporty } = result;
       // console.log(result);
-      if (result.status === 'active') {
+      if (result.status === "active") {
         // console.log(result.status);
-        done(null, Object.assign(user_id, { clientId, email, role }));
+        done(
+          null,
+          Object.assign(user_id, {
+            clientId,
+            email,
+            role,
+            costs,
+            planer,
+            raporty
+          })
+        );
       } else {
-        console.log('konto zostalo zawieszone');
+        console.log("konto zostalo zawieszone");
         return done(null, false, {
-          message: 'Incorrect username or password.'
+          message: "Incorrect username or password."
         });
       }
     })
@@ -42,7 +52,7 @@ passport.deserializeUser((user_id, done) => {
     //   })
     // );
     .catch(err => {
-      console.log('blad w deserialize');
+      console.log("blad w deserialize");
       return done(null, false);
     });
 });
@@ -50,11 +60,11 @@ passport.deserializeUser((user_id, done) => {
 // console.log('gdzie jestem: ', process.env.NODE_ENV);
 
 passport.use(
-  'local',
+  "local",
   new LocalStrategy(
     {
-      usernameField: 'email',
-      passwordField: 'password',
+      usernameField: "email",
+      passwordField: "password",
       passReqToCallback: true //passback entire req to call back
     },
     function(req, email, password, done) {
@@ -73,14 +83,14 @@ passport.use(
                 return done(null, { user_id: result[0].id });
               } else {
                 Object.assign(message, {
-                  errors: 'Błędne hasło, chcesz je zresetować?'
+                  errors: "Błędne hasło, chcesz je zresetować?"
                 });
-                req.flash('info', message);
+                req.flash("info", message);
                 return done(null, false);
               }
             });
           } else {
-            req.flash('info', { errors: ['Niepoprawny email lub hasło.'] });
+            req.flash("info", { errors: ["Niepoprawny email lub hasło."] });
             return done(null, false);
           }
         })

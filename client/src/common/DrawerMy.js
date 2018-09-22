@@ -109,13 +109,19 @@ class DrawerMy extends React.Component {
         </div>
 
         <div>
-          <DrawerLink text="Koszty" link="/costs" icon="MoneyIcon" />
-          <DrawerLink text="Aktywności" link="/planer" icon="EventIcon" />
-          <DrawerLink
-            text="Raporty"
-            link="/raporty"
-            icon="EventAvailableIcon"
-          />
+          {auth && auth.costs ? (
+            <DrawerLink text="Koszty" link="/costs" icon="MoneyIcon" />
+          ) : null}
+          {auth && auth.planer ? (
+            <DrawerLink text="Aktywności" link="/planer" icon="EventIcon" />
+          ) : null}
+          {auth && auth.raporty ? (
+            <DrawerLink
+              text="Raporty"
+              link="/raporty"
+              icon="EventAvailableIcon"
+            />
+          ) : null}
         </div>
       </Drawer>
     );
