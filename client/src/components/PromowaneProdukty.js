@@ -34,6 +34,10 @@ class PromowaneProdukty extends React.Component {
     return (
       <FormGroup row>
         <SiteHeader text="Produkty promowane" />
+        <iframe
+          style={{ width: "100%", height: 600 }}
+          src="http://217.182.72.224:8080/nextreports-server"
+        />
         {/* <FormControlLabel
           control={
             <Switch

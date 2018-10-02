@@ -89,9 +89,10 @@ module.exports = app => {
         let powiat;
         let gmina;
         // const filtrowany = result.filter(x => x.rm !== "95");
-        const sortowany = result.sort(dynamicSort("rm"));
-        const sortRevSlice = sortowany.reverse().slice(0, 10);
-        return res.json(sortRevSlice);
+        // const sortowany = result.sort(dynamicSort("rm"));
+        // const sortRevSlice = sortowany.reverse().slice(0, 10);
+        // return res.json(sortRevSlice);
+        return res.json(result);
 
         // sortRevSlice.map((wynik, i) => {
         //   const { woj, pow, gmi } = wynik.get();
