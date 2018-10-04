@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const Cost = sequelize.define(
-    'costs',
+    "costs",
     {
       id: {
         autoIncrement: true,
@@ -17,6 +17,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },
       kwota_netto: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false
+      },
+      kwota_brutto: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false
       },

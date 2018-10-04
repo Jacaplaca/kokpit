@@ -37,13 +37,26 @@ class Login extends Component {
 
   render() {
     return (
-      <div style={{ textAlign: "center", padding: 20 }}>
+      <div
+        style={{
+          textAlign: "center",
+          //padding: 20
+          height: "100%",
+          position: "relative",
+          overflow: "auto"
+        }}
+      >
         <Paper
           style={{
             textAlign: "center",
             width: 500,
             padding: 30,
-            margin: "auto"
+            margin: 0,
+            position: "absolute",
+            top: "40%",
+            left: "50%",
+            //-ms-transform: translate(-50%, -50%);
+            transform: "translate(-40%, -50%)"
           }}
         >
           {this.props.formTemp[0] ? (

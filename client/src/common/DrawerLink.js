@@ -16,6 +16,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MoneyIcon from "@material-ui/icons/AttachMoney";
 import EventIcon from "@material-ui/icons/Event";
 import EventAvailableIcon from "@material-ui/icons/EventAvailable";
+import InsertChartOutlined from "@material-ui/icons/InsertChartOutlined";
 
 import { connect } from "react-redux";
 import * as actions from "../actions";
@@ -37,7 +38,8 @@ const styles = theme => ({
 const components = {
   MoneyIcon: <MoneyIcon />,
   EventIcon: <EventIcon />,
-  EventAvailableIcon: <EventAvailableIcon />
+  EventAvailableIcon: <EventAvailableIcon />,
+  InsertChartOutlined: <InsertChartOutlined />
 };
 
 class DrawerLink extends React.Component {

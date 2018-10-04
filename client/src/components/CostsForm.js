@@ -50,6 +50,7 @@ class CostsForm extends Component {
     data_wystawienia: "",
     nazwa_pozycji: "",
     kwota_netto: "",
+    kwota_brutto: "",
     categoryId: "",
     groupId: "",
     groups: [],
@@ -75,6 +76,7 @@ class CostsForm extends Component {
       data_wystawienia: data_wystawienia_prevState,
       nazwa_pozycji: nazwa_pozycji_prevState,
       kwota_netto: kwota_netto_prevState,
+      kwota_brutto: kwota_brutto_prevState,
       categoryId: categoryId_prevState,
       groupId: groupId_prevState
     } = prevState;
@@ -83,6 +85,7 @@ class CostsForm extends Component {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto,
+      kwota_brutto,
       categoryId,
       groupId
     } = this.state;
@@ -91,12 +94,14 @@ class CostsForm extends Component {
         data_wystawienia !== data_wystawienia_prevState ||
         nazwa_pozycji !== nazwa_pozycji_prevState ||
         kwota_netto !== kwota_netto_prevState ||
+        kwota_brutto !== kwota_brutto_prevState ||
         categoryId !== categoryId_prevState ||
         groupId !== groupId_prevState) &&
       (nr_dokumentu !== "" &&
         data_wystawienia !== "" &&
         nazwa_pozycji !== "" &&
         kwota_netto !== "" &&
+        kwota_brutto !== "" &&
         (categoryId ? categoryId.value !== "" : categoryId !== "") &&
         (groupId ? groupId.value !== "" : groupId !== ""))
       // categoryId.value !== '' &&
@@ -108,12 +113,14 @@ class CostsForm extends Component {
         data_wystawienia !== data_wystawienia_prevState ||
         nazwa_pozycji !== nazwa_pozycji_prevState ||
         kwota_netto !== kwota_netto_prevState ||
+        kwota_brutto !== kwota_brutto_prevState ||
         categoryId !== categoryId_prevState ||
         groupId !== groupId_prevState) &&
       (nr_dokumentu === "" ||
         data_wystawienia === "" ||
         nazwa_pozycji === "" ||
         kwota_netto === "" ||
+        kwota_brutto === "" ||
         (categoryId ? categoryId.value === "" : categoryId === "") ||
         (groupId ? groupId.value === "" : groupId === ""))
     ) {
@@ -130,6 +137,7 @@ class CostsForm extends Component {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto,
+      kwota_brutto,
       categoryId,
       groupId
     } = this.state;
@@ -139,6 +147,7 @@ class CostsForm extends Component {
       data_wystawienia ||
       nazwa_pozycji ||
       kwota_netto ||
+      kwota_brutto ||
       categoryId ||
       groupId
     ) {
@@ -155,6 +164,7 @@ class CostsForm extends Component {
       data_wystawienia: "",
       nazwa_pozycji: "",
       kwota_netto: "",
+      kwota_brutto: "",
       categoryId: "",
       groupId: "",
       edited: false,
@@ -172,6 +182,7 @@ class CostsForm extends Component {
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto,
+        kwota_brutto,
         categoryId,
         groupId,
         category,
@@ -181,6 +192,7 @@ class CostsForm extends Component {
         id,
         nr_dokumentu,
         kwota_netto,
+        kwota_brutto,
         nazwa_pozycji,
         data_wystawienia,
         categoryId,
@@ -199,6 +211,7 @@ class CostsForm extends Component {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto,
+      kwota_brutto,
       categoryId,
       groupId
     } = this.state;
@@ -213,6 +226,7 @@ class CostsForm extends Component {
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto,
+        kwota_brutto,
         categoryId,
         groupId
       })
@@ -232,6 +246,7 @@ class CostsForm extends Component {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto,
+      kwota_brutto,
       categoryId,
       groupId
     } = this.state;
@@ -246,6 +261,7 @@ class CostsForm extends Component {
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto,
+        kwota_brutto,
         categoryId,
         groupId
       })
@@ -361,13 +377,23 @@ class CostsForm extends Component {
                 przeszukuje="group"
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <InputComponent
                 name="kwota_netto"
                 label="Kwota netto"
                 type="text"
                 edytuj={kwota_netto => this.setState({ kwota_netto })}
                 value={this.state.kwota_netto.replace(".", ",")}
+                kwota
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <InputComponent
+                name="kwota_brutto"
+                label="Kwota brutto"
+                type="text"
+                edytuj={kwota_brutto => this.setState({ kwota_brutto })}
+                value={this.state.kwota_brutto.replace(".", ",")}
                 kwota
               />
             </Grid>

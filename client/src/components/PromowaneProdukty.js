@@ -10,6 +10,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import * as actions from "../actions";
 
+import MainFrame from "../common/MainFrame";
 import SiteHeader from "../common/SiteHeader";
 // import LinearProgress from "./LinearProgress";
 
@@ -32,12 +33,12 @@ class PromowaneProdukty extends React.Component {
   render() {
     //const { classes, theme, auth, open, handleDrawerOpen } = this.props;
     return (
-      <FormGroup row>
+      <MainFrame>
         <SiteHeader text="Produkty promowane" />
-        <iframe
+        {/* <iframe
           style={{ width: "100%", height: 600 }}
           src="http://217.182.72.224:8080/nextreports-server"
-        />
+        /> */}
         {/* <FormControlLabel
           control={
             <Switch
@@ -73,7 +74,7 @@ class PromowaneProdukty extends React.Component {
           control={<Switch checked value="checkedE" />}
           label="Disabled"
         /> */}
-      </FormGroup>
+      </MainFrame>
     );
   }
 }

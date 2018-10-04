@@ -10,26 +10,26 @@ class Landing extends Component {
     console.log(this.props.clicked);
   }
 
-  whatToShow = () => {
-    switch (this.props.clicked) {
-      case "costs":
-        return <Costs />;
-      //break;
-      case "planer":
-        return <Planer />;
-      //  break;
-      case "planerRaporty":
-        return <PlanerRaporty />;
-      //break;
-      default:
-        return (
-          <div style={{ textAlign: "center" }}>
-            <h1>Świadoma Firma</h1>
-            Raporty, analizy, prowizje - wszystko w jednym miejscu
-          </div>
-        );
-    }
-  };
+  // whatToShow = () => {
+  //   switch (this.props.clicked) {
+  //     case "costs":
+  //       return <Costs />;
+  //     //break;
+  //     case "planer":
+  //       return <Planer />;
+  //     //  break;
+  //     case "planerRaporty":
+  //       return <PlanerRaporty />;
+  //     //break;
+  //     default:
+  //       return (
+  //         <div style={{ textAlign: "center" }}>
+  //           <h1>Świadoma Firma</h1>
+  //           Raporty, analizy, prowizje - wszystko w jednym miejscu
+  //         </div>
+  //       );
+  //   }
+  // };
 
   render() {
     return this.whatToShow();

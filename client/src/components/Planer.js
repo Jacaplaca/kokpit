@@ -12,6 +12,7 @@ import {
   dynamicSort,
   defineds
 } from "../common/functions";
+import MainFrame from "../common/MainFrame";
 import SiteHeader from "../common/SiteHeader";
 import PlanerAktywnosciForm from "./PlanerAktywnosciForm";
 import PlanerLista from "./PlanerLista";
@@ -24,11 +25,6 @@ const styles = theme => ({
     position: "absolute",
     left: 2,
     fontSize: 16
-  },
-  container: {
-    width: "100%",
-    display: "inline-block",
-    flexWrap: "nowrap"
   }
 });
 
@@ -310,7 +306,7 @@ class Planer extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.container}>
+      <MainFrame>
         <SiteHeader text={"Zaplanuj aktywności"} />
         <PlanerAktywnosciForm
           editedId={this.state.editedId}
@@ -355,7 +351,7 @@ class Planer extends Component {
             kiedy={this.state.kiedy}
           />
         </ModalWindow>
-      </div>
+      </MainFrame>
     );
   }
 }

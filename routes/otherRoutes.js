@@ -217,6 +217,7 @@ module.exports = app => {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto,
+      kwota_brutto,
       categoryId,
       groupId
     } = req.body;
@@ -228,6 +229,7 @@ module.exports = app => {
         data_wystawienia,
         nazwa_pozycji,
         kwota_netto: kwota_netto.replace(",", ".").replace("zł", ""),
+        kwota_brutto: kwota_brutto.replace(",", ".").replace("zł", ""),
         categoryId,
         groupId
       },
@@ -504,6 +506,7 @@ module.exports = app => {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto,
+      kwota_brutto,
       categoryId,
       groupId
     } = req.body;
@@ -512,6 +515,7 @@ module.exports = app => {
       data_wystawienia,
       nazwa_pozycji,
       kwota_netto: kwota_netto.replace(",", ".").replace("zł", ""),
+      kwota_brutto: kwota_brutto.replace(",", ".").replace("zł", ""),
       categoryId: categoryId,
       groupId: groupId,
       clientId,

@@ -9,6 +9,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 import * as actions from "../actions";
 import { dataToString, defineds, dynamicSort } from "../common/functions";
+import MainFrame from "../common/MainFrame";
 import SiteHeader from "../common/SiteHeader";
 import CostsTable from "./CostsTable2Remote";
 import ModalWindow from "./ModalWindow";
@@ -25,10 +26,6 @@ const styles = theme => ({
     position: "absolute",
     left: 2,
     fontSize: 16
-  },
-  container: {
-    display: "inline-block",
-    flexWrap: "nowrap"
   }
 });
 
@@ -59,98 +56,6 @@ class Costs extends Component {
       key: "rangeselection"
     },
     submitIsDisable: true
-  };
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const {
-      nr_dokumentu: nr_dokumentu_prevState,
-      data_wystawienia: data_wystawienia_prevState,
-      nazwa_pozycji: nazwa_pozycji_prevState,
-      kwota_netto: kwota_netto_prevState,
-      categoryId: categoryId_prevState,
-      groupId: groupId_prevState
-    } = prevState;
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu !== "" &&
-        data_wystawienia !== "" &&
-        nazwa_pozycji !== "" &&
-        kwota_netto !== "" &&
-        (categoryId ? categoryId.value !== "" : categoryId !== "") &&
-        (groupId ? groupId.value !== "" : groupId !== ""))
-      // categoryId.value !== '' &&
-      // groupId.value !== ''
-    ) {
-      this.setState({ submitIsDisable: false });
-    } else if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu === "" ||
-        data_wystawienia === "" ||
-        nazwa_pozycji === "" ||
-        kwota_netto === "" ||
-        (categoryId ? categoryId.value === "" : categoryId === "") ||
-        (groupId ? groupId.value === "" : groupId === ""))
-    ) {
-      this.setState({ submitIsDisable: true });
-    } else {
-      return;
-    }
-  }
-
-  czyWypelniony = () => {
-    const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      id ||
-      nr_dokumentu ||
-      data_wystawienia ||
-      nazwa_pozycji ||
-      kwota_netto ||
-      categoryId ||
-      groupId
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  clearForm = () => {
-    this.setState({
-      id: "",
-      nr_dokumentu: "",
-      data_wystawienia: "",
-      nazwa_pozycji: "",
-      kwota_netto: "",
-      categoryId: "",
-      groupId: "",
-      edited: false
-    });
   };
 
   componentWillMount() {
@@ -262,7 +167,8 @@ class Costs extends Component {
     });
     const costsInt = kosztyFiltered.map(x =>
       Object.assign(x, {
-        kwota_netto: parseFloat(x.kwota_netto)
+        kwota_netto: parseFloat(x.kwota_netto),
+        kwota_brutto: parseFloat(x.kwota_brutto)
       })
     );
     return costsInt;
@@ -279,7 +185,7 @@ class Costs extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.container}>
+      <MainFrame>
         <SiteHeader text={"Dodaj koszty"} />
         <ModalWindow
           open={this.state.openModal}
@@ -325,7 +231,7 @@ class Costs extends Component {
             }}
           />
         </Paper>
-      </div>
+      </MainFrame>
     );
   }
 }

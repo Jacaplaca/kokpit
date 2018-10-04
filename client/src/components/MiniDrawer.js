@@ -14,6 +14,7 @@ import Planer from "./Planer";
 import PlanerRaport from "./PlanerRaporty";
 import Login from "./Login";
 import PromowaneProdukty from "./PromowaneProdukty";
+import NextReports from "./NextReports";
 // import LinearProgress from "../common/LinearProgress";
 
 let drawerWidth = 240;
@@ -36,8 +37,8 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3
+    backgroundColor: theme.palette.background.default
+    //padding: theme.spacing.unit * 3
   }
 });
 
@@ -92,6 +93,9 @@ class MiniDrawer extends React.Component {
             ) : null}
             {auth && auth.raporty ? (
               <Route path="/raporty" component={PlanerRaport} />
+            ) : null}
+            {auth && auth.nextReports ? (
+              <Route path="/nextreports" component={NextReports} />
             ) : null}
             {this.props.children}
           </main>

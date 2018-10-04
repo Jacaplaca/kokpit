@@ -122,6 +122,13 @@ class DrawerMy extends React.Component {
               icon="EventAvailableIcon"
             />
           ) : null}
+          {auth && auth.nextReports ? (
+            <DrawerLink
+              text="Next Reports"
+              link="/nextreports"
+              icon="InsertChartOutlined"
+            />
+          ) : null}
         </div>
       </Drawer>
     );

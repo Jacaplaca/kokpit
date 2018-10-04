@@ -12,6 +12,7 @@ import {
   dynamicSort,
   defineds
 } from "../common/functions";
+import MainFrame from "../common/MainFrame";
 import SiteHeader from "../common/SiteHeader";
 import PlanerRaportyForm from "./PlanerRaportyForm";
 import PlanerLista from "./PlanerLista";
@@ -23,11 +24,6 @@ const styles = theme => ({
   input: {
     display: "flex",
     padding: 0
-  },
-  container: {
-    width: "100%",
-    display: "inline-block",
-    flexWrap: "nowrap"
   }
 });
 
@@ -125,7 +121,7 @@ class PlanerRaporty extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.container}>
+      <MainFrame>
         <SiteHeader text={"Dodaj raport z aktywności"} />
         <PlanerRaportyForm
           editedId={this.state.editedId}
@@ -169,7 +165,7 @@ class PlanerRaporty extends Component {
             kiedy={this.state.kiedy}
           />
         </ModalWindow>
-      </div>
+      </MainFrame>
     );
   }
 }

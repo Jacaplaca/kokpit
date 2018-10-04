@@ -9,15 +9,14 @@ import filterFactory, {
   Comparator
 } from "react-bootstrap-table2-filter";
 import "bootstrap/dist/css/bootstrap.css";
-import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
 import currency from "currency.js";
-import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import FilterNoneIcon from "@material-ui/icons/FilterNone";
 
+import ButtonIconCircle from "../common/ButtonIconCircle";
 import Confirmation from "./Confirmation";
 
 const styles = theme => ({
@@ -37,6 +36,19 @@ const styles = theme => ({
   },
   suma: {
     backgroundColor: theme.palette.primary.main
+  },
+  icon: {
+    borderRadius: 15,
+    padding: 5,
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: "white",
+      background: theme.palette.primary.main
+    }
+  },
+  labelIcon: {
+    height: 4,
+    fontSize: 5
   }
 });
 
@@ -72,6 +84,21 @@ const mojTextFilter = textFilter({
   // }
 });
 
+const mojNumberFilter = numberFilter({
+  placeholder: "wpisz...",
+  comparators: [Comparator.EQ, Comparator.GT, Comparator.LT],
+  style: { display: "inline-grid", marginTop: 5 },
+  comparatorStyle: {}, // custom the style on comparator select
+  numberStyle: { margin: "0px", marginTop: 5, width: "100%" } // custom the style on number input/select
+});
+
+const kwotaFormat = cell => {
+  return `${currency(cell, {
+    separator: " ",
+    decimal: ","
+  }).format()} zł`;
+};
+
 const RemoteFilter = props => {
   const rowClasses = (row, rowIndex) => {
     // console.log(props.classes.darkerRow);
@@ -83,6 +110,45 @@ const RemoteFilter = props => {
       //   backgroundColor: '#c8e6c9'
       // };
     }
+  };
+
+  const sumaHeaderFormat = (colum, colIndex) => {
+    return (
+      <div>
+        <h4>Suma netto: </h4>
+        <p>
+          {`${currency(props.suma, {
+            separator: " ",
+            decimal: ","
+          }).format()} zł`}
+        </p>
+      </div>
+    );
+  };
+
+  const iconProps = {
+    className: props.classes.icon,
+    style: { fontSize: 30 }
+  };
+
+  const rowButtons = cell => {
+    return (
+      <div>
+        <ButtonIconCircle akcja={() => handleDeleteConfirm(cell)}>
+          <DeleteIcon {...iconProps} />
+        </ButtonIconCircle>
+        <ButtonIconCircle
+          akcja={() => {
+            props.edit(cell);
+          }}
+        >
+          <EditIcon {...iconProps} />
+        </ButtonIconCircle>
+        <ButtonIconCircle akcja={() => props.duplicate(cell)}>
+          <FilterNoneIcon {...iconProps} />
+        </ButtonIconCircle>
+      </div>
+    );
   };
 
   const handleDeleteConfirm = id => {
@@ -100,16 +166,11 @@ const RemoteFilter = props => {
     // padding: '0.1rem'
     paddingLeft: 5,
     paddingTop: 0,
-    paddingBottom: 0
+    paddingBottom: 0,
+    fontSize: 14
   };
 
   const columnStyleKwota = {
-    verticalAlign: "middle",
-    // padding: '0.1rem'
-    paddingLeft: 5,
-    paddingTop: 0,
-    paddingBottom: 0,
-    fontSize: 17,
     fontWeight: 600,
     textAlign: "center"
   };
@@ -128,7 +189,7 @@ const RemoteFilter = props => {
       },
       headerStyle: (colum, colIndex) => {
         return {
-          width: "170px",
+          width: "130px",
           // textAlign: 'center',
           verticalAlign: "bottom"
         };
@@ -139,11 +200,12 @@ const RemoteFilter = props => {
       text: "Data wystawienia",
       filter: mojTextFilter,
       sort: true,
-      style: (cell, row, rowIndex, colIndex) => {
-        return columnStyleKwota;
-      },
+      // style: (cell, row, rowIndex, colIndex) => {
+      //   return columnStyleKwota;
+      // },
+      style: { ...columnStyleMain, ...columnStyleKwota },
       headerStyle: (colum, colIndex) => {
-        return { width: "170px", verticalAlign: "bottom" };
+        return { width: "130px", verticalAlign: "bottom" };
       }
     },
     {
@@ -192,34 +254,24 @@ const RemoteFilter = props => {
       text: "Kwota netto",
       sort: true,
       classes: "kwota",
-      style: (cell, row, rowIndex, colIndex) => {
-        return columnStyleKwota;
-      },
+      style: { ...columnStyleMain, ...columnStyleKwota },
       headerStyle: (colum, colIndex) => {
         return { verticalAlign: "bottom" };
       },
-      formatter: cell => {
-        let liczba = cell;
-        // liczba = cell.toString().replace('.', ',');
-        // return `${liczba}`;
-        return `${currency(cell, {
-          separator: " ",
-          decimal: ","
-        }).format()} zł`;
+      formatter: kwotaFormat,
+      filter: mojNumberFilter
+    },
+    {
+      dataField: "kwota_brutto",
+      text: "Kwota brutto",
+      sort: true,
+      classes: "kwota",
+      style: { ...columnStyleMain, ...columnStyleKwota },
+      headerStyle: (colum, colIndex) => {
+        return { verticalAlign: "bottom" };
       },
-      filter: numberFilter({
-        placeholder: "wpisz...",
-        comparators: [Comparator.EQ, Comparator.GT, Comparator.LT],
-        style: { display: "inline-grid", marginTop: 5 },
-        comparatorStyle: {}, // custom the style on comparator select
-        // comparatorClassName: 'custom-comparator-class',  // custom the class on comparator select
-        numberStyle: { margin: "0px", marginTop: 5, width: "100%" } // custom the style on number input/select
-        // numberClassName: 'custom-number-class',  // custom the class on ber input/select
-      })
-      // filter: customFilter(),
-      // filterRenderer: (onFilter, column) => (
-      //   <PriceFilter onFilter={onFilter} column={column} />
-      // )
+      formatter: kwotaFormat,
+      filter: mojNumberFilter
     },
     {
       dataField: "id",
@@ -227,22 +279,8 @@ const RemoteFilter = props => {
         separator: " ",
         decimal: ","
       }).format()} zł`,
-      style: (cell, row, rowIndex, colIndex) => {
-        return columnStyleKwota;
-      },
-      headerFormatter: (colum, colIndex) => {
-        return (
-          <div>
-            <h4>Suma: </h4>
-            <p>
-              {`${currency(props.suma, {
-                separator: " ",
-                decimal: ","
-              }).format()} zł`}
-            </p>
-          </div>
-        );
-      },
+      style: { ...columnStyleMain, ...columnStyleKwota },
+      headerFormatter: sumaHeaderFormat,
       headerStyle: (colum, colIndex) => {
         return {
           width: "170px",
@@ -251,32 +289,7 @@ const RemoteFilter = props => {
           // display: 'inline'
         };
       },
-      formatter: cell => {
-        return (
-          <div>
-            <IconButton
-              aria-label="Delete"
-              onClick={() => handleDeleteConfirm(cell)}
-            >
-              <DeleteIcon />
-            </IconButton>
-            <IconButton
-              aria-label="Edit"
-              onClick={() => {
-                props.edit(cell);
-              }}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="Duplicate"
-              onClick={() => props.duplicate(cell)}
-            >
-              <FilterNoneIcon />
-            </IconButton>
-          </div>
-        );
-      }
+      formatter: rowButtons
     }
   ];
 

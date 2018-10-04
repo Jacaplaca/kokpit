@@ -61,6 +61,9 @@ module.exports = (sequelize, Sequelize) => {
       },
       raporty: {
         type: Sequelize.TINYINT
+      },
+      nextReports: {
+        type: Sequelize.TINYINT
       }
     },
     {

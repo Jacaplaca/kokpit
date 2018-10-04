@@ -24,7 +24,15 @@ passport.deserializeUser((user_id, done) => {
   User.findById(id)
     .then(project => {
       const result = JSON.parse(JSON.stringify(project));
-      const { clientId, email, role, costs, planer, raporty } = result;
+      const {
+        clientId,
+        email,
+        role,
+        costs,
+        planer,
+        raporty,
+        nextReports
+      } = result;
       // console.log(result);
       if (result.status === "active") {
         // console.log(result.status);
@@ -36,7 +44,8 @@ passport.deserializeUser((user_id, done) => {
             role,
             costs,
             planer,
-            raporty
+            raporty,
+            nextReports
           })
         );
       } else {
