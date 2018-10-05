@@ -307,7 +307,8 @@ class PlanerAktywnosciForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        gus_simc
+        gus_simc,
+        miejsca
       } = result.data;
       this.setState({
         //kiedy,
@@ -317,7 +318,8 @@ class PlanerAktywnosciForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        miejsceLabel: gus_simc ? gus_simc.nazwa : "",
+        //miejsceLabel: gus_simc ? gus_simc.nazwa : "",
+        miejsceLabel: miejsca ? miejsca.name : "",
         // categoryId: { label: category.name, value: category.id },
         // groupId: { label: group.name, value: group.id },
         edited: true,

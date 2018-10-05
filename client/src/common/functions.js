@@ -106,3 +106,12 @@ export const defineds = {
   startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
   endOfLastMonth: endOfMonth(addMonths(new Date(), -1))
 };
+
+export const shortPlace = str => {
+  const arr = str.split(" ");
+  const [first, ...remaining] = arr;
+  const len = remaining.join(" ").length;
+  return len > 18
+    ? `${remaining.join(" ").slice(0, 15)}...`
+    : `${remaining.join(" ").slice(0, 18)}`;
+};

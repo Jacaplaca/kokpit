@@ -2,25 +2,37 @@ import React from "react";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
+import { fade } from "@material-ui/core/styles/colorManipulator";
+import Chip from "@material-ui/core/Chip";
 
-const styles = {
+const styles = theme => ({
   root: {
-    //width: "100%",
-    //maxWidth: "100%",
-    textTransform: "uppercase",
-    opacity: "0.75",
-    marginBottom: 20
+    //display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap"
   },
-  text: {
-    fontSize: 30,
-    fontWeight: "300"
+  chip: {
+    margin: theme.spacing.unit / 2,
+    color: "white",
+    backgroundColor: fade(theme.palette.secondary.light, 1)
   }
-};
+});
 
 function RaportyAkcjeIndicator(props) {
-  const { classes, text } = props;
+  const { classes, text, day } = props;
+  const { nawozy, nowyKlient, sprzedaz, zamowienie, zboza } = day;
 
-  return <div>ikony</div>;
+  return (
+    <span className={classes.root}>
+      {nawozy ? <Chip label="Nawozy" className={classes.chip} /> : null}
+      {nowyKlient ? (
+        <Chip label="Nowy klient" className={classes.chip} />
+      ) : null}
+      {sprzedaz ? <Chip label="Sprzedaż" className={classes.chip} /> : null}
+      {zamowienie ? <Chip label="Zamówienie" className={classes.chip} /> : null}
+      {zboza ? <Chip label="Zboża" className={classes.chip} /> : null}
+    </span>
+  );
 }
 
 RaportyAkcjeIndicator.propTypes = {

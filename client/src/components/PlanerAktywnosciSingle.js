@@ -9,7 +9,12 @@ import ClockIcon from "@material-ui/icons/WatchLater";
 import Edit from "@material-ui/icons/Edit";
 import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
-import { timeDiff, wezGodzine, minutes2hours } from "../common/functions";
+import {
+  timeDiff,
+  wezGodzine,
+  minutes2hours,
+  shortPlace
+} from "../common/functions";
 //import Paper from "@material-ui/core/Paper";
 
 import RaportyAkcjeIndicator from "./RaportyAkcjeIndicator";
@@ -102,6 +107,7 @@ class PlanerAktywnosciSingle extends Component {
             planer_akt_rodz,
             miejsce_id,
             gus_simc,
+            miejsca,
             inna,
             uwagi,
             wyslano,
@@ -147,11 +153,13 @@ class PlanerAktywnosciSingle extends Component {
               </span>
               <span className={classes.aktywnosc}>
                 {aktywnosc_id === 5 ? inna : planer_akt_rodz.name}{" "}
-                {aktywnosc_id === 1 && gus_simc.nazwa}
+                {/* {aktywnosc_id === 1 && gus_simc.nazwa} */}
+                {aktywnosc_id === 1 && shortPlace(miejsca.name)}
               </span>
               <span className={classes.klient}>
                 {planer_klienci && planer_klienci.nazwa}
               </span>
+              <RaportyAkcjeIndicator day={day} />
 
               <IconButton
                 style={

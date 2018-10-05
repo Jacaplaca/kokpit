@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { startOfMonth, endOfMonth } from "date-fns";
 import { connect } from "react-redux";
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -59,98 +58,6 @@ class Planer extends Component {
     kiedy: ""
   };
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const {
-      nr_dokumentu: nr_dokumentu_prevState,
-      data_wystawienia: data_wystawienia_prevState,
-      nazwa_pozycji: nazwa_pozycji_prevState,
-      kwota_netto: kwota_netto_prevState,
-      categoryId: categoryId_prevState,
-      groupId: groupId_prevState
-    } = prevState;
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu !== "" &&
-        data_wystawienia !== "" &&
-        nazwa_pozycji !== "" &&
-        kwota_netto !== "" &&
-        (categoryId ? categoryId.value !== "" : categoryId !== "") &&
-        (groupId ? groupId.value !== "" : groupId !== ""))
-      // categoryId.value !== '' &&
-      // groupId.value !== ''
-    ) {
-      this.setState({ submitIsDisable: false });
-    } else if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu === "" ||
-        data_wystawienia === "" ||
-        nazwa_pozycji === "" ||
-        kwota_netto === "" ||
-        (categoryId ? categoryId.value === "" : categoryId === "") ||
-        (groupId ? groupId.value === "" : groupId === ""))
-    ) {
-      this.setState({ submitIsDisable: true });
-    } else {
-      return;
-    }
-  }
-
-  czyWypelniony = () => {
-    const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      id ||
-      nr_dokumentu ||
-      data_wystawienia ||
-      nazwa_pozycji ||
-      kwota_netto ||
-      categoryId ||
-      groupId
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  clearForm = () => {
-    this.setState({
-      id: "",
-      nr_dokumentu: "",
-      data_wystawienia: "",
-      nazwa_pozycji: "",
-      kwota_netto: "",
-      categoryId: "",
-      groupId: "",
-      edited: false
-    });
-  };
-
   componentWillMount() {
     this.fetchAktywnosci();
   }
@@ -171,108 +78,12 @@ class Planer extends Component {
         this.setState({
           aktywnosci: []
         });
+        console.log(podzielone.sort(dynamicSort("kiedy")).reverse());
         this.setState({
           aktywnosci: podzielone.sort(dynamicSort("kiedy")).reverse()
         });
       })
       .then(() => this.props.loading(false));
-  };
-
-  handleEdit = id => {
-    axios.get(`/api/cost/${id}`).then(result => {
-      const {
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        category,
-        group
-      } = result.data;
-      this.setState({
-        id,
-        nr_dokumentu,
-        kwota_netto,
-        nazwa_pozycji,
-        data_wystawienia,
-        categoryId: { label: category.name, value: category.id },
-        groupId: { label: group.name, value: group.id },
-        edited: true
-      });
-    });
-  };
-
-  onEdit = () => {
-    const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    const url = `/api/cost/edit/${id}`;
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
-      })
-    })
-      .then(() => {
-        this.fetchAktywnosci();
-      })
-      .then(() => {
-        this.clearForm();
-      });
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      categoryId,
-      groupId
-    } = this.state;
-    const url = "/api/cost";
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        categoryId,
-        groupId
-      })
-    })
-      .then(resp => resp.json())
-      .then(data => {
-        const dataWystawienia = data.data_wystawienia;
-        const startDate = startOfMonth(dataWystawienia);
-        const endDate = endOfMonth(dataWystawienia);
-        const rangeselection = { endDate, startDate, key: "rangeselection" };
-        this.setState({ rangeselection });
-      })
-      .then(() => {
-        this.fetchAktywnosci();
-      })
-      .then(() => {
-        this.clearForm();
-      });
   };
 
   handleChange = event => {

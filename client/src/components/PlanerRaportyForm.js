@@ -24,7 +24,12 @@ import InputComponent from "../common/inputs/InputComponent";
 
 import KlienciSearch from "./KlienciSearch";
 
-import { wezGodzine, dynamicSort, dataToString } from "../common/functions";
+import {
+  wezGodzine,
+  dynamicSort,
+  dataToString,
+  shortPlace
+} from "../common/functions";
 
 const styles = theme => ({
   aktyDoRaportu: {
@@ -336,13 +341,14 @@ class PlanerRaportyForm extends Component {
   fetchujDate = data => {
     console.log(`/api/kiedy/akt/${data}`);
     axios.get(`/api/kiedy/akt/${data}`).then(result => {
+      //console.log(result.data);
       this.setState({ aktyDaty: result.data });
     });
   };
 
   fetchujAktywnosc = id => {
     axios.get(`/api/id/akt/${id}`).then(result => {
-      console.log(result.data);
+      //console.log(result.data);
       const {
         //kiedy,
         start,
@@ -351,7 +357,8 @@ class PlanerRaportyForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        gus_simc
+        gus_simc,
+        miejsca
       } = result.data;
       const { kiedy } = this.props;
       this.setState({
@@ -361,7 +368,7 @@ class PlanerRaportyForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        miejsceLabel: gus_simc ? gus_simc.nazwa : ""
+        miejsceLabel: miejsca ? miejsca.name : ""
         //edited: true
       });
       this.props.edytuj(kiedy);
@@ -455,6 +462,7 @@ class PlanerRaportyForm extends Component {
         zamowienie,
         zboza,
         gus_simc,
+        miejsca,
         planer_klienci
       } = result.data;
       this.props.edytuj(kiedy);
@@ -466,7 +474,8 @@ class PlanerRaportyForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        miejsceLabel: gus_simc ? gus_simc.nazwa : "",
+        //miejsceLabel: gus_simc ? gus_simc.nazwa : "",
+        miejsceLabel: miejsca ? miejsca.name : "",
         // categoryId: { label: category.name, value: category.id },
         // groupId: { label: group.name, value: group.id },
         edited: true,
@@ -611,9 +620,10 @@ class PlanerRaportyForm extends Component {
         miejsce_id,
         inna,
         gus_simc,
+        miejsca,
         planer_akt_rodz
       } = day;
-      // console.log(id);
+      console.log(day);
       return (
         <Button
           key={id}
@@ -631,7 +641,8 @@ class PlanerRaportyForm extends Component {
             aktywnosc_id !== 5
               ? planer_akt_rodz.name.slice(0, 20)
               : inna.slice(0, 20)
-          } ${gus_simc !== null ? gus_simc.nazwa.slice(0, 20) : ""}`}
+            // } ${gus_simc !== null ? gus_simc.nazwa.slice(0, 20) : ""}`}
+          } ${miejsca !== null ? shortPlace(miejsca.name) : ""}`}
         </Button>
       );
     });
@@ -751,7 +762,8 @@ class PlanerRaportyForm extends Component {
                     }
                   />
                   <KlienciSearch
-                    miejsceLabel={this.state.miejsceLabel}
+                    //miejsceLabel={this.state.miejsceLabel.slice(0, 6)}
+                    miejsceLabel={this.state.miejsceLabel.split(" ")[1]}
                     klientLabel={this.state.klientLabel}
                     clearLabel={() => this.setState({ klientLabel: "" })}
                     // miejsceLabel="lublin"

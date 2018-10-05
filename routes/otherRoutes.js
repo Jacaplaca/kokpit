@@ -9,6 +9,7 @@ const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
 const Aktywnosci = db.planer_aktywnosci;
 const Raporty = db.planer_raporty;
+const Miejsca = db.miejsca;
 const City = db.gus_simc;
 const Street = db.gus_ulic;
 const Terc = db.gus_terc;
@@ -42,7 +43,6 @@ dynamicSort = property => {
 
 module.exports = app => {
   app.get("/api/city/:city", (req, res, next) => {
-    // console.log("get api/city/");
     const wyszukiwanie = req.params.city;
     const city = wyszukiwanie;
     // const city = wyszukiwanie.split(" ")[0];
@@ -70,24 +70,29 @@ module.exports = app => {
       //   )
       // );
 
-      City.findAll({
+      // City.findAll({
+      //   where: {
+      //     nazwa: { [Op.like]: `${city}%` }
+      //   },
+      //   include: [
+      //     { model: Wojewodztwo, attributes: ["nazwa"] },
+      //     {
+      //       model: Powiat,
+      //       attributes: ["nazwa"]
+      //     },
+      //     { model: Terc, attributes: ["nazwa"] }
+      //   ],
+      //   limit: 30
+      Miejsca.findAll({
         where: {
-          nazwa: { [Op.like]: `${city}%` }
+          name: { [Op.like]: `%${city}%` }
         },
-        include: [
-          { model: Wojewodztwo, attributes: ["nazwa"] },
-          {
-            model: Powiat,
-            attributes: ["nazwa"]
-          },
-          { model: Terc, attributes: ["nazwa"] }
-        ],
         limit: 30
       }).then(result => {
-        var promises = [];
-        let wojewodztwo;
-        let powiat;
-        let gmina;
+        // var promises = [];
+        // let wojewodztwo;
+        // let powiat;
+        // let gmina;
         // const filtrowany = result.filter(x => x.rm !== "95");
         // const sortowany = result.sort(dynamicSort("rm"));
         // const sortRevSlice = sortowany.reverse().slice(0, 10);
@@ -162,7 +167,6 @@ module.exports = app => {
   });
 
   app.get("/api/klienci/:query", (req, res, next) => {
-    // console.log("get api/city/");
     const query = req.params.query;
 
     const { user_id, clientId } = req.user;
@@ -180,6 +184,7 @@ module.exports = app => {
         where: {
           [Op.or]: [
             { adr_Miejscowosc: { [Op.like]: `${query}%` } },
+            { adr_Kod: { [Op.like]: `${query}%` } },
             { nazwa: { [Op.like]: `${query}%` } }
           ],
           clientId
@@ -431,7 +436,8 @@ module.exports = app => {
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
-            { model: City, attributes: ["nazwa"] }
+            //{ model: City, attributes: ["nazwa"] },
+            { model: Miejsca, attributes: ["name"] }
           ],
           where: { user_id, id }
         })
@@ -449,7 +455,8 @@ module.exports = app => {
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
-            { model: City, attributes: ["nazwa"] },
+            //{ model: City, attributes: ["nazwa"] },
+            { model: Miejsca, attributes: ["name"] },
             { model: PlanerKlienci, attributes: ["nazwa"] }
           ],
           where: { user_id, id }
@@ -468,7 +475,7 @@ module.exports = app => {
 
   app.get(`/api/kiedy/akt/:data`, (req, res, next) => {
     console.log(req.params);
-    console.log("przegladaj tabele");
+    console.log("przegladaj tabele /api/kiedy/akt/:data");
     const day = req.params.data;
     const { user_id, clientId } = req.user;
     if (!req.user) {
@@ -477,7 +484,8 @@ module.exports = app => {
     Aktywnosci.findAll({
       include: [
         { model: RodzajAktywnosci, attributes: ["name"] },
-        { model: City, attributes: ["nazwa"] }
+        // { model: City, attributes: ["nazwa"] }
+        { model: Miejsca, attributes: ["name"] }
       ],
       where: { user_id, kiedy: new Date(day) }
     })
@@ -620,6 +628,7 @@ module.exports = app => {
       });
   });
 
+  //Changed for Miejsca
   app.get("/api/table/:table/:zakres", (req, res) => {
     const table = req.params;
     const zakres = table.zakres;
@@ -639,7 +648,8 @@ module.exports = app => {
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
-            { model: City, attributes: ["nazwa"] }
+            // { model: City, attributes: ["nazwa"] }
+            { model: Miejsca, attributes: ["name"] }
           ],
           where: {
             user_id,
@@ -662,7 +672,8 @@ module.exports = app => {
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
-            { model: City, attributes: ["nazwa"] },
+            // { model: City, attributes: ["nazwa"] },
+            { model: Miejsca, attributes: ["name"] },
             { model: PlanerKlienci, attributes: ["nazwa"] }
           ],
           where: {

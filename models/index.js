@@ -25,6 +25,12 @@ var sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: "mysql",
     operatorsAliases: false,
+    define: {
+      //charset: "utf8",
+      //collate: "utf8_general_ci",
+      // collate: "utf8_polish_ci",
+      timestamps: true
+    },
     logging: false
     // dialectOptions: {
     //   useUTC: false //for reading from database
@@ -93,7 +99,11 @@ db.gus_terc_pow.belongsTo(db.gus_terc_woj, {
   targetKey: "id"
 });
 
-db.planer_aktywnosci.belongsTo(db.gus_simc, {
+// db.planer_aktywnosci.belongsTo(db.gus_simc, {
+//   foreignKey: "miejsce_id",
+//   targetKey: "id"
+// });
+db.planer_aktywnosci.belongsTo(db.miejsca, {
   foreignKey: "miejsce_id",
   targetKey: "id"
 });
@@ -110,7 +120,11 @@ db.planer_aktywnosci.belongsTo(db.clients, {
   targetKey: "id"
 });
 
-db.planer_raporty.belongsTo(db.gus_simc, {
+// db.planer_raporty.belongsTo(db.gus_simc, {
+//   foreignKey: "miejsce_id",
+//   targetKey: "id"
+// });
+db.planer_raporty.belongsTo(db.miejsca, {
   foreignKey: "miejsce_id",
   targetKey: "id"
 });

@@ -122,6 +122,18 @@ const costs = [
 // const valid = costs[0].kwota_netto.indexOf(42.33);
 // valid
 
+const skroc = str => {
+  const arr = str.split(" ");
+  const [first, ...remaining] = arr;
+  const len = remaining.join(" ").length;
+  return len > 18
+    ? `${remaining.join(" ").slice(0, 15)}...`
+    : `${remaining.join(" ").slice(0, 18)}`;
+};
+
+const dlugi = "01-022 Warszawa (Wola)333";
+console.log(skroc(dlugi));
+
 const reference = [
   { id: 0, name: "aaa" },
   { id: 0, name: "bbb" },

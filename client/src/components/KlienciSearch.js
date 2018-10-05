@@ -23,7 +23,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
   // console.log(suggestion);
 
   return (
-    <MenuItem selected={isHighlighted} component="div">
+    <MenuItem selected={isHighlighted} component="div" dense>
       <div style={{ display: "block", width: "100%" }}>
         <span>
           {parts.map((part, index) => {

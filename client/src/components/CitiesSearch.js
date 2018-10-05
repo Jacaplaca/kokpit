@@ -16,20 +16,59 @@ function renderSuggestionsContainer({ containerProps, children, query }) {
   return <div {...containerProps}>{children}</div>;
 }
 
+// function renderSuggestion(suggestion, { query, isHighlighted }) {
+//   const matches = match(suggestion.nazwa, query);
+//   const parts = parse(suggestion.nazwa, matches);
+//   const {
+//     gus_terc_woj,
+//     gus_terc_pow,
+//     gus_terc,
+//     cecha,
+//     nazwa_1,
+//     nazwa_2
+//   } = suggestion;
+//
+//   return (
+//     <MenuItem selected={isHighlighted} component="div">
+//       <div style={{ display: "block", width: "100%" }}>
+//         <span>
+//           {parts.map((part, index) => {
+//             return part.highlight ? (
+//               <span key={String(index)} style={{ fontWeight: 500 }}>
+//                 {part.text}
+//               </span>
+//             ) : (
+//               <strong key={String(index)} style={{ fontWeight: 300 }}>
+//                 {part.text}
+//               </strong>
+//             );
+//           })}
+//         </span>
+//         {nazwa_1 && (
+//           <span style={{ float: "center" }}>
+//             <span style={{ fontSize: 15 }}> {cecha}</span>
+//             <span style={{ fontSize: 15 }}>{nazwa_1}</span>
+//             <span style={{ fontSize: 15 }}> {nazwa_2}</span>
+//           </span>
+//         )}
+//         <span style={{ float: "right" }}>
+//           <span style={{ fontSize: 12 }}>woj.: </span>
+//           <span style={{ fontSize: 15 }}>{gus_terc_woj.nazwa} </span>
+//           <span style={{ fontSize: 12 }}>pow.: </span>
+//           <span style={{ fontSize: 15 }}>{gus_terc_pow.nazwa} </span>
+//           <span style={{ fontSize: 12 }}>gmi.: </span>
+//           <span style={{ fontSize: 15 }}>{gus_terc.nazwa} </span>
+//         </span>
+//       </div>
+//     </MenuItem>
+//   );
+// }
 function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.nazwa, query);
-  const parts = parse(suggestion.nazwa, matches);
-  const {
-    gus_terc_woj,
-    gus_terc_pow,
-    gus_terc,
-    cecha,
-    nazwa_1,
-    nazwa_2
-  } = suggestion;
+  const matches = match(suggestion.name, query);
+  const parts = parse(suggestion.name, matches);
 
   return (
-    <MenuItem selected={isHighlighted} component="div">
+    <MenuItem selected={isHighlighted} component="div" dense>
       <div style={{ display: "block", width: "100%" }}>
         <span>
           {parts.map((part, index) => {
@@ -43,21 +82,6 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
               </strong>
             );
           })}
-        </span>
-        {nazwa_1 && (
-          <span style={{ float: "center" }}>
-            <span style={{ fontSize: 15 }}> {cecha}</span>
-            <span style={{ fontSize: 15 }}>{nazwa_1}</span>
-            <span style={{ fontSize: 15 }}> {nazwa_2}</span>
-          </span>
-        )}
-        <span style={{ float: "right" }}>
-          <span style={{ fontSize: 12 }}>woj.: </span>
-          <span style={{ fontSize: 15 }}>{gus_terc_woj.nazwa} </span>
-          <span style={{ fontSize: 12 }}>pow.: </span>
-          <span style={{ fontSize: 15 }}>{gus_terc_pow.nazwa} </span>
-          <span style={{ fontSize: 12 }}>gmi.: </span>
-          <span style={{ fontSize: 15 }}>{gus_terc.nazwa} </span>
         </span>
       </div>
     </MenuItem>
@@ -143,6 +167,7 @@ class CitySearch extends React.Component {
 
     axios.get(`/api/city/${value}`).then(result => {
       const suggestions = result.data;
+      console.log(suggestions);
 
       if (value === this.state.value) {
         this.setState({
@@ -158,21 +183,32 @@ class CitySearch extends React.Component {
     });
   }
 
+  // getSuggestionValue = suggestion => {
+  //   console.log("get suggestion value");
+  //   const miasto = suggestion.nazwa;
+  //   const id = suggestion.id;
+  //   const cecha = suggestion.cecha ? suggestion.cecha : "";
+  //   const nazwa_1 = suggestion.nazwa_1 ? suggestion.nazwa_1 : "";
+  //   const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
+  //   // if (this.state.single !== "") {
+  //   // }
+  //   //this.props.test(id);
+  //   this.props.edytuj(id);
+  //   this.props.wybranoLabel(miasto);
+  //   this.setState({ calaNazwa: miasto, clear: true });
+  //   console.log(id);
+  //   return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
+  // };
+
   getSuggestionValue = suggestion => {
     console.log("get suggestion value");
-    const miasto = suggestion.nazwa;
+    const miasto = suggestion.name;
     const id = suggestion.id;
-    const cecha = suggestion.cecha ? suggestion.cecha : "";
-    const nazwa_1 = suggestion.nazwa_1 ? suggestion.nazwa_1 : "";
-    const nazwa_2 = suggestion.nazwa_2 ? suggestion.nazwa_2 : "";
-    // if (this.state.single !== "") {
-    // }
-    //this.props.test(id);
     this.props.edytuj(id);
     this.props.wybranoLabel(miasto);
     this.setState({ calaNazwa: miasto, clear: true });
     console.log(id);
-    return `${miasto} ${cecha}${nazwa_1} ${nazwa_2}`;
+    return `${miasto}`;
   };
 
   handleSuggestionsFetchRequested = ({ value }) => {
