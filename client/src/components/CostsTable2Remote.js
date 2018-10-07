@@ -16,8 +16,17 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import FilterNoneIcon from "@material-ui/icons/FilterNone";
 
+import ButtonMy from "../common/ButtonMy";
 import ButtonIconCircle from "../common/ButtonIconCircle";
 import Confirmation from "./Confirmation";
+
+let nrFilter;
+let dataFilter;
+let nazwaFilter;
+let nettoFilter;
+let bruttoFilter;
+let categoryFilter;
+let groupFilter;
 
 const styles = theme => ({
   headerClasses: {
@@ -64,13 +73,20 @@ const mulitSelect = (data, kolumna) => {
   return mulitSelect;
 };
 
-const mojTextFilter = textFilter({
+const filterStyle = {
+  marginTop: 5,
+  fontSize: 14,
+  padding: 3,
+  borderRadius: 0
+};
+
+const mojTextFilter = {
   placeholder: "szukaj...", // custom the input placeholder
   // className: 'my-custom-text-filter', // custom classname on input
   // defaultValue: 'test', // default filtering value
   // comparator: Comparator.EQ, // default is Comparator.LIKE
   // caseSensitive: true // default is false, and true will only work when comparator is LIKE
-  style: { marginTop: 5 } // your custom styles on input
+  style: { ...filterStyle } // your custom styles on input
   // delay: 1000, // how long will trigger filtering after user typing, default is 500 ms
   // getFilter: e => console.log('asdasdfasdfasdf')
   // } // accept callback function and you can call it for filter programmtically
@@ -82,15 +98,29 @@ const mojTextFilter = textFilter({
   //   // nameFilter was assigned once the component has been mounted.
   //   nameFilter = filter;
   // }
-});
+};
 
-const mojNumberFilter = numberFilter({
+const mojNumberFilter = {
   placeholder: "wpisz...",
-  comparators: [Comparator.EQ, Comparator.GT, Comparator.LT],
+  //withoutEmptyComparatorOption: true, // dont render empty option for comparator
+  //withoutEmptyNumberOption: true, // dont render empty option for numner select if it is defined
+  comparators: [
+    (Comparator.GT = "więcej niż"),
+    (Comparator.LT = "mniej niż")
+    // (Comparator.EQ = "a")
+  ],
   style: { display: "inline-grid", marginTop: 5 },
-  comparatorStyle: {}, // custom the style on comparator select
-  numberStyle: { margin: "0px", marginTop: 5, width: "100%" } // custom the style on number input/select
-});
+  comparatorStyle: {
+    ...filterStyle,
+    width: "100%",
+    textAlign: "center",
+    // fontWeight: 800,
+    // fontSize: 17,
+    padding: 3
+  }, // custom the style on comparator select
+  numberStyle: { margin: "0px", width: "100%", ...filterStyle }
+  //defaultValue: { number: 0, comparator: Comparator.GT } // custom the style on number input/select
+};
 
 const kwotaFormat = cell => {
   return `${currency(cell, {
@@ -115,7 +145,7 @@ const RemoteFilter = props => {
   const sumaHeaderFormat = (colum, colIndex) => {
     return (
       <div>
-        <h4>Suma netto: </h4>
+        <h6 style={{ ...headerStyle }}>Suma netto: </h6>
         <p>
           {`${currency(props.suma, {
             separator: " ",
@@ -161,17 +191,25 @@ const RemoteFilter = props => {
   //   props.setDuplicate(id);
   // };
 
+  const headerStyle = {
+    //verticalAlign: "bottom"
+    fontSize: 14,
+    fontWeight: 500,
+    textTransform: "uppercase"
+  };
+
   const columnStyleMain = {
     verticalAlign: "middle",
     // padding: '0.1rem'
     paddingLeft: 5,
     paddingTop: 0,
     paddingBottom: 0,
-    fontSize: 14
+    fontSize: 14,
+    overflowWrap: "break-word"
   };
 
   const columnStyleKwota = {
-    fontWeight: 600,
+    //fontWeight: 600,
     textAlign: "center"
   };
 
@@ -179,7 +217,23 @@ const RemoteFilter = props => {
     {
       dataField: "nr_dokumentu",
       text: "Nr dokumentu",
-      filter: mojTextFilter,
+      // filter: {
+      //   ...mojTextFilter,
+      //   getFilter: filter => {
+      //     nrFilter = filter;
+      //   }
+      // },
+      filter: textFilter({
+        ...mojTextFilter,
+        getFilter: filter => {
+          nrFilter = filter;
+        }
+      }),
+      // filter: textFilter({
+      //   getFilter: filter => {
+      //     nrFilter = filter;
+      //   }
+      // }),
       sort: true,
       sortingHeaderStyle: {
         backgroundColor: "red"
@@ -190,22 +244,27 @@ const RemoteFilter = props => {
       headerStyle: (colum, colIndex) => {
         return {
           width: "130px",
+          ...headerStyle
           // textAlign: 'center',
-          verticalAlign: "bottom"
         };
       }
     },
     {
       dataField: "data_wystawienia",
       text: "Data wystawienia",
-      filter: mojTextFilter,
+      filter: textFilter({
+        ...mojTextFilter,
+        getFilter: filter => {
+          dataFilter = filter;
+        }
+      }),
       sort: true,
       // style: (cell, row, rowIndex, colIndex) => {
       //   return columnStyleKwota;
       // },
       style: { ...columnStyleMain, ...columnStyleKwota },
       headerStyle: (colum, colIndex) => {
-        return { width: "130px", verticalAlign: "bottom" };
+        return { width: "130px", ...headerStyle };
       }
     },
     {
@@ -215,9 +274,14 @@ const RemoteFilter = props => {
         return columnStyleMain;
       },
       headerStyle: (colum, colIndex) => {
-        return { verticalAlign: "bottom" };
+        return { ...headerStyle };
       },
-      filter: mojTextFilter,
+      filter: textFilter({
+        ...mojTextFilter,
+        getFilter: filter => {
+          nazwaFilter = filter;
+        }
+      }),
       sort: true
     },
     {
@@ -227,10 +291,16 @@ const RemoteFilter = props => {
       style: (cell, row, rowIndex, colIndex) => {
         return columnStyleMain;
       },
+      headerStyle: (colum, colIndex) => {
+        return { ...headerStyle };
+      },
       filter: multiSelectFilter({
+        getFilter: filter => {
+          categoryFilter = filter;
+        },
         placeholder: "wszystko...",
         // options: selectOptionsKategoria
-        style: { marginTop: 5 },
+        style: { ...filterStyle },
         options: mulitSelect(props.dataCalosc, "category"),
         onClick: e => console.log(e)
       })
@@ -242,9 +312,15 @@ const RemoteFilter = props => {
       style: (cell, row, rowIndex, colIndex) => {
         return columnStyleMain;
       },
+      headerStyle: (colum, colIndex) => {
+        return { ...headerStyle };
+      },
       filter: multiSelectFilter({
+        getFilter: filter => {
+          groupFilter = filter;
+        },
         placeholder: "wszystko...",
-        style: { marginTop: 5 },
+        style: { ...filterStyle },
         // options: selectOptionsKategoria
         options: mulitSelect(props.dataCalosc, "group")
       })
@@ -256,10 +332,15 @@ const RemoteFilter = props => {
       classes: "kwota",
       style: { ...columnStyleMain, ...columnStyleKwota },
       headerStyle: (colum, colIndex) => {
-        return { verticalAlign: "bottom" };
+        return { ...headerStyle };
       },
       formatter: kwotaFormat,
-      filter: mojNumberFilter
+      filter: numberFilter({
+        ...mojNumberFilter,
+        getFilter: filter => {
+          nettoFilter = filter;
+        }
+      })
     },
     {
       dataField: "kwota_brutto",
@@ -268,10 +349,15 @@ const RemoteFilter = props => {
       classes: "kwota",
       style: { ...columnStyleMain, ...columnStyleKwota },
       headerStyle: (colum, colIndex) => {
-        return { verticalAlign: "bottom" };
+        return { ...headerStyle };
       },
       formatter: kwotaFormat,
-      filter: mojNumberFilter
+      filter: numberFilter({
+        ...mojNumberFilter,
+        getFilter: filter => {
+          bruttoFilter = filter;
+        }
+      })
     },
     {
       dataField: "id",
@@ -283,7 +369,7 @@ const RemoteFilter = props => {
       headerFormatter: sumaHeaderFormat,
       headerStyle: (colum, colIndex) => {
         return {
-          width: "170px",
+          width: "135px",
           textAlign: "center",
           verticalAlign: "middle"
           // display: 'inline'
@@ -388,24 +474,31 @@ class CostsTable extends Component {
             }
           } else if (filterType === "NUMBER") {
             const znak = filterVal.comparator;
+            console.log(znak);
             const operators = {
+              undefined: function(a, b) {
+                return;
+              },
               "": function(a, b) {
                 return;
               },
-              "=": function(a, b) {
+              a: function(a, b) {
                 return a === b;
               },
-              "<": function(a, b) {
+              "mniej niż": function(a, b) {
                 return a < b;
               },
-              ">": function(a, b) {
+              "więcej niż": function(a, b) {
                 return a > b;
               }
             };
 
             const liczba = Math.trunc(filterVal.number);
+            // console.log(liczba);
+            // console.log(comparator);
+            // liczba = isNaN(liczba) ? 0 : Math.trunc(filterVal.number);
             if (comparator === Comparator.LIKE) {
-              valid = operators[znak](row[dataField], liczba);
+              valid = !znak ? true : operators[znak](row[dataField], liczba);
             } else {
               valid = operators[znak](row[dataField], liczba);
             }
@@ -460,8 +553,21 @@ class CostsTable extends Component {
     }
   };
 
+  cleanFilters = () => {
+    nrFilter("");
+    dataFilter("");
+    nazwaFilter("");
+    console.log(nettoFilter);
+    nettoFilter("");
+    bruttoFilter("");
+    categoryFilter("");
+    groupFilter("");
+    //domyslnaLiczbaFilter = 0;
+  };
+
   render() {
     const { open, deleteRow } = this.state;
+    console.log(nettoFilter);
     return (
       <div>
         <Confirmation
@@ -470,6 +576,21 @@ class CostsTable extends Component {
           action={this.handleDelete}
           komunikat={"Czy na pewno chcesz usunąć tę pozycję kosztową?"}
         />
+        <ButtonMy
+          onClick={() => this.cleanFilters()}
+          style={{
+            // position: "absolute",
+            // right: "50px",
+            marginTop: 10,
+            marginBottom: 10,
+            marginLeft: 10
+          }}
+          size="small"
+          //disabled={day.values[0].wyslano ? true : false}
+        >
+          Czyść filtry
+        </ButtonMy>
+
         <RemoteFilter
           data={this.jakieDane().costs}
           suma={this.jakieDane().sumuj}
