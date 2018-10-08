@@ -68,7 +68,17 @@ class InputComponent extends React.Component {
   };
 
   render() {
-    const { classes, label, type, edytuj, value, kwota, password } = this.props;
+    const {
+      classes,
+      label,
+      type,
+      edytuj,
+      value,
+      kwota,
+      password,
+      error,
+      helperText
+    } = this.props;
 
     return (
       <FormControl
@@ -76,6 +86,8 @@ class InputComponent extends React.Component {
         aria-describedby="name-helper-text"
       >
         <TextField
+          helperText={helperText}
+          error={error}
           label={label}
           name="input"
           id="name-helper"
@@ -100,6 +112,11 @@ class InputComponent extends React.Component {
     );
   }
 }
+
+InputComponent.defaultProps = {
+  error: false,
+  helperText: ""
+};
 
 InputComponent.propTypes = {
   classes: PropTypes.object.isRequired

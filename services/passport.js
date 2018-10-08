@@ -77,6 +77,7 @@ passport.use(
       passReqToCallback: true //passback entire req to call back
     },
     function(req, email, password, done) {
+      console.log("co to jest passport use");
       User.findAll({
         where: {
           email: email
@@ -84,6 +85,7 @@ passport.use(
       })
         .then(project => {
           const message = { email };
+          console.log(`${email}, ${password}`);
           const result = JSON.parse(JSON.stringify(project));
           if (result.length > 0) {
             const hash = result[0].password.toString();
@@ -92,7 +94,7 @@ passport.use(
                 return done(null, { user_id: result[0].id });
               } else {
                 Object.assign(message, {
-                  errors: "Błędne hasło, chcesz je zresetować?"
+                  errors: "Błędne hasło, czy chcesz je zresetować?"
                 });
                 req.flash("info", message);
                 return done(null, false);

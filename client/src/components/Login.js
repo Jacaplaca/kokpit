@@ -6,22 +6,33 @@ import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import Key from "@material-ui/icons/VpnKey";
 
+import EmailValidator from "email-validator";
+
 import PropTypes from "prop-types";
 import * as actions from "../actions";
 
 import InputComponent from "../common/inputs/InputComponent";
 import ButtonMy from "../common/ButtonMy";
 
+const emailHelperMessage = "Adres email podany przy rejestracji";
+
 class Login extends Component {
   state = {
-    email: ""
+    emailHelper: emailHelperMessage,
+    disabledButton: true,
+    errorEmail: false,
+    email: "",
+    password: "",
+    resetShow: true
   };
 
   componentWillMount = () => {
     this.props.fetchForm();
   };
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps, prevState, snapshot) => {
+    const { email: emailPrev } = prevState;
+    const { email } = this.state;
     if (
       this.state.email === "" &&
       this.props.formTemp.length > 0 &&
@@ -29,10 +40,26 @@ class Login extends Component {
     ) {
       this.setState({ email: this.props.formTemp[0].email });
     }
+
+    if (email !== emailPrev) {
+      EmailValidator.validate(email)
+        ? this.setState({
+            disabledButton: false,
+            emailHelper: emailHelperMessage,
+            errorEmail: false
+          })
+        : this.setState({ disabledButton: true });
+    }
   };
 
-  onChangeEmail = event => {
-    this.setState({ email: event.target.value });
+  onChangePassword = password => {
+    this.setState({ password });
+    this.state.disabledButton === true
+      ? this.setState({
+          emailHelper: "Podaj prawidłowy adres email",
+          errorEmail: true
+        })
+      : this.setState({ emailHelper: emailHelperMessage, errorEmail: false });
   };
 
   render() {
@@ -59,15 +86,30 @@ class Login extends Component {
             transform: "translate(-40%, -50%)"
           }}
         >
+          {/* {this.state.error} */}
           {this.props.formTemp[0] ? (
-            <div>
+            <div style={{ display: !this.state.resetShow && "none" }}>
               {this.props.formTemp[0].errors}
               {"email" in this.props.formTemp[0] && (
                 <form method="POST" action="/auth/reset">
                   <input name="email" type="hidden" value={this.state.email} />
-                  <button type="submit" className="btn btn-primary">
+                  <Button
+                    style={{ margin: 8 }}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                  >
                     Tak
-                  </button>
+                  </Button>
+                  <Button
+                    onClick={() => this.setState({ resetShow: false })}
+                    style={{ margin: 8 }}
+                    //type="submit"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Nie
+                  </Button>
                 </form>
               )}
             </div>
@@ -80,12 +122,14 @@ class Login extends Component {
               type="email"
               edytuj={email => this.setState({ email })}
               value={this.state.email}
+              error={this.state.errorEmail}
+              helperText={this.state.emailHelper}
             />
             <InputComponent
               name="password"
               label="Password"
               type="password"
-              edytuj={password => this.setState({ password })}
+              edytuj={password => this.onChangePassword(password)}
               value={this.state.password}
               password
             />
@@ -96,7 +140,12 @@ class Login extends Component {
               hidden
             />
             <div style={{ width: "100%", marginTop: 40 }}>
-              <Button type="submit" variant="contained" color="primary">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={this.state.disabledButton}
+              >
                 Zaloguj się
                 <Key style={{ marginLeft: 10 }} />
               </Button>
