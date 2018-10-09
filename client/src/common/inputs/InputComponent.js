@@ -119,7 +119,9 @@ InputComponent.defaultProps = {
 };
 
 InputComponent.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  error: PropTypes.bool,
+  helperText: PropTypes.string
 };
 
 export default withStyles(styles)(InputComponent);

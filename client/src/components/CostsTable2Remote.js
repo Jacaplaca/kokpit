@@ -408,40 +408,7 @@ class CostsTable extends Component {
     //fetchTemporary: true
   };
 
-  // componentDidMount() {
-  //   this._isMounted = true;
-  // }
-
-  componentWillReceiveProps(nextProps) {
-    console.log("costs table remote receive props");
-    console.log(nextProps.costs);
-    console.log(this.props.costs);
-    // this.setState({
-    //   data: this.props.costs,
-    //   suma: this.sumuj(this.props.costs)
-    // });
-    // this.setState({
-    //   fetchTemporary: true
-    // });
-    //this.receiveProps();
-  }
-
-  // componentWillUnmount() {
-  //   this._isMounted = false;
-  // }
-
-  // receiveProps() {
-  //   if (this._isMounted) {
-  //     console.log("cost table2remote is mounted");
-  //     this.setState({
-  //       data: this.props.costs,
-  //       suma: this.sumuj(this.props.costs)
-  //     });
-  //   }
-  // }
-
   handleTableChange = (type, { filters }) => {
-    console.log(type);
     // console.log(JSON.stringify(filters));
     // console.log(filters);
     setTimeout(() => {
@@ -557,7 +524,6 @@ class CostsTable extends Component {
     nrFilter("");
     dataFilter("");
     nazwaFilter("");
-    console.log(nettoFilter);
     nettoFilter("");
     bruttoFilter("");
     categoryFilter("");
@@ -567,7 +533,6 @@ class CostsTable extends Component {
 
   render() {
     const { open, deleteRow } = this.state;
-    console.log(nettoFilter);
     return (
       <div>
         <Confirmation

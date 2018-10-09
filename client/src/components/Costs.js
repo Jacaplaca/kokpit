@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { compose } from "redux";
 import { startOfMonth, endOfMonth } from "date-fns";
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -9,8 +10,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 import * as actions from "../actions";
 import { dataToString, defineds, dynamicSort } from "../common/functions";
-import MainFrame from "../common/MainFrame";
-import SiteHeader from "../common/SiteHeader";
+import MainFrameHOC from "../common/MainFrameHOC";
+//import SiteHeader from "../common/SiteHeader";
 import CostsTable from "./CostsTable2Remote";
 import ModalWindow from "./ModalWindow";
 import CostsForm from "./CostsForm";
@@ -71,13 +72,11 @@ class Costs extends Component {
 
   fetchCosts = range => {
     this.props.loading(true);
-    console.log(range);
     const { startDate, endDate } = this.state.rangeselection;
 
     const poczatek = range ? range.rangeselection.startDate : startDate;
     const koniec = range ? range.rangeselection.endDate : endDate;
 
-    console.log("fetchCosts()");
     axios
       .get(`/api/table/costs/${dataToString(poczatek)}_${dataToString(koniec)}`)
       .then(result => {
@@ -185,8 +184,7 @@ class Costs extends Component {
     const { classes } = this.props;
 
     return (
-      <MainFrame>
-        <SiteHeader text={"Dodaj koszty"} />
+      <div>
         <ModalWindow
           open={this.state.openModal}
           close={this.handleClose}
@@ -231,7 +229,7 @@ class Costs extends Component {
             }}
           />
         </Paper>
-      </MainFrame>
+      </div>
     );
   }
 }
@@ -244,9 +242,17 @@ function mapStateToProps({ auth }) {
   return { auth };
 }
 
-export default withStyles(styles, { withTheme: true })(
+// export default withStyles(styles, { withTheme: true })(
+//   connect(
+//     mapStateToProps,
+//     actions
+//   )(Costs)
+// );
+export default compose(
+  withStyles(styles, { withTheme: true }),
   connect(
     mapStateToProps,
     actions
-  )(Costs)
-);
+  ),
+  MainFrameHOC
+)(Costs);

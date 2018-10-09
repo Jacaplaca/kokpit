@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import * as actions from "../actions";
 
 import DrawerLink from "./DrawerLink";
+import ShowLinkToComp from "./ShowLinkToComp";
 
 let drawerWidth = 240;
 
@@ -85,6 +86,27 @@ const styles = theme => ({
 class DrawerMy extends React.Component {
   render() {
     const { classes, theme, auth, open, handleDrawerClose } = this.props;
+    const links = [
+      { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
+      {
+        comp: "planer",
+        text: "Aktywności",
+        link: "/planer",
+        icon: "EventIcon"
+      },
+      {
+        comp: "raporty",
+        text: "Raporty",
+        link: "/raporty",
+        icon: "EventAvailableIcon"
+      },
+      {
+        comp: "nextReports",
+        text: "Next Reports",
+        link: "/nextreports",
+        icon: "InsertChartOutlined"
+      }
+    ];
     return (
       <Drawer
         variant="permanent"
@@ -109,26 +131,14 @@ class DrawerMy extends React.Component {
         </div>
 
         <div>
-          {auth && auth.costs ? (
-            <DrawerLink text="Koszty" link="/costs" icon="MoneyIcon" />
-          ) : null}
-          {auth && auth.planer ? (
-            <DrawerLink text="Aktywności" link="/planer" icon="EventIcon" />
-          ) : null}
-          {auth && auth.raporty ? (
-            <DrawerLink
-              text="Raporty"
-              link="/raporty"
-              icon="EventAvailableIcon"
-            />
-          ) : null}
-          {auth && auth.nextReports ? (
-            <DrawerLink
-              text="Next Reports"
-              link="/nextreports"
-              icon="InsertChartOutlined"
-            />
-          ) : null}
+          {links.map((el, i) => {
+            const { comp, text, link, icon } = el;
+            return (
+              <ShowLinkToComp key={i} comp={comp}>
+                <DrawerLink text={text} link={link} icon={icon} />
+              </ShowLinkToComp>
+            );
+          })}
         </div>
       </Drawer>
     );

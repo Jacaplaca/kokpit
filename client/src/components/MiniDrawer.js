@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { BrowserRouter, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
@@ -15,7 +15,6 @@ import PlanerRaport from "./PlanerRaporty";
 import Login from "./Login";
 import PromowaneProdukty from "./PromowaneProdukty";
 import NextReports from "./NextReports";
-// import LinearProgress from "../common/LinearProgress";
 
 let drawerWidth = 240;
 
@@ -42,6 +41,13 @@ const styles = theme => ({
   }
 });
 
+class MyComponent extends Component {
+  render() {
+    const TagName = this.props.component;
+    return <TagName title={this.props.title} />;
+  }
+}
+
 class MiniDrawer extends React.Component {
   state = {
     open: true
@@ -65,11 +71,35 @@ class MiniDrawer extends React.Component {
 
   render() {
     const { classes, theme, auth } = this.props;
-    // console.log(this.props.auth);
+    const routes = [
+      {
+        comp: "costs",
+        path: "/costs",
+        component: Costs,
+        title: "Dodaj koszty"
+      },
+      {
+        comp: "planer",
+        path: "/planer",
+        component: Planer,
+        title: "Zaplanuj aktywności"
+      },
+      {
+        comp: "raporty",
+        path: "/raporty",
+        component: PlanerRaport,
+        title: "Dodaj raport z aktywności"
+      },
+      {
+        comp: "nextReports",
+        path: "/nextreports",
+        component: NextReports,
+        title: ""
+      }
+    ];
     return (
       <BrowserRouter>
         <div className={classes.root}>
-          {/* <LinearProgress /> */}
           <TopNavBar
             open={this.state.open}
             handleDrawerOpen={this.handleDrawerOpen}
@@ -83,20 +113,24 @@ class MiniDrawer extends React.Component {
             {!auth ? (
               <Route path="/" exact component={Login} />
             ) : (
-              <Route path="/" exact component={PromowaneProdukty} />
+              <Route
+                path="/"
+                exact
+                render={() => <PromowaneProdukty title="Produkty promowane" />}
+              />
             )}
-            {auth && auth.costs ? (
-              <Route path="/costs" component={Costs} />
-            ) : null}
-            {auth && auth.planer ? (
-              <Route path="/planer" component={Planer} />
-            ) : null}
-            {auth && auth.raporty ? (
-              <Route path="/raporty" component={PlanerRaport} />
-            ) : null}
-            {auth && auth.nextReports ? (
-              <Route path="/nextreports" component={NextReports} />
-            ) : null}
+            {routes.map((route, i) => {
+              const { comp, path, component, title } = route;
+              return auth && auth[comp] ? (
+                <Route
+                  key={i}
+                  path={path}
+                  render={() => (
+                    <MyComponent title={title} component={component} />
+                  )}
+                />
+              ) : null;
+            })}
             {this.props.children}
           </main>
         </div>
@@ -104,10 +138,6 @@ class MiniDrawer extends React.Component {
     );
   }
 }
-
-// MiniDrawer.defaultProps = {
-//   auth: { email: 'd' }
-// };
 
 MiniDrawer.propTypes = {
   classes: PropTypes.object.isRequired,

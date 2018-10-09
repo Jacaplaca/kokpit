@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { compose } from "redux";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -11,8 +12,7 @@ import {
   dynamicSort,
   defineds
 } from "../common/functions";
-import MainFrame from "../common/MainFrame";
-import SiteHeader from "../common/SiteHeader";
+import MainFrameHOC from "../common/MainFrameHOC";
 import PlanerAktywnosciForm from "./PlanerAktywnosciForm";
 import PlanerLista from "./PlanerLista";
 import ModalWindow from "./ModalWindow";
@@ -117,8 +117,7 @@ class Planer extends Component {
     const { classes } = this.props;
 
     return (
-      <MainFrame>
-        <SiteHeader text={"Zaplanuj aktywności"} />
+      <div>
         <PlanerAktywnosciForm
           editedId={this.state.editedId}
           expanded={expanded => this.setState({ expanded })}
@@ -162,7 +161,7 @@ class Planer extends Component {
             kiedy={this.state.kiedy}
           />
         </ModalWindow>
-      </MainFrame>
+      </div>
     );
   }
 }
@@ -177,9 +176,11 @@ function mapStateToProps({ auth }) {
 
 // export default connect(mapStateToProps)(Header);
 
-export default withStyles(styles, { withTheme: true })(
+export default compose(
+  withStyles(styles, { withTheme: true }),
   connect(
     mapStateToProps,
     actions
-  )(Planer)
-);
+  ),
+  MainFrameHOC
+)(Planer);
