@@ -5,17 +5,16 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-
-import Button from "@material-ui/core/Button";
+import * as actions from "../actions";
 import Send from "@material-ui/icons/Send";
-import Edit from "@material-ui/icons/Edit";
+//import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
+import ButtonMy from "../common/ButtonMy";
 import SiteHeader from "../common/SiteHeader";
 import InputComponent from "../common/inputs/InputComponent";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputData from "../common/inputs/InputData";
-
 const styles = theme => ({
   input: {
     display: "flex",
@@ -46,11 +45,11 @@ const styles = theme => ({
 class CostsForm extends Component {
   state = {
     id: "",
-    nr_dokumentu: "",
-    data_wystawienia: "",
-    nazwa_pozycji: "",
-    kwota_netto: "",
-    kwota_brutto: "",
+    nr_dokumentu: "a",
+    data_wystawienia: "2018-10-01",
+    nazwa_pozycji: "a",
+    kwota_netto: "1",
+    kwota_brutto: "2",
     categoryId: "",
     groupId: "",
     groups: [],
@@ -70,59 +69,24 @@ class CostsForm extends Component {
       this.handleEdit(this.props.editedId);
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const {
-      nr_dokumentu: nr_dokumentu_prevState,
-      data_wystawienia: data_wystawienia_prevState,
-      nazwa_pozycji: nazwa_pozycji_prevState,
-      kwota_netto: kwota_netto_prevState,
-      kwota_brutto: kwota_brutto_prevState,
-      categoryId: categoryId_prevState,
-      groupId: groupId_prevState
-    } = prevState;
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      kwota_brutto,
-      categoryId,
-      groupId
-    } = this.state;
+  componentDidUpdate(prevProps, prevState) {
+    const porownanie = [
+      [this.state.nr_dokumentu, prevState.nr_dokumentu],
+      [this.state.data_wystawienia, prevState.data_wystawienia],
+      [this.state.nazwa_pozycji, prevState.nazwa_pozycji],
+      [this.state.kwota_netto, prevState.kwota_netto],
+      [this.state.kwota_brutto, prevState.kwota_brutto],
+      [this.state.categoryId, prevState.categoryId],
+      [this.state.groupId, prevState.groupId]
+    ];
     if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        kwota_brutto !== kwota_brutto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu !== "" &&
-        data_wystawienia !== "" &&
-        nazwa_pozycji !== "" &&
-        kwota_netto !== "" &&
-        kwota_brutto !== "" &&
-        (categoryId ? categoryId.value !== "" : categoryId !== "") &&
-        (groupId ? groupId.value !== "" : groupId !== ""))
-      // categoryId.value !== '' &&
-      // groupId.value !== ''
+      porownanie.some(x => x[0] !== x[1]) &&
+      porownanie.every(x => x[0] !== "")
     ) {
       this.setState({ submitIsDisable: false });
     } else if (
-      (nr_dokumentu !== nr_dokumentu_prevState ||
-        data_wystawienia !== data_wystawienia_prevState ||
-        nazwa_pozycji !== nazwa_pozycji_prevState ||
-        kwota_netto !== kwota_netto_prevState ||
-        kwota_brutto !== kwota_brutto_prevState ||
-        categoryId !== categoryId_prevState ||
-        groupId !== groupId_prevState) &&
-      (nr_dokumentu === "" ||
-        data_wystawienia === "" ||
-        nazwa_pozycji === "" ||
-        kwota_netto === "" ||
-        kwota_brutto === "" ||
-        (categoryId ? categoryId.value === "" : categoryId === "") ||
-        (groupId ? groupId.value === "" : groupId === ""))
+      porownanie.some(x => x[0] !== x[1]) &&
+      porownanie.some(x => x[0] === "")
     ) {
       this.setState({ submitIsDisable: true });
     } else {
@@ -131,30 +95,17 @@ class CostsForm extends Component {
   }
 
   czyWypelniony = () => {
-    const {
-      id,
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      kwota_brutto,
-      categoryId,
-      groupId
-    } = this.state;
-    if (
-      id ||
-      nr_dokumentu ||
-      data_wystawienia ||
-      nazwa_pozycji ||
-      kwota_netto ||
-      kwota_brutto ||
-      categoryId ||
-      groupId
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    const arr = [
+      this.state.id,
+      this.state.nr_dokumentu,
+      this.state.data_wystawienia,
+      this.state.nazwa_pozycji,
+      this.state.kwota_netto,
+      this.state.kwota_brutto,
+      this.state.categoryId,
+      this.state.groupId
+    ];
+    return arr.some(x => x);
   };
 
   clearForm = () => {
@@ -175,36 +126,42 @@ class CostsForm extends Component {
     // this.props.clearForm;
   };
 
-  handleEdit = id => {
-    axios.get(`/api/id/cost/${id}`).then(result => {
-      const {
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto,
-        kwota_brutto,
-        categoryId,
-        groupId,
-        category,
-        group
-      } = result.data;
-      this.setState({
-        id,
-        nr_dokumentu,
-        kwota_netto,
-        kwota_brutto,
-        nazwa_pozycji,
-        data_wystawienia,
-        categoryId,
-        groupId,
-        edited: true,
-        categoryText: category.name,
-        groupText: group.name
-      });
+  handleEdit = async id => {
+    const result = await axios.get(`/api/id/cost/${id}`);
+
+    await this.addFetchToState(result);
+  };
+
+  addFetchToState = result => {
+    const {
+      id,
+      nr_dokumentu,
+      data_wystawienia,
+      nazwa_pozycji,
+      kwota_netto,
+      kwota_brutto,
+      categoryId,
+      groupId,
+      category,
+      group
+    } = result.data;
+    this.setState({
+      id,
+      nr_dokumentu,
+      kwota_netto,
+      kwota_brutto,
+      nazwa_pozycji,
+      data_wystawienia,
+      categoryId,
+      groupId,
+      edited: true,
+      categoryText: category.name,
+      groupText: group.name
     });
   };
 
-  onEdit = () => {
+  onEdit = async () => {
+    this.props.submit(true);
     const {
       id,
       nr_dokumentu,
@@ -217,7 +174,7 @@ class CostsForm extends Component {
     } = this.state;
     const url = `/api/cost/edit/${id}`;
 
-    fetch(url, {
+    await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
@@ -230,16 +187,14 @@ class CostsForm extends Component {
         categoryId,
         groupId
       })
-    })
-      .then(() => {
-        this.props.fetchuj();
-      })
-      .then(() => {
-        this.clearForm();
-      });
+    });
+    await this.props.fetchuj();
+    await this.clearForm();
+    await this.props.submit(false);
   };
 
-  handleSubmit = e => {
+  handleSubmit = async e => {
+    this.props.submit(true);
     e.preventDefault();
     const {
       nr_dokumentu,
@@ -252,7 +207,7 @@ class CostsForm extends Component {
     } = this.state;
     const url = "/api/cost";
 
-    fetch(url, {
+    const resp = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
@@ -265,16 +220,12 @@ class CostsForm extends Component {
         categoryId,
         groupId
       })
-    })
-      .then(resp => resp.json())
-      .then(data => this.props.changeRange(data))
-      .then(() => {
-        // this.fetchCosts();
-        this.props.fetchuj();
-      })
-      .then(() => {
-        this.clearForm();
-      });
+    });
+    const data = await resp.json();
+    await this.props.changeRange(data);
+    await this.props.fetchuj();
+    await this.clearForm();
+    await this.props.submit(false);
   };
 
   handleChange = event => {
@@ -300,7 +251,7 @@ class CostsForm extends Component {
   };
 
   render() {
-    const { classes, duplicate, modal } = this.props;
+    const { classes, duplicate, modal, submitCheck } = this.props;
     const { edited, submitIsDisable } = this.state;
 
     return (
@@ -398,7 +349,8 @@ class CostsForm extends Component {
               />
             </Grid>
           </Grid>
-          <Button
+          <ButtonMy
+            progress
             disabled={submitIsDisable}
             onClick={e => {
               if (edited && !duplicate) {
@@ -407,26 +359,19 @@ class CostsForm extends Component {
                 this.handleSubmit(e);
               }
             }}
-            variant="contained"
-            color="primary"
-            className={classes.button}
           >
             {duplicate
               ? "Dodaj koszt"
               : edited
                 ? "Edytuj koszt"
                 : "Dodaj koszt"}
-            <Send style={{ marginLeft: 10 }} />
-          </Button>
+            {!submitCheck && <Send style={{ marginLeft: 10 }} />}
+          </ButtonMy>
           {this.czyWypelniony() && (
-            <Button
-              variant="contained"
-              className={classes.button}
-              onClick={() => this.clearForm()}
-            >
+            <ButtonMy colorMy="gray" onClick={() => this.clearForm()}>
               Anuluj
               <Cancel style={{ marginLeft: 10 }} />
-            </Button>
+            </ButtonMy>
           )}
         </form>
       </Paper>
@@ -438,17 +383,13 @@ CostsForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ submit: submitCheck }) {
+  return { submitCheck };
 }
-
-// export default connect(mapStateToProps)(Header);
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    mapStateToProps
-    // actions
+    mapStateToProps,
+    actions
   )(CostsForm)
 );
-
-// export default withStyles(styles)(Costs);

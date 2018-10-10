@@ -60,38 +60,31 @@ class Costs extends Component {
   };
 
   componentWillMount() {
-    // axios
-    //   .get("/api/table/group")
-    //   .then(result => this.setState({ groups: result.data }));
-    // // .then(result => this.renderSelect(result.data));
-    // axios
-    //   .get("/api/table/category")
-    //   .then(result => this.setState({ categories: result.data }));
     this.fetchCosts();
   }
 
-  fetchCosts = range => {
+  resultToState = fetch => {
+    const koszty = fetch.data;
+    koszty.map(el => Object.assign(el, { clicked: true }));
+    this.setState({
+      costs: koszty,
+      chmurka_group: this.chmurka(koszty, "group"),
+      chmurka_category: this.chmurka(koszty, "category")
+    });
+  };
+
+  fetchCosts = async range => {
     this.props.loading(true);
     const { startDate, endDate } = this.state.rangeselection;
 
     const poczatek = range ? range.rangeselection.startDate : startDate;
     const koniec = range ? range.rangeselection.endDate : endDate;
 
-    axios
-      .get(`/api/table/costs/${dataToString(poczatek)}_${dataToString(koniec)}`)
-      .then(result => {
-        const koszty = result.data;
-        const nieUnikalneGrupy = koszty.map(el => {
-          return { groupId: el.groupId, group: el.group.name };
-        });
-        koszty.map(el => Object.assign(el, { clicked: true }));
-        this.setState({
-          costs: koszty,
-          chmurka_group: this.chmurka(koszty, "group"),
-          chmurka_category: this.chmurka(koszty, "category")
-        });
-      })
-      .then(() => this.props.loading(false));
+    const fetch = await axios.get(
+      `/api/table/costs/${dataToString(poczatek)}_${dataToString(koniec)}`
+    );
+    await this.resultToState(fetch);
+    await this.props.loading(false);
   };
 
   chmurka = (data, kolumna) => {
@@ -121,8 +114,8 @@ class Costs extends Component {
   };
 
   renderSelect = select => {
-    const none = { label: "Brak", value: "" };
-    const doWyboru = select.map((elem, i) => ({
+    //const none = { label: "Brak", value: "" };
+    const doWyboru = select.map(elem => ({
       label: elem.name,
       value: elem.id
     }));

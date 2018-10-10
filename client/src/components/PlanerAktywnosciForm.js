@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
+import * as actions from "../actions";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
+import ButtonMy from "../common/ButtonMy";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
@@ -203,17 +204,16 @@ class PlanerAktywnosciForm extends Component {
     if (kiedy !== kiedy_prevState) {
       this.validateKiedy(kiedy);
     }
-    // if (aktywnosc_id !== aktywnosc_id_prevState) {
-    //   this.setState({ miejsce_id: "", inna: "" });
-    // }
-
+    const porownanie = [
+      [kiedy, kiedy_prevState],
+      [start, start_prevState],
+      [stop, stop_prevState],
+      [aktywnosc_id, aktywnosc_id_prevState],
+      [miejsce_id, miejsce_id_prevState],
+      [inna, inna_prevState]
+    ];
     if (
-      (kiedy !== kiedy_prevState ||
-        start !== start_prevState ||
-        stop !== stop_prevState ||
-        aktywnosc_id !== aktywnosc_id_prevState ||
-        miejsce_id !== miejsce_id_prevState ||
-        inna !== inna_prevState) &&
+      porownanie.some(x => x[0] !== x[1]) &&
       (this.validateKiedy(kiedy) &&
         this.validateTime(start, "Start") &&
         this.validateTime(stop, "Stop") &&
@@ -223,12 +223,7 @@ class PlanerAktywnosciForm extends Component {
     ) {
       this.setState({ submitIsDisable: false });
     } else if (
-      (kiedy !== kiedy_prevState ||
-        start !== start_prevState ||
-        stop !== stop_prevState ||
-        aktywnosc_id !== aktywnosc_id_prevState ||
-        inna !== inna_prevState ||
-        miejsce_id !== miejsce_id_prevState) &&
+      porownanie.some(x => x[0] !== x[1]) &&
       (!this.validateKiedy(kiedy) ||
         !this.validateTime(start, "Start") ||
         !this.validateTime(stop, "Stop") ||
@@ -329,7 +324,8 @@ class PlanerAktywnosciForm extends Component {
     });
   };
 
-  onEdit = () => {
+  onEdit = async () => {
+    this.props.submit(true);
     console.log("on edit");
     const {
       //kiedy,
@@ -343,7 +339,7 @@ class PlanerAktywnosciForm extends Component {
     const { kiedy } = this.props;
     const url = `/api/akt/edit/${this.props.editedId}`;
 
-    fetch(url, {
+    await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
@@ -356,19 +352,16 @@ class PlanerAktywnosciForm extends Component {
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi
       })
-    })
-      .then(() => {
-        // this.fetchCosts();
-        this.props.expanded(dataToString(kiedy));
-        this.props.fetchuj();
-      })
-      .then(() => {
-        this.clearForm();
-      });
+    });
+    // this.fetchCosts();
+    await this.props.expanded(dataToString(kiedy));
+    await this.props.fetchuj();
+    await this.clearForm();
+    await this.props.submit(false);
   };
 
-  handleSubmit = e => {
-    const { user_id, clientId } = this.props.auth;
+  handleSubmit = async e => {
+    this.props.submit(true);
     e.preventDefault();
     const {
       //kiedy,
@@ -382,7 +375,7 @@ class PlanerAktywnosciForm extends Component {
     const { kiedy } = this.props;
     const url = "/api/aktywnosci";
 
-    fetch(url, {
+    const result = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
@@ -395,17 +388,12 @@ class PlanerAktywnosciForm extends Component {
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi
       })
-    })
-      .then(resp => resp.json())
-      // .then(data => this.props.changeRange(data))
-      .then(data => {
-        this.props.expanded(dataToString(data.kiedy));
-        // this.fetchCosts();
-        this.props.fetchuj();
-      })
-      .then(() => {
-        this.clearForm();
-      });
+    });
+    const data = await result.json();
+    await this.props.expanded(dataToString(data.kiedy));
+    await this.props.fetchuj();
+    await this.clearForm();
+    await this.props.submit(false);
   };
 
   handleChange = event => {
@@ -440,7 +428,7 @@ class PlanerAktywnosciForm extends Component {
   };
 
   render() {
-    const { classes, modal, edytuj, kiedy } = this.props;
+    const { classes, modal, edytuj, kiedy, submitCheck } = this.props;
 
     return (
       <Paper style={{ padding: 20 }}>
@@ -526,38 +514,30 @@ class PlanerAktywnosciForm extends Component {
 
             <div style={{ width: "100%", display: "block" }}>
               {!this.state.edited ? (
-                <Button
-                  disabled={this.state.submitIsDisable}
+                <ButtonMy
                   type="submit"
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
+                  disabled={this.state.submitIsDisable}
+                  progress
                 >
                   Zaplanuj aktywność
-                  <Send style={{ marginLeft: 10 }} />
-                </Button>
+                  {!submitCheck && <Send style={{ marginLeft: 10 }} />}
+                </ButtonMy>
               ) : (
-                <Button
+                <ButtonMy
                   // type="submit"
                   disabled={this.state.submitIsDisable}
                   onClick={() => this.onEdit()}
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
+                  progress
                 >
                   Edytuj aktywność
-                  <Edit style={{ marginLeft: 10 }} />
-                </Button>
+                  {!submitCheck && <Edit style={{ marginLeft: 10 }} />}
+                </ButtonMy>
               )}
               {this.czyWypelniony() && (
-                <Button
-                  variant="contained"
-                  className={classes.button}
-                  onClick={() => this.clearForm()}
-                >
+                <ButtonMy colorMy="gray" onClick={() => this.clearForm()}>
                   Anuluj
                   <Cancel style={{ marginLeft: 10 }} />
-                </Button>
+                </ButtonMy>
               )}
             </div>
           </Grid>
@@ -571,16 +551,16 @@ PlanerAktywnosciForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ submit: submitCheck }) {
+  return { submitCheck };
 }
 
 // export default connect(mapStateToProps)(Header);
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    mapStateToProps
-    // actions
+    mapStateToProps,
+    actions
   )(PlanerAktywnosciForm)
 );
 

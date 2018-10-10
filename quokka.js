@@ -122,6 +122,25 @@ const costs = [
 // const valid = costs[0].kwota_netto.indexOf(42.33);
 // valid
 
+const pierwsza = 1;
+const druga = 2;
+const trzeci = 3;
+const array = [pierwsza, druga, trzeci];
+const liczba_prev = 1;
+//const str = "liczba_prev"
+const l = "liczba";
+const koniec = "prev";
+const str = `${l}_${koniec}`;
+const some = array.some((x, i) => {
+  this.cos = [pierwsza, druga, trzeci];
+  console.log(this.cos[1]);
+  return x === eval(str);
+});
+some;
+
+const eve = array.every(x => x < 4);
+eve;
+
 const skroc = str => {
   const arr = str.split(" ");
   const [first, ...remaining] = arr;

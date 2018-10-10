@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Modal from "@material-ui/core/Modal";
 import { withStyles } from "@material-ui/core/styles";
+import LinearProgress from "../common/LinearProgress";
+import * as actions from "../actions";
 //import Paper from "@material-ui/core/Paper";
 
 const styles = theme => ({
@@ -54,6 +56,7 @@ class ModalWindow extends Component {
         onClose={close}
       >
         <div style={this.getModalStyle()} className={classes.paper}>
+          <LinearProgress />
           {children}
         </div>
       </Modal>
@@ -77,7 +80,7 @@ function mapStateToProps({ auth }) {
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    mapStateToProps
-    // actions
+    mapStateToProps,
+    actions
   )(ModalWindow)
 );

@@ -10,10 +10,12 @@ import { fade } from "@material-ui/core/styles/colorManipulator";
 import classNames from "classnames";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import ButtonMy from "../common/ButtonMy";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
 
+import * as actions from "../actions";
 import DoneIcon from "@material-ui/icons/Done";
 
 import CitySearch from "./CitiesSearch";
@@ -338,15 +340,15 @@ class PlanerRaportyForm extends Component {
     }
   }
 
-  fetchujDate = data => {
-    console.log(`/api/kiedy/akt/${data}`);
-    axios.get(`/api/kiedy/akt/${data}`).then(result => {
-      //console.log(result.data);
-      this.setState({ aktyDaty: result.data });
-    });
+  fetchujDate = async data => {
+    this.props.loading(true);
+    const result = await axios.get(`/api/kiedy/akt/${data}`);
+    await this.setState({ aktyDaty: result.data });
+    await this.props.loading(false);
   };
 
   fetchujAktywnosc = id => {
+    this.props.loading(true);
     axios.get(`/api/id/akt/${id}`).then(result => {
       //console.log(result.data);
       const {
@@ -372,6 +374,7 @@ class PlanerRaportyForm extends Component {
         //edited: true
       });
       this.props.edytuj(kiedy);
+      this.props.loading(false);
     });
   };
 
@@ -445,6 +448,7 @@ class PlanerRaportyForm extends Component {
   };
 
   handleEdit = id => {
+    this.props.loading(true);
     console.log("handluje edita");
     axios.get(`/api/id/planerRaporty/${id}`).then(result => {
       const {
@@ -489,11 +493,12 @@ class PlanerRaportyForm extends Component {
         zboza
       });
       this.fetchujDate(kiedy);
+      this.props.loading(false);
     });
   };
 
   onEdit = () => {
-    console.log("on edit");
+    this.props.submit(true);
     const {
       //kiedy,
       start,
@@ -539,11 +544,12 @@ class PlanerRaportyForm extends Component {
       })
       .then(() => {
         this.clearForm();
+        this.props.submit(false);
       });
   };
 
   handleSubmit = e => {
-    console.log("handluej submita planery raporty");
+    this.props.submit(true);
     //const { user_id, clientId } = this.props.auth;
     e.preventDefault();
     const {
@@ -594,6 +600,7 @@ class PlanerRaportyForm extends Component {
       })
       .then(() => {
         this.clearForm();
+        this.props.submit(false);
       });
   };
 
@@ -654,7 +661,7 @@ class PlanerRaportyForm extends Component {
   };
 
   render() {
-    const { classes, modal, edytuj, kiedy } = this.props;
+    const { classes, modal, edytuj, kiedy, submitCheck } = this.props;
     //const { kiedy } = this.state;
     const pola = [
       { pole: "nawozy", nazwa: "Nawozy" },
@@ -811,38 +818,30 @@ class PlanerRaportyForm extends Component {
 
             <div style={{ width: "100%", display: "block" }}>
               {!this.state.edited ? (
-                <Button
+                <ButtonMy
                   disabled={this.state.submitIsDisable}
                   type="submit"
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
+                  progress
                 >
                   Dodaj Raport
-                  <Send style={{ marginLeft: 10 }} />
-                </Button>
+                  {!submitCheck && <Send style={{ marginLeft: 10 }} />}
+                </ButtonMy>
               ) : (
-                <Button
+                <ButtonMy
                   // type="submit"
                   disabled={this.state.submitIsDisable}
                   onClick={() => this.onEdit()}
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
+                  progress
                 >
                   Edytuj raport
-                  <Edit style={{ marginLeft: 10 }} />
-                </Button>
+                  {!submitCheck && <Edit style={{ marginLeft: 10 }} />}
+                </ButtonMy>
               )}
               {this.czyWypelniony() && (
-                <Button
-                  variant="contained"
-                  className={classes.button}
-                  onClick={this.clearForm}
-                >
+                <ButtonMy onClick={this.clearForm} colorMy="gray">
                   Anuluj
                   <Cancel style={{ marginLeft: 10 }} />
-                </Button>
+                </ButtonMy>
               )}
             </div>
           </Grid>
@@ -856,16 +855,16 @@ PlanerRaportyForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ submit: submitCheck }) {
+  return { submitCheck };
 }
 
 // export default connect(mapStateToProps)(Header);
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    mapStateToProps
-    // actions
+    mapStateToProps,
+    actions
   )(PlanerRaportyForm)
 );
 

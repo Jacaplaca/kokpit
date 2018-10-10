@@ -62,28 +62,28 @@ class Planer extends Component {
     this.fetchAktywnosci();
   }
 
-  fetchAktywnosci = range => {
+  fetchAktywnosci = async range => {
     this.props.loading(true);
     const { startDate, endDate } = this.state.rangeselection;
     const poczatek = range ? range.rangeselection.startDate : startDate;
     const koniec = range ? range.rangeselection.endDate : endDate;
-    axios
-      .get(
-        `/api/table/planerAktywnosci/${dataToString(poczatek)}_${dataToString(
-          koniec
-        )}`
-      )
-      .then(result => {
-        const podzielone = podzielUnikalnymi(result.data, "kiedy");
-        this.setState({
-          aktywnosci: []
-        });
-        console.log(podzielone.sort(dynamicSort("kiedy")).reverse());
-        this.setState({
-          aktywnosci: podzielone.sort(dynamicSort("kiedy")).reverse()
-        });
-      })
-      .then(() => this.props.loading(false));
+    const fetch = await axios.get(
+      `/api/table/planerAktywnosci/${dataToString(poczatek)}_${dataToString(
+        koniec
+      )}`
+    );
+    await this.addFetchToState(fetch);
+    await this.props.loading(false);
+  };
+
+  addFetchToState = fetch => {
+    const podzielone = podzielUnikalnymi(fetch.data, "kiedy");
+    this.setState({
+      aktywnosci: []
+    });
+    this.setState({
+      aktywnosci: podzielone.sort(dynamicSort("kiedy")).reverse()
+    });
   };
 
   handleChange = event => {

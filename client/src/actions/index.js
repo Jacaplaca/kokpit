@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FETCH_USER, FETCH_FORM, CLICKED, LOADING } from "./types";
+import { FETCH_USER, FETCH_FORM, CLICKED, LOADING, SUBMIT } from "./types";
 
 export const fetchUser = () => async dispatch => {
   const res = await axios.get("/api/current_user");
@@ -14,6 +14,11 @@ export const clicked = where => async dispatch => {
 export const loading = status => async dispatch => {
   // const res = await axios.get('/api/current_user');
   dispatch({ type: LOADING, payload: status });
+};
+
+export const submit = status => async dispatch => {
+  // const res = await axios.get('/api/current_user');
+  dispatch({ type: SUBMIT, payload: status });
 };
 
 export const handleToken = token => async dispatch => {

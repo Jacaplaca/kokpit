@@ -7,3 +7,5 @@ export const COLLAPSED_DRAWER = "collapsible";
 export const CLICKED = "clicked";
 
 export const LOADING = "loading";
+
+export const SUBMIT = "submit";
