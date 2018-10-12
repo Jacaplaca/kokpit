@@ -11,7 +11,22 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const axios = require("axios");
 
-var hour = randomIntFromInterval(7, 8);
+let hour;
+
+schedule.scheduleJob(
+  {
+    hour: 18,
+    minute: 58,
+    second: 30,
+    datOfWeek: [1, 2, 3, 4, 5, 6, 7]
+  },
+  function() {
+    hour = randomIntFromInterval(7, 8);
+    console.log(hour);
+  }
+);
+
+//var hour = randomIntFromInterval(7, 8);
 
 function randomMinutes() {
   if (hour === 7) {
