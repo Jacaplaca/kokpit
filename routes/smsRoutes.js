@@ -18,7 +18,7 @@ module.exports = app => {
         .sms()
         .from("ECO")
         .to(tel)
-        .message("Wiadomość testowa ąśćłóżźęń")
+        .message("Wiadomość testowa")
         .execute(); // return Promise
     }
 
@@ -30,7 +30,7 @@ module.exports = app => {
       console.error(err);
     }
 
-    const message = req.flash("info");
-    res.send(message);
+    //const message = req.flash("info");
+    //res.send(message);
   });
 };

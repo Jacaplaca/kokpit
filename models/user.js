@@ -64,6 +64,9 @@ module.exports = (sequelize, Sequelize) => {
       },
       nextReports: {
         type: Sequelize.TINYINT
+      },
+      nr_telefonu: {
+        type: Sequelize.STRING
       }
     },
     {

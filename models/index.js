@@ -150,6 +150,15 @@ db.planer_klienci.belongsTo(db.clients, {
   targetKey: "id"
 });
 
+db.overdue_payments.belongsTo(db.users, {
+  foreignKey: "id_user",
+  targetKey: "id"
+});
+db.overdue_payments.belongsTo(db.planer_klienci, {
+  foreignKey: "id_customer_client",
+  targetKey: "id"
+});
+
 // db.gus_simc.belongsToMany(db.gus_terc_pow, {
 //   through: db.gus_terc_woj,
 //   foreignKey: "woj_id"
