@@ -1,9 +1,9 @@
-require('dotenv').config();
-var SMSAPI = require('smsapi'),
+require("dotenv").config();
+var SMSAPI = require("smsapi"),
   smsapi = new SMSAPI();
 
 module.exports = app => {
-  app.get('/api/sms/:tel', (req, res) => {
+  app.get("/api/sms/:tel", (req, res) => {
     const tel = req.params.tel;
     console.log(tel);
 
@@ -16,9 +16,9 @@ module.exports = app => {
     function sendMessage() {
       return smsapi.message
         .sms()
-        .from('ECO')
+        .from("ECO")
         .to(tel)
-        .message('My first message!')
+        .message("Wiadomość testowa ąśćłóżźęń")
         .execute(); // return Promise
     }
 
@@ -30,7 +30,7 @@ module.exports = app => {
       console.error(err);
     }
 
-    const message = req.flash('info');
+    const message = req.flash("info");
     res.send(message);
   });
 };
