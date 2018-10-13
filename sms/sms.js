@@ -4,41 +4,60 @@ var SMSAPI = require("smsapi"),
 var schedule = require("node-schedule");
 
 const db = require("../models/index");
-const OverduePayments = db.overdue_payments;
 const Invoices4SMS = db.invoices4sms;
 const Invoices4SMSsent = db.invoices4sms_sent;
 const User = db.users;
-const PlanerKlienci = db.planer_klienci;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-const axios = require("axios");
 
-//domyslna 7 godzina
 let hour = 7;
 let minutes = 45;
+//let randomizeTime;
 
-//o7:20 codzinnie odpala losowanie godziny
-schedule.scheduleJob(
-  "* */2 * * *",
-  // {
-  //   hour: 10,
-  //   minute: 37,
-  //   second: 45,
-  //   datOfWeek: [1, 2, 3, 4, 5, 6, 7]
-  // }
+var startRandomizer = schedule.scheduleJob(
+  {
+    hour: 22,
+    minute: 28,
+    second: 0,
+    datOfWeek: [1, 2, 3, 4, 5, 6, 7]
+  },
   function() {
-    hour = randomIntFromInterval(7, 8);
-    minutes = randomMinutes();
-    console.log(`${today()} ${time()}: random: ${hour}:${minutes}`);
+    //console.log("start!");
+    //setInterval(randomTime, 0.1 * 60000);
+    //randomizeTime = setInterval(randomTime, 0.1 * 60000);
+    randomTime(7, 37, 8, 25);
   }
 );
 
-function randomMinutes() {
-  if (hour === 7) {
-    return randomIntFromInterval(37, 59);
-  } else {
-    return randomIntFromInterval(0, 27);
-  }
+// setInterval(function() {
+// }, 0.1 * 60000);
+// var stopRandomizer = schedule.scheduleJob(
+//   {
+//     hour: 21,
+//     minute: 51,
+//     second: 0,
+//     datOfWeek: [1, 2, 3, 4, 5, 6, 7]
+//   },
+//   function() {
+//     //console.log("stop!");
+//     //clearInterval(randomizeTime);
+//     //startRandomizer.cancel();
+//     //setInterval(randomTime, 1 * 60000);
+//   }
+// );
+
+function randomTime(hourStart, minuteStart, hourStop, minuteStop) {
+  hour = randomIntFromInterval(hourStart, hourStop);
+  minutes = function() {
+    if (hour === hourStart) {
+      return randomIntFromInterval(minuteStart, 59);
+    } else if (hour === hourStop) {
+      return randomIntFromInterval(0, minuteStop);
+    } else {
+      return randomIntFromInterval(0, 59);
+    }
+  };
+  console.log(`${today()} ${time()}: random: ${hour}:${minutes()}`);
 }
 
 function randomIntFromInterval(min, max) {
@@ -46,7 +65,7 @@ function randomIntFromInterval(min, max) {
 }
 
 //sobota i niedziela testowo
-schedule.scheduleJob(
+var runFetching = schedule.scheduleJob(
   {
     hour: hour,
     minute: minutes,
@@ -94,8 +113,6 @@ function fetchInvoices() {
             const object = Object.assign(invoice, { phone: phoneNumbers[i] });
             notSentWithNumber.push(object);
           });
-          //console.log(notSentWithNumber);
-          //console.log(notSentWithNumber.filter(x => x.phone !== null));
           sendSMS(notSentWithNumber.filter(x => x.phone !== null));
         });
       });
@@ -105,7 +122,6 @@ function fetchInvoices() {
 function sendSMS(result) {
   console.log(result.length);
   const byUsers = podzielUnikalnymi(result, "id_client_soft");
-  //console.log(byUsers);
   const sms = byUsers.map(user => {
     const tel = user.values[0].phone;
     let message = "Nowe zaleglosci: ";
@@ -120,12 +136,10 @@ function sendSMS(result) {
     return { tel, sms: message };
   });
   send(result, sms);
-  //console.log(sms);
 }
 
 function send(invoices, sms) {
   sms.map(message => {
-    console.log(message.sms.slice(0, -2));
     smsapi.authentication
       .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
       .then(sendMessage)
@@ -143,7 +157,6 @@ function send(invoices, sms) {
 
     function displayResult(result) {
       console.log(result);
-      //console.log(result.list);
       const nr_telefonu = result.list[0].number;
       updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
     }
@@ -196,14 +209,6 @@ function updateToSent(invoices) {
       });
   });
 }
-
-//j.schedule();
-
-//id, id_user, nr_dokumentu, aktualna_naleznosc_brutto, id_kontrahent, termin_platnosci,
-// zamiana ich id na moje id
-// to to samo ale czasami zamiast nazwy jest ulica
-//dlaczego mam inne id klienta niz jest hurtowni, czy powinienem zrobic aby byla ta sama baza w hurtowni co u mni
-// jak czesto zmieniaja sie nr kontrachentow w hurtowni, moze jakas synchornizacja
 
 function today() {
   var data = new Date();
