@@ -5,24 +5,31 @@ var schedule = require("node-schedule");
 
 const db = require("../models/index");
 const OverduePayments = db.overdue_payments;
+const Invoices4SMS = db.invoices4sms;
+const Invoices4SMSsent = db.invoices4sms_sent;
 const User = db.users;
 const PlanerKlienci = db.planer_klienci;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const axios = require("axios");
 
+//domyslna 7 godzina
 let hour = 7;
+let minutes = 45;
 
+//o7:20 codzinnie odpala losowanie godziny
 schedule.scheduleJob(
-  {
-    hour: 7,
-    minute: 20,
-    second: 30,
-    datOfWeek: [1, 2, 3, 4, 5, 6, 7]
-  },
+  "* */2 * * *",
+  // {
+  //   hour: 10,
+  //   minute: 37,
+  //   second: 45,
+  //   datOfWeek: [1, 2, 3, 4, 5, 6, 7]
+  // }
   function() {
     hour = randomIntFromInterval(7, 8);
-    //console.log(hour);
+    minutes = randomMinutes();
+    console.log(`${today()} ${time()}: random: ${hour}:${minutes}`);
   }
 );
 
@@ -34,66 +41,89 @@ function randomMinutes() {
   }
 }
 
-console.log(`${hour}:${randomMinutes()}`);
-
-function randomIntFromInterval(
-  min,
-  max // min and max included
-) {
+function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
 //sobota i niedziela testowo
 schedule.scheduleJob(
   {
     hour: hour,
-    minute: randomMinutes(),
+    minute: minutes,
     second: 30,
     datOfWeek: [1, 2, 3, 4, 5, 6, 7]
   },
   function() {
     console.log("Time for tea!");
+    fetchInvoices();
   }
 );
 
-function fetchOverdueSend() {
-  OverduePayments.findAll({
-    include: [
-      { model: User, attributes: ["nr_telefonu"] },
-      { model: PlanerKlienci, attributes: ["nazwa"] }
-    ],
-    where: {
-      // deadline: new Date(today()),
-      sent: 0
-    },
-    raw: true
-  })
-    .then(result => {
-      sendSMS(result);
-    })
-    .catch(err => {
-      console.log(err);
+function fetchInvoices() {
+  const promises = [];
+  let notSent;
+  const phoneNumbers = [];
+  const notSentWithNumber = [];
+  Invoices4SMSsent.findAll({ raw: true })
+    .then(result => result.map(invoice => invoice.nr_document))
+    .then(sentNumbers => {
+      Invoices4SMS.findAll({
+        where: {
+          nr_document: { [Op.not]: sentNumbers }
+        },
+        raw: true
+      }).then(notSentInvoices => {
+        notSent = notSentInvoices;
+        notSentInvoices.map(invoice => {
+          const prom = User.find({
+            attributes: ["nr_telefonu"],
+            raw: true,
+            where: {
+              clientId: invoice.id_client,
+              id_client_soft: invoice.id_client_soft
+            }
+          }).then(user => {
+            user
+              ? phoneNumbers.push(user.nr_telefonu)
+              : phoneNumbers.push(null);
+          });
+          promises.push(prom);
+        });
+        Promise.all(promises).then(x => {
+          notSent.map((invoice, i) => {
+            const object = Object.assign(invoice, { phone: phoneNumbers[i] });
+            notSentWithNumber.push(object);
+          });
+          //console.log(notSentWithNumber);
+          //console.log(notSentWithNumber.filter(x => x.phone !== null));
+          sendSMS(notSentWithNumber.filter(x => x.phone !== null));
+        });
+      });
     });
 }
 
 function sendSMS(result) {
-  const byUsers = podzielUnikalnymi(result, "id_user");
+  console.log(result.length);
+  const byUsers = podzielUnikalnymi(result, "id_client_soft");
+  //console.log(byUsers);
   const sms = byUsers.map(user => {
-    const tel = user.values[0]["user.nr_telefonu"];
+    const tel = user.values[0].phone;
     let message = "Nowe zaleglosci: ";
     user["values"].map(
       invoice =>
-        (message = `${message}${invoice.nr_document} z dnia ${
-          invoice.date_of_issue
-        } dla ${invoice["planer_klienci.nazwa"]} na ${Math.floor(
-          invoice.gross_amount
-        )}zl, `)
+        (message = `${message}${
+          invoice.nr_document
+        } z dnia ${invoice.date_issue.slice(0, 10)} dla ${
+          invoice.debtor
+        } na ${Math.floor(invoice.remained)}zl, `)
     );
     return { tel, sms: message };
   });
   send(result, sms);
+  //console.log(sms);
 }
 
-function send(results, sms) {
+function send(invoices, sms) {
   sms.map(message => {
     console.log(message.sms.slice(0, -2));
     smsapi.authentication
@@ -107,33 +137,60 @@ function send(results, sms) {
         .sms()
         .from("ECO")
         .to(message.tel)
-        .message(message.sms.slice(0, -2));
-      //.execute(); // return Promise
+        .message(message.sms.slice(0, -2))
+        .execute(); // return Promise
     }
 
     function displayResult(result) {
       console.log(result);
-      updateToSent(results);
+      //console.log(result.list);
+      const nr_telefonu = result.list[0].number;
+      updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
     }
 
     function displayError(err) {
       console.error(err);
-      //updateToSent(results);
+      //const nr_telefonu = "48507478971";
+      //updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
     }
   });
 }
 
-function updateToSent(results) {
-  results.map(document => {
-    OverduePayments.update(
-      {
-        sent: 1
-      },
-      {
-        where: { id: document.id }
-      }
-    )
-      .then(() => console.log("po updacie"))
+function updateToSent(invoices) {
+  const promises = [];
+  invoices.map((invoice, i) => {
+    const {
+      id_client,
+      nr_document,
+      date_issue,
+      deadline,
+      id_client_soft,
+      name_emp,
+      surname_emp,
+      debtor,
+      amount,
+      status,
+      remained
+    } = invoice;
+
+    Invoices4SMSsent.create({
+      id_client,
+      nr_document,
+      date_issue,
+      deadline,
+      id_client_soft,
+      name_emp,
+      surname_emp,
+      debtor,
+      amount,
+      status,
+      remained
+    })
+      .then(() => {
+        Invoices4SMS.destroy({ where: { nr_document } })
+          .then(x => console.log("destroyed"))
+          .catch(err => console.log(err));
+      })
       .catch(err => {
         console.log(err);
       });
@@ -154,6 +211,14 @@ function today() {
   var month = data.getMonth() + 1;
   var day = data.getDate();
   return `${year}-${month}-${day}`;
+}
+
+function time() {
+  var data = new Date();
+  var hour = data.getHours();
+  var minute = data.getMinutes();
+  var second = data.getSeconds();
+  return `${hour}:${minute}:${second}`;
 }
 
 function onlyUnique(value, index, self) {

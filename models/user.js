@@ -67,6 +67,10 @@ module.exports = (sequelize, Sequelize) => {
       },
       nr_telefonu: {
         type: Sequelize.STRING
+      },
+      id_client_soft: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1
       }
     },
     {
