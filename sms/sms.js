@@ -1,4 +1,5 @@
 require("dotenv").config();
+//process.env.TZ = 'Europe/Amsterdam'
 var SMSAPI = require("smsapi"),
   smsapi = new SMSAPI();
 var schedule = require("node-schedule");
@@ -15,6 +16,17 @@ let minutes = 45;
 //let randomizeTime;
 
 console.log(`Now is ${today()} ${time()}`);
+
+// var toLocalTime = function(time) {
+//   var d = new Date(time);
+//   var offset = (new Date().getTimezoneOffset() / 60) * -1;
+//   console.log(new Date().getTimezoneOffset());
+//   var n = new Date(d.getTime() + 7200000);
+//   console.log(offset);
+//   return n;
+// };
+//
+// console.log(toLocalTime(new Date()));
 
 var startRandomizer = schedule.scheduleJob(
   {
@@ -79,6 +91,7 @@ var runFetching = schedule.scheduleJob(
     fetchInvoices();
   }
 );
+fetchInvoices();
 
 function fetchInvoices() {
   const promises = [];
@@ -116,64 +129,87 @@ function fetchInvoices() {
             notSentWithNumber.push(object);
           });
           sendSMS(notSentWithNumber.filter(x => x.phone !== null));
+          //console.log(notSentWithNumber.filter(x => x.phone !== null));
         });
       });
     });
 }
 
 function sendSMS(result) {
-  console.log(result.length);
+  //console.log(result.length);
   const byUsers = podzielUnikalnymi(result, "id_client_soft");
-  const sms = byUsers.map(user => {
+  byUsers.map(user => {
     const tel = user.values[0].phone;
+    const idSoft = user.values[0].id_client_soft;
     let message = "Nowe zaleglosci: ";
-    user["values"].map(
-      invoice =>
-        (message = `${message}${
-          invoice.nr_document
-        } z dnia ${invoice.date_issue.slice(0, 10)} dla ${
-          invoice.debtor
-        } na ${Math.floor(invoice.remained)}zl, `)
-    );
-    return { tel, sms: message };
+    Invoices4SMS.findAll({
+      where: {
+        id_client_soft: idSoft
+      },
+      raw: true
+    })
+      .then(invoices => {
+        const howManyInvoices = invoices.length;
+        const remainedSum = invoices.reduce(
+          (cnt, invoice) => cnt + invoice.remained,
+          0
+        );
+        message = `Odzyskaj ${remainedSum}zl z ${howManyInvoices}fv. Nowe: `;
+        return { howManyInvoices, remainedSum };
+      })
+      .then(wholeSummary => {
+        user["values"].map(invoice => {
+          const month = invoice.date_issue.slice(0, 10).split("-")[1];
+          const day = invoice.date_issue.slice(0, 10).split("-")[2];
+          message = `${message}${invoice.nr_document.replace(
+            /\s/g,
+            ""
+          )} z ${day}/${month}(${invoice.debtor})-${Math.floor(
+            invoice.remained
+          )}zl, `;
+        });
+        const sms = { tel, sms: message };
+        //console.log(sms);
+        send(result, sms);
+      });
   });
-  send(result, sms);
+  //send(result, sms);
+  //console.log(sms);
 }
 
 function send(invoices, sms) {
-  sms.map(message => {
-    smsapi.authentication
-      .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
-      .then(sendMessage)
-      .then(displayResult)
-      .catch(displayError);
+  console.log(sms);
+  smsapi.authentication
+    .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
+    .then(sendMessage)
+    .then(displayResult)
+    .catch(displayError);
 
-    function sendMessage() {
-      return smsapi.message
-        .sms()
-        .from("ECO")
-        .to(message.tel)
-        .message(message.sms.slice(0, -2))
-        .execute(); // return Promise
-    }
+  function sendMessage() {
+    return smsapi.message
+      .sms()
+      .from("ECO")
+      .to(sms.tel)
+      .message(sms.sms.slice(0, -2));
+    //.execute(); // return Promise
+  }
 
-    function displayResult(result) {
-      console.log(result);
-      const nr_telefonu = result.list[0].number;
-      updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
-    }
+  function displayResult(result) {
+    //console.log(result);
+    //const nr_telefonu = result.list[0].number;
+    //updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
+  }
 
-    function displayError(err) {
-      console.error(err);
-      //const nr_telefonu = "48507478971";
-      //updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
-    }
-  });
+  function displayError(err) {
+    console.error(err);
+    //const nr_telefonu = "48507478971";
+    //updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
+  }
 }
 
 function updateToSent(invoices) {
   const promises = [];
-  invoices.map((invoice, i) => {
+  invoices.map(invoice => {
     const {
       id_client,
       nr_document,
@@ -201,11 +237,14 @@ function updateToSent(invoices) {
       status,
       remained
     })
-      .then(() => {
-        Invoices4SMS.destroy({ where: { nr_document } })
-          .then(x => console.log("destroyed"))
-          .catch(err => console.log(err));
-      })
+      .then(
+        message => console.log(message)
+        // {
+        //   Invoices4SMS.destroy({ where: { nr_document } })
+        //     .then(x => console.log("destroyed"))
+        //     .catch(err => console.log(err));
+        // }
+      )
       .catch(err => {
         console.log(err);
       });
