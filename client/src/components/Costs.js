@@ -74,6 +74,11 @@ class Costs extends Component {
   };
 
   fetchCosts = async range => {
+    // console.log(
+    //   `${defineds.startOfMonth} ${defineds.endOfMonth} last: ${
+    //     defineds.startOfLastMonth
+    //   } ${defineds.endOfLastMonth} `
+    // );
     this.props.loading(true);
     const { startDate, endDate } = this.state.rangeselection;
 

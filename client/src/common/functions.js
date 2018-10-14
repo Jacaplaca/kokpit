@@ -8,7 +8,10 @@ import {
   startOfWeek,
   endOfWeek,
   isSameDay,
-  differenceInCalendarDays
+  differenceInCalendarDays,
+  addMinutes,
+  subMinutes,
+  addHours
 } from "date-fns";
 
 export const dataToString = element => {
@@ -101,11 +104,19 @@ export const defineds = {
   endOfToday: endOfDay(new Date()),
   startOfYesterday: startOfDay(addDays(new Date(), -1)),
   endOfYesterday: endOfDay(addDays(new Date(), -1)),
-  startOfMonth: startOfMonth(new Date()),
+  startOfMonth: formatTimezone(startOfMonth(new Date())),
   endOfMonth: endOfMonth(new Date()),
   startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
   endOfLastMonth: endOfMonth(addMonths(new Date(), -1))
 };
+
+function formatTimezone(date: Date): Date {
+  const offset = date.getTimezoneOffset();
+
+  return Math.sign(offset) !== -1
+    ? addMinutes(date, offset)
+    : subMinutes(date, Math.abs(offset));
+}
 
 export const shortPlace = str => {
   const arr = str.split(" ");
