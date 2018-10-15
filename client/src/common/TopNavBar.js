@@ -1,18 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  BrowserRouter,
-  Route,
-  Link,
-  Redirect,
-  NavLink
-} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 
 import Typography from "@material-ui/core/Typography";
-import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -60,7 +53,7 @@ const styles = theme => ({
 
 class TopNavBar extends React.Component {
   renderContent() {
-    const { classes } = this.props;
+    // const { classes } = this.props;
     console.log(this.props.auth);
     switch (this.props.auth) {
       case null:

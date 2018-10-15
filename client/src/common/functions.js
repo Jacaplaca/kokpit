@@ -6,12 +6,7 @@ import {
   endOfMonth,
   addMonths,
   startOfWeek,
-  endOfWeek,
-  isSameDay,
-  differenceInCalendarDays,
-  addMinutes,
-  subMinutes,
-  addHours
+  endOfWeek
 } from "date-fns";
 
 export const dataToString = element => {
@@ -40,9 +35,7 @@ export const podzielUnikalnymi = (array, key) => {
     };
   });
   array.map(element => {
-    const ktoryIndex = podzielone => {
-      return podzielone[key] === element[key];
-    };
+    const ktoryIndex = podzielone => podzielone[key] === element[key];
     const gdzieKlucz = podzielone.findIndex(ktoryIndex);
     podzielone[gdzieKlucz].values.push(element);
   });
@@ -104,19 +97,19 @@ export const defineds = {
   endOfToday: endOfDay(new Date()),
   startOfYesterday: startOfDay(addDays(new Date(), -1)),
   endOfYesterday: endOfDay(addDays(new Date(), -1)),
-  startOfMonth: formatTimezone(startOfMonth(new Date())),
+  startOfMonth: startOfMonth(new Date()),
   endOfMonth: endOfMonth(new Date()),
   startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
   endOfLastMonth: endOfMonth(addMonths(new Date(), -1))
 };
 
-function formatTimezone(date: Date): Date {
-  const offset = date.getTimezoneOffset();
-
-  return Math.sign(offset) !== -1
-    ? addMinutes(date, offset)
-    : subMinutes(date, Math.abs(offset));
-}
+// function formatTimezone(date: Date): Date {
+//   const offset = date.getTimezoneOffset();
+//
+//   return Math.sign(offset) !== -1
+//     ? addMinutes(date, offset)
+//     : subMinutes(date, Math.abs(offset));
+// }
 
 export const shortPlace = str => {
   const arr = str.split(" ");

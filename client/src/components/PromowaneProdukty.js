@@ -2,17 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-
 import { withStyles } from "@material-ui/core/styles";
 
 import { connect } from "react-redux";
 import * as actions from "../actions";
 
 import MainFrameHOC from "../common/MainFrameHOC";
-import SiteHeader from "../common/SiteHeader";
 // import LinearProgress from "./LinearProgress";
 
 const styles = theme => ({

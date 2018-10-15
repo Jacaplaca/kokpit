@@ -19,7 +19,7 @@ function renderSuggestionsContainer({ containerProps, children, query }) {
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.nazwa, query);
   const parts = parse(suggestion.nazwa, matches);
-  const { nazwa, adr_Kod, adr_Miejscowosc } = suggestion;
+  const { adr_Kod, adr_Miejscowosc } = suggestion;
   // console.log(suggestion);
 
   return (
@@ -215,8 +215,8 @@ class KlienciSearch extends React.Component {
   };
 
   render() {
-    const { classes, value, edytuj, placeholder, miejsceLabel } = this.props;
-    const { single } = this.state;
+    const { classes, placeholder } = this.props;
+    //const { single } = this.state;
 
     const status = this.state.isLoading ? "Szukam..." : this.props.label;
 

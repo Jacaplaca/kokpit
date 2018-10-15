@@ -257,9 +257,9 @@ class PlanerRaportyForm extends Component {
       stop: stop_prevState,
       aktywnosc_id: aktywnosc_id_prevState,
       miejsce_id: miejsce_id_prevState,
-      inna: inna_prevState,
-      uwagi: uwagi_prevState,
-      dataWybrana: dataWybrana_prevState
+      inna: inna_prevState
+      //uwagi: uwagi_prevState,
+      //dataWybrana: dataWybrana_prevState
     } = prevState;
     const { kiedy: kiedy_prevState } = prevProps;
     const {
@@ -268,8 +268,8 @@ class PlanerRaportyForm extends Component {
       stop,
       aktywnosc_id,
       miejsce_id,
-      inna,
-      dataWybrana
+      inna
+      //dataWybrana
     } = this.state;
     const { kiedy } = this.props;
 
@@ -359,7 +359,7 @@ class PlanerRaportyForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        gus_simc,
+        //gus_simc,
         miejsca
       } = result.data;
       const { kiedy } = this.props;
@@ -439,7 +439,7 @@ class PlanerRaportyForm extends Component {
   };
 
   renderSelect = select => {
-    const none = { label: "Brak", value: "" };
+    //const none = { label: "Brak", value: "" };
     const doWyboru = select.map((elem, i) => ({
       label: elem.name,
       value: elem.id
@@ -465,7 +465,7 @@ class PlanerRaportyForm extends Component {
         sprzedaz,
         zamowienie,
         zboza,
-        gus_simc,
+        //gus_simc,
         miejsca,
         planer_klienci
       } = result.data;
@@ -620,13 +620,13 @@ class PlanerRaportyForm extends Component {
     return this.state.aktyDaty.map(day => {
       const {
         id,
-        kiedy,
+        //kiedy,
         start,
         stop,
         aktywnosc_id,
-        miejsce_id,
+        //miejsce_id,
         inna,
-        gus_simc,
+        //gus_simc,
         miejsca,
         planer_akt_rodz
       } = day;

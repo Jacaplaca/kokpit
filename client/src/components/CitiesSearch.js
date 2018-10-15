@@ -276,7 +276,7 @@ class CitySearch extends React.Component {
   };
 
   render() {
-    const { classes, value, edytuj } = this.props;
+    const { classes } = this.props;
 
     const status = this.state.isLoading ? "Szukam..." : "Miejscowość";
 

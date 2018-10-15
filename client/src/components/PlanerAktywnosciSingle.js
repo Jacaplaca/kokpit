@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
-import SvgIcon from "@material-ui/core/SvgIcon";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ClockIcon from "@material-ui/icons/WatchLater";
 import Edit from "@material-ui/icons/Edit";
@@ -100,22 +99,22 @@ class PlanerAktywnosciSingle extends Component {
         {this.props.day.map(day => {
           const {
             id,
-            kiedy,
+            // kiedy,
             start,
             stop,
             aktywnosc_id,
             planer_akt_rodz,
-            miejsce_id,
-            gus_simc,
+            // miejsce_id,
+            // gus_simc,
             miejsca,
             inna,
-            uwagi,
+            // uwagi,
             wyslano,
-            nawozy,
-            nowyKlient,
-            sprzedaz,
-            zamowienie,
-            zboza,
+            // nawozy,
+            // nowyKlient,
+            // sprzedaz,
+            // zamowienie,
+            // zboza,
             planer_klienci
           } = day;
           return (

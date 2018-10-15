@@ -71,7 +71,7 @@ class InputComponent extends React.Component {
     const {
       classes,
       label,
-      type,
+      //type,
       edytuj,
       value,
       kwota,

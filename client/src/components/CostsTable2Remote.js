@@ -10,7 +10,7 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 import "bootstrap/dist/css/bootstrap.css";
 import { withStyles } from "@material-ui/core/styles";
-import { emphasize, fade } from "@material-ui/core/styles/colorManipulator";
+import { fade } from "@material-ui/core/styles/colorManipulator";
 import currency from "currency.js";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -243,7 +243,7 @@ const RemoteFilter = props => {
       },
       headerStyle: (colum, colIndex) => {
         return {
-          width: "130px",
+          width: "140px",
           ...headerStyle
           // textAlign: 'center',
         };

@@ -1,3 +1,163 @@
+const cos = [
+  {
+    id_client: 2,
+    nr_document: "FS 4330/MAG/2018",
+    date_issue: "2018-09-04 00:00:00.000",
+    deadline: "2018-09-18 00:00:00.000",
+    id_client_soft: 5,
+    name_emp: "PRZEMYSŁAW",
+    surname_emp: "KWARCIANY",
+    debtor: "MAŁEK",
+    amount: 1550,
+    status: "nierozliczone",
+    remained: 1550,
+    createdAt: null,
+    updatedAt: null,
+    phone: "ccc",
+    help: 1
+  },
+  {
+    id_client: 2,
+    nr_document: "FS 4352/MAG/2018",
+    date_issue: "2018-09-05 00:00:00.000",
+    deadline: "2018-09-19 00:00:00.000",
+    id_client_soft: 5,
+    name_emp: "PRZEMYSŁAW",
+    surname_emp: "KWARCIANY",
+    debtor: "GANCARZ",
+    amount: 5806,
+    status: "nierozliczone",
+    remained: 5806,
+    createdAt: null,
+    updatedAt: null,
+    phone: "ccc",
+    help: 2
+  }
+][
+  ({
+    id_client: 2,
+    nr_document: "FS 4332/MAG/2018",
+    date_issue: "2018-09-04 00:00:00.000",
+    deadline: "2018-09-18 00:00:00.000",
+    id_client_soft: 16,
+    name_emp: "PIOTR",
+    surname_emp: "GŁOWIENKA",
+    debtor: "CHARGOT",
+    amount: 4787.8,
+    status: "nierozliczone",
+    remained: 4787.8,
+    createdAt: null,
+    updatedAt: null,
+    phone: "bbb",
+    help: 1
+  },
+  {
+    id_client: 2,
+    nr_document: "FS 4388/MAG/2018",
+    date_issue: "2018-09-07 00:00:00.000",
+    deadline: "2018-09-21 00:00:00.000",
+    id_client_soft: 16,
+    name_emp: "PIOTR",
+    surname_emp: "GŁOWIENKA",
+    debtor: "BULICZ",
+    amount: 1410,
+    status: "nierozliczone",
+    remained: 1410,
+    createdAt: null,
+    updatedAt: null,
+    phone: "bbb",
+    help: 2
+  })
+][
+  ({
+    id_client: 2,
+    nr_document: "FS 4345/MAG/2018",
+    date_issue: "2018-09-04 00:00:00.000",
+    deadline: "2018-09-18 00:00:00.000",
+    id_client_soft: 8,
+    name_emp: "MATEUSZ",
+    surname_emp: "RÓJ",
+    debtor: "HRYCAJ",
+    amount: 2351,
+    status: "nierozliczone",
+    remained: 2351,
+    createdAt: null,
+    updatedAt: null,
+    phone: "aaa",
+    help: 1
+  },
+  {
+    id_client: 2,
+    nr_document: "FS 4366/MAG/2018",
+    date_issue: "2018-09-06 00:00:00.000",
+    deadline: "2018-09-20 00:00:00.000",
+    id_client_soft: 8,
+    name_emp: "MATEUSZ",
+    surname_emp: "RÓJ",
+    debtor: "POPIK",
+    amount: 906,
+    status: "nierozliczone",
+    remained: 906,
+    createdAt: null,
+    updatedAt: null,
+    phone: "aaa",
+    help: 2
+  })
+][
+  ({
+    id_client: 2,
+    nr_document: "FS 674/SK/2018",
+    date_issue: "2018-09-18 00:00:00.000",
+    deadline: "2018-10-02 00:00:00.000",
+    id_client_soft: 1,
+    name_emp: "KONRAD",
+    surname_emp: "GNUTEK",
+    debtor: "WOJCIECH SZPONAR",
+    amount: 1170,
+    status: "nierozliczone",
+    remained: 1170,
+    createdAt: null,
+    updatedAt: null,
+    phone: "gn",
+    help: 1
+  },
+  {
+    id_client: 2,
+    nr_document: "FS 4628/MAG/2018",
+    date_issue: "2018-09-21 00:00:00.000",
+    deadline: "2018-10-05 00:00:00.000",
+    id_client_soft: 1,
+    name_emp: "KONRAD",
+    surname_emp: "GNUTEK",
+    debtor: "DEC SKLEP MIĽCZYN",
+    amount: 740.2,
+    status: "nierozliczone",
+    remained: 740.2,
+    createdAt: null,
+    updatedAt: null,
+    phone: "gn",
+    help: 2
+  })
+][
+  {
+    id_client: 2,
+    nr_document: "FS 4709/MAG/2018",
+    date_issue: "2018-09-26 00:00:00.000",
+    deadline: "2018-10-10 00:00:00.000",
+    id_client_soft: 12,
+    name_emp: "AREK",
+    surname_emp: "NOWAK",
+    debtor: "SAGROL",
+    amount: 1311,
+    status: "nierozliczone",
+    remained: 1311,
+    createdAt: null,
+    updatedAt: null,
+    phone: "ccc",
+    help: 1
+  }
+];
+
 const costs = [
   {
     id: 1,
@@ -140,6 +300,44 @@ some;
 
 const eve = array.every(x => x < 4);
 eve;
+
+const klienci = [
+  { client: 1, sam: "audi" },
+  { client: 1, sam: "audi" },
+  { client: 1, sam: "audi" },
+  { client: 1, sam: "audi" },
+  { client: 4, sam: "audi" },
+  { client: 1, sam: "audi" },
+  { client: 4, sam: "audi" },
+  { client: 1, sam: "audi" },
+  { client: 1, sam: "audi" },
+  { client: 2, sam: "audi" },
+  { client: 2, sam: "audi" },
+  { client: 2, sam: "audi" },
+  { client: 1, sam: "audi" },
+  { client: 4, sam: "audi" },
+  { client: 3, sam: "audi" },
+  { client: 3, sam: "audi" },
+  { client: 3, sam: "audi" },
+  { client: 4, sam: "audi" },
+  { client: 3, sam: "audi" },
+  { client: 3, sam: "audi" }
+];
+
+const short = (arr, key, len) => {
+  let shorter = [];
+  let shorterWithHelp = [];
+  arr.map(x => {
+    shorter.push(x);
+    const ile = shorter.filter(y => y[key] === x[key]).length;
+    shorterWithHelp.push(Object.assign(x, { help: ile }));
+  });
+  return shorterWithHelp.filter(x => x.help <= len);
+};
+
+const wynik = short(klienci, "client", 3);
+
+wynik;
 
 const skroc = str => {
   const arr = str.split(" ");

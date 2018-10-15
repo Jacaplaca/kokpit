@@ -11,94 +11,82 @@ const User = db.users;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
-let hour = 7;
-let minutes = 45;
+let hourRandom = 7;
+let minuteRandom = 20;
 //let randomizeTime;
 
 console.log(`Now is ${today()} ${time()}`);
 
-// var toLocalTime = function(time) {
-//   var d = new Date(time);
-//   var offset = (new Date().getTimezoneOffset() / 60) * -1;
-//   console.log(new Date().getTimezoneOffset());
-//   var n = new Date(d.getTime() + 7200000);
-//   console.log(offset);
-//   return n;
-// };
-//
-// console.log(toLocalTime(new Date()));
+var rule = new schedule.RecurrenceRule();
+rule.dayOfWeek = [new schedule.Range(1, 5)];
+rule.hour = 7;
+rule.minute = 30;
+rule.second = 0;
 
-var startRandomizer = schedule.scheduleJob(
+//let addon = 0;
+var randomizeSendingTime = schedule.scheduleJob(rule, function() {
+  console.log("Randomizing");
+  // var data = new Date();
+  // var h = data.getHours();
+  // var m = data.getMinutes();
+  //randomTime(7, 37, 8, 26);
+  randomTime(7, 40, 8, 40);
+});
+
+//fetchInvoices();
+
+var runFetching = schedule.scheduleJob(
   {
-    hour: 3,
-    minute: 40,
-    second: 0,
-    datOfWeek: [1, 2, 3, 4, 5, 6, 7]
+    hour: hourRandom,
+    minute: minuteRandom,
+    second: 15,
+    dayOfWeek: [new schedule.Range(1, 5)]
   },
   function() {
-    //console.log("start!");
-    //setInterval(randomTime, 0.1 * 60000);
-    //randomizeTime = setInterval(randomTime, 0.1 * 60000);
-    randomTime(7, 37, 8, 25);
+    console.log("Lecimy z smsami!");
+    fetchInvoices();
   }
 );
 
-// setInterval(function() {
-// }, 0.1 * 60000);
-// var stopRandomizer = schedule.scheduleJob(
-//   {
-//     hour: 21,
-//     minute: 51,
-//     second: 0,
-//     datOfWeek: [1, 2, 3, 4, 5, 6, 7]
-//   },
-//   function() {
-//     //console.log("stop!");
-//     //clearInterval(randomizeTime);
-//     //startRandomizer.cancel();
-//     //setInterval(randomTime, 1 * 60000);
-//   }
-// );
+function changeSchedule() {
+  runFetching.reschedule({
+    hour: hourRandom,
+    minute: minuteRandom,
+    second: 30,
+    dayOfWeek: [new schedule.Range(1, 5)]
+  });
+}
 
 function randomTime(hourStart, minuteStart, hourStop, minuteStop) {
-  hour = randomIntFromInterval(hourStart, hourStop);
-  minutes = function() {
-    if (hour === hourStart) {
-      return randomIntFromInterval(minuteStart, 59);
-    } else if (hour === hourStop) {
-      return randomIntFromInterval(0, minuteStop);
+  hourRandom = randomIntFromInterval(hourStart, hourStop);
+  minuteRandom = minutes();
+  function minutes() {
+    if (hourStart === hourStop) {
+      return randomIntFromInterval(minuteStart, minuteStop);
     } else {
-      return randomIntFromInterval(0, 59);
+      if (hourRandom === hourStart) {
+        return randomIntFromInterval(minuteStart, 59);
+      } else if (hourRandom === hourStop) {
+        return randomIntFromInterval(0, minuteStop);
+      } else {
+        return randomIntFromInterval(0, 59);
+      }
     }
-  };
-  console.log(`${today()} ${time()}: random: ${hour}:${minutes()}`);
+  }
+  console.log(`${today()} ${time()}: random: ${hourRandom}:${minuteRandom}`);
+  changeSchedule();
 }
 
 function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-//sobota i niedziela testowo
-var runFetching = schedule.scheduleJob(
-  {
-    hour: hour,
-    minute: minutes,
-    second: 30,
-    datOfWeek: [1, 2, 3, 4, 5, 6, 7]
-  },
-  function() {
-    console.log("Time for tea!");
-    fetchInvoices();
-  }
-);
-fetchInvoices();
-
 function fetchInvoices() {
-  const promises = [];
-  let notSent;
-  const phoneNumbers = [];
-  const notSentWithNumber = [];
-  Invoices4SMSsent.findAll({ raw: true })
+  console.log(`fetch invoices ${today()} ${time()}`);
+  Invoices4SMSsent.findAll({
+    raw: true,
+    attributes: ["nr_document"]
+  })
     .then(result => result.map(invoice => invoice.nr_document))
     .then(sentNumbers => {
       Invoices4SMS.findAll({
@@ -106,39 +94,68 @@ function fetchInvoices() {
           nr_document: { [Op.not]: sentNumbers }
         },
         raw: true
-      }).then(notSentInvoices => {
-        notSent = notSentInvoices;
-        notSentInvoices.map(invoice => {
-          const prom = User.find({
-            attributes: ["nr_telefonu"],
-            raw: true,
-            where: {
-              clientId: invoice.id_client,
-              id_client_soft: invoice.id_client_soft
-            }
-          }).then(user => {
-            user
-              ? phoneNumbers.push(user.nr_telefonu)
-              : phoneNumbers.push(null);
-          });
-          promises.push(prom);
-        });
-        Promise.all(promises).then(x => {
-          notSent.map((invoice, i) => {
-            const object = Object.assign(invoice, { phone: phoneNumbers[i] });
-            notSentWithNumber.push(object);
-          });
-          sendSMS(notSentWithNumber.filter(x => x.phone !== null));
-          //console.log(notSentWithNumber.filter(x => x.phone !== null));
-        });
-      });
+      }).then(sentInvoices =>
+        fetchUsers(sentInvoices.sort(dynamicSort("deadline")).reverse())
+      );
     });
 }
 
+function fetchUsers(invoices) {
+  console.log("fetchUsers");
+  User.findAll({
+    attributes: ["clientId", "id", "nr_telefonu", "id_client_soft"],
+    raw: true
+  }).then(users => compareAddPhone(invoices, users));
+}
+
+function compareAddPhone(invoices, users) {
+  //let invoicesWithPhone = []
+  const notSentWithNumber = invoices.map(inv => {
+    const userData = users.filter(
+      user =>
+        inv.id_client === user.clientId &&
+        inv.id_client_soft === user.id_client_soft
+    );
+    const {
+      nr_document,
+      date_issue,
+      id_client,
+      deadline,
+      name_emp,
+      surname_emp,
+      debtor,
+      amount,
+      remained,
+      status,
+      id_client_soft
+    } = inv;
+    return {
+      id_client_soft,
+      id_soft_odUsera: userData.length > 0 ? userData[0].id_client_soft : null,
+      phone: userData.length > 0 ? userData[0].nr_telefonu : null,
+      nr_document,
+      date_issue,
+      id_client,
+      deadline,
+      name_emp,
+      surname_emp,
+      debtor,
+      amount,
+      remained,
+      status
+    };
+  });
+  sendSMS(
+    short(notSentWithNumber.filter(x => x.phone !== null), "id_client_soft", 3)
+  );
+}
+
 function sendSMS(result) {
-  //console.log(result.length);
+  console.log(result);
   const byUsers = podzielUnikalnymi(result, "id_client_soft");
+  //console.log(byUsers);
   byUsers.map(user => {
+    //console.log(user.values);
     const tel = user.values[0].phone;
     const idSoft = user.values[0].id_client_soft;
     let message = "Nowe zaleglosci: ";
@@ -154,22 +171,36 @@ function sendSMS(result) {
           (cnt, invoice) => cnt + invoice.remained,
           0
         );
-        message = `Odzyskaj ${remainedSum}zl z ${howManyInvoices}fv. Nowe: `;
+        message = `Odzyskaj ${Math.floor(
+          remainedSum
+        )}zl z ${howManyInvoices}fv. Nowe: `;
         return { howManyInvoices, remainedSum };
       })
       .then(wholeSummary => {
         user["values"].map(invoice => {
-          const month = invoice.date_issue.slice(0, 10).split("-")[1];
-          const day = invoice.date_issue.slice(0, 10).split("-")[2];
+          const monthIssue = invoice.date_issue.slice(0, 10).split("-")[1];
+          const dayIssue = invoice.date_issue.slice(0, 10).split("-")[2];
+          const monthDeadline = invoice.deadline.slice(0, 10).split("-")[1];
+          const dayDeadline = invoice.deadline.slice(0, 10).split("-")[2];
+          const naKwote =
+            invoice.amount !== invoice.remained
+              ? ` na kwote: ${Math.floor(invoice.amount)}zl `
+              : "";
+          const remain =
+            invoice.amount !== invoice.remained ? ` pozostalo: ` : "";
           message = `${message}${invoice.nr_document.replace(
             /\s/g,
             ""
-          )} z ${day}/${month}(${invoice.debtor})-${Math.floor(
+          )} z ${Math.trunc(dayIssue)}${months(
+            Math.trunc(monthIssue)
+          )}-${Math.trunc(dayDeadline)}${months(
+            Math.trunc(monthDeadline)
+          )} ${naKwote} ${invoice.debtor} ${remain}${Math.floor(
             invoice.remained
           )}zl, `;
         });
-        const sms = { tel, sms: message };
-        //console.log(sms);
+        const sms = { tel, idSoft, sms: message };
+        //console.log("senduje");
         send(result, sms);
       });
   });
@@ -177,7 +208,39 @@ function sendSMS(result) {
   //console.log(sms);
 }
 
+function months(number) {
+  switch (number) {
+    case 1:
+      return "sty";
+    case 2:
+      return "lut";
+    case 3:
+      return "marz";
+    case 4:
+      return "kwi";
+    case 5:
+      return "maj";
+    case 6:
+      return "cze";
+    case 7:
+      return "lip";
+    case 8:
+      return "sie";
+    case 9:
+      return "wrz";
+    case 10:
+      return "paz";
+    case 11:
+      return "lis";
+    case 12:
+      return "gru";
+    default:
+      return "blad";
+  }
+}
+
 function send(invoices, sms) {
+  //console.log("sms");
   console.log(sms);
   smsapi.authentication
     .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
@@ -190,14 +253,16 @@ function send(invoices, sms) {
       .sms()
       .from("ECO")
       .to(sms.tel)
-      .message(sms.sms.slice(0, -2));
-    //.execute(); // return Promise
+      .message(sms.sms.slice(0, -2))
+      .normalize();
+    //.execute() // return Promise
   }
 
   function displayResult(result) {
-    //console.log(result);
-    //const nr_telefonu = result.list[0].number;
-    //updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
+    console.log(result);
+    const nr_telefonu = result.list[0].number;
+    updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
+    //updateToSent(invoices.filter(invoice => invoice.phone === sms.tel));
   }
 
   function displayError(err) {
@@ -238,7 +303,7 @@ function updateToSent(invoices) {
       remained
     })
       .then(
-        message => console.log(message)
+        message => console.log(`${nr_document} saved in Invoices4SMSsent`)
         // {
         //   Invoices4SMS.destroy({ where: { nr_document } })
         //     .then(x => console.log("destroyed"))
@@ -249,6 +314,17 @@ function updateToSent(invoices) {
         console.log(err);
       });
   });
+}
+
+function short(arr, key, len) {
+  let shorter = [];
+  let shorterWithHelp = [];
+  arr.map(x => {
+    shorter.push(x);
+    const ile = shorter.filter(y => y[key] === x[key]).length;
+    shorterWithHelp.push(Object.assign(x, { help: ile }));
+  });
+  return shorterWithHelp.filter(x => x.help <= len);
 }
 
 function today() {
@@ -288,6 +364,19 @@ function podzielUnikalnymi(array, key) {
     podzielone[gdzieKlucz].values.push(element);
   });
   return podzielone;
+}
+
+function dynamicSort(property) {
+  let sortOrder = 1;
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+  return function(a, b) {
+    const result =
+      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    return result * sortOrder;
+  };
 }
 
 // const afterSend = {

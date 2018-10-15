@@ -1,12 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  BrowserRouter,
-  Route,
-  Link,
-  Redirect,
-  NavLink
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { withStyles } from "@material-ui/core/styles";
 

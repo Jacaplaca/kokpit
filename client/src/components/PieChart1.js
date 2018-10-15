@@ -5,14 +5,14 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  Legend,
+  // Tooltip,
+  // Legend,
   Cell,
   LabelList,
   ResponsiveContainer
 } from "recharts";
-import { scaleLog } from "d3-scale";
-const scale = scaleLog().base(Math.E);
+// import { scaleLog } from "d3-scale";
+// const scale = scaleLog().base(Math.E);
 
 const colors = [
   "#1f77b4",

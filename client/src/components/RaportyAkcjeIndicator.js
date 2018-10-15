@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import Chip from "@material-ui/core/Chip";
@@ -19,7 +18,7 @@ const styles = theme => ({
 });
 
 function RaportyAkcjeIndicator(props) {
-  const { classes, text, day } = props;
+  const { classes, day } = props;
   const { nawozy, nowyKlient, sprzedaz, zamowienie, zboza } = day;
 
   return (

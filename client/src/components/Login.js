@@ -12,7 +12,6 @@ import PropTypes from "prop-types";
 import * as actions from "../actions";
 
 import InputComponent from "../common/inputs/InputComponent";
-import ButtonMy from "../common/ButtonMy";
 
 const emailHelperMessage = "Adres email podany przy rejestracji";
 

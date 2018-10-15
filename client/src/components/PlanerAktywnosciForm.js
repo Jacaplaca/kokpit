@@ -283,7 +283,7 @@ class PlanerAktywnosciForm extends Component {
   };
 
   renderSelect = select => {
-    const none = { label: "Brak", value: "" };
+    //const none = { label: "Brak", value: "" };
     const doWyboru = select.map((elem, i) => ({
       label: elem.name,
       value: elem.id
@@ -302,7 +302,7 @@ class PlanerAktywnosciForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        gus_simc,
+        //gus_simc,
         miejsca
       } = result.data;
       this.setState({
