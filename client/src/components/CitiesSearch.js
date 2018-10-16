@@ -252,7 +252,7 @@ class CitySearch extends React.Component {
   };
 
   editMiejsceLabel = () => {
-    console.log("editMiejsceLabel");
+    //console.log("editMiejsceLabel");
     // if (this.props.miejsceLabel !== "" && this.state.single === "") {
     // if (this.state.single.length < 3) {
     //   this.props.edytuj("");
@@ -261,7 +261,7 @@ class CitySearch extends React.Component {
     //   console.log("nie kasuj");
     // }
 
-    console.log(this.state.single.length);
+    //console.log(this.state.single.length);
     if (this.props.miejsceLabel !== "") {
       return this.props.miejsceLabel;
     } else {

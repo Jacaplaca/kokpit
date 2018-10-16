@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import NumberFormat from "react-number-format";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
+import InputMask from "react-input-mask";
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -31,8 +32,7 @@ const styles = theme => ({
 });
 
 function NumberFormatCustom(props) {
-  const { inputRef, onChange, ...other } = props;
-  // console.log(props);
+  const { inputRef, onChange, name, ...other } = props;
 
   return (
     <NumberFormat
@@ -41,7 +41,8 @@ function NumberFormatCustom(props) {
       onValueChange={values => {
         onChange({
           target: {
-            value: values.formattedValue.replace(/ /g, "")
+            value: values.formattedValue.replace(/ /g, ""),
+            name: name
           }
         });
       }}
@@ -78,6 +79,7 @@ class InputComponent extends React.Component {
       kwota,
       password,
       error,
+      mask,
       helperText
     } = this.props;
 
@@ -86,30 +88,46 @@ class InputComponent extends React.Component {
         className={classes.formControl}
         aria-describedby="name-helper-text"
       >
-        <TextField
-          helperText={helperText}
-          error={error}
-          label={label}
-          name={name}
-          id="name-helper"
+        <InputMask
+          mask={mask}
           value={value}
-          //onChange={event => edytuj(event.target.value)}
           onChange={edytuj}
-          type={this.state.showPassword ? "text" : "password"}
-          InputProps={{
-            inputComponent: kwota && NumberFormatCustom,
-            endAdornment: password && (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="Toggle password visibility"
-                  onClick={this.handleClickShowPassword}
-                >
-                  {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-        />
+          // className={classes.textField}
+        >
+          {() => (
+            <TextField
+              helperText={helperText}
+              error={error}
+              label={label}
+              name={name}
+              id="name-helper"
+              value={value}
+              //onChange={event => edytuj(event.target.value)}
+              onChange={edytuj}
+              type={this.state.showPassword ? type : "password"}
+              InputLabelProps={{
+                shrink: type === "date" || value !== "" ? true : false
+              }}
+              InputProps={{
+                inputComponent: kwota && NumberFormatCustom,
+                endAdornment: password && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Toggle password visibility"
+                      onClick={this.handleClickShowPassword}
+                    >
+                      {this.state.showPassword ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+          )}
+        </InputMask>
       </FormControl>
     );
   }
@@ -117,13 +135,15 @@ class InputComponent extends React.Component {
 
 InputComponent.defaultProps = {
   error: false,
-  helperText: ""
+  helperText: "",
+  type: "string"
 };
 
 InputComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   error: PropTypes.bool,
-  helperText: PropTypes.string
+  helperText: PropTypes.string,
+  type: PropTypes.string
 };
 
 export default withStyles(styles)(InputComponent);

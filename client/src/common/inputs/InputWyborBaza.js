@@ -56,23 +56,20 @@ class InputWyborBaza extends React.Component {
   };
 
   render() {
-    const { classes, label, value, edytuj } = this.props;
+    const { classes, label, value, edytuj, name } = this.props;
 
     return (
       <div className={classes.root}>
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="age-simple">{label}</InputLabel>
           <Select
+            //name={name}
             value={value}
-            onChange={event => {
-              console.log(event.target);
-              return edytuj(event.target.value);
-            }}
+            onChange={edytuj}
             // value={this.state.wybrany}
             // onChange={this.handleChange}
             inputProps={{
-              name: "wybrany",
-              id: "age-simple"
+              name: name
             }}
             // margin="normal"
             // className={classes.textField}

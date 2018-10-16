@@ -11,8 +11,6 @@ import InputSelectTextField from "./InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
-//
-
 function renderSuggestionsContainer({ containerProps, children, query }) {
   return <div {...containerProps}>{children}</div>;
 }
@@ -118,28 +116,39 @@ class InputSelectBaza extends React.Component {
   };
 
   componentWillMount() {
-    axios.get(`/api/table/${this.props.przeszukuje}`).then(result => {
+    axios.get(`/api/table/${this.props.baza}`).then(result => {
       const fetchowane = this.props.reverse
         ? result.data.sort(dynamicSort("name")).reverse()
         : result.data.sort(dynamicSort("name"));
       this.setState({ fetchowane, isLoading: false });
-      this.props.daty(fetchowane);
+      //this.props.daty(fetchowane);
     });
   }
 
   onChange = (event, { newValue, method }) => {
-    console.log(newValue);
-    const wybrano = this.state.fetchowane.filter(x => x.name === newValue)[0];
-    console.log(wybrano);
     this.setState({
       value: newValue
     });
+    const wybrano = this.state.fetchowane.filter(x => x.name === newValue)[0];
+    let input = {
+      target: {
+        value: wybrano ? wybrano.id : newValue,
+        name: this.props.name,
+        text: wybrano ? wybrano.name : newValue,
+        type: "inputSelectBaza"
+      }
+    };
+    console.log(input);
+    // console.log(newValue);
+    // console.log(this.props.name);
+    // console.log(method);
+    // console.log(wybrano);
     newValue !== ""
       ? this.setState({ clear: true })
       : this.setState({ clear: false });
 
-    wybrano ? this.props.wybrano(wybrano) : this.props.wybrano("");
-    this.props.edytuj(newValue);
+    this.props.wybrano(input);
+    //this.props.edytuj(newValue);
     // wybrano ? this.props.edytujValue(wybrano)
     //this.props.edytuj({ name: wybrano ? wybrano.namenewValue });
   };
@@ -149,7 +158,16 @@ class InputSelectBaza extends React.Component {
       value: "",
       clear: false
     });
-    this.props.czysc();
+    //this.props.czysc();
+    let input = {
+      target: {
+        value: "",
+        name: this.props.name,
+        text: "",
+        type: "inputSelectBaza"
+      }
+    };
+    this.props.wybrano(input);
     this.input.focus();
     this.setState({
       suggestions: this.state.fetchowane

@@ -11,12 +11,8 @@ import ButtonMy from "../common/ButtonMy";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
-
 import CitySearch from "./CitiesSearch";
-
 import InputWyborBaza from "../common/inputs/InputWyborBaza";
-import InputTime from "../common/inputs/InputTime";
-import InputData from "../common/inputs/InputData";
 import InputComponent from "../common/inputs/InputComponent";
 
 import { wezGodzine, dataToString } from "../common/functions";
@@ -31,11 +27,6 @@ const styles = theme => ({
     left: 2,
     fontSize: 16
   },
-  // accordionClass: {
-  //   backgroundColor: fade(theme.palette.primary.main, 0.15)
-  //   // borderColor: theme.palette.primary.main,
-  //   // color: 'white'
-  // },
   button: {
     margin: theme.spacing.unit
   },
@@ -79,32 +70,24 @@ class PlanerAktywnosciForm extends Component {
     dniWyslane: [],
     activities: [],
     edited: false,
-    submitIsDisable: true,
+    isSubmitDisabled: true,
 
     miejsce_id_temp: ""
   };
 
   componentWillMount() {
-    console.log("form zostal zamountowany");
     axios.get(`/api/table/dniDoRaportu`).then(result => {
       const dniWyslane = result.data;
       this.setState({
-        //isLoading: false,
         dniWyslane
       });
     });
-    console.log(this.props.editedId);
-    console.log(this.props.modal);
+
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
-    // this.props.modal && (
-    //
-    // )
   }
 
   validateKiedy = data => {
-    console.log(this.state.dniWyslane);
-    console.log(data);
     const nalezy =
       this.state.dniWyslane.filter(x => x.name === data).length === 1
         ? false
@@ -164,82 +147,24 @@ class PlanerAktywnosciForm extends Component {
     return false;
   };
 
-  // errorTime = () => {
-  //
-  // }
-
   sprawdzPola = () => {
+    console.log("sprawdzam pola");
     const { aktywnosc_id, miejsce_id, inna } = this.state;
     switch (aktywnosc_id) {
       case 1:
+        console.log("case aktyw");
+        console.log(!miejsce_id ? false : true);
         return !miejsce_id ? false : true;
         break;
       case 5:
+        console.log("case inna");
         return inna === "" ? false : true;
         break;
       default:
+        console.log("case default");
         return true;
     }
   };
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const {
-      // kiedy: kiedy_prevState,
-      start: start_prevState,
-      stop: stop_prevState,
-      aktywnosc_id: aktywnosc_id_prevState,
-      miejsce_id: miejsce_id_prevState,
-      inna: inna_prevState,
-      uwagi: uwagi_prevState
-    } = prevState;
-    const { kiedy: kiedy_prevState } = prevProps;
-    const { start, stop, aktywnosc_id, miejsce_id, inna } = this.state;
-    const { kiedy } = this.props;
-
-    if (start !== start_prevState || stop !== stop_prevState) {
-      this.validateTime(start, "Start");
-      this.validateTime(stop, "Stop");
-      this.validateDuration(start, stop);
-    }
-    if (kiedy !== kiedy_prevState) {
-      this.validateKiedy(kiedy);
-    }
-    const porownanie = [
-      [kiedy, kiedy_prevState],
-      [start, start_prevState],
-      [stop, stop_prevState],
-      [aktywnosc_id, aktywnosc_id_prevState],
-      [miejsce_id, miejsce_id_prevState],
-      [inna, inna_prevState]
-    ];
-    if (
-      porownanie.some(x => x[0] !== x[1]) &&
-      (this.validateKiedy(kiedy) &&
-        this.validateTime(start, "Start") &&
-        this.validateTime(stop, "Stop") &&
-        this.validateDuration(start, stop) &&
-        aktywnosc_id !== "" &&
-        this.sprawdzPola())
-    ) {
-      this.setState({ submitIsDisable: false });
-    } else if (
-      porownanie.some(x => x[0] !== x[1]) &&
-      (!this.validateKiedy(kiedy) ||
-        !this.validateTime(start, "Start") ||
-        !this.validateTime(stop, "Stop") ||
-        !this.validateDuration(start, stop) ||
-        aktywnosc_id === "" ||
-        !this.sprawdzPola())
-    ) {
-      this.setState({ submitIsDisable: true });
-    } else {
-      return;
-    }
-  }
-
-  // componentWillReceiveProps(nextProps) {
-  //   this.state.id !== nextProps.editedId && this.handleEdit(nextProps.editedId);
-  // }
 
   czyWypelniony = () => {
     const { start, stop, miejsce_id, aktywnosc_id, uwagi, inna } = this.state;
@@ -253,20 +178,22 @@ class PlanerAktywnosciForm extends Component {
 
   clearForm = () => {
     console.log("clearform");
-    this.setState({
-      id: "",
-      //kiedy: "",
-      start: "",
-      stop: "",
-      miejsce_id: null,
-      aktywnosc_id: "",
-      uwagi: "",
-      inna: "",
-      edited: false
-    });
+    this.setState(
+      {
+        id: "",
+        //kiedy: "",
+        start: "",
+        stop: "",
+        miejsce_id: null,
+        aktywnosc_id: "",
+        uwagi: "",
+        inna: "",
+        edited: false
+      },
+      () => this.canSubmit()
+    );
     this.props.edytuj("");
     this.props.modal && this.props.closeModal();
-    // this.props.clearForm;
   };
 
   dynamicSort = property => {
@@ -283,7 +210,6 @@ class PlanerAktywnosciForm extends Component {
   };
 
   renderSelect = select => {
-    //const none = { label: "Brak", value: "" };
     const doWyboru = select.map((elem, i) => ({
       label: elem.name,
       value: elem.id
@@ -292,36 +218,45 @@ class PlanerAktywnosciForm extends Component {
   };
 
   handleEdit = id => {
-    console.log("handluje edita");
-    axios.get(`/api/id/akt/${id}`).then(result => {
-      const {
-        kiedy,
-        start,
-        stop,
-        aktywnosc_id,
-        miejsce_id,
-        inna,
-        uwagi,
-        //gus_simc,
-        miejsca
-      } = result.data;
-      this.setState({
-        //kiedy,
-        start: wezGodzine(start),
-        stop: wezGodzine(stop),
-        aktywnosc_id,
-        miejsce_id,
-        inna,
-        uwagi,
-        //miejsceLabel: gus_simc ? gus_simc.nazwa : "",
-        miejsceLabel: miejsca ? miejsca.name : "",
-        // categoryId: { label: category.name, value: category.id },
-        // groupId: { label: group.name, value: group.id },
-        edited: true,
-        miejsce_id_temp: miejsce_id
+    this.props.loading(true);
+    axios
+      .get(`/api/id/akt/${id}`)
+      .then(result => {
+        const {
+          kiedy,
+          start,
+          stop,
+          aktywnosc_id,
+          miejsce_id,
+          inna,
+          uwagi,
+          //gus_simc,
+          miejsca
+        } = result.data;
+        this.setState(
+          {
+            //kiedy,
+            start: wezGodzine(start),
+            stop: wezGodzine(stop),
+            aktywnosc_id,
+            miejsce_id,
+            inna,
+            uwagi,
+            //miejsceLabel: gus_simc ? gus_simc.nazwa : "",
+            miejsceLabel: miejsca ? miejsca.name : "",
+            // categoryId: { label: category.name, value: category.id },
+            // groupId: { label: group.name, value: group.id },
+            edited: true,
+            miejsce_id_temp: miejsce_id
+          },
+          () => this.canSubmit()
+        );
+        this.props.edytuj(kiedy);
+      })
+      .then(() => {
+        this.canSubmit();
+        this.props.loading(false);
       });
-      this.props.edytuj(kiedy);
-    });
   };
 
   onEdit = async () => {
@@ -396,16 +331,6 @@ class PlanerAktywnosciForm extends Component {
     await this.props.submit(false);
   };
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
-  handleChangeKwota = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
-  };
-
   costs = () => {
     const koszty = this.state.costs;
     const { startDate, endDate } = this.state.rangeselection;
@@ -421,51 +346,94 @@ class PlanerAktywnosciForm extends Component {
     return costsInt;
   };
 
-  handleSelect = ranges => {
-    this.setState({
-      ...ranges
-    });
+  handleChange = async event => {
+    const { name, value } = event.target;
+
+    if (name === "kiedy") {
+      await this.props.edytuj(value);
+      await this.canSubmit();
+    } else {
+      this.setState({ [name]: value }, () => this.canSubmit());
+    }
+  };
+
+  canSubmit = () => {
+    const porownanie = [
+      this.props.kiedy,
+      this.state.start,
+      this.state.stop,
+      this.state.aktywnosc_id
+    ];
+
+    this.validateTime(this.state.start, "Start");
+    this.validateTime(this.state.stop, "Stop");
+    this.validateDuration(this.state.start, this.state.stop);
+    //this.sprawdzPola();
+
+    if (
+      porownanie.every(x => x !== "") &&
+      (this.validateKiedy(this.props.kiedy) &&
+        this.validateTime(this.state.start, "Start") &&
+        this.validateTime(this.state.stop, "Stop") &&
+        this.validateDuration(this.state.start, this.state.stop) &&
+        this.state.aktywnosc_id !== "" &&
+        this.sprawdzPola())
+    ) {
+      console.log("warunek 1 otwieram");
+      this.setState({ isSubmitDisabled: false });
+    } else if (
+      porownanie.some(x => x === "") &&
+      (!this.validateKiedy(this.props.kiedy) ||
+        !this.validateTime(this.state.start, "Start") ||
+        !this.validateTime(this.state.stop, "Stop") ||
+        !this.validateDuration(this.state.start, this.state.stop) ||
+        this.state.aktywnosc_id === "" ||
+        !this.sprawdzPola())
+    ) {
+      console.log("warunek zamykam");
+      this.setState({ isSubmitDisabled: true });
+    } else {
+      console.log("return");
+      this.setState({ isSubmitDisabled: true });
+    }
   };
 
   render() {
     const { classes, modal, edytuj, kiedy, submitCheck } = this.props;
+
+    const timesInputs = (label, bigVar, smallVar) => {
+      const error = `error${bigVar}`;
+      return (
+        <InputComponent
+          label={this.state[error] ? "Wpisz poprawną godzinę" : label}
+          mask="99 : 99"
+          error={this.state[error]}
+          edytuj={this.handleChange}
+          value={this.state[smallVar]}
+          name={smallVar}
+        />
+      );
+    };
 
     return (
       <Paper style={{ padding: 20 }}>
         <form onSubmit={e => this.handleSubmit(e)}>
           <Grid container spacing={24}>
             <Grid item xs={3}>
-              <InputData
+              <InputComponent
                 disabled={modal ? true : false}
                 label={
                   this.state.errorKiedy ? "Data wysłana do raportu" : "Kiedy"
                 }
                 error={this.state.errorKiedy}
-                //label="Kiedy"
                 type="date"
-                //edytuj={kiedy => this.setState({ kiedy })}
-                edytuj={kiedy => edytuj(kiedy)}
+                edytuj={this.handleChange}
                 value={kiedy}
-                //value={this.state.kiedy}
+                name="kiedy"
               />
-              <InputTime
-                label={
-                  this.state.errorStart ? "Wpisz poprawną godzinę" : "Początek"
-                }
-                error={this.state.errorStart}
-                edytuj={start => this.setState({ start })}
-                value={this.state.start}
-              />
-              <InputTime
-                label={
-                  this.state.errorStop ? "Wpisz poprawną godzinę" : "Koniec"
-                }
-                error={this.state.errorStop}
-                edytuj={stop => this.setState({ stop })}
-                value={this.state.stop}
-              />
-              {/* <InputComponent label="Uwagi" type="text" /> */}
-              {/* <InputComponent label="Uwagi" type="text" /> */}
+
+              {timesInputs("Początek", "Start", "start")}
+              {timesInputs("Koniec", "Stop", "stop")}
             </Grid>
             <Grid item xs={9}>
               <Grid container spacing={24}>
@@ -473,7 +441,8 @@ class PlanerAktywnosciForm extends Component {
                   <InputWyborBaza
                     table="rodzajAktywnosci"
                     label="Aktywność"
-                    edytuj={aktywnosc_id => this.setState({ aktywnosc_id })}
+                    edytuj={this.handleChange}
+                    name="aktywnosc_id"
                     value={this.state.aktywnosc_id}
                   />
                 </Grid>
@@ -482,7 +451,8 @@ class PlanerAktywnosciForm extends Component {
                     <InputComponent
                       label="Inna"
                       type="text"
-                      edytuj={inna => this.setState({ inna })}
+                      name="inna"
+                      edytuj={this.handleChange}
                       value={this.state.inna}
                     />
                   )}
@@ -490,24 +460,27 @@ class PlanerAktywnosciForm extends Component {
               </Grid>
               {this.state.aktywnosc_id === 1 && (
                 <CitySearch
-                  test={miejsce_id =>
-                    this.setState({ miejsce_id_temp: miejsce_id })
-                  }
                   miejsceLabel={this.state.miejsceLabel}
-                  edytuj={miejsce_id => this.setState({ miejsce_id })}
+                  edytuj={miejsce_id =>
+                    this.setState({ miejsce_id }, () => this.canSubmit())
+                  }
+                  //edytuj={this.handleChange}
                   value={this.state.miejsce_id}
-                  cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                  cancelLabel={() =>
+                    this.setState({ miejsceLabel: "" }, () => this.canSubmit())
+                  }
                   wybranoLabel={wybranoLabel =>
-                    this.setState({ miejsceLabel: wybranoLabel })
+                    this.setState({ miejsceLabel: wybranoLabel }, () =>
+                      this.canSubmit()
+                    )
                   }
                 />
               )}
-
-              {/* <InputTime label="Koniec" /> */}
               <InputComponent
                 label="Uwagi"
                 type="text"
-                edytuj={uwagi => this.setState({ uwagi })}
+                name="uwagi"
+                edytuj={this.handleChange}
                 value={this.state.uwagi}
               />
             </Grid>
@@ -516,7 +489,7 @@ class PlanerAktywnosciForm extends Component {
               {!this.state.edited ? (
                 <ButtonMy
                   type="submit"
-                  disabled={this.state.submitIsDisable}
+                  disabled={this.state.isSubmitDisabled}
                   progress
                 >
                   Zaplanuj aktywność
@@ -525,7 +498,7 @@ class PlanerAktywnosciForm extends Component {
               ) : (
                 <ButtonMy
                   // type="submit"
-                  disabled={this.state.submitIsDisable}
+                  disabled={this.state.isSubmitDisabled}
                   onClick={() => this.onEdit()}
                   progress
                 >

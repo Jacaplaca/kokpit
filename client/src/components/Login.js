@@ -18,7 +18,7 @@ const emailHelperMessage = "Adres email podany przy rejestracji";
 class Login extends Component {
   state = {
     emailHelper: emailHelperMessage,
-    disabledButton: true,
+    isSubmitDisabled: true,
     errorEmail: false,
     email: "",
     password: "",
@@ -30,50 +30,39 @@ class Login extends Component {
   };
 
   componentDidUpdate = (prevProps, prevState, snapshot) => {
-    const { email: emailPrev } = prevState;
     const { email } = this.state;
     if (
-      this.state.email === "" &&
+      email === "" &&
       this.props.formTemp.length > 0 &&
-      this.props.formTemp[0].email !== this.state.email
+      this.props.formTemp[0].email !== email
     ) {
       this.setState({ email: this.props.formTemp[0].email });
     }
-
-    if (email !== emailPrev) {
-      EmailValidator.validate(email)
-        ? this.setState({
-            disabledButton: false,
-            emailHelper: emailHelperMessage,
-            errorEmail: false
-          })
-        : this.setState({ disabledButton: true });
-    }
   };
 
-  onChangePassword = password => {
-    this.setState({ password });
-    this.state.disabledButton === true
+  handleChange = event => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value }, () => {
+      this.canSubmit(name);
+    });
+  };
+
+  canSubmit = name => {
+    const { email, password } = this.state;
+    password.length > 0 && EmailValidator.validate(email)
+      ? this.setState({
+          isSubmitDisabled: false,
+          emailHelper: emailHelperMessage,
+          errorEmail: false
+        })
+      : this.setState({ isSubmitDisabled: true });
+
+    name === "password" && this.state.isSubmitDisabled === true
       ? this.setState({
           emailHelper: "Podaj prawidłowy adres email",
           errorEmail: true
         })
       : this.setState({ emailHelper: emailHelperMessage, errorEmail: false });
-  };
-
-  handleChange = event => {
-    console.log(event);
-    console.log(event.target.name);
-    console.log(event.target.value);
-    this.setState(
-      {
-        // use dynamic name value to set our state object property
-        [event.target.name]: event.target.value
-      }
-      // function() {
-      //   this.canSubmit();
-      // }
-    );
   };
 
   render() {
@@ -129,7 +118,6 @@ class Login extends Component {
             </div>
           ) : null}
           <form method="POST" action="/auth/login">
-            <Input name="email" type="email" value={this.state.email} hidden />
             <InputComponent
               name="email"
               label="Email"
@@ -149,18 +137,12 @@ class Login extends Component {
               value={this.state.password}
               password
             />
-            <Input
-              name="password"
-              type="password"
-              value={this.state.password}
-              hidden
-            />
             <div style={{ width: "100%", marginTop: 40 }}>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={this.state.disabledButton}
+                disabled={this.state.isSubmitDisabled}
               >
                 Zaloguj się
                 <Key style={{ marginLeft: 10 }} />

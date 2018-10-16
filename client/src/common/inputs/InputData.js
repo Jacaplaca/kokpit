@@ -27,7 +27,7 @@ class InputData extends React.Component {
   };
 
   render() {
-    const { classes, label, edytuj, value, error, disabled } = this.props;
+    const { classes, label, edytuj, value, error, disabled, name } = this.props;
 
     return (
       <FormControl
@@ -37,12 +37,12 @@ class InputData extends React.Component {
         <TextField
           disabled={disabled ? true : false}
           error={error}
-          name="input"
+          name={name}
           id="input"
           label={label}
           type="date"
           value={value}
-          onChange={event => edytuj(event.target.value)}
+          onChange={edytuj}
           InputLabelProps={{
             shrink: true
           }}
