@@ -254,8 +254,8 @@ function send(invoices, sms) {
       .from("ECO")
       .to(sms.tel)
       .message(sms.sms.slice(0, -2))
-      .normalize();
-    //.execute() // return Promise
+      .normalize()
+      .execute(); // return Promise
   }
 
   function displayResult(result) {
