@@ -71,7 +71,8 @@ class InputComponent extends React.Component {
     const {
       classes,
       label,
-      //type,
+      type,
+      name,
       edytuj,
       value,
       kwota,
@@ -89,10 +90,11 @@ class InputComponent extends React.Component {
           helperText={helperText}
           error={error}
           label={label}
-          name="input"
+          name={name}
           id="name-helper"
           value={value}
-          onChange={event => edytuj(event.target.value)}
+          //onChange={event => edytuj(event.target.value)}
+          onChange={edytuj}
           type={this.state.showPassword ? "text" : "password"}
           InputProps={{
             inputComponent: kwota && NumberFormatCustom,

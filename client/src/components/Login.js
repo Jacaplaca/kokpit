@@ -61,6 +61,21 @@ class Login extends Component {
       : this.setState({ emailHelper: emailHelperMessage, errorEmail: false });
   };
 
+  handleChange = event => {
+    console.log(event);
+    console.log(event.target.name);
+    console.log(event.target.value);
+    this.setState(
+      {
+        // use dynamic name value to set our state object property
+        [event.target.name]: event.target.value
+      }
+      // function() {
+      //   this.canSubmit();
+      // }
+    );
+  };
+
   render() {
     return (
       <div
@@ -119,7 +134,8 @@ class Login extends Component {
               name="email"
               label="Email"
               type="email"
-              edytuj={email => this.setState({ email })}
+              //edytuj={email => this.setState({ email })}
+              edytuj={this.handleChange}
               value={this.state.email}
               error={this.state.errorEmail}
               helperText={this.state.emailHelper}
@@ -128,7 +144,8 @@ class Login extends Component {
               name="password"
               label="Password"
               type="password"
-              edytuj={password => this.onChangePassword(password)}
+              //edytuj={password => this.onChangePassword(password)}
+              edytuj={this.handleChange}
               value={this.state.password}
               password
             />
