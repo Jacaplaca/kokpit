@@ -156,7 +156,7 @@ class PlanerAktywnosciSingle extends Component {
                 {aktywnosc_id === 1 && shortPlace(miejsca.name)}
               </span>
               <span className={classes.klient}>
-                {planer_klienci && planer_klienci.nazwa}
+                {planer_klienci && planer_klienci.name}
               </span>
               <RaportyAkcjeIndicator day={day} />
 

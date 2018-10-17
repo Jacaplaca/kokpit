@@ -11,8 +11,8 @@ import ButtonMy from "../common/ButtonMy";
 import Send from "@material-ui/icons/Send";
 import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
-import CitySearch from "./CitiesSearch";
 import InputWyborBaza from "../common/inputs/InputWyborBaza";
+import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputComponent from "../common/inputs/InputComponent";
 
 import { wezGodzine, dataToString } from "../common/functions";
@@ -55,6 +55,7 @@ class PlanerAktywnosciForm extends Component {
     start: "",
     stop: "",
     miejsce_id: null,
+    miejsce_idText: "",
     aktywnosc_id: "",
     inna: "",
     uwagi: "",
@@ -70,9 +71,7 @@ class PlanerAktywnosciForm extends Component {
     dniWyslane: [],
     activities: [],
     edited: false,
-    isSubmitDisabled: true,
-
-    miejsce_id_temp: ""
+    isSubmitDisabled: true
   };
 
   componentWillMount() {
@@ -235,19 +234,14 @@ class PlanerAktywnosciForm extends Component {
         } = result.data;
         this.setState(
           {
-            //kiedy,
             start: wezGodzine(start),
             stop: wezGodzine(stop),
             aktywnosc_id,
             miejsce_id,
             inna,
             uwagi,
-            //miejsceLabel: gus_simc ? gus_simc.nazwa : "",
-            miejsceLabel: miejsca ? miejsca.name : "",
-            // categoryId: { label: category.name, value: category.id },
-            // groupId: { label: group.name, value: group.id },
-            edited: true,
-            miejsce_id_temp: miejsce_id
+            miejsce_idText: miejsca ? miejsca.name : "",
+            edited: true
           },
           () => this.canSubmit()
         );
@@ -261,16 +255,7 @@ class PlanerAktywnosciForm extends Component {
 
   onEdit = async () => {
     this.props.submit(true);
-    console.log("on edit");
-    const {
-      //kiedy,
-      start,
-      stop,
-      aktywnosc_id,
-      miejsce_id,
-      inna,
-      uwagi
-    } = this.state;
+    const { start, stop, aktywnosc_id, miejsce_id, inna, uwagi } = this.state;
     const { kiedy } = this.props;
     const url = `/api/akt/edit/${this.props.editedId}`;
 
@@ -347,13 +332,26 @@ class PlanerAktywnosciForm extends Component {
   };
 
   handleChange = async event => {
-    const { name, value } = event.target;
+    const { name, value, type, text } = event.target;
+    const label = `${name}Text`;
 
     if (name === "kiedy") {
       await this.props.edytuj(value);
       await this.canSubmit();
     } else {
-      this.setState({ [name]: value }, () => this.canSubmit());
+      if (type === "inputSelectBaza" && typeof value === "string") {
+        this.setState({ [name]: "", [label]: value }, () => {
+          this.canSubmit();
+        });
+      } else if (type === "inputSelectBaza" && typeof value === "number") {
+        this.setState({ [name]: value, [label]: text }, () => {
+          this.canSubmit();
+        });
+      } else {
+        this.setState({ [name]: value }, () => {
+          this.canSubmit();
+        });
+      }
     }
   };
 
@@ -459,21 +457,14 @@ class PlanerAktywnosciForm extends Component {
                 </Grid>
               </Grid>
               {this.state.aktywnosc_id === 1 && (
-                <CitySearch
-                  miejsceLabel={this.state.miejsceLabel}
-                  edytuj={miejsce_id =>
-                    this.setState({ miejsce_id }, () => this.canSubmit())
-                  }
-                  //edytuj={this.handleChange}
-                  value={this.state.miejsce_id}
-                  cancelLabel={() =>
-                    this.setState({ miejsceLabel: "" }, () => this.canSubmit())
-                  }
-                  wybranoLabel={wybranoLabel =>
-                    this.setState({ miejsceLabel: wybranoLabel }, () =>
-                      this.canSubmit()
-                    )
-                  }
+                <InputSelectBaza
+                  name="miejsce_id"
+                  wybrano={this.handleChange}
+                  value={this.state.miejsce_idText}
+                  label="Miejscowość"
+                  placeholder="Wpisz miejscowość..."
+                  baza="city"
+                  startAfter={2}
                 />
               )}
               <InputComponent

@@ -42,164 +42,118 @@ dynamicSort = property => {
 };
 
 module.exports = app => {
-  app.get("/api/city/:city", (req, res, next) => {
-    const wyszukiwanie = req.params.city;
-    const city = wyszukiwanie;
-    // const city = wyszukiwanie.split(" ")[0];
-    const drugiCzlon = wyszukiwanie.split(" ")[1];
-    console.log(city);
-    // console.log(drugiCzlon);
-    if (city.length < 3) {
-      res.json([]);
-    } else {
-      const { user_id, clientId } = req.user;
-      if (!req.user) {
-        return res.redirect("/");
-      }
-      let mods = [];
-
-      // Street.findAll({
-      //   where: { nazwa_1: { [Op.like]: `%${city.toLowerCase()}%` } },
-      //   limit: 30
-      // }).then(result =>
-      //   res.json(
-      //     result.map(x => {
-      //       Object.assign(x.get(), { nazwa: x.get().nazwa_1 });
-      //       // console.log(x);
-      //     })
-      //   )
-      // );
-
-      // City.findAll({
-      //   where: {
-      //     nazwa: { [Op.like]: `${city}%` }
-      //   },
-      //   include: [
-      //     { model: Wojewodztwo, attributes: ["nazwa"] },
-      //     {
-      //       model: Powiat,
-      //       attributes: ["nazwa"]
-      //     },
-      //     { model: Terc, attributes: ["nazwa"] }
-      //   ],
-      //   limit: 30
-      Miejsca.findAll({
-        where: {
-          name: { [Op.like]: `%${city}%` }
-        },
-        limit: 30
-      }).then(result => {
-        // var promises = [];
-        // let wojewodztwo;
-        // let powiat;
-        // let gmina;
-        // const filtrowany = result.filter(x => x.rm !== "95");
-        // const sortowany = result.sort(dynamicSort("rm"));
-        // const sortRevSlice = sortowany.reverse().slice(0, 10);
-        // return res.json(sortRevSlice);
-        return res.json(result);
-
-        // sortRevSlice.map((wynik, i) => {
-        //   const { woj, pow, gmi } = wynik.get();
-        //   var promise_woj = Terc.find({ where: { woj } }).then(x => {
-        //     wojewodztwo = x.get().nazwa;
-        //   });
-        //   var promise_pow = Terc.find({ where: { woj, pow } }).then(x => {
-        //     powiat = x.get().nazwa;
-        //   });
-        //   var promise_gmi = Terc.find({ where: { woj, pow, gmi } }).then(x => {
-        //     gmina = x.get().nazwa;
-        //     mods.push(
-        //       Object.assign(wynik.get(), {
-        //         wojewodztwo:
-        //           wojewodztwo
-        //             // .toLowerCase()
-        //             .charAt(0)
-        //             .toUpperCase() + wojewodztwo.slice(1),
-        //         powiat:
-        //           powiat
-        //             // .toLowerCase()
-        //             .charAt(0)
-        //             .toUpperCase() + powiat.slice(1),
-        //         gmina:
-        //           gmina
-        //             // .toLowerCase()
-        //             .charAt(0)
-        //             .toUpperCase() + gmina.slice(1)
-        //       })
-        //     );
-        //   });
-        //   promises.push(promise_woj, promise_pow, promise_gmi);
-        // });
-        // Promise.all(promises).then(y => {
-        //   if (!drugiCzlon) {
-        //     res.json(mods);
-        //   } else if (drugiCzlon.length > 2) {
-        //     const symboleMiast = mods.map(miasto => miasto.sym);
-        //     Street.findAll({
-        //       where: {
-        //         nazwa_1: { [Op.like]: `%${drugiCzlon}%` },
-        //         sym: symboleMiast
-        //       },
-        //       limit: 30
-        //     }).then(result => {
-        //       const ulice = result.map(b =>
-        //         Object.assign(
-        //           {},
-        //           {
-        //             cecha: b.get().cecha,
-        //             nazwa_1: b.get().nazwa_1,
-        //             nazwa_2: b.get().nazwa_2,
-        //             sym: b.get().sym
-        //           }
-        //         )
-        //       );
-        //       const uliceImiasta = ulice.map(ulica => {
-        //         const miasto = mods.filter(m => m.sym === ulica.sym);
-        //         return Object.assign(ulica, miasto[0]);
-        //       });
-        //       return res.json(uliceImiasta);
-        //     });
-        //   }
-        // });
-      });
-    }
-  });
-
-  app.get("/api/klienci/:query", (req, res, next) => {
+  app.get("/api/byname/:table/:query", (req, res, next) => {
     const query = req.params.query;
-
+    const table = req.params.table;
     const { user_id, clientId } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
-    if (query.length < 3) {
-      res.json([]);
-    } else {
-      PlanerKlienci.findAll({
-        // where: {
-        //   adr_Miejscowosc: { [Op.like]: `${query}%` },
-        //   clientId
-        // },
-        where: {
-          [Op.or]: [
-            { adr_Miejscowosc: { [Op.like]: `${query}%` } },
-            { adr_Kod: { [Op.like]: `${query}%` } },
-            { nazwa: { [Op.like]: `${query}%` } }
-          ],
-          clientId
-        },
-        limit: 100
-      })
-        .then(result => {
-          res.json(result);
+    switch (table) {
+      case "category":
+        Category.findAll({
+          where: { clientId, name: { [Op.like]: `%${query}%` } }
         })
-        .catch(err => {
-          console.log(err);
-          res.sendStatus(500);
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "group":
+        Group.findAll({
+          where: { clientId, name: { [Op.like]: `%${query}%` } }
+        })
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "city":
+        Miejsca.findAll({
+          where: {
+            name: { [Op.like]: `%${query}%` }
+          },
+          limit: 30
+        }).then(result => {
+          return res.json(result);
         });
+        break;
+      case "dniDoRaportu":
+        Aktywnosci.findAll({
+          where: { user_id, wyslano: 1 }
+        })
+          .then(result => {
+            const datyDoRaportu = result.map(x => x.get().kiedy);
+            const unique = datyDoRaportu.filter(onlyUnique);
+            return res.json(
+              unique.map((x, i) => Object.assign({}, { id: i, name: x }))
+            );
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "planerClient":
+        PlanerKlienci.findAll({
+          where: {
+            [Op.or]: [
+              { adr_Miejscowosc: { [Op.like]: `${query}%` } },
+              { adr_Kod: { [Op.like]: `${query}%` } },
+              { name: { [Op.like]: `${query}%` } }
+            ],
+            clientId
+          },
+          limit: 50
+        })
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      default:
     }
   });
+
+  // app.get("/api/klienci/:query", (req, res, next) => {
+  //   const query = req.params.query;
+  //
+  //   const { user_id, clientId } = req.user;
+  //   if (!req.user) {
+  //     return res.redirect("/");
+  //   }
+  //   if (query.length < 3) {
+  //     res.json([]);
+  //   } else {
+  //     PlanerKlienci.findAll({
+  //       where: {
+  //         [Op.or]: [
+  //           { adr_Miejscowosc: { [Op.like]: `${query}%` } },
+  //           { adr_Kod: { [Op.like]: `${query}%` } },
+  //           { nazwa: { [Op.like]: `${query}%` } }
+  //         ],
+  //         clientId
+  //       },
+  //       limit: 100
+  //     })
+  //       .then(result => {
+  //         res.json(result);
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //         res.sendStatus(500);
+  //       });
+  //   }
+  // });
 
   app.get("/api/klienci", (req, res) => {
     res.json([]);
@@ -457,7 +411,7 @@ module.exports = app => {
             { model: RodzajAktywnosci, attributes: ["name"] },
             //{ model: City, attributes: ["nazwa"] },
             { model: Miejsca, attributes: ["name"] },
-            { model: PlanerKlienci, attributes: ["nazwa"] }
+            { model: PlanerKlienci, attributes: ["name"] }
           ],
           where: { user_id, id }
         })
@@ -674,7 +628,7 @@ module.exports = app => {
             { model: RodzajAktywnosci, attributes: ["name"] },
             // { model: City, attributes: ["nazwa"] },
             { model: Miejsca, attributes: ["name"] },
-            { model: PlanerKlienci, attributes: ["nazwa"] }
+            { model: PlanerKlienci, attributes: ["name"] }
           ],
           where: {
             user_id,
@@ -750,18 +704,37 @@ module.exports = app => {
             res.sendStatus(500);
           });
         break;
+      case "city":
+        Miejsca.findAll({
+          limit: 30
+        })
+          .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
       case "dniDoRaportu":
         Aktywnosci.findAll({ where: { user_id, wyslano: 1 } })
-          // .then(result => {
-          //   console.log(result);
-          //   res.json(result);
-          // })
           .then(result => {
             const datyDoRaportu = result.map(x => x.get().kiedy);
             const unique = datyDoRaportu.filter(onlyUnique);
             return res.json(
               unique.map((x, i) => Object.assign({}, { id: i, name: x }))
             );
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      case "planerClient":
+        PlanerKlienci.findAll({
+          where: { clientId },
+          limit: 50
+        })
+          .then(result => {
+            res.json(result);
           })
           .catch(err => {
             console.log(err);

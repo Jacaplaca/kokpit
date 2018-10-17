@@ -1,13 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
-import match from "autosuggest-highlight/match";
-import parse from "autosuggest-highlight/parse";
-import MenuItem from "@material-ui/core/MenuItem";
+//import match from "autosuggest-highlight/match";
+//import parse from "autosuggest-highlight/parse";
+//import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { dynamicSort } from "../../common/functions";
-import InputSelectTextField from "./InputSelectTextField";
+import { simpleSuggestion } from "./Suggestions";
+import InputSelectTextField from "../../common/inputs/InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
@@ -15,45 +16,31 @@ function renderSuggestionsContainer({ containerProps, children, query }) {
   return <div {...containerProps}>{children}</div>;
 }
 
-function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.name, query);
-  const parts = parse(suggestion.name, matches);
-
-  return (
-    <MenuItem selected={isHighlighted} component="div">
-      <div style={{ display: "block", width: "100%" }}>
-        <span>
-          {parts.map((part, index) => {
-            return part.highlight ? (
-              <span key={String(index)} style={{ fontWeight: 500 }}>
-                {part.text}
-              </span>
-            ) : (
-              <strong key={String(index)} style={{ fontWeight: 300 }}>
-                {part.text}
-              </strong>
-            );
-          })}
-        </span>
-      </div>
-      {/* <span>{gmina}</span> */}
-    </MenuItem>
-  );
-}
-
 function escapeRegexCharacters(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function getSuggestions(fetchowane, value) {
+function getSuggestions(fetchowane, value, names) {
   // const sugestie = [...suggestions];
-  const escapedValue = escapeRegexCharacters(value.trim());
+  //const escapedValue = escapeRegexCharacters(value.trim());
   //const regex = new RegExp("^" + escapedValue, "i");
   const regex = new RegExp(value.toLowerCase());
+  //
+  // const filtered = fetchowane.filter(suggestion =>
+  //   regex.test(suggestion.name.toLowerCase())
+  // );
+  // console.log(filtered);
+  // return filtered;
 
-  return fetchowane.filter(suggestion =>
-    regex.test(suggestion.name.toLowerCase())
-  );
+  //const names = ;
+
+  return fetchowane.filter(suggestion => {
+    let filtered = [];
+    for (var key of names) {
+      filtered.push(regex.test(suggestion[key].toLowerCase()));
+    }
+    return filtered;
+  });
 }
 
 function getSuggestionValue(suggestion) {
@@ -116,13 +103,13 @@ class InputSelectBaza extends React.Component {
   };
 
   componentWillMount() {
-    axios.get(`/api/table/${this.props.baza}`).then(result => {
-      const fetchowane = this.props.reverse
-        ? result.data.sort(dynamicSort("name")).reverse()
-        : result.data.sort(dynamicSort("name"));
-      this.setState({ fetchowane, isLoading: false });
-      //this.props.daty(fetchowane);
-    });
+    // axios.get(`/api/table/${this.props.baza}`).then(result => {
+    //   const fetchowane = this.props.reverse
+    //     ? result.data.sort(dynamicSort("name")).reverse()
+    //     : result.data.sort(dynamicSort("name"));
+    //   this.setState({ fetchowane, isLoading: false });
+    //   //this.props.daty(fetchowane);
+    // });
   }
 
   onChange = (event, { newValue, method }) => {
@@ -139,21 +126,15 @@ class InputSelectBaza extends React.Component {
       }
     };
     console.log(input);
-    // console.log(newValue);
-    // console.log(this.props.name);
-    // console.log(method);
-    // console.log(wybrano);
     newValue !== ""
       ? this.setState({ clear: true })
       : this.setState({ clear: false });
 
     this.props.wybrano(input);
-    //this.props.edytuj(newValue);
-    // wybrano ? this.props.edytujValue(wybrano)
-    //this.props.edytuj({ name: wybrano ? wybrano.namenewValue });
   };
 
   clearValue = () => {
+    console.log("czyszcze pole");
     this.setState({
       value: "",
       clear: false
@@ -169,18 +150,94 @@ class InputSelectBaza extends React.Component {
     };
     this.props.wybrano(input);
     this.input.focus();
-    this.setState({
-      suggestions: this.state.fetchowane
-    });
+    //this.onSuggestionsFetchRequested("ko");
+    // this.setState({
+    //   suggestions: this.state.fetchowane
+    // });
+    // this.setState({
+    //   value: ""
+    // });
+    this.props.startAfter > 0
+      ? this.setState({ suggestions: [] })
+      : this.loadSuggestions("", `/api/table/${this.props.baza}`);
   };
 
-  onSuggestionsFetchRequested = ({ value }) => {
+  loadSuggestions(value, address) {
+    // console.log("loadSuggestions");
+    //
+    // this.setState({
+    //   isLoading: true
+    // });
+    //
+    // axios.get(`/api/city/${value}`).then(result => {
+    //   const suggestions = result.data;
+    //   console.log(suggestions);
+    //
+    //   if (value === this.state.value) {
+    //     this.setState({
+    //       isLoading: false,
+    //       suggestions
+    //     });
+    //   } else {
+    //     this.setState({
+    //       isLoading: false,
+    //       suggestions
+    //     });
+    //   }
+    // });
+
     this.setState({
-      suggestions: getSuggestions(this.state.fetchowane, value)
+      isLoading: true
     });
+    //axios.get(address).then(result => {
+    axios.get(address).then(result => {
+      console.log(value);
+      const fetchowane = this.props.reverse
+        ? result.data.sort(dynamicSort("name")).reverse()
+        : result.data.sort(dynamicSort("name"));
+      this.setState({ fetchowane, isLoading: false }, () => {
+        this.setState({
+          //suggestions: getSuggestions(this.state.fetchowane, value)
+          suggestions: getSuggestions(
+            this.state.fetchowane,
+            value,
+            this.props.names
+          )
+        });
+      });
+      //this.props.daty(fetchowane);
+    });
+  }
+
+  onSuggestionsFetchRequested = ({ value }) => {
+    // this.setState({
+    //   //suggestions: getSuggestions(this.state.fetchowane, value)
+    //   suggestions: getSuggestions(this.state.fetchowane, value)
+    // });
+
+    console.log("onSuggestionsFetchRequested");
+    console.log(value);
+
+    if (value.length === 0 && this.props.startAfter === 0) {
+      this.loadSuggestions(value, `/api/table/${this.props.baza}`);
+    } else if (value.length > this.props.startAfter) {
+      this.loadSuggestions(value, `/api/byname/${this.props.baza}/${value}`);
+    }
+
+    // if (value.length <= this.props.startAfter) {
+    // } else if (value.length > this.props.startAfter) {
+    // }
+
+    // if (value.length >= this.props.startAfter) {
+    //   this.loadSuggestions(value, `/api/table/${this.props.baza}`);
+    //   //this.props.wybranoLabel("");
+    //   //this.props.cancelLabel();
+    // } else {
+    // }
   };
 
   onSuggestionsClearRequested = () => {
+    console.log("onSuggestionsClearRequested");
     this.setState({
       suggestions: []
     });
@@ -198,22 +255,26 @@ class InputSelectBaza extends React.Component {
       label,
       placeholder,
       value: valueProps,
-      error
+      error,
+      suggestion
       // disabled
     } = this.props;
-    const { suggestions, value, single } = this.state;
+    const { suggestions, value, single, isLoading } = this.state;
 
     const inputProps = {
       //autoFocus: focus,
-      label: error ? "Wybierz poprawną datę" : label,
+      label: error ? "Wybierz poprawną datę" : isLoading ? "Szukam..." : label,
       placeholder,
       classes,
       value: valueProps,
       //value: value,
       onChange: this.onChange,
       error,
-      clearValue: this.clearValue
+      clearValue: this.clearValue,
+      isLoading
     };
+
+    //const nameOfSuggestion = `${suggestion}Suggestion`;
 
     return (
       <Autosuggest
@@ -233,7 +294,7 @@ class InputSelectBaza extends React.Component {
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
         getSuggestionValue={getSuggestionValue}
         shouldRenderSuggestions={shouldRenderSuggestions}
-        renderSuggestion={renderSuggestion}
+        renderSuggestion={suggestion}
         inputProps={inputProps}
         renderSuggestionsContainer={renderSuggestionsContainer}
         ref={this.storeInputReference}
@@ -243,7 +304,18 @@ class InputSelectBaza extends React.Component {
 }
 
 InputSelectBaza.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  startAfter: PropTypes.number,
+  suggestion: PropTypes.func,
+  names: PropTypes.array
+};
+
+InputSelectBaza.defaultProps = {
+  //error: false,
+  //helperText: "",
+  startAfter: 0,
+  suggestion: simpleSuggestion,
+  names: ["name"]
 };
 
 export default withStyles(styles)(InputSelectBaza);
