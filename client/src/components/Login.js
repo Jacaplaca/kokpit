@@ -41,6 +41,7 @@ class Login extends Component {
   };
 
   handleChange = event => {
+    //console.log(event);
     const { name, value } = event.target;
     this.setState({ [name]: value }, () => {
       this.canSubmit(name);

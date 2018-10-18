@@ -10,6 +10,9 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
+import IconCancel from "@material-ui/icons/Clear";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
 const styles = theme => ({
@@ -68,9 +71,62 @@ class InputComponent extends React.Component {
     this.setState(state => ({ showPassword: !state.showPassword }));
   };
 
+  clearButton = () => {
+    if (this.props.value !== "" && this.props.isLoading) {
+      return (
+        <CircularProgress size={23} color="red" style={{ marginBottom: 10 }} />
+      );
+    } else if (this.props.value !== "" && !this.props.isLoading) {
+      return (
+        <IconButton
+          onClick={() =>
+            this.props.edytuj({ target: { name: this.props.name, value: "" } })
+          }
+        >
+          <IconCancel />
+        </IconButton>
+      );
+    } else {
+      <div />;
+    }
+  };
+
+  endAdornment = () => {
+    if (this.props.value.length > 0 && !this.props.password) {
+      return (
+        <InputAdornment position="end">{this.clearButton()}</InputAdornment>
+      );
+    } else if (this.props.value.length > 0 && this.props.password) {
+      return (
+        <InputAdornment position="end">
+          <IconButton
+            aria-label="Toggle password visibility"
+            onClick={this.handleClickShowPassword}
+          >
+            {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+          {this.clearButton()}
+        </InputAdornment>
+      );
+    }
+  };
+
   render() {
+    // const {
+    //   classes,
+    //   label,
+    //   type,
+    //   name,
+    //   edytuj,
+    //   value,
+    //   kwota,
+    //   password,
+    //   error,
+    //   mask,
+    //   helperText
+    // } = this.props;
+
     const {
-      classes,
       label,
       type,
       name,
@@ -80,7 +136,14 @@ class InputComponent extends React.Component {
       password,
       error,
       mask,
-      helperText
+      helperText,
+      // disabled,
+      clearValue,
+      classes,
+      inputRef = () => {},
+      ref,
+      isLoading,
+      ...other
     } = this.props;
 
     return (
@@ -96,6 +159,7 @@ class InputComponent extends React.Component {
         >
           {() => (
             <TextField
+              fullWidth
               helperText={helperText}
               error={error}
               label={label}
@@ -110,20 +174,14 @@ class InputComponent extends React.Component {
               }}
               InputProps={{
                 inputComponent: kwota && NumberFormatCustom,
-                endAdornment: password && (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="Toggle password visibility"
-                      onClick={this.handleClickShowPassword}
-                    >
-                      {this.state.showPassword ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                )
+                endAdornment: this.endAdornment(),
+                inputRef: node => {
+                  //ref(node);
+                  inputRef(node);
+                },
+                classes: {
+                  input: classes.input
+                }
               }}
             />
           )}
@@ -132,6 +190,25 @@ class InputComponent extends React.Component {
     );
   }
 }
+
+// return (
+//   <TextField
+//     fullWidth
+//     InputProps={{
+//       endAdornment: (
+//         <InputAdornment position="end">{clearButton()}</InputAdornment>
+//       ),
+//       inputRef: node => {
+//         ref(node);
+//         inputRef(node);
+//       },
+//       classes: {
+//         input: classes.input
+//       }
+//     }}
+//     {...other}
+//   />
+// );
 
 InputComponent.defaultProps = {
   error: false,
