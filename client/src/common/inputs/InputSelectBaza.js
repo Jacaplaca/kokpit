@@ -9,6 +9,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { dynamicSort } from "../../common/functions";
 import { simpleSuggestion } from "./Suggestions";
 import InputSelectTextField from "../../common/inputs/InputSelectTextField";
+import InputComponent from "../../common/inputs/InputComponent";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
@@ -289,6 +290,7 @@ class InputSelectBaza extends React.Component {
           suggestion: classes.suggestion
         }}
         renderInputComponent={InputSelectTextField}
+        //renderInputComponent={InputComponent}
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}

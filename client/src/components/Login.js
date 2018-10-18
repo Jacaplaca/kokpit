@@ -2,18 +2,54 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import Paper from "@material-ui/core/Paper";
-import Input from "@material-ui/core/Input";
+//import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import Key from "@material-ui/icons/VpnKey";
-
+import { withStyles } from "@material-ui/core/styles";
 import EmailValidator from "email-validator";
-
 import PropTypes from "prop-types";
 import * as actions from "../actions";
 
 import InputComponent from "../common/inputs/InputComponent";
 
 const emailHelperMessage = "Adres email podany przy rejestracji";
+
+const styles = theme => ({
+  root: {
+    // height: 250,
+    width: "100%",
+    // flexGrow: 1,
+    marginBottom: theme.spacing.unit / 2
+  },
+  container: {
+    position: "relative"
+  },
+  suggestionsContainerOpen: {
+    position: "absolute",
+    zIndex: 1,
+    marginTop: theme.spacing.unit,
+    left: 0,
+    right: 0,
+    maxHeight: 300,
+    overflowY: "auto",
+    background: "white",
+    boxShadow: theme.shadows[5]
+  },
+  suggestion: {
+    display: "block"
+  },
+  suggestionsList: {
+    margin: 0,
+    padding: 0,
+    listStyleType: "none"
+  },
+  divider: {
+    height: theme.spacing.unit * 1
+  }
+  // input: {
+  //   margin: 44
+  // }
+});
 
 class Login extends Component {
   state = {
@@ -22,7 +58,8 @@ class Login extends Component {
     errorEmail: false,
     email: "",
     password: "",
-    resetShow: true
+    resetShow: true,
+    hidePassword: true
   };
 
   componentWillMount = () => {
@@ -44,26 +81,42 @@ class Login extends Component {
     //console.log(event);
     const { name, value } = event.target;
     this.setState({ [name]: value }, () => {
-      this.canSubmit(name);
+      this.canSubmit();
     });
   };
 
-  canSubmit = name => {
+  canSubmit = () => {
     const { email, password } = this.state;
-    password.length > 0 && EmailValidator.validate(email)
-      ? this.setState({
-          isSubmitDisabled: false,
-          emailHelper: emailHelperMessage,
-          errorEmail: false
-        })
-      : this.setState({ isSubmitDisabled: true });
+    const goodEmail = EmailValidator.validate(email);
+    const somePass = password.length > 0;
 
-    name === "password" && this.state.isSubmitDisabled === true
-      ? this.setState({
-          emailHelper: "Podaj prawidłowy adres email",
-          errorEmail: true
-        })
-      : this.setState({ emailHelper: emailHelperMessage, errorEmail: false });
+    if (somePass && goodEmail) {
+      this.setState({
+        isSubmitDisabled: false,
+        emailHelper: emailHelperMessage,
+        errorEmail: false
+      });
+    } else if (goodEmail && !somePass) {
+      this.setState({ isSubmitDisabled: true });
+    } else if (!goodEmail && somePass) {
+      this.setState({
+        emailHelper: "Podaj prawidłowy adres email",
+        errorEmail: true,
+        isSubmitDisabled: true
+      });
+    } else if (!goodEmail && !somePass) {
+      this.setState({
+        isSubmitDisabled: true,
+        emailHelper: emailHelperMessage,
+        errorEmail: false
+      });
+    } else {
+      this.setState({ isSubmitDisabled: true });
+    }
+  };
+
+  passwordVisibility = () => {
+    this.setState({ hidePassword: !this.state.hidePassword });
   };
 
   render() {
@@ -132,11 +185,12 @@ class Login extends Component {
             <InputComponent
               name="password"
               label="Password"
-              type="password"
+              type="string"
               //edytuj={password => this.onChangePassword(password)}
               edytuj={this.handleChange}
               value={this.state.password}
-              password
+              password={this.state.hidePassword}
+              passwordVisibility={this.passwordVisibility}
             />
             <div style={{ width: "100%", marginTop: 40 }}>
               <Button
@@ -165,7 +219,14 @@ const mapStateToProps = ({ formTemp }) => {
   return { formTemp };
 };
 
-export default connect(
-  mapStateToProps,
-  actions
-)(Login);
+// export default connect(
+//   mapStateToProps,
+//   actions
+// )(Login);
+
+export default withStyles(styles, { withTheme: true })(
+  connect(
+    mapStateToProps,
+    actions
+  )(Login)
+);
