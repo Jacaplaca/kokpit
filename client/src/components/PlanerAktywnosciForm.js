@@ -15,7 +15,14 @@ import InputWyborBaza from "../common/inputs/InputWyborBaza";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputComponent from "../common/inputs/InputComponent";
 
-import { wezGodzine, dataToString } from "../common/functions";
+import {
+  wezGodzine,
+  dataToString,
+  validateTime,
+  validateDuration,
+  validateKiedy,
+  sprawdzPola
+} from "../common/functions";
 
 const styles = theme => ({
   input: {
@@ -50,7 +57,6 @@ const styles = theme => ({
 class PlanerAktywnosciForm extends Component {
   state = {
     id: "",
-
     kiedy: "",
     start: "",
     stop: "",
@@ -60,110 +66,18 @@ class PlanerAktywnosciForm extends Component {
     inna: "",
     uwagi: "",
     wyslano: "",
-
-    miejsceLabel: "",
-
-    errorStart: false,
-    errorStop: false,
-    errorKiedy: false,
-    //errorTimeMessage: "",
-
     dniWyslane: [],
+    miejsceLabel: "",
     activities: [],
     edited: false,
     isSubmitDisabled: true
   };
 
   componentWillMount() {
-    axios.get(`/api/table/dniDoRaportu`).then(result => {
-      const dniWyslane = result.data;
-      this.setState({
-        dniWyslane
-      });
-    });
-
+    this.fetchSentDate();
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
   }
-
-  validateKiedy = data => {
-    const nalezy =
-      this.state.dniWyslane.filter(x => x.name === data).length === 1
-        ? false
-        : true;
-    const pelnaData = data.length === 10 ? true : false;
-
-    if (pelnaData) {
-      if (nalezy) {
-        this.setState({ errorKiedy: false });
-        return true;
-      }
-      this.setState({ errorKiedy: true });
-      return false;
-    }
-    this.setState({ errorKiedy: false });
-    return false;
-  };
-
-  validateTime = (time, pole) => {
-    const nazwaPola = `error${pole}`;
-    const hours = Math.trunc(time.split(":")[0]);
-    const minutes = Math.trunc(time.split(":")[1]);
-    if (hours < 0 || hours > 23 || (minutes < 0 || minutes > 59)) {
-      this.setState({ [nazwaPola]: true });
-    }
-    if (hours >= 0 && hours <= 23 && (minutes >= 0 && minutes <= 59)) {
-      this.setState({ [nazwaPola]: false });
-      return true;
-    } else {
-      if (hours && minutes) {
-        // console.log("sa godizny i minuty");
-      }
-      return false;
-    }
-  };
-
-  validateDuration = (start, stop) => {
-    const startHours = Math.trunc(start.split(":")[0]);
-    const startMinutes = Math.trunc(start.split(":")[1]);
-    const stopHours = Math.trunc(stop.split(":")[0]);
-    const stopMinutes = Math.trunc(stop.split(":")[1]);
-
-    const startTotal = startHours * 60 + startMinutes;
-    const stopTotal = stopHours * 60 + stopMinutes;
-    if (
-      !Number.isNaN(startHours) &&
-      !Number.isNaN(startMinutes) &&
-      !Number.isNaN(stopHours) &&
-      !Number.isNaN(stopMinutes)
-    ) {
-      if (startTotal < stopTotal) {
-        return true;
-      }
-      this.setState({ errorStop: true });
-      return false;
-    }
-    return false;
-  };
-
-  sprawdzPola = () => {
-    console.log("sprawdzam pola");
-    const { aktywnosc_id, miejsce_id, inna } = this.state;
-    switch (aktywnosc_id) {
-      case 1:
-        console.log("case aktyw");
-        console.log(!miejsce_id ? false : true);
-        return !miejsce_id ? false : true;
-        break;
-      case 5:
-        console.log("case inna");
-        return inna === "" ? false : true;
-        break;
-      default:
-        console.log("case default");
-        return true;
-    }
-  };
 
   czyWypelniony = () => {
     const { start, stop, miejsce_id, aktywnosc_id, uwagi, inna } = this.state;
@@ -248,9 +162,23 @@ class PlanerAktywnosciForm extends Component {
         this.props.edytuj(kiedy);
       })
       .then(() => {
-        this.canSubmit();
-        this.props.loading(false);
+        this.fetchSentDate();
       });
+  };
+
+  fetchSentDate = () => {
+    axios.get(`/api/table/dniDoRaportu`).then(result => {
+      const dniWyslane = result.data;
+      this.setState(
+        {
+          dniWyslane
+        },
+        () => {
+          this.canSubmit();
+          this.props.loading(false);
+        }
+      );
+    });
   };
 
   onEdit = async () => {
@@ -273,7 +201,6 @@ class PlanerAktywnosciForm extends Component {
         uwagi
       })
     });
-    // this.fetchCosts();
     await this.props.expanded(dataToString(kiedy));
     await this.props.fetchuj();
     await this.clearForm();
@@ -316,21 +243,6 @@ class PlanerAktywnosciForm extends Component {
     await this.props.submit(false);
   };
 
-  costs = () => {
-    const koszty = this.state.costs;
-    const { startDate, endDate } = this.state.rangeselection;
-    const kosztyFiltered = koszty.filter(x => {
-      const data = new Date(x.data_wystawienia);
-      return data >= startDate && data <= endDate;
-    });
-    const costsInt = kosztyFiltered.map(x =>
-      Object.assign(x, {
-        kwota_netto: parseFloat(x.kwota_netto)
-      })
-    );
-    return costsInt;
-  };
-
   handleChange = async event => {
     const { name, value, type, text } = event.target;
     const label = `${name}Text`;
@@ -363,35 +275,40 @@ class PlanerAktywnosciForm extends Component {
       this.state.aktywnosc_id
     ];
 
-    this.validateTime(this.state.start, "Start");
-    this.validateTime(this.state.stop, "Stop");
-    this.validateDuration(this.state.start, this.state.stop);
-    //this.sprawdzPola();
+    validateTime(this.state.start, "Start");
+    validateTime(this.state.stop, "Stop");
+    validateDuration(this.state.start, this.state.stop);
 
     if (
       porownanie.every(x => x !== "") &&
-      (this.validateKiedy(this.props.kiedy) &&
-        this.validateTime(this.state.start, "Start") &&
-        this.validateTime(this.state.stop, "Stop") &&
-        this.validateDuration(this.state.start, this.state.stop) &&
+      (validateKiedy(this.props.kiedy, this.state.dniWyslane) &&
+        validateTime(this.state.start, "Start") &&
+        validateTime(this.state.stop, "Stop") &&
+        validateDuration(this.state.start, this.state.stop) &&
         this.state.aktywnosc_id !== "" &&
-        this.sprawdzPola())
+        sprawdzPola(
+          this.state.aktywnosc_id,
+          this.state.miejsce_id,
+          this.state.inna
+        ))
     ) {
       console.log("warunek 1 otwieram");
       this.setState({ isSubmitDisabled: false });
     } else if (
       porownanie.some(x => x === "") &&
-      (!this.validateKiedy(this.props.kiedy) ||
-        !this.validateTime(this.state.start, "Start") ||
-        !this.validateTime(this.state.stop, "Stop") ||
-        !this.validateDuration(this.state.start, this.state.stop) ||
+      (!validateKiedy(this.props.kiedy, this.state.dniWyslane) ||
+        !validateTime(this.state.start, "Start") ||
+        !validateTime(this.state.stop, "Stop") ||
+        !validateDuration(this.state.start, this.state.stop) ||
         this.state.aktywnosc_id === "" ||
-        !this.sprawdzPola())
+        !sprawdzPola(
+          this.state.aktywnosc_id,
+          this.state.miejsce_id,
+          this.state.inna
+        ))
     ) {
-      console.log("warunek zamykam");
       this.setState({ isSubmitDisabled: true });
     } else {
-      console.log("return");
       this.setState({ isSubmitDisabled: true });
     }
   };
@@ -403,9 +320,9 @@ class PlanerAktywnosciForm extends Component {
       const error = `error${bigVar}`;
       return (
         <InputComponent
-          label={this.state[error] ? "Wpisz poprawną godzinę" : label}
+          label={this.props[error] ? "Wpisz poprawną godzinę" : label}
           mask="99 : 99"
-          error={this.state[error]}
+          error={this.props[error]}
           edytuj={this.handleChange}
           value={this.state[smallVar]}
           name={smallVar}
@@ -421,9 +338,9 @@ class PlanerAktywnosciForm extends Component {
               <InputComponent
                 disabled={modal ? true : false}
                 label={
-                  this.state.errorKiedy ? "Data wysłana do raportu" : "Kiedy"
+                  this.props.errorKiedy ? "Data wysłana do raportu" : "Kiedy"
                 }
-                error={this.state.errorKiedy}
+                error={this.props.errorKiedy}
                 type="date"
                 edytuj={this.handleChange}
                 value={kiedy}
@@ -515,8 +432,13 @@ PlanerAktywnosciForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ submit: submitCheck }) {
-  return { submitCheck };
+function mapStateToProps({
+  submit: submitCheck,
+  errorStopAction: errorStop,
+  errorStartAction: errorStart,
+  errorKiedyAction: errorKiedy
+}) {
+  return { submitCheck, errorStop, errorStart, errorKiedy };
 }
 
 // export default connect(mapStateToProps)(Header);

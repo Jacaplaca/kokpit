@@ -86,24 +86,8 @@ class Planer extends Component {
     });
   };
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
-  handleChangeKwota = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
-  };
-
   handleClose = () => {
     this.setState({ openModal: false });
-  };
-
-  handleChangeSelect = name => value => {
-    this.setState({
-      [name]: value
-    });
   };
 
   handleSelect = ranges => {

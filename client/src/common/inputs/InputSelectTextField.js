@@ -39,11 +39,14 @@ const InputSelectTextField = props => {
     // kwota,
     // //error,
     // classes,
-    // inputRef = () => {},
-    // ref,
+    inputRef = () => {},
+    ref,
+    kwota,
     // isLoading,
     ...other
   } = props;
+  //console.log(ref);
+  // console.log(kwota);
 
   // const clearButton = () => {
   //   if (inputProps.value !== "" && isLoading) {
@@ -101,21 +104,32 @@ const InputSelectTextField = props => {
     }
   };
 
+  const thisCompInputProps = {
+    inputComponent: kwota && NumberFormatCustom,
+    endAdornment: endAdornment()
+  };
+
+  // const inputProps = {
+  //   ...thisCompInputProps,
+  //   inputRef: node => {
+  //     ref(node);
+  //     inputRef(node);
+  //   }
+  //   // classes: {
+  //   //   input: classes.input
+  //   // }
+  // };
+
   return (
     <TextField
       // disabled={disabled ? true : false}
       //error={error ? true : false}
-      fullWidth
       InputProps={{
-        inputComponent: props.kwota && NumberFormatCustom,
-        endAdornment: endAdornment()
-        // inputRef: node => {
-        //   ref(node);
-        //   inputRef(node);
-        // }
-        // classes: {
-        //   input: classes.input
-        // }
+        inputRef: node => {
+          ref && ref(node);
+          inputRef(node);
+        },
+        ...thisCompInputProps
       }}
       {...other}
     />

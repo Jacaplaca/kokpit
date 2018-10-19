@@ -1,5 +1,14 @@
 import axios from "axios";
-import { FETCH_USER, FETCH_FORM, CLICKED, LOADING, SUBMIT } from "./types";
+import {
+  FETCH_USER,
+  FETCH_FORM,
+  CLICKED,
+  LOADING,
+  SUBMIT,
+  ERRORSTOP,
+  ERRORSTART,
+  ERRORKIEDY
+} from "./types";
 
 export const fetchUser = () => async dispatch => {
   const res = await axios.get("/api/current_user");
@@ -7,17 +16,26 @@ export const fetchUser = () => async dispatch => {
 };
 
 export const clicked = where => async dispatch => {
-  // const res = await axios.get('/api/current_user');
   dispatch({ type: CLICKED, payload: where });
 };
 
+export const errorStopAction = error => async dispatch => {
+  dispatch({ type: ERRORSTOP, payload: error });
+};
+
+export const errorStartAction = error => async dispatch => {
+  dispatch({ type: ERRORSTART, payload: error });
+};
+
+export const errorKiedyAction = error => async dispatch => {
+  dispatch({ type: ERRORKIEDY, payload: error });
+};
+
 export const loading = status => async dispatch => {
-  // const res = await axios.get('/api/current_user');
   dispatch({ type: LOADING, payload: status });
 };
 
 export const submit = status => async dispatch => {
-  // const res = await axios.get('/api/current_user');
   dispatch({ type: SUBMIT, payload: status });
 };
 
@@ -27,7 +45,6 @@ export const handleToken = token => async dispatch => {
 };
 
 export const fetchForm = () => async dispatch => {
-  console.log("fetchForm()");
   const res = await axios.get("/api/message");
   dispatch({ type: FETCH_FORM, payload: res.data });
 };

@@ -349,10 +349,10 @@ class PlanerRaportyForm extends Component {
   }
 
   fetchujDate = async data => {
-    this.props.loading(true);
+    //this.props.loading(true);
     const result = await axios.get(`/api/kiedy/akt/${data}`);
     await this.setState({ aktyDaty: result.data });
-    await this.props.loading(false);
+    //await this.props.loading(false);
   };
 
   fetchujAktywnosc = id => {
@@ -690,44 +690,44 @@ class PlanerRaportyForm extends Component {
   };
 
   canSubmit = () => {
-    // const porownanie = [
-    //   this.props.kiedy,
-    //   this.state.start,
-    //   this.state.stop,
-    //   this.state.aktywnosc_id
-    // ];
-    //
-    // this.validateTime(this.state.start, "Start");
-    // this.validateTime(this.state.stop, "Stop");
-    // this.validateDuration(this.state.start, this.state.stop);
-    // //this.sprawdzPola();
-    //
-    // if (
-    //   porownanie.every(x => x !== "") &&
-    //   (this.validateKiedy(this.props.kiedy) &&
-    //     this.validateTime(this.state.start, "Start") &&
-    //     this.validateTime(this.state.stop, "Stop") &&
-    //     this.validateDuration(this.state.start, this.state.stop) &&
-    //     this.state.aktywnosc_id !== "" &&
-    //     this.sprawdzPola())
-    // ) {
-    //   console.log("warunek 1 otwieram");
-    //   this.setState({ isSubmitDisabled: false });
-    // } else if (
-    //   porownanie.some(x => x === "") &&
-    //   (!this.validateKiedy(this.props.kiedy) ||
-    //     !this.validateTime(this.state.start, "Start") ||
-    //     !this.validateTime(this.state.stop, "Stop") ||
-    //     !this.validateDuration(this.state.start, this.state.stop) ||
-    //     this.state.aktywnosc_id === "" ||
-    //     !this.sprawdzPola())
-    // ) {
-    //   console.log("warunek zamykam");
-    //   this.setState({ isSubmitDisabled: true });
-    // } else {
-    //   console.log("return");
-    //   this.setState({ isSubmitDisabled: true });
-    // }
+    const porownanie = [
+      this.props.kiedy,
+      this.state.start,
+      this.state.stop,
+      this.state.aktywnosc_id
+    ];
+
+    this.validateTime(this.state.start, "Start");
+    this.validateTime(this.state.stop, "Stop");
+    this.validateDuration(this.state.start, this.state.stop);
+    //this.sprawdzPola();
+
+    if (
+      porownanie.every(x => x !== "") &&
+      (this.validateKiedy(this.props.kiedy) &&
+        this.validateTime(this.state.start, "Start") &&
+        this.validateTime(this.state.stop, "Stop") &&
+        this.validateDuration(this.state.start, this.state.stop) &&
+        this.state.aktywnosc_id !== "" &&
+        this.sprawdzPola())
+    ) {
+      console.log("warunek 1 otwieram");
+      this.setState({ isSubmitDisabled: false });
+    } else if (
+      porownanie.some(x => x === "") &&
+      (!this.validateKiedy(this.props.kiedy) ||
+        !this.validateTime(this.state.start, "Start") ||
+        !this.validateTime(this.state.stop, "Stop") ||
+        !this.validateDuration(this.state.start, this.state.stop) ||
+        this.state.aktywnosc_id === "" ||
+        !this.sprawdzPola())
+    ) {
+      console.log("warunek zamykam");
+      this.setState({ isSubmitDisabled: true });
+    } else {
+      console.log("return");
+      this.setState({ isSubmitDisabled: true });
+    }
   };
 
   render() {

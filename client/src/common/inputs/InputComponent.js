@@ -3,14 +3,6 @@ import PropTypes from "prop-types";
 import FormControl from "@material-ui/core/FormControl";
 import InputMask from "react-input-mask";
 import { withStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-
-import IconCancel from "@material-ui/icons/Clear";
-import CircularProgress from "@material-ui/core/CircularProgress";
-
 import InputSelectTextField from "../inputs/InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
@@ -52,47 +44,50 @@ const InputComponent = props => {
     classes,
     inputRef = () => {},
     ref,
+    fullWidth,
+    kwota,
     isLoading,
     ...other
   } = props;
+  console.log(ref);
 
-  const clearButton = () => {
-    if (value !== "" && isLoading) {
-      return (
-        <CircularProgress size={23} color="red" style={{ marginBottom: 10 }} />
-      );
-    } else if (value !== "" && !isLoading) {
-      return (
-        <IconButton
-          onClick={() => edytuj({ target: { name: name, value: "" } })}
-        >
-          <IconCancel />
-        </IconButton>
-      );
-    } else {
-      <div />;
-    }
-  };
-
-  const endAdornment = () => {
-    if (value.length > 0 && !passwordVisibility) {
-      return <InputAdornment position="end">{clearButton()}</InputAdornment>;
-    } else if (value.length > 0 && passwordVisibility) {
-      return (
-        <InputAdornment position="end">
-          <IconButton
-            aria-label="Toggle password visibility"
-            onClick={passwordVisibility}
-          >
-            {password ? <VisibilityOff /> : <Visibility />}
-          </IconButton>
-          {clearButton()}
-        </InputAdornment>
-      );
-    } else {
-      return <div />;
-    }
-  };
+  // const clearButton = () => {
+  //   if (value !== "" && isLoading) {
+  //     return (
+  //       <CircularProgress size={23} color="red" style={{ marginBottom: 10 }} />
+  //     );
+  //   } else if (value !== "" && !isLoading) {
+  //     return (
+  //       <IconButton
+  //         onClick={() => edytuj({ target: { name: name, value: "" } })}
+  //       >
+  //         <IconCancel />
+  //       </IconButton>
+  //     );
+  //   } else {
+  //     <div />;
+  //   }
+  // };
+  //
+  // const endAdornment = () => {
+  //   if (value.length > 0 && !passwordVisibility) {
+  //     return <InputAdornment position="end">{clearButton()}</InputAdornment>;
+  //   } else if (value.length > 0 && passwordVisibility) {
+  //     return (
+  //       <InputAdornment position="end">
+  //         <IconButton
+  //           aria-label="Toggle password visibility"
+  //           onClick={passwordVisibility}
+  //         >
+  //           {password ? <VisibilityOff /> : <Visibility />}
+  //         </IconButton>
+  //         {clearButton()}
+  //       </InputAdornment>
+  //     );
+  //   } else {
+  //     return <div />;
+  //   }
+  // };
 
   return (
     <FormControl
@@ -103,15 +98,16 @@ const InputComponent = props => {
         mask={mask}
         value={value}
         onChange={edytuj}
-        InputProps={{
-          inputRef: node => {
-            ref(node);
-            inputRef(node);
-          }
-          // classes: {
-          //   input: classes.input
-          // }
-        }}
+        // InputProps={{
+        //   inputRef: node => {
+        //     ref(node);
+        //     inputRef(node);
+        //   }
+        //   // classes: {
+        //   //   input: classes.input
+        //   // }
+        // }}
+        {...other}
         // className={classes.textField}
       >
         {() => (
@@ -127,12 +123,19 @@ const InputComponent = props => {
             InputLabelProps={{
               shrink: type === "date" || value !== "" ? true : false
             }}
-            // InputProps={{
-            //   inputComponent: kwota && NumberFormatCustom,
-            //   // endAdornment: endAdornment()
-            //   endAdornment: <InputAdornment position="end">asdf</InputAdornment>
-            // }}
-            {...other}
+            kwota={kwota}
+            fullWidth={fullWidth}
+            // InputProps={
+            //   {
+            //     // inputComponent: kwota && NumberFormatCustom,
+            //     // // endAdornment: endAdornment()
+            //     // endAdornment: <InputAdornment position="end">asdf</InputAdornment>
+            //     // inputRef: node => {
+            //     //   //ref(node);
+            //     //   inputRef(node);
+            //     // }
+            //   }
+            // }
           />
           // <TextField
           //   fullWidth

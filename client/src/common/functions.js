@@ -9,6 +9,95 @@ import {
   endOfWeek
 } from "date-fns";
 
+import store from "../store";
+import * as actions from "../actions";
+
+export const sprawdzPola = (aktywnosc_id, miejsce_id, inna) => {
+  console.log("sprawdzam pola");
+  switch (aktywnosc_id) {
+    case 1:
+      console.log("case aktyw");
+      console.log(!miejsce_id ? false : true);
+      return !miejsce_id ? false : true;
+      break;
+    case 5:
+      console.log("case inna");
+      return inna === "" ? false : true;
+      break;
+    default:
+      console.log("case default");
+      return true;
+  }
+};
+
+export const validateKiedy = (data, sentDays) => {
+  console.log("validate kiedy");
+  //store.dispatch(actions.errorKiedyAction(true));
+  console.log(data);
+  console.log(sentDays);
+  const nalezy =
+    sentDays.filter(x => x.name === data).length === 1 ? false : true;
+  const pelnaData = data.length === 10 ? true : false;
+
+  if (pelnaData) {
+    if (nalezy) {
+      //this.setState({ errorKiedy: false });
+      store.dispatch(actions.errorKiedyAction(false));
+      return true;
+    }
+    store.dispatch(actions.errorKiedyAction(true));
+    // this.setState({ errorKiedy: true });
+    return false;
+  }
+  // this.setState({ errorKiedy: false });
+  store.dispatch(actions.errorKiedyAction(false));
+  return false;
+};
+
+export const validateTime = (time, pole) => {
+  const nazwaPola = `error${pole}Action`;
+  const hours = Math.trunc(time.split(":")[0]);
+  const minutes = Math.trunc(time.split(":")[1]);
+  if (hours < 0 || hours > 23 || (minutes < 0 || minutes > 59)) {
+    // this.setState({ [nazwaPola]: true });
+    store.dispatch(actions[nazwaPola](true));
+  }
+  if (hours >= 0 && hours <= 23 && (minutes >= 0 && minutes <= 59)) {
+    // this.setState({ [nazwaPola]: false });
+    store.dispatch(actions[nazwaPola](false));
+    return true;
+  } else {
+    if (hours && minutes) {
+      // console.log("sa godizny i minuty");
+    }
+    return false;
+  }
+};
+
+export const validateDuration = (start, stop) => {
+  const startHours = Math.trunc(start.split(":")[0]);
+  const startMinutes = Math.trunc(start.split(":")[1]);
+  const stopHours = Math.trunc(stop.split(":")[0]);
+  const stopMinutes = Math.trunc(stop.split(":")[1]);
+
+  const startTotal = startHours * 60 + startMinutes;
+  const stopTotal = stopHours * 60 + stopMinutes;
+  if (
+    !Number.isNaN(startHours) &&
+    !Number.isNaN(startMinutes) &&
+    !Number.isNaN(stopHours) &&
+    !Number.isNaN(stopMinutes)
+  ) {
+    if (startTotal < stopTotal) {
+      return true;
+    }
+    //this.setState({ errorStop: true });
+    store.dispatch(actions.errorStopAction(true));
+    return false;
+  }
+  return false;
+};
+
 export const dataToString = element => {
   const data = new Date(element);
   const dzien =
