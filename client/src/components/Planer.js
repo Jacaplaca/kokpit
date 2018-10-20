@@ -73,6 +73,7 @@ class Planer extends Component {
       )}`
     );
     await this.addFetchToState(fetch);
+    await this.props.fetchSentDays();
     await this.props.loading(false);
   };
 

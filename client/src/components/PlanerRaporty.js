@@ -30,29 +30,14 @@ class PlanerRaporty extends Component {
   state = {
     aktywnosci: [],
     id: "",
-    nr_dokumentu: "",
-    data_wystawienia: "",
-    nazwa_pozycji: "",
-    kwota_netto: "",
-
-    start: "",
-    categoryId: "",
-    groupId: "",
-    groups: [],
-    categories: [],
-    costs: [],
     editedId: "",
-    city: "",
     rangeselection: {
       startDate: defineds.startOfMonth,
       endDate: defineds.endOfMonth,
       key: "rangeselection"
     },
-    edited: false,
-    submitIsDisable: true,
     openModal: false,
     expanded: "",
-
     kiedy: ""
   };
 
@@ -72,6 +57,7 @@ class PlanerRaporty extends Component {
       )}`
     );
     await this.addFetchToState(fetch);
+    await this.props.fetchSentDays();
     await this.props.loading(false);
   };
 
@@ -85,24 +71,8 @@ class PlanerRaporty extends Component {
     });
   };
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
-  handleChangeKwota = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
-  };
-
   handleClose = () => {
     this.setState({ openModal: false });
-  };
-
-  handleChangeSelect = name => value => {
-    this.setState({
-      [name]: value
-    });
   };
 
   handleSelect = ranges => {
@@ -113,8 +83,6 @@ class PlanerRaporty extends Component {
   };
 
   render() {
-    //const { classes } = this.props;
-
     return (
       <div>
         <PlanerRaportyForm
@@ -136,12 +104,10 @@ class PlanerRaporty extends Component {
               this.setState({ openModal: true });
               this.setState({ editedId: id });
             }}
-            //delete={id => console.log(id)}
             fetchuj={() => this.fetchRaporty()}
             expanded={this.state.expanded}
             wyslanoDoPlanu={expanded => this.setState({ expanded })}
             component="planerRaporty"
-            // edit={id => console.log(id)}
           />
         </Paper>
         <ModalWindow
@@ -171,8 +137,6 @@ PlanerRaporty.propTypes = {
 function mapStateToProps({ auth }) {
   return { auth };
 }
-
-// export default connect(mapStateToProps)(Header);
 
 export default compose(
   withStyles(styles, { withTheme: true }),

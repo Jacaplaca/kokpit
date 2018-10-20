@@ -7,6 +7,7 @@ import submitReducer from "./submitReducer";
 import errorStopReducer from "./errorStopReducer";
 import errorStartReducer from "./errorStartReducer";
 import errorKiedyReducer from "./errorKiedyReducer";
+import sentDaysReducer from "./sendDaysReducer";
 
 export default combineReducers({
   auth: authReducer,
@@ -16,5 +17,6 @@ export default combineReducers({
   submit: submitReducer,
   errorStopAction: errorStopReducer,
   errorStartAction: errorStartReducer,
-  errorKiedyAction: errorKiedyReducer
+  errorKiedyAction: errorKiedyReducer,
+  sentDays: sentDaysReducer
 });

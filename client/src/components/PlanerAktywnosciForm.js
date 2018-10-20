@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-
 import { connect } from "react-redux";
 import * as actions from "../actions";
 import Grid from "@material-ui/core/Grid";
@@ -14,7 +13,6 @@ import Cancel from "@material-ui/icons/Clear";
 import InputWyborBaza from "../common/inputs/InputWyborBaza";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputComponent from "../common/inputs/InputComponent";
-
 import {
   wezGodzine,
   dataToString,
@@ -66,7 +64,7 @@ class PlanerAktywnosciForm extends Component {
     inna: "",
     uwagi: "",
     wyslano: "",
-    dniWyslane: [],
+    // dniWyslane: [],
     miejsceLabel: "",
     activities: [],
     edited: false,
@@ -74,9 +72,13 @@ class PlanerAktywnosciForm extends Component {
   };
 
   componentWillMount() {
-    this.fetchSentDate();
+    // this.fetchSentDate();
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
+  }
+
+  componentDidUpdate(prevProps) {
+    prevProps.sentDays !== this.props.sentDays && this.canSubmit();
   }
 
   czyWypelniony = () => {
@@ -90,7 +92,6 @@ class PlanerAktywnosciForm extends Component {
   };
 
   clearForm = () => {
-    console.log("clearform");
     this.setState(
       {
         id: "",
@@ -107,27 +108,6 @@ class PlanerAktywnosciForm extends Component {
     );
     this.props.edytuj("");
     this.props.modal && this.props.closeModal();
-  };
-
-  dynamicSort = property => {
-    let sortOrder = 1;
-    if (property[0] === "-") {
-      sortOrder = -1;
-      property = property.substr(1);
-    }
-    return function(a, b) {
-      const result =
-        a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-      return result * sortOrder;
-    };
-  };
-
-  renderSelect = select => {
-    const doWyboru = select.map((elem, i) => ({
-      label: elem.name,
-      value: elem.id
-    }));
-    return doWyboru.sort(this.dynamicSort("label"));
   };
 
   handleEdit = id => {
@@ -162,23 +142,9 @@ class PlanerAktywnosciForm extends Component {
         this.props.edytuj(kiedy);
       })
       .then(() => {
-        this.fetchSentDate();
+        this.canSubmit();
+        this.props.loading(false);
       });
-  };
-
-  fetchSentDate = () => {
-    axios.get(`/api/table/dniDoRaportu`).then(result => {
-      const dniWyslane = result.data;
-      this.setState(
-        {
-          dniWyslane
-        },
-        () => {
-          this.canSubmit();
-          this.props.loading(false);
-        }
-      );
-    });
   };
 
   onEdit = async () => {
@@ -268,46 +234,23 @@ class PlanerAktywnosciForm extends Component {
   };
 
   canSubmit = () => {
-    const porownanie = [
-      this.props.kiedy,
-      this.state.start,
-      this.state.stop,
-      this.state.aktywnosc_id
-    ];
-
-    validateTime(this.state.start, "Start");
-    validateTime(this.state.stop, "Stop");
-    validateDuration(this.state.start, this.state.stop);
+    const { start, stop, aktywnosc_id, miejsce_id, inna } = this.state;
+    const { kiedy, sentDays } = this.props;
+    const goodTime = validateKiedy(kiedy, sentDays, false);
+    const goodStart = validateTime(start, "Start");
+    const goodStop = validateTime(stop, "Stop");
+    const goodDuration = validateDuration(start, stop);
+    const goodFields = sprawdzPola(aktywnosc_id, miejsce_id, inna);
 
     if (
-      porownanie.every(x => x !== "") &&
-      (validateKiedy(this.props.kiedy, this.state.dniWyslane) &&
-        validateTime(this.state.start, "Start") &&
-        validateTime(this.state.stop, "Stop") &&
-        validateDuration(this.state.start, this.state.stop) &&
-        this.state.aktywnosc_id !== "" &&
-        sprawdzPola(
-          this.state.aktywnosc_id,
-          this.state.miejsce_id,
-          this.state.inna
-        ))
+      goodTime &&
+      goodStart &&
+      goodStop &&
+      goodDuration &&
+      aktywnosc_id !== "" &&
+      goodFields
     ) {
-      console.log("warunek 1 otwieram");
       this.setState({ isSubmitDisabled: false });
-    } else if (
-      porownanie.some(x => x === "") &&
-      (!validateKiedy(this.props.kiedy, this.state.dniWyslane) ||
-        !validateTime(this.state.start, "Start") ||
-        !validateTime(this.state.stop, "Stop") ||
-        !validateDuration(this.state.start, this.state.stop) ||
-        this.state.aktywnosc_id === "" ||
-        !sprawdzPola(
-          this.state.aktywnosc_id,
-          this.state.miejsce_id,
-          this.state.inna
-        ))
-    ) {
-      this.setState({ isSubmitDisabled: true });
     } else {
       this.setState({ isSubmitDisabled: true });
     }
@@ -346,7 +289,6 @@ class PlanerAktywnosciForm extends Component {
                 value={kiedy}
                 name="kiedy"
               />
-
               {timesInputs("Początek", "Start", "start")}
               {timesInputs("Koniec", "Stop", "stop")}
             </Grid>
@@ -436,12 +378,11 @@ function mapStateToProps({
   submit: submitCheck,
   errorStopAction: errorStop,
   errorStartAction: errorStart,
-  errorKiedyAction: errorKiedy
+  errorKiedyAction: errorKiedy,
+  sentDays
 }) {
-  return { submitCheck, errorStop, errorStart, errorKiedy };
+  return { submitCheck, errorStop, errorStart, errorKiedy, sentDays };
 }
-
-// export default connect(mapStateToProps)(Header);
 
 export default withStyles(styles, { withTheme: true })(
   connect(
@@ -449,5 +390,3 @@ export default withStyles(styles, { withTheme: true })(
     actions
   )(PlanerAktywnosciForm)
 );
-
-// export default withStyles(styles)(Costs);

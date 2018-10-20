@@ -49,67 +49,13 @@ const InputComponent = props => {
     isLoading,
     ...other
   } = props;
-  console.log(ref);
-
-  // const clearButton = () => {
-  //   if (value !== "" && isLoading) {
-  //     return (
-  //       <CircularProgress size={23} color="red" style={{ marginBottom: 10 }} />
-  //     );
-  //   } else if (value !== "" && !isLoading) {
-  //     return (
-  //       <IconButton
-  //         onClick={() => edytuj({ target: { name: name, value: "" } })}
-  //       >
-  //         <IconCancel />
-  //       </IconButton>
-  //     );
-  //   } else {
-  //     <div />;
-  //   }
-  // };
-  //
-  // const endAdornment = () => {
-  //   if (value.length > 0 && !passwordVisibility) {
-  //     return <InputAdornment position="end">{clearButton()}</InputAdornment>;
-  //   } else if (value.length > 0 && passwordVisibility) {
-  //     return (
-  //       <InputAdornment position="end">
-  //         <IconButton
-  //           aria-label="Toggle password visibility"
-  //           onClick={passwordVisibility}
-  //         >
-  //           {password ? <VisibilityOff /> : <Visibility />}
-  //         </IconButton>
-  //         {clearButton()}
-  //       </InputAdornment>
-  //     );
-  //   } else {
-  //     return <div />;
-  //   }
-  // };
 
   return (
     <FormControl
       className={classes.formControl}
       aria-describedby="name-helper-text"
     >
-      <InputMask
-        mask={mask}
-        value={value}
-        onChange={edytuj}
-        // InputProps={{
-        //   inputRef: node => {
-        //     ref(node);
-        //     inputRef(node);
-        //   }
-        //   // classes: {
-        //   //   input: classes.input
-        //   // }
-        // }}
-        {...other}
-        // className={classes.textField}
-      >
+      <InputMask mask={mask} value={value} onChange={edytuj} {...other}>
         {() => (
           <InputSelectTextField
             helperText={helperText}
@@ -125,46 +71,7 @@ const InputComponent = props => {
             }}
             kwota={kwota}
             fullWidth={fullWidth}
-            // InputProps={
-            //   {
-            //     // inputComponent: kwota && NumberFormatCustom,
-            //     // // endAdornment: endAdornment()
-            //     // endAdornment: <InputAdornment position="end">asdf</InputAdornment>
-            //     // inputRef: node => {
-            //     //   //ref(node);
-            //     //   inputRef(node);
-            //     // }
-            //   }
-            // }
           />
-          // <TextField
-          //   fullWidth
-          //   helperText={helperText}
-          //   error={error}
-          //   label={label}
-          //   name={name}
-          //   id="name-helper"
-          //   value={value}
-          //   //onChange={event => edytuj(event.target.value)}
-          //   onChange={edytuj}
-          //   //type={this.state.showPassword ? type : "password"}
-          //   type={password ? "password" : type}
-          //   InputLabelProps={{
-          //     shrink: type === "date" || value !== "" ? true : false
-          //   }}
-          //   InputProps={{
-          //     inputComponent: kwota && NumberFormatCustom,
-          //     // inputComponent: kwota && NumberFormatCustom,
-          //     endAdornment: endAdornment()
-          //     // inputRef: node => {
-          //     //   //ref(node);
-          //     //   inputRef(node);
-          //     // },
-          //     // classes: {
-          //     //   input: classes.input
-          //     // }
-          //   }}
-          // />
         )}
       </InputMask>
     </FormControl>

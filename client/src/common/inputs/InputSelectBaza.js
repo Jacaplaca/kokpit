@@ -25,22 +25,25 @@ function getSuggestions(fetchowane, value, names) {
   //const escapedValue = escapeRegexCharacters(value.trim());
   //const regex = new RegExp("^" + escapedValue, "i");
   const regex = new RegExp(value.toLowerCase());
-  //
-  // const filtered = fetchowane.filter(suggestion =>
-  //   regex.test(suggestion.name.toLowerCase())
-  // );
-  // console.log(filtered);
-  // return filtered;
+
+  const filtered = fetchowane.filter(suggestion =>
+    regex.test(suggestion.name.toLowerCase())
+  );
+  console.log("filtered");
+  console.log(filtered);
+  return filtered;
 
   //const names = ;
 
-  return fetchowane.filter(suggestion => {
-    let filtered = [];
-    for (var key of names) {
-      filtered.push(regex.test(suggestion[key].toLowerCase()));
-    }
-    return filtered;
-  });
+  // return fetchowane.filter(suggestion => {
+  //   let filtered = [];
+  //   for (var key of names) {
+  //     filtered.push(regex.test(suggestion[key].toLowerCase()));
+  //   }
+  // console.log('filtered');
+  //   console.log(filtered);
+  //   return filtered;
+  // });
 }
 
 function getSuggestionValue(suggestion) {
@@ -102,16 +105,6 @@ class InputSelectBaza extends React.Component {
     //focus: false
   };
 
-  componentWillMount() {
-    // axios.get(`/api/table/${this.props.baza}`).then(result => {
-    //   const fetchowane = this.props.reverse
-    //     ? result.data.sort(dynamicSort("name")).reverse()
-    //     : result.data.sort(dynamicSort("name"));
-    //   this.setState({ fetchowane, isLoading: false });
-    //   //this.props.daty(fetchowane);
-    // });
-  }
-
   onChange = (event, { newValue, method }) => {
     this.setState({
       value: newValue
@@ -139,7 +132,6 @@ class InputSelectBaza extends React.Component {
       value: "",
       clear: false
     });
-    //this.props.czysc();
     let input = {
       target: {
         value: "",
@@ -150,90 +142,61 @@ class InputSelectBaza extends React.Component {
     };
     this.props.wybrano(input);
     this.input.focus();
-    //this.onSuggestionsFetchRequested("ko");
-    // this.setState({
-    //   suggestions: this.state.fetchowane
-    // });
-    // this.setState({
-    //   value: ""
-    // });
     this.props.startAfter > 0
       ? this.setState({ suggestions: [] })
       : this.loadSuggestions("", `/api/table/${this.props.baza}`);
   };
 
-  loadSuggestions(value, address) {
-    // console.log("loadSuggestions");
-    //
-    // this.setState({
-    //   isLoading: true
-    // });
-    //
-    // axios.get(`/api/city/${value}`).then(result => {
-    //   const suggestions = result.data;
-    //   console.log(suggestions);
-    //
-    //   if (value === this.state.value) {
-    //     this.setState({
-    //       isLoading: false,
-    //       suggestions
-    //     });
-    //   } else {
-    //     this.setState({
-    //       isLoading: false,
-    //       suggestions
-    //     });
-    //   }
-    // });
-
+  loadSuggestions = async (value, address) => {
     this.setState({
       isLoading: true
     });
-    //axios.get(address).then(result => {
-    axios.get(address).then(result => {
-      console.log(value);
-      const fetchowane = this.props.reverse
+    let fetchowane;
+    // console.log(this.props.object);
+    if (this.props.object) {
+      console.log("nie fetchuj");
+      fetchowane = this.props.reverse
+        ? this.props.object.sort(dynamicSort("name")).reverse()
+        : this.props.object.sort(dynamicSort("name"));
+    } else {
+      console.log("fetchuj i chuj");
+      const result = await axios.get(address);
+      fetchowane = this.props.reverse
         ? result.data.sort(dynamicSort("name")).reverse()
         : result.data.sort(dynamicSort("name"));
-      this.setState({ fetchowane, isLoading: false }, () => {
-        this.setState({
-          //suggestions: getSuggestions(this.state.fetchowane, value)
-          suggestions: getSuggestions(
-            this.state.fetchowane,
-            value,
-            this.props.names
-          )
-        });
+    }
+    await this.setState({ fetchowane, isLoading: false }, () => {
+      this.setState({
+        suggestions: getSuggestions(
+          this.state.fetchowane,
+          value,
+          this.props.names
+        )
       });
-      //this.props.daty(fetchowane);
     });
-  }
+
+    // const daty = [
+    //   { id: 1, name: "2018-10-01" },
+    //   { id: 2, name: "2018-10-15" },
+    //   { id: 3, name: "2018-10-18" },
+    //   { id: 4, name: "2018-10-22" },
+    //   { id: 5, name: "2018-10-25" },
+    //   { id: 6, name: "2018-10-26" },
+    //   { id: 7, name: "2018-10-27" }
+    // ];
+
+    // const filtrowane = daty.filter()
+    // this.setState({
+    //   suggestions: getSuggestions(daty, value, this.props.names)
+    // });
+  };
 
   onSuggestionsFetchRequested = ({ value }) => {
-    // this.setState({
-    //   //suggestions: getSuggestions(this.state.fetchowane, value)
-    //   suggestions: getSuggestions(this.state.fetchowane, value)
-    // });
-
-    console.log("onSuggestionsFetchRequested");
-    console.log(value);
-
     if (value.length === 0 && this.props.startAfter === 0) {
       this.loadSuggestions(value, `/api/table/${this.props.baza}`);
     } else if (value.length > this.props.startAfter) {
       this.loadSuggestions(value, `/api/byname/${this.props.baza}/${value}`);
     }
-
-    // if (value.length <= this.props.startAfter) {
-    // } else if (value.length > this.props.startAfter) {
-    // }
-
-    // if (value.length >= this.props.startAfter) {
-    //   this.loadSuggestions(value, `/api/table/${this.props.baza}`);
-    //   //this.props.wybranoLabel("");
-    //   //this.props.cancelLabel();
-    // } else {
-    // }
   };
 
   onSuggestionsClearRequested = () => {

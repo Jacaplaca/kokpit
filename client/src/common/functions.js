@@ -30,26 +30,22 @@ export const sprawdzPola = (aktywnosc_id, miejsce_id, inna) => {
   }
 };
 
-export const validateKiedy = (data, sentDays) => {
-  console.log("validate kiedy");
-  //store.dispatch(actions.errorKiedyAction(true));
-  console.log(data);
+export const validateKiedy = (data, sentDays, belongs) => {
   console.log(sentDays);
-  const nalezy =
-    sentDays.filter(x => x.name === data).length === 1 ? false : true;
+  const nalezy = belongs
+    ? sentDays.some(x => x.name === data)
+    : !sentDays.some(x => x.name === data);
+
   const pelnaData = data.length === 10 ? true : false;
 
   if (pelnaData) {
     if (nalezy) {
-      //this.setState({ errorKiedy: false });
       store.dispatch(actions.errorKiedyAction(false));
       return true;
     }
     store.dispatch(actions.errorKiedyAction(true));
-    // this.setState({ errorKiedy: true });
     return false;
   }
-  // this.setState({ errorKiedy: false });
   store.dispatch(actions.errorKiedyAction(false));
   return false;
 };
@@ -59,16 +55,13 @@ export const validateTime = (time, pole) => {
   const hours = Math.trunc(time.split(":")[0]);
   const minutes = Math.trunc(time.split(":")[1]);
   if (hours < 0 || hours > 23 || (minutes < 0 || minutes > 59)) {
-    // this.setState({ [nazwaPola]: true });
     store.dispatch(actions[nazwaPola](true));
   }
   if (hours >= 0 && hours <= 23 && (minutes >= 0 && minutes <= 59)) {
-    // this.setState({ [nazwaPola]: false });
     store.dispatch(actions[nazwaPola](false));
     return true;
   } else {
     if (hours && minutes) {
-      // console.log("sa godizny i minuty");
     }
     return false;
   }

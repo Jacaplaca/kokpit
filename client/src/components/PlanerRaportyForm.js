@@ -20,19 +20,18 @@ import DoneIcon from "@material-ui/icons/Done";
 
 import { clientSuggestion } from "../common/inputs/Suggestions";
 
-import CitySearch from "./CitiesSearch";
 import InputWyborBaza from "../common/inputs/InputWyborBaza";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
-import InputTime from "../common/inputs/InputTime";
 import InputComponent from "../common/inputs/InputComponent";
-
-import KlienciSearch from "./KlienciSearch";
 
 import {
   wezGodzine,
-  dynamicSort,
   dataToString,
-  shortPlace
+  shortPlace,
+  validateTime,
+  validateDuration,
+  validateKiedy,
+  sprawdzPola
 } from "../common/functions";
 
 const styles = theme => ({
@@ -130,7 +129,6 @@ class PlanerRaportyForm extends Component {
     //datyUnikalne: [],
     dataWybrana: "",
     aktyDaty: [],
-    datyDoRaportu: [],
 
     kiedy: "",
 
@@ -154,7 +152,6 @@ class PlanerRaportyForm extends Component {
     zamowienie: false,
     zboza: false,
 
-    miejsceLabel: "",
     klientLabel: "",
 
     errorStart: false,
@@ -163,232 +160,56 @@ class PlanerRaportyForm extends Component {
 
     activities: [],
     edited: false,
-    submitIsDisable: true,
-    //editedId: null,
-
-    miejsce_id_temp: "",
-    miejsceLabel_temp: ""
+    isSubmitDisabled: true
   };
 
   componentWillMount() {
+    // this.fetchSentDate();
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
   }
 
-  validateTime = (time, pole) => {
-    const nazwaPola = `error${pole}`;
-    const hours = Math.trunc(time.split(":")[0]);
-    const minutes = Math.trunc(time.split(":")[1]);
-    // console.log(`${hours} : ${minutes}`);
-    // console.log(hours.length);
-    if (hours < 0 || hours > 23 || (minutes < 0 || minutes > 59)) {
-      // console.log("zly czas");
-      this.setState({ [nazwaPola]: true });
-    }
-    if (hours >= 0 && hours <= 23 && (minutes >= 0 && minutes <= 59)) {
-      this.setState({ [nazwaPola]: false });
-      return true;
-    } else {
-      if (hours && minutes) {
-        // this.setState({ [nazwaPola]: true });
-        // console.log("sa godizny i minuty");
-      }
-      return false;
-    }
-  };
-
-  validateDuration = (start, stop) => {
-    const startHours = Math.trunc(start.split(":")[0]);
-    const startMinutes = Math.trunc(start.split(":")[1]);
-    const stopHours = Math.trunc(stop.split(":")[0]);
-    const stopMinutes = Math.trunc(stop.split(":")[1]);
-
-    const startTotal = startHours * 60 + startMinutes;
-    const stopTotal = stopHours * 60 + stopMinutes;
-    if (
-      !Number.isNaN(startHours) &&
-      !Number.isNaN(startMinutes) &&
-      !Number.isNaN(stopHours) &&
-      !Number.isNaN(stopMinutes)
-    ) {
-      if (startTotal < stopTotal) {
-        return true;
-      }
-      this.setState({ errorStop: true });
-      return false;
-    }
-    return false;
-  };
-
-  validateKiedy = data => {
-    //return this.props.modal && true;
-    if (this.props.modal) {
-      return true;
-    }
-    const nalezy =
-      this.state.datyDoRaportu.filter(x => x.name === data).length === 1
-        ? true
-        : false;
-    const pelnaData = data.length === 10 ? true : false;
-    console.log(data);
-
-    if (pelnaData) {
-      if (nalezy) {
-        this.setState({ errorKiedy: false });
-        return true;
-      }
-      this.setState({ errorKiedy: true });
-      return false;
-    }
-    this.setState({ errorKiedy: false });
-    return false;
-  };
-
-  sprawdzPola = () => {
-    const { aktywnosc_id, miejsce_id, inna } = this.state;
-    switch (aktywnosc_id) {
-      case 1:
-        return miejsce_id === "" ? false : true;
-        break;
-      case 5:
-        return inna === "" ? false : true;
-        break;
-      default:
-        return true;
-    }
-  };
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const {
-      //kiedy: kiedy_prevState,
-      start: start_prevState,
-      stop: stop_prevState,
-      aktywnosc_id: aktywnosc_id_prevState,
-      miejsce_id: miejsce_id_prevState,
-      inna: inna_prevState
-      //uwagi: uwagi_prevState,
-      //dataWybrana: dataWybrana_prevState
-    } = prevState;
-    const { kiedy: kiedy_prevState } = prevProps;
-    const {
-      //kiedy,
-      start,
-      stop,
-      aktywnosc_id,
-      miejsce_id,
-      inna
-      //dataWybrana
-    } = this.state;
-    const { kiedy } = this.props;
-
-    // if (dataWybrana_prevState !== dataWybrana) {
-    //   this.fetchujDate(dataWybrana);
-    // }
-
-    if (start !== start_prevState || stop !== stop_prevState) {
-      this.validateTime(start, "Start");
-      this.validateTime(stop, "Stop");
-      this.validateDuration(start, stop);
-    }
-
-    if (kiedy !== kiedy_prevState) {
-      this.validateKiedy(kiedy);
-    }
-
-    if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 1) {
-      this.setState({
-        miejsceLabel: "",
-        miejsce_id: "",
-        planer_klienci_id: ""
-      });
-    }
-
-    if (aktywnosc_id !== aktywnosc_id_prevState && aktywnosc_id !== 5) {
-      this.setState({ inna: "" });
-    }
-
-    // if (aktywnosc_id !== aktywnosc_id_prevState) {
-    //   this.setState({ miejsce_id: "", inna: "" });
-    // }
-
-    if (
-      (kiedy !== kiedy_prevState ||
-        start !== start_prevState ||
-        stop !== stop_prevState ||
-        aktywnosc_id !== aktywnosc_id_prevState ||
-        miejsce_id !== miejsce_id_prevState ||
-        inna !== inna_prevState) &&
-      // kiedy.length >= 10
-      (this.validateKiedy(kiedy) &&
-        this.validateTime(start, "Start") &&
-        this.validateTime(stop, "Stop") &&
-        this.validateDuration(start, stop) &&
-        aktywnosc_id !== "" &&
-        this.sprawdzPola())
-    ) {
-      this.setState({ submitIsDisable: false });
-    } else if (
-      (kiedy !== kiedy_prevState ||
-        start !== start_prevState ||
-        stop !== stop_prevState ||
-        aktywnosc_id !== aktywnosc_id_prevState ||
-        inna !== inna_prevState ||
-        miejsce_id !== miejsce_id_prevState) &&
-      // kiedy === ""
-      (!this.validateKiedy(kiedy) ||
-        !this.validateTime(start, "Start") ||
-        !this.validateTime(stop, "Stop") ||
-        !this.validateDuration(start, stop) ||
-        aktywnosc_id === "" ||
-        !this.sprawdzPola())
-    ) {
-      this.setState({ submitIsDisable: true });
-    } else {
-      return;
-    }
-  }
-
   fetchujDate = async data => {
     //this.props.loading(true);
-    const result = await axios.get(`/api/kiedy/akt/${data}`);
-    await this.setState({ aktyDaty: result.data });
+    if (data.length === 10) {
+      const result = await axios.get(`/api/kiedy/akt/${data}`);
+      await this.setState({ aktyDaty: result.data });
+    }
     //await this.props.loading(false);
   };
 
   fetchujAktywnosc = id => {
     this.props.loading(true);
     axios.get(`/api/id/akt/${id}`).then(result => {
-      //console.log(result.data);
       const {
-        //kiedy,
         start,
         stop,
         aktywnosc_id,
         miejsce_id,
         inna,
         uwagi,
-        //gus_simc,
         miejsca
       } = result.data;
       const { kiedy } = this.props;
-      this.setState({
-        start: wezGodzine(start),
-        stop: wezGodzine(stop),
-        aktywnosc_id,
-        miejsce_id,
-        inna,
-        uwagi,
-        miejsceLabel: miejsca ? miejsca.name : ""
-        //edited: true
-      });
-      this.props.edytuj(kiedy);
-      this.props.loading(false);
+      this.setState(
+        {
+          start: wezGodzine(start),
+          stop: wezGodzine(stop),
+          aktywnosc_id,
+          miejsce_id,
+          inna,
+          uwagi,
+          miejsce_idText: miejsca ? miejsca.name : "",
+          planer_klienci_idText: miejsca ? miejsca.name.split(" ")[1] : ""
+        },
+        () => {
+          this.canSubmit();
+          this.props.edytuj(kiedy);
+          this.props.loading(false);
+        }
+      );
     });
   };
-
-  // componentWillReceiveProps(nextProps) {
-  //   this.state.id !== nextProps.editedId && this.handleEdit(nextProps.editedId);
-  // }
 
   czyWypelniony = () => {
     const {
@@ -420,39 +241,34 @@ class PlanerRaportyForm extends Component {
 
   clearForm = () => {
     console.log("clearform");
-    this.setState({
-      id: "",
-      dataWybrana: "",
-      miejsceLabel: "",
-      klientLabel: "",
-      aktyDaty: [],
-      //kiedy: "",
-      start: "",
-      stop: "",
-      miejsce_id: "",
-      planer_klienci_id: "",
-      aktywnosc_id: "",
-      uwagi: "",
-      inna: "",
-      edited: false,
-      nawozy: false,
-      nowyKlient: false,
-      sprzedaz: false,
-      zamowienie: false,
-      zboza: false
-    });
-    this.props.edytuj("");
-    this.props.modal && this.props.closeModal();
-    // this.props.clearForm;
-  };
-
-  renderSelect = select => {
-    //const none = { label: "Brak", value: "" };
-    const doWyboru = select.map((elem, i) => ({
-      label: elem.name,
-      value: elem.id
-    }));
-    return doWyboru.sort(dynamicSort("label"));
+    this.setState(
+      {
+        id: "",
+        dataWybrana: "",
+        miejsce_idText: "",
+        planer_klienci_idText: "",
+        aktyDaty: [],
+        //kiedy: "",
+        start: "",
+        stop: "",
+        miejsce_id: "",
+        planer_klienci_id: "",
+        aktywnosc_id: "",
+        uwagi: "",
+        inna: "",
+        edited: false,
+        nawozy: false,
+        nowyKlient: false,
+        sprzedaz: false,
+        zamowienie: false,
+        zboza: false
+      },
+      () => {
+        this.canSubmit();
+        this.props.edytuj("");
+        this.props.modal && this.props.closeModal();
+      }
+    );
   };
 
   handleEdit = id => {
@@ -478,31 +294,36 @@ class PlanerRaportyForm extends Component {
         planer_klienci
       } = result.data;
       this.props.edytuj(kiedy);
-      this.setState({
-        //kiedy,
-        start: wezGodzine(start),
-        stop: wezGodzine(stop),
-        aktywnosc_id,
-        miejsce_id,
-        inna,
-        uwagi,
-        //miejsceLabel: gus_simc ? gus_simc.nazwa : "",
-        miejsceLabel: miejsca ? miejsca.name : "",
-        // categoryId: { label: category.name, value: category.id },
-        // groupId: { label: group.name, value: group.id },
-        edited: true,
-        miejsce_id_temp: miejsce_id,
-        planer_klienci_id,
-        //klientLabel: planer_klienci ? planer_klienci.nazwa : "",
-        planer_klienci_idText: planer_klienci ? planer_klienci.nazwa : "",
-        nawozy,
-        nowyKlient,
-        sprzedaz,
-        zamowienie,
-        zboza
-      });
-      this.fetchujDate(kiedy);
-      this.props.loading(false);
+      this.setState(
+        {
+          //kiedy,
+          start: wezGodzine(start),
+          stop: wezGodzine(stop),
+          aktywnosc_id,
+          miejsce_id,
+          inna,
+          uwagi,
+          //miejsceLabel: gus_simc ? gus_simc.nazwa : "",
+          miejsce_idText: miejsca ? miejsca.name : "",
+          // categoryId: { label: category.name, value: category.id },
+          // groupId: { label: group.name, value: group.id },
+          edited: true,
+          miejsce_id_temp: miejsce_id,
+          planer_klienci_id,
+          //klientLabel: planer_klienci ? planer_klienci.nazwa : "",
+          planer_klienci_idText: planer_klienci ? planer_klienci.name : "",
+          nawozy,
+          nowyKlient,
+          sprzedaz,
+          zamowienie,
+          zboza
+        },
+        () => {
+          this.canSubmit();
+          this.fetchujDate(kiedy);
+          this.props.loading(false);
+        }
+      );
     });
   };
 
@@ -615,7 +436,6 @@ class PlanerRaportyForm extends Component {
 
   renderAktywnosci = () => {
     const { classes } = this.props;
-    console.log(this.state);
     return this.state.aktyDaty.map(day => {
       const {
         id,
@@ -629,7 +449,6 @@ class PlanerRaportyForm extends Component {
         miejsca,
         planer_akt_rodz
       } = day;
-      console.log(day);
       return (
         <Button
           key={id}
@@ -647,7 +466,6 @@ class PlanerRaportyForm extends Component {
             aktywnosc_id !== 5
               ? planer_akt_rodz.name.slice(0, 20)
               : inna.slice(0, 20)
-            // } ${gus_simc !== null ? gus_simc.nazwa.slice(0, 20) : ""}`}
           } ${miejsca !== null ? shortPlace(miejsca.name) : ""}`}
         </Button>
       );
@@ -659,17 +477,17 @@ class PlanerRaportyForm extends Component {
     this.setState({ [akcja]: !this.state[akcja] });
   };
 
-  handleChange = event => {
+  handleChange = async event => {
     const { name, value, type, text } = event.target;
     const label = `${name}Text`;
 
     console.log(`${name}, ${value}, ${type}, ${text}`);
 
     if (name === "kiedy") {
-      this.setState({ [name]: text }, () => {
-        this.canSubmit();
-        this.fetchujDate(text);
-      });
+      console.log("name kiedy");
+      await this.props.edytuj(text);
+      await this.canSubmit();
+      await this.fetchujDate(text);
     } else {
       if (type === "inputSelectBaza" && typeof value === "string") {
         this.setState({ [name]: "", [label]: value }, () => {
@@ -690,49 +508,30 @@ class PlanerRaportyForm extends Component {
   };
 
   canSubmit = () => {
-    const porownanie = [
-      this.props.kiedy,
-      this.state.start,
-      this.state.stop,
-      this.state.aktywnosc_id
-    ];
-
-    this.validateTime(this.state.start, "Start");
-    this.validateTime(this.state.stop, "Stop");
-    this.validateDuration(this.state.start, this.state.stop);
-    //this.sprawdzPola();
+    const { start, stop, aktywnosc_id, miejsce_id, inna } = this.state;
+    const { kiedy, sentDays } = this.props;
+    const goodTime = validateKiedy(kiedy, sentDays, true);
+    const goodStart = validateTime(start, "Start");
+    const goodStop = validateTime(stop, "Stop");
+    const goodDuration = validateDuration(start, stop);
+    const goodFields = sprawdzPola(aktywnosc_id, miejsce_id, inna);
 
     if (
-      porownanie.every(x => x !== "") &&
-      (this.validateKiedy(this.props.kiedy) &&
-        this.validateTime(this.state.start, "Start") &&
-        this.validateTime(this.state.stop, "Stop") &&
-        this.validateDuration(this.state.start, this.state.stop) &&
-        this.state.aktywnosc_id !== "" &&
-        this.sprawdzPola())
+      goodTime &&
+      goodStart &&
+      goodStop &&
+      goodDuration &&
+      aktywnosc_id !== "" &&
+      goodFields
     ) {
-      console.log("warunek 1 otwieram");
       this.setState({ isSubmitDisabled: false });
-    } else if (
-      porownanie.some(x => x === "") &&
-      (!this.validateKiedy(this.props.kiedy) ||
-        !this.validateTime(this.state.start, "Start") ||
-        !this.validateTime(this.state.stop, "Stop") ||
-        !this.validateDuration(this.state.start, this.state.stop) ||
-        this.state.aktywnosc_id === "" ||
-        !this.sprawdzPola())
-    ) {
-      console.log("warunek zamykam");
-      this.setState({ isSubmitDisabled: true });
     } else {
-      console.log("return");
       this.setState({ isSubmitDisabled: true });
     }
   };
 
   render() {
     const { classes, modal, edytuj, kiedy, submitCheck } = this.props;
-    //const { kiedy } = this.state;
     const pola = [
       { pole: "nawozy", nazwa: "Nawozy" },
       { pole: "nowyKlient", nazwa: "Nowy klient" },
@@ -744,9 +543,9 @@ class PlanerRaportyForm extends Component {
       const error = `error${bigVar}`;
       return (
         <InputComponent
-          label={this.state[error] ? "Wpisz poprawną godzinę" : label}
+          label={this.props[error] ? "Wpisz poprawną godzinę" : label}
           mask="99 : 99"
-          error={this.state[error]}
+          error={this.props[error]}
           edytuj={this.handleChange}
           value={this.state[smallVar]}
           name={smallVar}
@@ -763,36 +562,14 @@ class PlanerRaportyForm extends Component {
                 <p>{kiedy}</p>
               ) : (
                 <InputSelectBaza
-                  //daty={datyDoRaportu => this.setState({ datyDoRaportu })}
-                  error={this.state.errorKiedy}
-                  //miejsceLabel={this.state.miejsceLabel}
-                  // miejsceLabel="lublin"
-                  // edytujValue={kiedy => {
-                  //   this.setState({ kiedy });
-                  //   this.fetchujDate(kiedy);
-                  // }}
-                  // wybrano={wybrano => {
-                  //   wybrano && this.fetchujDate(wybrano.name);
-                  //   // this.setState({})
-                  // }}
-                  //wybrano={this.handleChange}
-                  // edytuj={kiedy => {
-                  //   this.setState({ kiedy });
-                  // }}
-                  // edytuj={kiedy => {
-                  //   edytuj(kiedy);
-                  // }}
+                  object={this.props.sentDays}
+                  error={this.props.errorKiedy}
                   wybrano={this.handleChange}
-                  //edytuj={this.handleChange}
-                  //czysc={() => this.setState({ kiedy: "" })}
-                  //czysc={() => edytuj("")}
-                  //value={this.state.kiedy}
-                  value={this.state.kiedy}
-                  //cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                  value={this.props.kiedy}
                   name="kiedy"
                   label="Kiedy"
                   placeholder="Dzień"
-                  baza="dniDoRaportu"
+                  //baza="dniDoRaportu"
                   reverse
                 />
               )}
@@ -803,26 +580,8 @@ class PlanerRaportyForm extends Component {
             <Grid item xs={9}>
               <Grid container spacing={24}>
                 <Grid item xs={6}>
-                  {/* <InputTime
-                    label={
-                      this.state.errorStart
-                        ? "Wpisz poprawną godzinę"
-                        : "Początek"
-                    }
-                    error={this.state.errorStart}
-                    edytuj={start => this.setState({ start })}
-                    value={this.state.start}
-                    // edytuj={kiedy => edytuj(kiedy)}
-                    // value={kiedy}
-                  /> */}
                   {timesInputs("Początek", "Start", "start")}
 
-                  {/* <InputWyborBaza
-                    table="rodzajAktywnosci"
-                    label="Aktywność"
-                    edytuj={aktywnosc_id => this.setState({ aktywnosc_id })}
-                    value={this.state.aktywnosc_id}
-                  /> */}
                   <InputWyborBaza
                     table="rodzajAktywnosci"
                     label="Aktywność"
@@ -832,20 +591,13 @@ class PlanerRaportyForm extends Component {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  {/* <InputTime
-                    label={
-                      this.state.errorStop ? "Wpisz poprawną godzinę" : "Koniec"
-                    }
-                    error={this.state.errorStop}
-                    edytuj={stop => this.setState({ stop })}
-                    value={this.state.stop}
-                  /> */}
                   {timesInputs("Koniec", "Stop", "stop")}
                   {this.state.aktywnosc_id === 5 && (
                     <InputComponent
                       label="Inna"
                       type="text"
-                      edytuj={inna => this.setState({ inna })}
+                      name="inna"
+                      edytuj={this.handleChange}
                       value={this.state.inna}
                     />
                   )}
@@ -853,18 +605,6 @@ class PlanerRaportyForm extends Component {
               </Grid>
               {this.state.aktywnosc_id === 1 && (
                 <div>
-                  {/* <CitySearch
-                    // test={miejsce_id =>
-                    //   this.setState({ miejsce_id_temp: miejsce_id })
-                    // }
-                    miejsceLabel={this.state.miejsceLabel}
-                    edytuj={miejsce_id => this.setState({ miejsce_id })}
-                    value={this.state.miejsce_id}
-                    cancelLabel={() => this.setState({ miejsceLabel: "" })}
-                    wybranoLabel={wybranoLabel =>
-                      this.setState({ miejsceLabel: wybranoLabel })
-                    }
-                  /> */}
                   <InputSelectBaza
                     name="miejsce_id"
                     wybrano={this.handleChange}
@@ -874,19 +614,6 @@ class PlanerRaportyForm extends Component {
                     baza="city"
                     startAfter={2}
                   />
-                  {/* <KlienciSearch
-                    //miejsceLabel={this.state.miejsceLabel.slice(0, 6)}
-                    //miejsceLabel={this.state.miejsceLabel.split(" ")[1]}
-                    miejsceLabel={this.state.miejsce_idText.split(" ")[1]}
-                    klientLabel={this.state.klientLabel}
-                    clearLabel={() => this.setState({ klientLabel: "" })}
-                    // miejsceLabel="lublin"
-                    edytuj={id => this.setState({ planer_klienci_id: id })}
-                    value={this.state.planer_klienci_id}
-                    //cancelLabel={() => this.setState({ miejsceLabel: "" })}
-                    label="Klient"
-                    placeholder="Zacznij wpisywać klienta"
-                  /> */}
                   <InputSelectBaza
                     name="planer_klienci_id"
                     wybrano={this.handleChange}
@@ -904,7 +631,8 @@ class PlanerRaportyForm extends Component {
               <InputComponent
                 label="Uwagi"
                 type="text"
-                edytuj={uwagi => this.setState({ uwagi })}
+                name="uwagi"
+                edytuj={this.handleChange}
                 value={this.state.uwagi}
               />
               {this.state.aktywnosc_id === 1 && (
@@ -937,7 +665,7 @@ class PlanerRaportyForm extends Component {
             <div style={{ width: "100%", display: "block" }}>
               {!this.state.edited ? (
                 <ButtonMy
-                  disabled={this.state.submitIsDisable}
+                  disabled={this.state.isSubmitDisabled}
                   type="submit"
                   progress
                 >
@@ -947,7 +675,7 @@ class PlanerRaportyForm extends Component {
               ) : (
                 <ButtonMy
                   // type="submit"
-                  disabled={this.state.submitIsDisable}
+                  disabled={this.state.isSubmitDisabled}
                   onClick={() => this.onEdit()}
                   progress
                 >
@@ -973,11 +701,15 @@ PlanerRaportyForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ submit: submitCheck }) {
-  return { submitCheck };
+function mapStateToProps({
+  submit: submitCheck,
+  errorStopAction: errorStop,
+  errorStartAction: errorStart,
+  errorKiedyAction: errorKiedy,
+  sentDays
+}) {
+  return { submitCheck, errorStop, errorStart, errorKiedy, sentDays };
 }
-
-// export default connect(mapStateToProps)(Header);
 
 export default withStyles(styles, { withTheme: true })(
   connect(
@@ -985,5 +717,3 @@ export default withStyles(styles, { withTheme: true })(
     actions
   )(PlanerRaportyForm)
 );
-
-// export default withStyles(styles)(Costs);
