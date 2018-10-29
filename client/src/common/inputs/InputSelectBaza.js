@@ -8,45 +8,17 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { dynamicSort } from "../../common/functions";
 import { simpleSuggestion } from "./Suggestions";
+import SuggestionsContainer from "./SuggestionsContainer";
 import InputSelectTextField from "../../common/inputs/InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
-
-function renderSuggestionsContainer({ containerProps, children, query }) {
-  return <div {...containerProps}>{children}</div>;
-}
 
 function escapeRegexCharacters(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function getSuggestions(fetchowane, value, names) {
-  // const sugestie = [...suggestions];
-  //const escapedValue = escapeRegexCharacters(value.trim());
-  //const regex = new RegExp("^" + escapedValue, "i");
-  const regex = new RegExp(value.toLowerCase());
-
-  const filtered = fetchowane.filter(suggestion =>
-    regex.test(suggestion.name.toLowerCase())
-  );
-  console.log("filtered");
-  console.log(filtered);
-  return filtered;
-
-  //const names = ;
-
-  // return fetchowane.filter(suggestion => {
-  //   let filtered = [];
-  //   for (var key of names) {
-  //     filtered.push(regex.test(suggestion[key].toLowerCase()));
-  //   }
-  // console.log('filtered');
-  //   console.log(filtered);
-  //   return filtered;
-  // });
-}
-
 function getSuggestionValue(suggestion) {
+  console.log("getSuggestionValue");
   return suggestion.name;
 }
 
@@ -101,11 +73,96 @@ class InputSelectBaza extends React.Component {
     isLoading: false,
     pokazujSugestie: true,
     // fetchowane: [{ id: 1, name: "aaa" }, { id: 2, name: "bbb" }]
-    fetchowane: []
+    fetchowane: [],
+    fetchowaneBack: [],
+    renderRows: 50,
+    renderRowsStart: 0
     //focus: false
   };
 
+  renderSuggestionsContainer = ({ containerProps, children, query }) => {
+    //console.log(containerProps);
+    const { suggestions, fetchowane, fetchowaneBack } = this.state;
+    const scrolling = event => {
+      if (event.type === "scroll") {
+        //console.log(event.nativeEvent);
+        const height = event.nativeEvent.srcElement.scrollHeight;
+        const position = event.nativeEvent.srcElement.scrollTop;
+        console.log(
+          `height: ${height}, position: ${position}, h-p: ${height -
+            position}, renderRows: ${this.state.renderRows} fetchLen: ${
+            this.state.fetchowane.length
+          } renderRows: ${this.state.renderRows}`
+        );
+        if (
+          this.state.fetchowane.length > this.state.renderRows &&
+          height - position < 301
+        ) {
+          console.log("doladuj dol");
+          this.setState(
+            {
+              //renderRows: this.state.renderRows + 50,
+              suggestions: fetchowaneBack.splice(
+                this.state.renderRowsStart + 50,
+                this.state.renderRows
+              ),
+              renderRowsStart: this.state.renderRowsStart + 50
+            }
+            // () => {
+            //   console.log("doladuj dol call");
+            //   // this.setState({suggestions})
+            //   this.setState({
+            //     suggestions: fetchowaneBack.splice(
+            //       this.state.renderRowsStart,
+            //       this.state.renderRows
+            //     )
+            //     // suggestions: [
+            //     //   {
+            //     //     adr_Kod: "20-228",
+            //     //     adr_Miejscowosc: "Lublin",
+            //     //     clientId: 2,
+            //     //     createdAt: null,
+            //     //     id: 4453,
+            //     //     kh_id: "4453",
+            //     //     name: "A2",
+            //     //     updatedAt: null
+            //     //   }
+            //     // ]
+            //   });
+            // }
+          );
+        } else if (position === 0 && this.state.renderRowsStart >= 50) {
+          console.log("doladuj gore");
+          this.setState(
+            {
+              //renderRows: this.state.renderRows + 50,
+              renderRowsStart: this.state.renderRowsStart - 50
+            },
+            () => {
+              console.log("doladuj gore call");
+              // this.setState({
+              //   suggestions: this.getSuggestions(
+              //     this.state.fetchowane,
+              //     this.state.value,
+              //     this.props.names
+              //   )
+              // });
+            }
+          );
+        }
+        //console.log(position / height);
+        //console.log("nie przekraczam");
+      }
+    };
+    return (
+      <div onScroll={scrolling} {...containerProps}>
+        {children}
+      </div>
+    );
+  };
+
   onChange = (event, { newValue, method }) => {
+    console.log("onchange");
     this.setState({
       value: newValue
     });
@@ -148,6 +205,7 @@ class InputSelectBaza extends React.Component {
   };
 
   loadSuggestions = async (value, address) => {
+    console.log("loadSuggestions");
     this.setState({
       isLoading: true
     });
@@ -165,33 +223,42 @@ class InputSelectBaza extends React.Component {
         ? result.data.sort(dynamicSort("name")).reverse()
         : result.data.sort(dynamicSort("name"));
     }
-    await this.setState({ fetchowane, isLoading: false }, () => {
-      this.setState({
-        suggestions: getSuggestions(
-          this.state.fetchowane,
-          value,
-          this.props.names
+    await this.setState(
+      { fetchowane, isLoading: false, fetchowaneBack: fetchowane },
+      () => {
+        console.log("loadSuggestions await");
+        this.setState({
+          suggestions: this.getSuggestions(
+            this.state.fetchowane,
+            value,
+            this.props.names
+          )
+        });
+      }
+    );
+
+    //.splice(this.state.renderRowsStart, this.state.renderRows);
+  };
+
+  getSuggestions = (fetchowane, value, names) => {
+    console.log("getSuggestions");
+    const regex = new RegExp(value.toLowerCase());
+    let filtered = [];
+
+    for (let field of names) {
+      filtered.push(
+        ...fetchowane.filter(suggestion =>
+          regex.test(suggestion[field].toLowerCase())
         )
-      });
-    });
-
-    // const daty = [
-    //   { id: 1, name: "2018-10-01" },
-    //   { id: 2, name: "2018-10-15" },
-    //   { id: 3, name: "2018-10-18" },
-    //   { id: 4, name: "2018-10-22" },
-    //   { id: 5, name: "2018-10-25" },
-    //   { id: 6, name: "2018-10-26" },
-    //   { id: 7, name: "2018-10-27" }
-    // ];
-
-    // const filtrowane = daty.filter()
-    // this.setState({
-    //   suggestions: getSuggestions(daty, value, this.props.names)
-    // });
+      );
+    }
+    return filtered
+      .reduce((x, y) => (x.includes(y) ? x : [...x, y]), [])
+      .splice(this.state.renderRowsStart, this.state.renderRows);
   };
 
   onSuggestionsFetchRequested = ({ value }) => {
+    console.log("onSuggestionsFetchRequested");
     if (value.length === 0 && this.props.startAfter === 0) {
       this.loadSuggestions(value, `/api/table/${this.props.baza}`);
     } else if (value.length > this.props.startAfter) {
@@ -202,7 +269,9 @@ class InputSelectBaza extends React.Component {
   onSuggestionsClearRequested = () => {
     console.log("onSuggestionsClearRequested");
     this.setState({
-      suggestions: []
+      suggestions: [],
+      renderRows: 50,
+      renderRowsStart: 0
     });
   };
 
@@ -222,7 +291,14 @@ class InputSelectBaza extends React.Component {
       suggestion
       // disabled
     } = this.props;
-    const { suggestions, value, single, isLoading } = this.state;
+    const {
+      suggestions,
+      value,
+      single,
+      isLoading,
+      renderRows,
+      renderRowsStart
+    } = this.state;
 
     const inputProps = {
       //autoFocus: focus,
@@ -238,6 +314,7 @@ class InputSelectBaza extends React.Component {
     };
 
     //const nameOfSuggestion = `${suggestion}Suggestion`;
+    //console.log(suggestions);
 
     return (
       <Autosuggest
@@ -254,6 +331,7 @@ class InputSelectBaza extends React.Component {
         renderInputComponent={InputSelectTextField}
         //renderInputComponent={InputSelectTextFieldOld}
         //renderInputComponent={InputComponent}
+        //suggestions={suggestions.splice(0, 50)}
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -261,7 +339,8 @@ class InputSelectBaza extends React.Component {
         shouldRenderSuggestions={shouldRenderSuggestions}
         renderSuggestion={suggestion}
         inputProps={inputProps}
-        renderSuggestionsContainer={renderSuggestionsContainer}
+        renderSuggestionsContainer={this.renderSuggestionsContainer}
+        //renderSuggestionsContainer={SuggestionsContainer}
         ref={this.storeInputReference}
       />
     );

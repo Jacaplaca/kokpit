@@ -78,8 +78,8 @@ module.exports = app => {
         Miejsca.findAll({
           where: {
             name: { [Op.like]: `%${query}%` }
-          },
-          limit: 30
+          }
+          //limit: 30
         }).then(result => {
           return res.json(result);
         });
@@ -109,8 +109,8 @@ module.exports = app => {
               { name: { [Op.like]: `${query}%` } }
             ],
             clientId
-          },
-          limit: 50
+          }
+          //limit: 50
         })
           .then(result => {
             res.json(result);
@@ -706,7 +706,7 @@ module.exports = app => {
         break;
       case "city":
         Miejsca.findAll({
-          limit: 30
+          //limit: 30
         })
           .then(result => res.json(result))
           .catch(err => {
@@ -730,8 +730,8 @@ module.exports = app => {
         break;
       case "planerClient":
         PlanerKlienci.findAll({
-          where: { clientId },
-          limit: 50
+          where: { clientId }
+          //limit: 50
         })
           .then(result => {
             res.json(result);
