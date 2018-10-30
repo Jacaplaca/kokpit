@@ -18,7 +18,7 @@ function escapeRegexCharacters(str) {
 }
 
 function getSuggestionValue(suggestion) {
-  console.log("getSuggestionValue");
+  //console.log("getSuggestionValue");
   return suggestion.name;
 }
 
@@ -64,6 +64,8 @@ const styles = theme => ({
 });
 
 class InputSelectBaza extends React.Component {
+  suggestionsRef = React.createRef();
+
   state = {
     //error: "Wpisz poprawną datę",
     value: "",
@@ -81,88 +83,54 @@ class InputSelectBaza extends React.Component {
   };
 
   renderSuggestionsContainer = ({ containerProps, children, query }) => {
-    //console.log(containerProps);
+    //this.suggestionsRef.scrollTo = 50;
+    //console.log("renderSuggestionsContainer");
     const { suggestions, fetchowane, fetchowaneBack } = this.state;
     const scrolling = event => {
+      //console.log(event.nativeEvent);
       if (event.type === "scroll") {
-        //console.log(event.nativeEvent);
         const height = event.nativeEvent.srcElement.scrollHeight;
         const position = event.nativeEvent.srcElement.scrollTop;
-        console.log(
-          `height: ${height}, position: ${position}, h-p: ${height -
-            position}, renderRows: ${this.state.renderRows} fetchLen: ${
-            this.state.fetchowane.length
-          } renderRows: ${this.state.renderRows}`
-        );
-        if (
-          this.state.fetchowane.length > this.state.renderRows &&
-          height - position < 301
-        ) {
-          console.log("doladuj dol");
-          this.setState(
-            {
-              //renderRows: this.state.renderRows + 50,
-              suggestions: fetchowaneBack.splice(
-                this.state.renderRowsStart + 50,
-                this.state.renderRows
-              ),
-              renderRowsStart: this.state.renderRowsStart + 50
-            }
-            // () => {
-            //   console.log("doladuj dol call");
-            //   // this.setState({suggestions})
-            //   this.setState({
-            //     suggestions: fetchowaneBack.splice(
-            //       this.state.renderRowsStart,
-            //       this.state.renderRows
-            //     )
-            //     // suggestions: [
-            //     //   {
-            //     //     adr_Kod: "20-228",
-            //     //     adr_Miejscowosc: "Lublin",
-            //     //     clientId: 2,
-            //     //     createdAt: null,
-            //     //     id: 4453,
-            //     //     kh_id: "4453",
-            //     //     name: "A2",
-            //     //     updatedAt: null
-            //     //   }
-            //     // ]
-            //   });
-            // }
-          );
-        } else if (position === 0 && this.state.renderRowsStart >= 50) {
-          console.log("doladuj gore");
-          this.setState(
-            {
-              //renderRows: this.state.renderRows + 50,
-              renderRowsStart: this.state.renderRowsStart - 50
-            },
-            () => {
-              console.log("doladuj gore call");
-              // this.setState({
-              //   suggestions: this.getSuggestions(
-              //     this.state.fetchowane,
-              //     this.state.value,
-              //     this.props.names
-              //   )
-              // });
-            }
-          );
+        // console.log(
+        //   `height: ${height}, position: ${position}, h-p: ${height -
+        //     position}, renderRows: ${this.state.renderRows} fetchLen: ${
+        //     this.state.fetchowane.length
+        //   } renderRows: ${this.state.renderRows}`
+        // );
+        //console.log(`offset: ${this.props.offset}, position: ${position}`);
+        if (height - position < 301) {
+          //console.log("doladuj dol");
+          this.props.changeOffset(1);
+          this.loadSuggestions(this.state.value, "ddd");
+          // console.log(this.suggestions);
+        } else if (position === 0 && this.props.offset > 0) {
+          //console.log("doladuj gore");
+          this.props.changeOffset(-1);
+          this.loadSuggestions(this.state.value, "ddd");
         }
-        //console.log(position / height);
-        //console.log("nie przekraczam");
       }
     };
     return (
-      <div onScroll={scrolling} {...containerProps}>
+      <div
+        // ref={re => (this.second = re)}
+        //ref={this.storeSugReference}
+        onScroll={scrolling}
+        {...containerProps}
+        //ref={this.suggestionsRef}
+      >
         {children}
       </div>
     );
   };
 
   onChange = (event, { newValue, method }) => {
-    console.log("onchange");
+    if (newValue.length > 4) {
+      //console.log(this.suggestionsRef);
+      // this.setState({ pos: 50 }, () => {
+      //   this.suggestionsRef.scrollTo = this.state.pos;
+      // });
+    }
+    //console.log("onchange");
     this.setState({
       value: newValue
     });
@@ -175,7 +143,7 @@ class InputSelectBaza extends React.Component {
         type: "inputSelectBaza"
       }
     };
-    console.log(input);
+    //console.log(input);
     newValue !== ""
       ? this.setState({ clear: true })
       : this.setState({ clear: false });
@@ -184,7 +152,7 @@ class InputSelectBaza extends React.Component {
   };
 
   clearValue = () => {
-    console.log("czyszcze pole");
+    //console.log("czyszcze pole");
     this.setState({
       value: "",
       clear: false
@@ -205,19 +173,20 @@ class InputSelectBaza extends React.Component {
   };
 
   loadSuggestions = async (value, address) => {
-    console.log("loadSuggestions");
+    //console.log(`loadSuggestions, value:${value}`);
     this.setState({
       isLoading: true
     });
     let fetchowane;
     // console.log(this.props.object);
     if (this.props.object) {
-      console.log("nie fetchuj");
+      //console.log("nie fetchuj");
+      //console.log(this.props.object);
       fetchowane = this.props.reverse
         ? this.props.object.sort(dynamicSort("name")).reverse()
         : this.props.object.sort(dynamicSort("name"));
     } else {
-      console.log("fetchuj i chuj");
+      //  console.log("fetchuj i chuj");
       const result = await axios.get(address);
       fetchowane = this.props.reverse
         ? result.data.sort(dynamicSort("name")).reverse()
@@ -226,7 +195,7 @@ class InputSelectBaza extends React.Component {
     await this.setState(
       { fetchowane, isLoading: false, fetchowaneBack: fetchowane },
       () => {
-        console.log("loadSuggestions await");
+        //console.log("loadSuggestions await");
         this.setState({
           suggestions: this.getSuggestions(
             this.state.fetchowane,
@@ -252,36 +221,41 @@ class InputSelectBaza extends React.Component {
         )
       );
     }
-    return filtered
-      .reduce((x, y) => (x.includes(y) ? x : [...x, y]), [])
-      .splice(this.state.renderRowsStart, this.state.renderRows);
+    return filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), []);
+    //.splice(this.state.renderRowsStart, this.state.renderRows);
   };
 
   onSuggestionsFetchRequested = ({ value }) => {
-    console.log("onSuggestionsFetchRequested");
-    if (value.length === 0 && this.props.startAfter === 0) {
-      this.loadSuggestions(value, `/api/table/${this.props.baza}`);
-    } else if (value.length > this.props.startAfter) {
-      this.loadSuggestions(value, `/api/byname/${this.props.baza}/${value}`);
-    }
+    //console.log(`onSuggestionsFetchRequested value: ${value}`);
+    this.loadSuggestions(value, "sdf");
+    // if (value.length === 0 && this.props.startAfter === 0) {
+    //   this.loadSuggestions(value, `/api/table/${this.props.baza}`);
+    // } else if (value.length > this.props.startAfter) {
+    //   this.loadSuggestions(value, `/api/byname/${this.props.baza}/${value}`);
+    // }
   };
 
   onSuggestionsClearRequested = () => {
-    console.log("onSuggestionsClearRequested");
-    this.setState({
-      suggestions: [],
-      renderRows: 50,
-      renderRowsStart: 0
-    });
+    //  console.log("onSuggestionsClearRequested");
+    this.setState(
+      {
+        suggestions: [],
+        renderRows: 50,
+        renderRowsStart: 0
+      },
+      () => this.props.clearOffset()
+    );
   };
 
   storeInputReference = autosuggest => {
     if (autosuggest !== null) {
       this.input = autosuggest.input;
+      this.suggestions = autosuggest.suggestionsContainer;
     }
   };
 
   render() {
+    //console.log(this.suggestions);
     const {
       classes,
       label,
@@ -310,7 +284,8 @@ class InputSelectBaza extends React.Component {
       onChange: this.onChange,
       error,
       clearValue: this.clearValue,
-      isLoading
+      isLoading:
+        this.props.isLoading === undefined ? isLoading : this.props.isLoading
     };
 
     //const nameOfSuggestion = `${suggestion}Suggestion`;
@@ -318,6 +293,8 @@ class InputSelectBaza extends React.Component {
 
     return (
       <Autosuggest
+        // focusInputOnSuggestionClick
+        // alwaysRenderSuggestions
         //autoFocus={true}
         //focusInputOnSuggestionClick
         //alwaysRenderSuggestions={true}
@@ -359,7 +336,9 @@ InputSelectBaza.defaultProps = {
   //helperText: "",
   startAfter: 0,
   suggestion: simpleSuggestion,
-  names: ["name"]
+  names: ["name"],
+  clearOffset: () => {}
+  //isLoading: false
 };
 
 export default withStyles(styles)(InputSelectBaza);

@@ -78,7 +78,8 @@ module.exports = app => {
         Miejsca.findAll({
           where: {
             name: { [Op.like]: `%${query}%` }
-          }
+          },
+          offset: 2
           //limit: 30
         }).then(result => {
           return res.json(result);
@@ -124,36 +125,54 @@ module.exports = app => {
     }
   });
 
-  // app.get("/api/klienci/:query", (req, res, next) => {
-  //   const query = req.params.query;
-  //
-  //   const { user_id, clientId } = req.user;
-  //   if (!req.user) {
-  //     return res.redirect("/");
-  //   }
-  //   if (query.length < 3) {
-  //     res.json([]);
-  //   } else {
-  //     PlanerKlienci.findAll({
-  //       where: {
-  //         [Op.or]: [
-  //           { adr_Miejscowosc: { [Op.like]: `${query}%` } },
-  //           { adr_Kod: { [Op.like]: `${query}%` } },
-  //           { nazwa: { [Op.like]: `${query}%` } }
-  //         ],
-  //         clientId
-  //       },
-  //       limit: 100
-  //     })
-  //       .then(result => {
-  //         res.json(result);
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //         res.sendStatus(500);
-  //       });
-  //   }
-  // });
+  app.get("/api/limit/:table/:query/:offset", (req, res, next) => {
+    const query = req.params.query;
+    const table = req.params.table;
+    const limit = 30;
+    const offset = Math.trunc(req.params.offset);
+    const { user_id, clientId } = req.user;
+    console.log(`limit: ${limit}, offset: ${offset}`);
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    switch (table) {
+      case "miejsce":
+        Miejsca.findAll({
+          where: {
+            name: { [Op.like]: `%${query}%` }
+          },
+          offset,
+          limit
+        }).then(result => {
+          //console.log(result.json());
+          return res.json(result);
+        });
+        break;
+      case "planer_klienci":
+        PlanerKlienci.findAll({
+          where: {
+            [Op.or]: [
+              { adr_Miejscowosc: { [Op.like]: `${query}%` } },
+              { adr_Kod: { [Op.like]: `${query}%` } },
+              { name: { [Op.like]: `${query}%` } }
+            ],
+            clientId
+          },
+          offset,
+          limit
+          //limit: 50
+        })
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
+      default:
+    }
+  });
 
   app.get("/api/klienci", (req, res) => {
     res.json([]);

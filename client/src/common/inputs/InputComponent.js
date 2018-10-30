@@ -83,6 +83,7 @@ InputComponent.defaultProps = {
   helperText: "",
   type: "string",
   value: ""
+
   //email: "",
   //password: ""
 };

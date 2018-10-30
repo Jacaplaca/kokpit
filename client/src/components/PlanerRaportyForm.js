@@ -160,7 +160,15 @@ class PlanerRaportyForm extends Component {
 
     activities: [],
     edited: false,
-    isSubmitDisabled: true
+    isSubmitDisabled: true,
+
+    miejsce_fetched: [],
+    miejsce_loading: false,
+
+    planer_klienci_fetched: [],
+    planer_klienci_loading: false,
+
+    offset: 0
   };
 
   componentWillMount() {
@@ -176,6 +184,56 @@ class PlanerRaportyForm extends Component {
       await this.setState({ aktyDaty: result.data });
     }
     //await this.props.loading(false);
+  };
+
+  fetchDB = async (value, baza) => {
+    console.log(`fetchDB ${value}, baza ${baza}`);
+    const fetchedLabel = `${baza}_fetched`;
+    const loadingLabel = `${baza}_loading`;
+    if (value.length > 2) {
+      console.log("fetchuj");
+      this.setState({ [loadingLabel]: true });
+      const result = await axios.get(
+        `/api/limit/${baza}/${value}/${this.state.offset}`
+      );
+      this.setState({ [fetchedLabel]: result.data }, () => {
+        this.setState({ [loadingLabel]: false });
+      });
+    }
+  };
+
+  changeOffset = (baza, direction) => {
+    //console.log("changeOffset");
+    //const input = event.target.name
+    const label = `${baza}_idText`;
+    const fetchedLabel = `${baza}_fetched`;
+    const { offset } = this.state;
+    const addToState = () => {
+      console.log("addToState");
+      this.setState({ offset: offset + 30 * direction }, () => {
+        this.fetchDB(this.state[label], baza);
+      });
+    };
+    console.log(`changeOffset | baza:${baza}, direction: ${direction}`);
+    if (this.state[fetchedLabel].length >= 30 && direction === 1) {
+      console.log("do dolu planer raporty");
+      addToState();
+    } else if (direction === -1) {
+      console.log("do gory");
+      addToState();
+    }
+  };
+
+  // smallerOffset = baza => {
+  //   const { offset, cities, miejsce_idText } = this.state;
+  //   console.log(`changeOffset | offset: ${offset}, cities: ${cities.length}`);
+  //   this.setState({ offset: offset - 30 }, () => {
+  //     this.fetchDB(miejsce_idText, baza);
+  //   });
+  // };
+
+  clearOffset = () => {
+    this.setState({ offset: 0 });
   };
 
   fetchujAktywnosc = id => {
@@ -206,6 +264,7 @@ class PlanerRaportyForm extends Component {
           this.canSubmit();
           this.props.edytuj(kiedy);
           this.props.loading(false);
+          miejsca && this.fetchDB(miejsca.name.split(" ")[1], "miejsce");
         }
       );
     });
@@ -497,6 +556,7 @@ class PlanerRaportyForm extends Component {
         name === "miejsce_id" &&
           this.setState({ planer_klienci_idText: text.split(" ")[1] });
         this.setState({ [name]: value, [label]: text }, () => {
+          this.fetchDB(text.split(" ")[1], "planer_klienci");
           this.canSubmit();
         });
       } else {
@@ -558,6 +618,7 @@ class PlanerRaportyForm extends Component {
         <form onSubmit={e => this.handleSubmit(e)}>
           <Grid container spacing={24}>
             <Grid item xs={3}>
+              {/* <div ref={this.suggestionsRef}>asdfasdfa</div> */}
               {modal ? (
                 <p>{kiedy}</p>
               ) : (
@@ -607,23 +668,42 @@ class PlanerRaportyForm extends Component {
                 <div>
                   <InputSelectBaza
                     name="miejsce_id"
-                    wybrano={this.handleChange}
+                    wybrano={e => {
+                      this.handleChange(e);
+                      this.fetchDB(e.target.text, "miejsce");
+                    }}
                     value={this.state.miejsce_idText}
                     label="Miejscowość"
                     placeholder="Wpisz miejscowość..."
-                    baza="city"
+                    //baza="city"
                     startAfter={2}
+                    changeOffset={el => this.changeOffset("miejsce", el)}
+                    //smallerOffset={() => this.smallerOffset("miejsce")}
+                    clearOffset={this.clearOffset}
+                    offset={this.state.offset}
+                    isLoading={this.state.miejsce_loading}
+                    object={this.state.miejsce_fetched}
                   />
                   <InputSelectBaza
                     name="planer_klienci_id"
-                    wybrano={this.handleChange}
+                    //wybrano={this.handleChange}
+                    wybrano={e => {
+                      this.handleChange(e);
+                      this.fetchDB(e.target.text, "planer_klienci");
+                    }}
                     value={this.state.planer_klienci_idText}
                     label="Klient"
                     placeholder="Zacznij wpisywać klienta..."
-                    baza="planerClient"
+                    //baza="planerClient"
                     startAfter={1}
                     suggestion={clientSuggestion}
                     names={["name", "adr_Kod", "adr_Miejscowosc"]}
+                    changeOffset={el => this.changeOffset("planer_klienci", el)}
+                    //smallerOffset={() => this.smallerOffset("planer_klienci")}
+                    clearOffset={this.clearOffset}
+                    offset={this.state.offset}
+                    isLoading={this.state.planer_klienci_loading}
+                    object={this.state.planer_klienci_fetched}
                   />
                 </div>
               )}
