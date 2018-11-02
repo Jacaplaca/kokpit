@@ -128,7 +128,7 @@ module.exports = app => {
   app.get("/api/limit/:table/:query/:offset", (req, res, next) => {
     const query = req.params.query;
     const table = req.params.table;
-    const limit = 30;
+    const limit = 31;
     const offset = Math.trunc(req.params.offset);
     const { user_id, clientId } = req.user;
     console.log(`limit: ${limit}, offset: ${offset}`);

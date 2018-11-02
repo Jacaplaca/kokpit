@@ -138,8 +138,8 @@ class PlanerRaportyForm extends Component {
     start: "",
     stop: "",
     miejsce_id: "",
-    miejsce_idText: "",
-    aktywnosc_id: "",
+    miejsce_idText: "Lublin",
+    aktywnosc_id: "1",
     planer_klienci_id: "",
     planer_klienci_idText: "",
     inna: "",
@@ -186,19 +186,19 @@ class PlanerRaportyForm extends Component {
     //await this.props.loading(false);
   };
 
-  fetchDB = async (value, baza) => {
-    console.log(`fetchDB ${value}, baza ${baza}`);
+  fetchDB = async (value, offset, baza) => {
+    console.log(`fetchDB ${value}, offset: ${offset}, baza ${baza}`);
     const fetchedLabel = `${baza}_fetched`;
     const loadingLabel = `${baza}_loading`;
     if (value.length > 2) {
-      console.log("fetchuj");
+      //console.log("fetchuj");
       this.setState({ [loadingLabel]: true });
-      const result = await axios.get(
-        `/api/limit/${baza}/${value}/${this.state.offset}`
-      );
-      this.setState({ [fetchedLabel]: result.data }, () => {
-        this.setState({ [loadingLabel]: false });
-      });
+      const result = await axios.get(`/api/limit/${baza}/${value}/${offset}`);
+      // this.setState({ [fetchedLabel]: result.data }, () => {
+      //console.log(result.data);
+      this.setState({ [loadingLabel]: false });
+      // });
+      return result.data;
     }
   };
 
@@ -540,7 +540,7 @@ class PlanerRaportyForm extends Component {
     const { name, value, type, text } = event.target;
     const label = `${name}Text`;
 
-    console.log(`${name}, ${value}, ${type}, ${text}`);
+    //console.log(`${name}, ${value}, ${type}, ${text}`);
 
     if (name === "kiedy") {
       console.log("name kiedy");
@@ -670,26 +670,29 @@ class PlanerRaportyForm extends Component {
                     name="miejsce_id"
                     wybrano={e => {
                       this.handleChange(e);
-                      this.fetchDB(e.target.text, "miejsce");
+                      //this.fetchDB(e.target.text, "miejsce");
                     }}
                     value={this.state.miejsce_idText}
                     label="Miejscowość"
                     placeholder="Wpisz miejscowość..."
                     //baza="city"
                     startAfter={2}
-                    changeOffset={el => this.changeOffset("miejsce", el)}
+                    //changeOffset={el => this.changeOffset("miejsce", el)}
                     //smallerOffset={() => this.smallerOffset("miejsce")}
-                    clearOffset={this.clearOffset}
-                    offset={this.state.offset}
+                    //clearOffset={this.clearOffset}
+                    //offset={this.state.offset}
                     isLoading={this.state.miejsce_loading}
-                    object={this.state.miejsce_fetched}
+                    //object={this.state.miejsce_fetched}
+                    fetch={(val, offset) =>
+                      this.fetchDB(val, offset, "miejsce")
+                    }
                   />
                   <InputSelectBaza
                     name="planer_klienci_id"
                     //wybrano={this.handleChange}
                     wybrano={e => {
                       this.handleChange(e);
-                      this.fetchDB(e.target.text, "planer_klienci");
+                      //this.fetchDB(e.target.text, "planer_klienci");
                     }}
                     value={this.state.planer_klienci_idText}
                     label="Klient"
@@ -698,12 +701,15 @@ class PlanerRaportyForm extends Component {
                     startAfter={1}
                     suggestion={clientSuggestion}
                     names={["name", "adr_Kod", "adr_Miejscowosc"]}
-                    changeOffset={el => this.changeOffset("planer_klienci", el)}
+                    //changeOffset={el => this.changeOffset("planer_klienci", el)}
                     //smallerOffset={() => this.smallerOffset("planer_klienci")}
-                    clearOffset={this.clearOffset}
-                    offset={this.state.offset}
+                    //clearOffset={this.clearOffset}
+                    //offset={this.state.offset}
                     isLoading={this.state.planer_klienci_loading}
-                    object={this.state.planer_klienci_fetched}
+                    //object={this.state.planer_klienci_fetched}
+                    fetch={(val, offset) =>
+                      this.fetchDB(val, offset, "planer_klienci")
+                    }
                   />
                 </div>
               )}

@@ -1,15 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
-//import match from "autosuggest-highlight/match";
-//import parse from "autosuggest-highlight/parse";
-//import MenuItem from "@material-ui/core/MenuItem";
-import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import { dynamicSort } from "../../common/functions";
 import { simpleSuggestion } from "./Suggestions";
 import SuggestionsContainer from "./SuggestionsContainer";
 import InputSelectTextField from "../../common/inputs/InputSelectTextField";
+import UpDownButton from "../UpDownButton";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
@@ -64,7 +61,7 @@ const styles = theme => ({
 });
 
 class InputSelectBaza extends React.Component {
-  suggestionsRef = React.createRef();
+  //suggestionsRef = React.createRef();
 
   state = {
     //error: "Wpisz poprawną datę",
@@ -76,56 +73,69 @@ class InputSelectBaza extends React.Component {
     pokazujSugestie: true,
     // fetchowane: [{ id: 1, name: "aaa" }, { id: 2, name: "bbb" }]
     fetchowane: [],
-    fetchowaneBack: [],
+    fetchowaneRest: undefined,
     renderRows: 50,
-    renderRowsStart: 0
+    renderRowsStart: 0,
+    offset: 0
     //focus: false
   };
 
   renderSuggestionsContainer = ({ containerProps, children, query }) => {
-    //this.suggestionsRef.scrollTo = 50;
-    //console.log("renderSuggestionsContainer");
-    const { suggestions, fetchowane, fetchowaneBack } = this.state;
-    const scrolling = event => {
-      //console.log(event.nativeEvent);
-      if (event.type === "scroll") {
-        const height = event.nativeEvent.srcElement.scrollHeight;
-        const position = event.nativeEvent.srcElement.scrollTop;
-        // console.log(
-        //   `height: ${height}, position: ${position}, h-p: ${height -
-        //     position}, renderRows: ${this.state.renderRows} fetchLen: ${
-        //     this.state.fetchowane.length
-        //   } renderRows: ${this.state.renderRows}`
-        // );
-        //console.log(`offset: ${this.props.offset}, position: ${position}`);
-        if (height - position < 301) {
-          //console.log("doladuj dol");
-          this.props.changeOffset(1);
-          this.loadSuggestions(this.state.value, "ddd");
-          // console.log(this.suggestions);
-        } else if (position === 0 && this.props.offset > 0) {
-          //console.log("doladuj gore");
-          this.props.changeOffset(-1);
-          this.loadSuggestions(this.state.value, "ddd");
-        }
-      }
-    };
+    const { suggestions, fetchowane, offset, fetchowaneRest } = this.state;
+    const { object } = this.props;
+    console.log(fetchowaneRest);
     return (
-      <div
-        // ref={re => (this.second = re)}
-        //ref={this.storeSugReference}
-        onScroll={scrolling}
-        {...containerProps}
-        //ref={this.suggestionsRef}
-      >
-        {children}
+      <div>
+        <div {...containerProps}>
+          {children &&
+            offset > 0 &&
+            !object && (
+              <UpDownButton icon={"ExpandLess"} onClick={this.handleUp} />
+            )}
+          {children}
+          {children &&
+            fetchowaneRest &&
+            !object && (
+              <UpDownButton onClick={this.handleDown} icon={"ExpandMore"} />
+            )}
+        </div>
       </div>
     );
   };
 
+  handleUp = () => {
+    console.log("doladuj gore");
+    this.changeOffset(-1);
+    //this.loadSuggestions(this.state.value, "ddd");
+  };
+
+  handleDown = () => {
+    console.log("doladuj dol");
+    this.changeOffset(1);
+    //this.loadSuggestions(this.state.value, "ddd");
+    this.suggestions.scrollTo(0, 0);
+  };
+
+  changeOffset = async direction => {
+    const { offset, fetchowane, value } = this.state;
+    const addToState = async () => {
+      const fetchedFromDB = await this.props.fetch(
+        value,
+        offset + 30 * direction
+      );
+      this.loadSuggestions(value, fetchedFromDB);
+      this.setState({ offset: offset + 30 * direction });
+    };
+    if (fetchowane.length >= 30 && direction === 1) {
+      addToState();
+    } else if (direction === -1) {
+      addToState();
+    }
+  };
+
   onChange = (event, { newValue, method }) => {
     if (newValue.length > 4) {
-      //console.log(this.suggestionsRef);
+      this.suggestions.scrollTo(0, 300);
       // this.setState({ pos: 50 }, () => {
       //   this.suggestionsRef.scrollTo = this.state.pos;
       // });
@@ -152,6 +162,7 @@ class InputSelectBaza extends React.Component {
   };
 
   clearValue = () => {
+    this.onSuggestionsClearRequested();
     //console.log("czyszcze pole");
     this.setState({
       value: "",
@@ -172,45 +183,36 @@ class InputSelectBaza extends React.Component {
       : this.loadSuggestions("", `/api/table/${this.props.baza}`);
   };
 
-  loadSuggestions = async (value, address) => {
-    //console.log(`loadSuggestions, value:${value}`);
-    this.setState({
-      isLoading: true
-    });
+  loadSuggestions = async (value, fetched) => {
     let fetchowane;
-    // console.log(this.props.object);
+    let fetchowaneRest;
     if (this.props.object) {
-      //console.log("nie fetchuj");
-      //console.log(this.props.object);
-      fetchowane = this.props.reverse
-        ? this.props.object.sort(dynamicSort("name")).reverse()
-        : this.props.object.sort(dynamicSort("name"));
+      fetchowane = this.props.object;
     } else {
-      //  console.log("fetchuj i chuj");
-      const result = await axios.get(address);
       fetchowane = this.props.reverse
-        ? result.data.sort(dynamicSort("name")).reverse()
-        : result.data.sort(dynamicSort("name"));
+        ? fetched
+            //.sort(dynamicSort("name"))
+            .splice(0, 30)
+            .reverse()
+        : fetched.sort(dynamicSort("name")).splice(0, 30);
+      fetchowaneRest = this.props.reverse
+        ? fetched
+            //.sort(dynamicSort("name"))
+            .splice(0, 5)
+            .reverse()
+        : fetched.sort(dynamicSort("name")).splice(0, 5);
     }
-    await this.setState(
-      { fetchowane, isLoading: false, fetchowaneBack: fetchowane },
-      () => {
-        //console.log("loadSuggestions await");
-        this.setState({
-          suggestions: this.getSuggestions(
-            this.state.fetchowane,
-            value,
-            this.props.names
-          )
-        });
-      }
-    );
-
-    //.splice(this.state.renderRowsStart, this.state.renderRows);
+    this.setState({
+      fetchowane,
+      fetchowaneRest,
+      isLoading: false,
+      suggestions: this.getSuggestions(fetchowane, value, this.props.names)
+    });
   };
 
   getSuggestions = (fetchowane, value, names) => {
-    console.log("getSuggestions");
+    //console.log("getSuggestions");
+    //  console.log(fetchowane);
     const regex = new RegExp(value.toLowerCase());
     let filtered = [];
 
@@ -225,26 +227,22 @@ class InputSelectBaza extends React.Component {
     //.splice(this.state.renderRowsStart, this.state.renderRows);
   };
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    //console.log(`onSuggestionsFetchRequested value: ${value}`);
-    this.loadSuggestions(value, "sdf");
-    // if (value.length === 0 && this.props.startAfter === 0) {
-    //   this.loadSuggestions(value, `/api/table/${this.props.baza}`);
-    // } else if (value.length > this.props.startAfter) {
-    //   this.loadSuggestions(value, `/api/byname/${this.props.baza}/${value}`);
-    // }
+  onSuggestionsFetchRequested = async ({ value }) => {
+    console.log(`onSuggestionsFetchRequested value: ${value}`);
+    if (this.props.object) {
+      this.loadSuggestions(value, this.props.object);
+    } else {
+      const fetchedFromDB = await this.props.fetch(value, this.state.offset);
+      this.loadSuggestions(value, fetchedFromDB);
+    }
   };
 
   onSuggestionsClearRequested = () => {
-    //  console.log("onSuggestionsClearRequested");
-    this.setState(
-      {
-        suggestions: [],
-        renderRows: 50,
-        renderRowsStart: 0
-      },
-      () => this.props.clearOffset()
-    );
+    console.log("onSuggestionsClearRequested");
+    this.setState({
+      suggestions: [],
+      offset: 0
+    });
   };
 
   storeInputReference = autosuggest => {

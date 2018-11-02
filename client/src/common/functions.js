@@ -13,25 +13,25 @@ import store from "../store";
 import * as actions from "../actions";
 
 export const sprawdzPola = (aktywnosc_id, miejsce_id, inna) => {
-  console.log("sprawdzam pola");
+  //console.log("sprawdzam pola");
   switch (aktywnosc_id) {
     case 1:
-      console.log("case aktyw");
-      console.log(!miejsce_id ? false : true);
+      //console.log("case aktyw");
+      //console.log(!miejsce_id ? false : true);
       return !miejsce_id ? false : true;
       break;
     case 5:
-      console.log("case inna");
+      //console.log("case inna");
       return inna === "" ? false : true;
       break;
     default:
-      console.log("case default");
+      //console.log("case default");
       return true;
   }
 };
 
 export const validateKiedy = (data, sentDays, belongs) => {
-  console.log(sentDays);
+  //console.log(sentDays);
   const nalezy = belongs
     ? sentDays.some(x => x.name === data)
     : !sentDays.some(x => x.name === data);
