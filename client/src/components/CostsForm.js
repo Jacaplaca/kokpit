@@ -289,7 +289,6 @@ class CostsForm extends Component {
                 value={this.state.categoryIdText}
                 label="Kategorie"
                 placeholder="Kategorie kosztowe"
-                baza="category"
               />
             </Grid>
             <Grid item xs={4}>
@@ -299,7 +298,6 @@ class CostsForm extends Component {
                 label="Grupy"
                 placeholder="Grupy kosztowe"
                 name="groupId"
-                baza="group"
               />
             </Grid>
             <Grid item xs={2}>

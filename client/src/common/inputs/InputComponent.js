@@ -40,13 +40,11 @@ const InputComponent = props => {
     mask,
     helperText,
     // disabled,
-    clearValue,
     classes,
     inputRef = () => {},
     ref,
     fullWidth,
     kwota,
-    isLoading,
     ...other
   } = props;
 

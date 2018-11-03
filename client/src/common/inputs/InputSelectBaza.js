@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
 import { withStyles } from "@material-ui/core/styles";
-import { dynamicSort } from "../../common/functions";
+import { dynamicSort, fetchDB, fetchDBall } from "../../common/functions";
 import { simpleSuggestion } from "./Suggestions";
 import SuggestionsContainer from "./SuggestionsContainer";
 import InputSelectTextField from "../../common/inputs/InputSelectTextField";
@@ -69,64 +69,57 @@ class InputSelectBaza extends React.Component {
     single: "",
     popper: "",
     suggestions: [],
-    isLoading: false,
-    pokazujSugestie: true,
-    // fetchowane: [{ id: 1, name: "aaa" }, { id: 2, name: "bbb" }]
+    isloading: false,
     fetchowane: [],
-    fetchowaneRest: undefined,
-    renderRows: 50,
-    renderRowsStart: 0,
+    fetchowaneRest: null,
     offset: 0
-    //focus: false
   };
 
   renderSuggestionsContainer = ({ containerProps, children, query }) => {
     const { suggestions, fetchowane, offset, fetchowaneRest } = this.state;
     const { object } = this.props;
-    console.log(fetchowaneRest);
     return (
       <div>
         <div {...containerProps}>
           {children &&
             offset > 0 &&
             !object && (
-              <UpDownButton icon={"ExpandLess"} onClick={this.handleUp} />
+              <UpDownButton
+                icon={"ExpandLess"}
+                onClick={() => this.handleUp(query)}
+              />
             )}
           {children}
           {children &&
             fetchowaneRest &&
             !object && (
-              <UpDownButton onClick={this.handleDown} icon={"ExpandMore"} />
+              <UpDownButton
+                onClick={() => this.handleDown(query)}
+                icon={"ExpandMore"}
+              />
             )}
         </div>
       </div>
     );
   };
 
-  handleUp = () => {
-    console.log("doladuj gore");
-    this.changeOffset(-1);
-    //this.loadSuggestions(this.state.value, "ddd");
+  handleUp = query => {
+    this.changeOffset(-1, query);
   };
 
-  handleDown = () => {
-    console.log("doladuj dol");
-    this.changeOffset(1);
-    //this.loadSuggestions(this.state.value, "ddd");
+  handleDown = query => {
+    this.changeOffset(1, query);
     this.suggestions.scrollTo(0, 0);
   };
 
-  changeOffset = async direction => {
-    const { offset, fetchowane, value } = this.state;
+  changeOffset = async (direction, query) => {
+    const { offset, fetchowane } = this.state;
     const addToState = async () => {
-      const fetchedFromDB = await this.props.fetch(
-        value,
-        offset + 30 * direction
-      );
-      this.loadSuggestions(value, fetchedFromDB);
-      this.setState({ offset: offset + 30 * direction });
+      this.setState({ offset: offset + this.props.limit * direction }, () => {
+        this.onSuggestionsFetchRequested({ value: query });
+      });
     };
-    if (fetchowane.length >= 30 && direction === 1) {
+    if (fetchowane.length >= this.props.limit && direction === 1) {
       addToState();
     } else if (direction === -1) {
       addToState();
@@ -136,11 +129,7 @@ class InputSelectBaza extends React.Component {
   onChange = (event, { newValue, method }) => {
     if (newValue.length > 4) {
       this.suggestions.scrollTo(0, 300);
-      // this.setState({ pos: 50 }, () => {
-      //   this.suggestionsRef.scrollTo = this.state.pos;
-      // });
     }
-    //console.log("onchange");
     this.setState({
       value: newValue
     });
@@ -153,34 +142,11 @@ class InputSelectBaza extends React.Component {
         type: "inputSelectBaza"
       }
     };
-    //console.log(input);
     newValue !== ""
       ? this.setState({ clear: true })
       : this.setState({ clear: false });
 
     this.props.wybrano(input);
-  };
-
-  clearValue = () => {
-    this.onSuggestionsClearRequested();
-    //console.log("czyszcze pole");
-    this.setState({
-      value: "",
-      clear: false
-    });
-    let input = {
-      target: {
-        value: "",
-        name: this.props.name,
-        text: "",
-        type: "inputSelectBaza"
-      }
-    };
-    this.props.wybrano(input);
-    this.input.focus();
-    this.props.startAfter > 0
-      ? this.setState({ suggestions: [] })
-      : this.loadSuggestions("", `/api/table/${this.props.baza}`);
   };
 
   loadSuggestions = async (value, fetched) => {
@@ -192,27 +158,26 @@ class InputSelectBaza extends React.Component {
       fetchowane = this.props.reverse
         ? fetched
             //.sort(dynamicSort("name"))
-            .splice(0, 30)
+            .splice(0, this.props.limit)
             .reverse()
-        : fetched.sort(dynamicSort("name")).splice(0, 30);
+        : fetched.sort(dynamicSort("name")).splice(0, this.props.limit);
       fetchowaneRest = this.props.reverse
         ? fetched
             //.sort(dynamicSort("name"))
-            .splice(0, 5)
+            .splice(0, 1)
             .reverse()
         : fetched.sort(dynamicSort("name")).splice(0, 5);
     }
     this.setState({
       fetchowane,
-      fetchowaneRest,
-      isLoading: false,
+      fetchowaneRest:
+        fetchowaneRest && fetchowaneRest.length === 0 ? null : fetchowaneRest,
+      isloading: false,
       suggestions: this.getSuggestions(fetchowane, value, this.props.names)
     });
   };
 
   getSuggestions = (fetchowane, value, names) => {
-    //console.log("getSuggestions");
-    //  console.log(fetchowane);
     const regex = new RegExp(value.toLowerCase());
     let filtered = [];
 
@@ -224,16 +189,32 @@ class InputSelectBaza extends React.Component {
       );
     }
     return filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), []);
-    //.splice(this.state.renderRowsStart, this.state.renderRows);
   };
 
   onSuggestionsFetchRequested = async ({ value }) => {
     console.log(`onSuggestionsFetchRequested value: ${value}`);
-    if (this.props.object) {
-      this.loadSuggestions(value, this.props.object);
-    } else {
-      const fetchedFromDB = await this.props.fetch(value, this.state.offset);
-      this.loadSuggestions(value, fetchedFromDB);
+    let fetchedFromDB;
+    if (value.length >= this.props.startAfter) {
+      // console.log(value);
+      if (this.props.object) {
+        this.loadSuggestions(value, this.props.object);
+      } else {
+        this.setState({ isloading: true });
+        if (this.props.limit === 999999) {
+          fetchedFromDB =
+            this.state.fetchowane.length === 0
+              ? await fetchDBall(this.props.name)
+              : this.state.fetchowane;
+        } else {
+          fetchedFromDB = await fetchDB(
+            value,
+            this.state.offset,
+            this.props.name,
+            this.props.limit
+          );
+        }
+        fetchedFromDB && this.loadSuggestions(value, fetchedFromDB);
+      }
     }
   };
 
@@ -253,7 +234,6 @@ class InputSelectBaza extends React.Component {
   };
 
   render() {
-    //console.log(this.suggestions);
     const {
       classes,
       label,
@@ -263,31 +243,22 @@ class InputSelectBaza extends React.Component {
       suggestion
       // disabled
     } = this.props;
-    const {
-      suggestions,
-      value,
-      single,
-      isLoading,
-      renderRows,
-      renderRowsStart
-    } = this.state;
+    const { suggestions, value, single, isloading } = this.state;
 
     const inputProps = {
       //autoFocus: focus,
-      label: error ? "Wybierz poprawną datę" : isLoading ? "Szukam..." : label,
+      label: error ? "Wybierz poprawną datę" : isloading ? "Szukam..." : label,
       placeholder,
       classes,
       value: valueProps,
       //value: value,
       onChange: this.onChange,
       error,
-      clearValue: this.clearValue,
-      isLoading:
-        this.props.isLoading === undefined ? isLoading : this.props.isLoading
+      //clearvalue: this.clearvalue,
+      isloading
+      // isloading:
+      //   this.props.isloading === undefined ? isloading : this.props.isloading
     };
-
-    //const nameOfSuggestion = `${suggestion}Suggestion`;
-    //console.log(suggestions);
 
     return (
       <Autosuggest
@@ -335,8 +306,9 @@ InputSelectBaza.defaultProps = {
   startAfter: 0,
   suggestion: simpleSuggestion,
   names: ["name"],
-  clearOffset: () => {}
-  //isLoading: false
+  clearOffset: () => {},
+  limit: 999999
+  //isloading: false
 };
 
 export default withStyles(styles)(InputSelectBaza);

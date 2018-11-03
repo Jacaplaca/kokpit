@@ -322,8 +322,8 @@ class PlanerAktywnosciForm extends Component {
                   value={this.state.miejsce_idText}
                   label="Miejscowość"
                   placeholder="Wpisz miejscowość..."
-                  baza="city"
-                  startAfter={2}
+                  startAfter={3}
+                  limit={30}
                 />
               )}
               <InputComponent

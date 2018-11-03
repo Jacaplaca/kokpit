@@ -125,10 +125,11 @@ module.exports = app => {
     }
   });
 
-  app.get("/api/limit/:table/:query/:offset", (req, res, next) => {
-    const query = req.params.query;
+  app.get("/api/limit/:table/:value/:offset/:limit", (req, res, next) => {
+    const value = req.params.value;
     const table = req.params.table;
-    const limit = 31;
+    let limit = Math.trunc(req.params.limit);
+    limit += 1;
     const offset = Math.trunc(req.params.offset);
     const { user_id, clientId } = req.user;
     console.log(`limit: ${limit}, offset: ${offset}`);
@@ -136,25 +137,24 @@ module.exports = app => {
       return res.redirect("/");
     }
     switch (table) {
-      case "miejsce":
+      case "miejsce_id":
         Miejsca.findAll({
           where: {
-            name: { [Op.like]: `%${query}%` }
+            name: { [Op.like]: `%${value}%` }
           },
           offset,
           limit
         }).then(result => {
-          //console.log(result.json());
           return res.json(result);
         });
         break;
-      case "planer_klienci":
+      case "planer_klienci_id":
         PlanerKlienci.findAll({
           where: {
             [Op.or]: [
-              { adr_Miejscowosc: { [Op.like]: `${query}%` } },
-              { adr_Kod: { [Op.like]: `${query}%` } },
-              { name: { [Op.like]: `${query}%` } }
+              { adr_Miejscowosc: { [Op.like]: `${value}%` } },
+              { adr_Kod: { [Op.like]: `${value}%` } },
+              { name: { [Op.like]: `${value}%` } }
             ],
             clientId
           },
@@ -699,7 +699,7 @@ module.exports = app => {
     }
     const { clientId, role, user_id } = req.user;
     switch (table.table) {
-      case "category":
+      case "categoryId":
         Category.findAll({ where: { clientId } })
           .then(result => res.json(result))
           .catch(err => {
@@ -707,7 +707,7 @@ module.exports = app => {
             res.sendStatus(500);
           });
         break;
-      case "group":
+      case "groupId":
         Group.findAll({ where: { clientId } })
           .then(result => res.json(result))
           .catch(err => {

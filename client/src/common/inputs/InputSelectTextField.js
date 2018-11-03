@@ -35,27 +35,28 @@ const InputSelectTextField = props => {
   const {
     // //value
     // // disabled,
-    // clearValue,
+    // clearvalue,
     // kwota,
     // //error,
     // classes,
     inputRef = () => {},
     ref,
     kwota,
-    // isLoading,
+    isloading,
+    // isloading,
     ...other
   } = props;
   //console.log(ref);
   // console.log(kwota);
 
   // const clearButton = () => {
-  //   if (inputProps.value !== "" && isLoading) {
+  //   if (inputProps.value !== "" && isloading) {
   //     return (
   //       <CircularProgress size={23} color="red" style={{ marginBottom: 10 }} />
   //     );
-  //   } else if (inputProps.value !== "" && !isLoading) {
+  //   } else if (inputProps.value !== "" && !isloading) {
   //     return (
-  //       <IconButton onClick={() => clearValue()}>
+  //       <IconButton onClick={() => clearvalue()}>
   //         <IconCancel />
   //       </IconButton>
   //     );
@@ -65,11 +66,9 @@ const InputSelectTextField = props => {
   // };
 
   const clearButton = () => {
-    if (props.value !== "" && props.isLoading) {
-      return (
-        <CircularProgress size={23} color="red" style={{ marginBottom: 10 }} />
-      );
-    } else if (props.value !== "" && !props.isLoading) {
+    if (props.value !== "" && isloading) {
+      return <CircularProgress size={23} style={{ marginBottom: 10 }} />;
+    } else if (props.value !== "" && !isloading) {
       return (
         <IconButton
           onClick={() =>

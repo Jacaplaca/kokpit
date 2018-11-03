@@ -10,6 +10,8 @@ import EmailValidator from "email-validator";
 import PropTypes from "prop-types";
 import * as actions from "../actions";
 
+import TextField from "@material-ui/core/TextField";
+
 import InputComponent from "../common/inputs/InputComponent";
 
 const emailHelperMessage = "Adres email podany przy rejestracji";
@@ -52,6 +54,11 @@ const styles = theme => ({
 });
 
 class Login extends Component {
+  emailRef = React.createRef();
+  passwordRef = React.createRef();
+  submitRef = React.createRef();
+  testRef = React.createRef();
+
   state = {
     emailHelper: emailHelperMessage,
     isSubmitDisabled: true,
@@ -65,6 +72,10 @@ class Login extends Component {
   componentWillMount = () => {
     this.props.fetchForm();
   };
+
+  // componentDidMount = () => {
+  //   console.log(this.testRef);
+  // };
 
   componentDidUpdate = (prevProps, prevState, snapshot) => {
     const { email } = this.state;
@@ -173,6 +184,7 @@ class Login extends Component {
           ) : null}
           <form method="POST" action="/auth/login">
             <InputComponent
+              ref={this.emailRef}
               name="email"
               label="Email"
               type="email"
@@ -183,6 +195,7 @@ class Login extends Component {
               helperText={this.state.emailHelper}
             />
             <InputComponent
+              ref={this.passwordRef}
               name="password"
               label="Password"
               type="string"
@@ -191,6 +204,10 @@ class Login extends Component {
               value={this.state.password}
               password={this.state.hidePassword}
               passwordVisibility={this.passwordVisibility}
+            />
+            <TextField
+              ref={this.testRef}
+              onChange={() => this.emailRef.current.focus()}
             />
             <div style={{ width: "100%", marginTop: 40 }}>
               <Button

@@ -105,8 +105,8 @@ const mojNumberFilter = {
   //withoutEmptyComparatorOption: true, // dont render empty option for comparator
   //withoutEmptyNumberOption: true, // dont render empty option for numner select if it is defined
   comparators: [
-    (Comparator.GT = "więcej niż"),
-    (Comparator.LT = "mniej niż")
+    (Comparator.GT = ">"),
+    (Comparator.LT = "<")
     // (Comparator.EQ = "a")
   ],
   style: { display: "inline-grid", marginTop: 5 },
@@ -452,10 +452,10 @@ class CostsTable extends Component {
               a: function(a, b) {
                 return a === b;
               },
-              "mniej niż": function(a, b) {
+              "<": function(a, b) {
                 return a < b;
               },
-              "więcej niż": function(a, b) {
+              ">": function(a, b) {
                 return a > b;
               }
             };

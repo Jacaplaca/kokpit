@@ -8,9 +8,21 @@ import {
   startOfWeek,
   endOfWeek
 } from "date-fns";
-
+import axios from "axios";
 import store from "../store";
 import * as actions from "../actions";
+
+export const fetchDB = async (value, offset, baza, limit) => {
+  const result = await axios.get(
+    `/api/limit/${baza}/${value}/${offset}/${limit}`
+  );
+  return result.data;
+};
+
+export const fetchDBall = async baza => {
+  const result = await axios.get(`/api/table/${baza}`);
+  return result.data;
+};
 
 export const sprawdzPola = (aktywnosc_id, miejsce_id, inna) => {
   //console.log("sprawdzam pola");
