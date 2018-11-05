@@ -42,6 +42,7 @@ const InputComponent = props => {
     // disabled,
     classes,
     inputRef = () => {},
+    //inputRef,
     ref,
     fullWidth,
     kwota,
@@ -56,6 +57,11 @@ const InputComponent = props => {
       <InputMask mask={mask} value={value} onChange={edytuj} {...other}>
         {() => (
           <InputSelectTextField
+            // onClick={() => {
+            //   console.log("InputComponent");
+            //   console.log(props);
+            // }}
+            //refy={props.refy}
             helperText={helperText}
             error={error}
             label={label}

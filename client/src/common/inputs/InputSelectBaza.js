@@ -255,7 +255,8 @@ class InputSelectBaza extends React.Component {
       onChange: this.onChange,
       error,
       //clearvalue: this.clearvalue,
-      isloading
+      isloading,
+      name: this.props.name
       // isloading:
       //   this.props.isloading === undefined ? isloading : this.props.isloading
     };

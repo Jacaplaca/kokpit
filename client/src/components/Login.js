@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import ReactDOM from "react-dom";
 
 import Paper from "@material-ui/core/Paper";
 //import Input from "@material-ui/core/Input";
@@ -15,6 +16,7 @@ import TextField from "@material-ui/core/TextField";
 import InputComponent from "../common/inputs/InputComponent";
 
 const emailHelperMessage = "Adres email podany przy rejestracji";
+// let key;
 
 const styles = theme => ({
   root: {
@@ -54,10 +56,10 @@ const styles = theme => ({
 });
 
 class Login extends Component {
-  emailRef = React.createRef();
-  passwordRef = React.createRef();
-  submitRef = React.createRef();
-  testRef = React.createRef();
+  // emailRef = React.createRef();
+  // passwordRef = React.createRef();
+  // submitRef = React.createRef();
+  // testRef = React.createRef();
 
   state = {
     emailHelper: emailHelperMessage,
@@ -73,9 +75,38 @@ class Login extends Component {
     this.props.fetchForm();
   };
 
-  // componentDidMount = () => {
-  //   console.log(this.testRef);
-  // };
+  componentDidMount = () => {
+    document.addEventListener("keydown", this.keyFunction, false);
+    //document.addEventListener("click", this.keyFunction, false);
+  };
+
+  keyFunction = event => {
+    console.log(event);
+    if (event.srcElement.localName === "input" && event.key === "Tab") {
+      const buttons = document.getElementsByTagName("button");
+      const inputs = document.getElementsByTagName("input");
+      console.log(buttons);
+      event.preventDefault();
+
+      for (let index = 0; index < inputs.length; ++index) {
+        // console.log(inputs[index]);
+        // console.log(inputs[index] === document.activeElement);
+        if (inputs[index] === document.activeElement) {
+          if (index < inputs.length - 1) {
+            console.log(`mniejsze ${index}`);
+            inputs[index + 1].focus();
+          } else if (index === inputs.length - 1) {
+            console.log(`rowne ${index}`);
+            for (var i = 0; i < buttons.length; i++) {
+              if (buttons[i].type === "submit") {
+                buttons[i].focus();
+              }
+            }
+          }
+        }
+      }
+    }
+  };
 
   componentDidUpdate = (prevProps, prevState, snapshot) => {
     const { email } = this.state;
@@ -184,7 +215,9 @@ class Login extends Component {
           ) : null}
           <form method="POST" action="/auth/login">
             <InputComponent
-              ref={this.emailRef}
+              //inputRef={this.emailRef}
+              //ref={this.emailRef}
+              //refy={this.emailRef}
               name="email"
               label="Email"
               type="email"
@@ -195,7 +228,7 @@ class Login extends Component {
               helperText={this.state.emailHelper}
             />
             <InputComponent
-              ref={this.passwordRef}
+              // ref={this.passwordRef}
               name="password"
               label="Password"
               type="string"
@@ -204,10 +237,6 @@ class Login extends Component {
               value={this.state.password}
               password={this.state.hidePassword}
               passwordVisibility={this.passwordVisibility}
-            />
-            <TextField
-              ref={this.testRef}
-              onChange={() => this.emailRef.current.focus()}
             />
             <div style={{ width: "100%", marginTop: 40 }}>
               <Button

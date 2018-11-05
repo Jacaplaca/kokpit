@@ -14,6 +14,7 @@ function NumberFormatCustom(props) {
   return (
     <NumberFormat
       {...other}
+      name={name}
       getInputRef={inputRef}
       onValueChange={values => {
         onChange({
@@ -43,6 +44,7 @@ const InputSelectTextField = props => {
     ref,
     kwota,
     isloading,
+    name,
     // isloading,
     ...other
   } = props;
@@ -118,19 +120,42 @@ const InputSelectTextField = props => {
   //   //   input: classes.input
   //   // }
   // };
-
+  //let textInput = null;
   return (
     <TextField
+      // ref={input => {
+      //   textInput = input;
+      // }}
       // disabled={disabled ? true : false}
       //error={error ? true : false}
+      onClick={node => {
+        // console.log("InputSelectTextField");
+        // console.log(inputRef);
+        // ref && ref(node);
+        // inputRef(node);
+        //console.log(node);
+        // node.focus();
+      }}
       InputProps={{
         inputRef: node => {
+          //console.log(node);
+          //console.log(node.getAttribute("name"));
+          //console.log(node.nodeName);
+          // console.log(node.name);
+          //console.log(inputRef(node));
           ref && ref(node);
           inputRef(node);
+          // if (node !== null) {
+          //   if (node.name === "email") {
+          //     node.focus();
+          //   }
+          // }
         },
         ...thisCompInputProps
       }}
+      //inputRef={textInput}
       {...other}
+      name={name}
     />
   );
 };
