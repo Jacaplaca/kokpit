@@ -260,9 +260,15 @@ export const keyFunction = event => {
               document.getElementsByName(nextToFocus)[0].focus();
               event.preventDefault();
             } else {
+<<<<<<< HEAD
               // document
               //   .getElementsByName(nextToFocus)[0]
               //   .nextElementSibling.focus();
+=======
+              document
+                .getElementsByName(nextToFocus)[0]
+                .nextElementSibling.focus();
+>>>>>>> db77da443473331a5790ce8b03b568e96e58917b
             }
           }
         }
