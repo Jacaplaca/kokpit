@@ -73,6 +73,7 @@ const InputSelectTextField = props => {
     } else if (props.value !== "" && !isloading) {
       return (
         <IconButton
+          id={`${name}_clear`}
           onClick={() =>
             props.onChange({ target: { name: props.name, value: "" } })
           }
@@ -92,6 +93,7 @@ const InputSelectTextField = props => {
       return (
         <InputAdornment position="end">
           <IconButton
+            focusable="false"
             aria-label="Toggle password visibility"
             onClick={props.passwordVisibility}
           >

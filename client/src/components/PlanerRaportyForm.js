@@ -31,7 +31,8 @@ import {
   validateTime,
   validateDuration,
   validateKiedy,
-  sprawdzPola
+  sprawdzPola,
+  keyFunction
 } from "../common/functions";
 
 const styles = theme => ({
@@ -170,6 +171,18 @@ class PlanerRaportyForm extends Component {
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
   }
+
+  componentDidMount = () => {
+    document.addEventListener("keydown", keyFunction, false);
+  };
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", keyFunction, false);
+  }
+
+  // keyFunction = event => {
+  //   console.log(event);
+  // };
 
   fetchujDate = async data => {
     if (data.length === 10) {
@@ -556,7 +569,7 @@ class PlanerRaportyForm extends Component {
 
     return (
       <Paper style={{ padding: 20 }}>
-        <form onSubmit={e => this.handleSubmit(e)}>
+        <form onSubmit={e => this.handleSubmit(e)} id="mainForm">
           <Grid container spacing={24}>
             <Grid item xs={3}>
               {/* <div ref={this.suggestionsRef}>asdfasdfa</div> */}
@@ -583,7 +596,6 @@ class PlanerRaportyForm extends Component {
               <Grid container spacing={24}>
                 <Grid item xs={6}>
                   {timesInputs("Początek", "Start", "start")}
-
                   <InputWyborBaza
                     table="rodzajAktywnosci"
                     label="Aktywność"
@@ -667,6 +679,7 @@ class PlanerRaportyForm extends Component {
             <div style={{ width: "100%", display: "block" }}>
               {!this.state.edited ? (
                 <ButtonMy
+                  id="submit"
                   disabled={this.state.isSubmitDisabled}
                   type="submit"
                   progress
