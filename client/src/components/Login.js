@@ -10,10 +10,8 @@ import { withStyles } from "@material-ui/core/styles";
 import EmailValidator from "email-validator";
 import PropTypes from "prop-types";
 import * as actions from "../actions";
-
-import TextField from "@material-ui/core/TextField";
-
 import InputComponent from "../common/inputs/InputComponent";
+import { keyFunction } from "../common/functions";
 
 const emailHelperMessage = "Adres email podany przy rejestracji";
 // let key;
@@ -76,9 +74,14 @@ class Login extends Component {
   };
 
   componentDidMount = () => {
-    document.addEventListener("keydown", this.keyFunction, false);
+    document.addEventListener("keydown", keyFunction, false);
     //document.addEventListener("click", this.keyFunction, false);
   };
+
+  componentWillUnmount() {
+    // you need to unbind the same listener that was binded.
+    document.removeEventListener("keydown", keyFunction, false);
+  }
 
   keyFunction = event => {
     console.log(event);
@@ -193,6 +196,7 @@ class Login extends Component {
                 <form method="POST" action="/auth/reset">
                   <input name="email" type="hidden" value={this.state.email} />
                   <Button
+                    id="submit"
                     style={{ margin: 8 }}
                     type="submit"
                     variant="contained"
@@ -213,7 +217,7 @@ class Login extends Component {
               )}
             </div>
           ) : null}
-          <form method="POST" action="/auth/login">
+          <form method="POST" action="/auth/login" id="mainForm">
             <InputComponent
               //inputRef={this.emailRef}
               //ref={this.emailRef}

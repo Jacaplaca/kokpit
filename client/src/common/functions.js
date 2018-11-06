@@ -213,3 +213,61 @@ export const shortPlace = str => {
     ? `${remaining.join(" ").slice(0, 15)}...`
     : `${remaining.join(" ").slice(0, 18)}`;
 };
+
+export const keyFunction = event => {
+  const formName = event.srcElement.form && event.srcElement.form.id;
+  const activeElementName = event.srcElement.name;
+  //console.log(event.srcElement.nodeName);
+  if (
+    formName &&
+    (event.key === "Escape" || event.key === "Tab" || event.key === "Enter")
+  ) {
+    const inputs = document.forms[formName].getElementsByTagName("input");
+    let nextToFocus;
+    if (
+      event.srcElement.localName === "input" &&
+      event.key === "Escape" &&
+      event.srcElement.value.length > 0
+    ) {
+      const clearButton = document.getElementById(`${activeElementName}_clear`);
+      clearButton && clearButton.click();
+    }
+    if (event.srcElement.localName === "input" && event.key === "Enter") {
+      document.getElementById("submit").click();
+    }
+    //let inp = [];
+    if (event.srcElement.localName === "input" && event.key === "Tab") {
+      // const inp = document.getElementsByName("aktywnosc_id");
+      // const pr = inp[0].previousElementSibling;
+      // console.log(pr);
+      // pr.focus();
+      for (var i = 0; i < inputs.length; i++) {
+        //inp.push(inputs[i].name);
+        if (inputs[i].name === activeElementName) {
+          if (i < inputs.length - 1) {
+            nextToFocus = inputs[i + 1].name;
+            // console.log(inputs[i + 1].name);
+          } else if (i === inputs.length - 1) {
+            nextToFocus = inputs[0].name;
+          }
+        }
+      }
+      if (nextToFocus) {
+        if (nextToFocus.length > 0) {
+          if (document.getElementsByName(nextToFocus).length > 0) {
+            //console.log(document.getElementsByName(nextToFocus)[0]);
+            if (document.getElementsByName(nextToFocus)[0].type !== "hidden") {
+              document.getElementsByName(nextToFocus)[0].focus();
+              event.preventDefault();
+            } else {
+              // document
+              //   .getElementsByName(nextToFocus)[0]
+              //   .nextElementSibling.focus();
+            }
+          }
+        }
+      }
+    }
+    //console.log(event.srcElement.name);
+  }
+};

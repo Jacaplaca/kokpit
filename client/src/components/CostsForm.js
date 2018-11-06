@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+//import RootRef from "@material-ui/core/RootRef";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
@@ -12,6 +13,7 @@ import ButtonMy from "../common/ButtonMy";
 import SiteHeader from "../common/SiteHeader";
 import InputComponent from "../common/inputs/InputComponent";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
+import { keyFunction } from "../common/functions";
 const styles = theme => ({
   input: {
     display: "flex",
@@ -43,7 +45,7 @@ class CostsForm extends Component {
   state = {
     id: "",
     nr_dokumentu: "a",
-    data_wystawienia: "2018-10-01",
+    data_wystawienia: "2018-11-05",
     nazwa_pozycji: "a",
     kwota_netto: "1",
     kwota_brutto: "2",
@@ -67,49 +69,12 @@ class CostsForm extends Component {
   }
 
   componentDidMount = () => {
-    document.addEventListener("keydown", this.keyFunction, false);
-    //document.addEventListener("click", this.keyFunction, false);
+    document.addEventListener("keydown", keyFunction, false);
   };
 
-  keyFunction = event => {
-    console.log(event);
-    if (event.srcElement.localName === "input" && event.key === "Tab") {
-      const name = event.srcElement.name;
-      const inputsNames = [];
-      //const name = document.getElementsByName[0].name;
-      //const buttons = document.getElementsByTagName("button");
-      const inputs = document
-        // .getElementsByTagName("input")
-        .getElementsByClassName("MuiInput-input-294");
-      //const inputsNames = inputs.map(x => x.name);
-      //console.log(buttons);
-      for (var i = 0; i < inputs.length; i++) {
-        inputsNames.push(inputs[i].name);
-      }
-      console.log(inputsNames);
-      console.log(inputs);
-      console.log(name);
-      event.preventDefault();
-
-      // for (let index = 0; index < inputs.length; ++index) {
-      //   // console.log(inputs[index]);
-      //   // console.log(inputs[index] === document.activeElement);
-      //   if (inputs[index] === document.activeElement) {
-      //     if (index < inputs.length - 1) {
-      //       console.log(`mniejsze ${index}`);
-      //       inputs[index + 1].focus();
-      //     } else if (index === inputs.length - 1) {
-      //       console.log(`rowne ${index}`);
-      //       // for (var i = 0; i < buttons.length; i++) {
-      //       //   if (buttons[i].type === "submit") {
-      //       //     buttons[i].focus();
-      //       //   }
-      //       // }
-      //     }
-      //   }
-      // }
-    }
-  };
+  componentWillUnmount() {
+    document.removeEventListener("keydown", keyFunction, false);
+  }
 
   czyWypelniony = () => {
     const arr = [
@@ -296,7 +261,7 @@ class CostsForm extends Component {
         {modal && (
           <SiteHeader text={duplicate ? "Utwórz nowy koszt" : "Edytuj koszt"} />
         )}
-        <form>
+        <form id="mainForm">
           <Grid container spacing={24}>
             <Grid item xs={4}>
               <InputComponent
@@ -367,6 +332,7 @@ class CostsForm extends Component {
             </Grid>
           </Grid>
           <ButtonMy
+            id="submit"
             progress
             disabled={isSubmitDisabled}
             onClick={e => {
