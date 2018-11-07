@@ -234,8 +234,49 @@ export const keyFunction = event => {
     if (event.srcElement.localName === "input" && event.key === "Enter") {
       document.getElementById("submit").click();
     }
+<<<<<<< HEAD
     if (event.key === "Tab") {
       console.log(event.srcElement);
+=======
+    //let inp = [];
+    if (event.srcElement.localName === "input" && event.key === "Tab") {
+      // const inp = document.getElementsByName("aktywnosc_id");
+      // const pr = inp[0].previousElementSibling;
+      // console.log(pr);
+      // pr.focus();
+      for (var i = 0; i < inputs.length; i++) {
+        //inp.push(inputs[i].name);
+        if (inputs[i].name === activeElementName) {
+          if (i < inputs.length - 1) {
+            nextToFocus = inputs[i + 1].name;
+            // console.log(inputs[i + 1].name);
+          } else if (i === inputs.length - 1) {
+            nextToFocus = inputs[0].name;
+          }
+        }
+      }
+      if (nextToFocus) {
+        if (nextToFocus.length > 0) {
+          if (document.getElementsByName(nextToFocus).length > 0) {
+            //console.log(document.getElementsByName(nextToFocus)[0]);
+            if (document.getElementsByName(nextToFocus)[0].type !== "hidden") {
+              document.getElementsByName(nextToFocus)[0].focus();
+              event.preventDefault();
+            } else {
+<<<<<<< HEAD
+              // document
+              //   .getElementsByName(nextToFocus)[0]
+              //   .nextElementSibling.focus();
+=======
+              document
+                .getElementsByName(nextToFocus)[0]
+                .nextElementSibling.focus();
+>>>>>>> db77da443473331a5790ce8b03b568e96e58917b
+            }
+          }
+        }
+      }
+>>>>>>> 2af33c1796deccefeae066994801b282b1bb4ead
     }
     //let inp = [];
     // if (event.srcElement.localName === "input" && event.key === "Tab") {
