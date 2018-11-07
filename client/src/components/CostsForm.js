@@ -9,11 +9,16 @@ import Paper from "@material-ui/core/Paper";
 import * as actions from "../actions";
 import Send from "@material-ui/icons/Send";
 import Cancel from "@material-ui/icons/Clear";
+
 import ButtonMy from "../common/ButtonMy";
+
 import SiteHeader from "../common/SiteHeader";
 import InputComponent from "../common/inputs/InputComponent";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import { keyFunction } from "../common/functions";
+
+import DatePickerMy from "../common/inputs/DatePickerMy";
+
 const styles = theme => ({
   input: {
     display: "flex",
@@ -45,7 +50,7 @@ class CostsForm extends Component {
   state = {
     id: "",
     nr_dokumentu: "a",
-    data_wystawienia: "2018-11-05",
+    data_wystawienia: new Date(),
     nazwa_pozycji: "a",
     kwota_netto: "1",
     kwota_brutto: "2",
@@ -216,7 +221,9 @@ class CostsForm extends Component {
   };
 
   handleChange = event => {
+    console.log(event);
     const { name, value, type, text } = event.target;
+    console.log(`${name}  ${value}`);
     const label = `${name}Text`;
 
     if (type === "inputSelectBaza" && typeof value === "string") {
@@ -252,6 +259,10 @@ class CostsForm extends Component {
     }
   };
 
+  // handleDateChange = date => {
+  //   this.setState({ data_wystawienia: date });
+  // };
+
   render() {
     const { classes, duplicate, modal, submitCheck } = this.props;
     const { edited, isSubmitDisabled } = this.state;
@@ -273,13 +284,20 @@ class CostsForm extends Component {
               />
             </Grid>
             <Grid item xs={4}>
-              <InputComponent
+              <DatePickerMy
+                name="data_wystawienia"
+                label="Data wystawienia"
+                edytuj={this.handleChange}
+                //edytuj={e => console.log(e)}
+                value={this.state.data_wystawienia}
+              />
+              {/* <InputComponent
                 name="data_wystawienia"
                 label="Data wystawienia"
                 type="date"
                 edytuj={this.handleChange}
                 value={this.state.data_wystawienia}
-              />
+              /> */}
             </Grid>
             <Grid item xs={4}>
               <InputComponent

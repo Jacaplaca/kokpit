@@ -596,6 +596,13 @@ class PlanerRaportyForm extends Component {
               <Grid container spacing={24}>
                 <Grid item xs={6}>
                   {timesInputs("Początek", "Start", "start")}
+                </Grid>
+                <Grid item xs={6}>
+                  {timesInputs("Koniec", "Stop", "stop")}
+                </Grid>
+              </Grid>
+              <Grid container spacing={24}>
+                <Grid item xs={6}>
                   <InputWyborBaza
                     table="rodzajAktywnosci"
                     label="Aktywność"
@@ -605,7 +612,6 @@ class PlanerRaportyForm extends Component {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  {timesInputs("Koniec", "Stop", "stop")}
                   {this.state.aktywnosc_id === 5 && (
                     <InputComponent
                       label="Inna"

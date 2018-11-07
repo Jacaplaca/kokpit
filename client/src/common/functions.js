@@ -105,10 +105,9 @@ export const validateDuration = (start, stop) => {
 
 export const dataToString = element => {
   const data = new Date(element);
-  const dzien =
-    data.getDate() > 10 ? `${data.getDate()}` : `0${data.getDate()}`;
+  const dzien = data.getDate() > 9 ? `${data.getDate()}` : `0${data.getDate()}`;
   const miesiac =
-    data.getMonth() + 1 > 10
+    data.getMonth() + 1 > 9
       ? `${data.getMonth() + 1}`
       : `0${data.getMonth() + 1}`;
   return `${data.getFullYear()}-${miesiac}-${dzien}`;
@@ -235,39 +234,42 @@ export const keyFunction = event => {
     if (event.srcElement.localName === "input" && event.key === "Enter") {
       document.getElementById("submit").click();
     }
-    //let inp = [];
-    if (event.srcElement.localName === "input" && event.key === "Tab") {
-      // const inp = document.getElementsByName("aktywnosc_id");
-      // const pr = inp[0].previousElementSibling;
-      // console.log(pr);
-      // pr.focus();
-      for (var i = 0; i < inputs.length; i++) {
-        //inp.push(inputs[i].name);
-        if (inputs[i].name === activeElementName) {
-          if (i < inputs.length - 1) {
-            nextToFocus = inputs[i + 1].name;
-            // console.log(inputs[i + 1].name);
-          } else if (i === inputs.length - 1) {
-            nextToFocus = inputs[0].name;
-          }
-        }
-      }
-      if (nextToFocus) {
-        if (nextToFocus.length > 0) {
-          if (document.getElementsByName(nextToFocus).length > 0) {
-            //console.log(document.getElementsByName(nextToFocus)[0]);
-            if (document.getElementsByName(nextToFocus)[0].type !== "hidden") {
-              document.getElementsByName(nextToFocus)[0].focus();
-              event.preventDefault();
-            } else {
-              // document
-              //   .getElementsByName(nextToFocus)[0]
-              //   .nextElementSibling.focus();
-            }
-          }
-        }
-      }
+    if (event.key === "Tab") {
+      console.log(event.srcElement);
     }
+    //let inp = [];
+    // if (event.srcElement.localName === "input" && event.key === "Tab") {
+    //   // const inp = document.getElementsByName("aktywnosc_id");
+    //   // const pr = inp[0].previousElementSibling;
+    //   // console.log(pr);
+    //   // pr.focus();
+    //   for (var i = 0; i < inputs.length; i++) {
+    //     //inp.push(inputs[i].name);
+    //     if (inputs[i].name === activeElementName) {
+    //       if (i < inputs.length - 1) {
+    //         nextToFocus = inputs[i + 1].name;
+    //         // console.log(inputs[i + 1].name);
+    //       } else if (i === inputs.length - 1) {
+    //         nextToFocus = inputs[0].name;
+    //       }
+    //     }
+    //   }
+    //   if (nextToFocus) {
+    //     if (nextToFocus.length > 0) {
+    //       if (document.getElementsByName(nextToFocus).length > 0) {
+    //         //console.log(document.getElementsByName(nextToFocus)[0]);
+    //         if (document.getElementsByName(nextToFocus)[0].type !== "hidden") {
+    //           document.getElementsByName(nextToFocus)[0].focus();
+    //           event.preventDefault();
+    //         } else {
+    //           // document
+    //           //   .getElementsByName(nextToFocus)[0]
+    //           //   .nextElementSibling.focus();
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     //console.log(event.srcElement.name);
   }
 };

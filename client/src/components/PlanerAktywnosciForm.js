@@ -19,7 +19,8 @@ import {
   validateTime,
   validateDuration,
   validateKiedy,
-  sprawdzPola
+  sprawdzPola,
+  keyFunction
 } from "../common/functions";
 
 const styles = theme => ({
@@ -79,6 +80,14 @@ class PlanerAktywnosciForm extends Component {
 
   componentDidUpdate(prevProps) {
     prevProps.sentDays !== this.props.sentDays && this.canSubmit();
+  }
+
+  componentDidMount = () => {
+    document.addEventListener("keydown", keyFunction, false);
+  };
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", keyFunction, false);
   }
 
   czyWypelniony = () => {
@@ -275,7 +284,7 @@ class PlanerAktywnosciForm extends Component {
 
     return (
       <Paper style={{ padding: 20 }}>
-        <form onSubmit={e => this.handleSubmit(e)}>
+        <form onSubmit={e => this.handleSubmit(e)} id="mainForm">
           <Grid container spacing={24}>
             <Grid item xs={3}>
               <InputComponent
@@ -338,6 +347,7 @@ class PlanerAktywnosciForm extends Component {
             <div style={{ width: "100%", display: "block" }}>
               {!this.state.edited ? (
                 <ButtonMy
+                  id="submit"
                   type="submit"
                   disabled={this.state.isSubmitDisabled}
                   progress
