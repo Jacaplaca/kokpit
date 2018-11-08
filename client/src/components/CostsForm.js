@@ -50,7 +50,7 @@ class CostsForm extends Component {
   state = {
     id: "",
     nr_dokumentu: "a",
-    data_wystawienia: new Date(),
+    data_wystawienia: "",
     nazwa_pozycji: "a",
     kwota_netto: "1",
     kwota_brutto: "2",
@@ -290,6 +290,7 @@ class CostsForm extends Component {
                 edytuj={this.handleChange}
                 //edytuj={e => console.log(e)}
                 value={this.state.data_wystawienia}
+                //placeholder="Wybierz dzień"
               />
               {/* <InputComponent
                 name="data_wystawienia"

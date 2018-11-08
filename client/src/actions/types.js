@@ -1,6 +1,7 @@
 export const FETCH_USER = "fetchUser";
 export const FETCH_FORM = "fetchForm";
 export const FETCH_SENT_ACTIVITIES = "fetchSentActivities";
+export const LOADING_SENT_ACITIVITIES = "loadingSentAcitivities";
 
 export const FIXED_DRAWER = "fixed_drawer";
 export const COLLAPSED_DRAWER = "collapsible";

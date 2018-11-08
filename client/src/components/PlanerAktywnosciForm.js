@@ -13,6 +13,7 @@ import Cancel from "@material-ui/icons/Clear";
 import InputWyborBaza from "../common/inputs/InputWyborBaza";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputComponent from "../common/inputs/InputComponent";
+import DatePickerMy from "../common/inputs/DatePickerMy";
 import {
   wezGodzine,
   dataToString,
@@ -287,7 +288,7 @@ class PlanerAktywnosciForm extends Component {
         <form onSubmit={e => this.handleSubmit(e)} id="mainForm">
           <Grid container spacing={24}>
             <Grid item xs={3}>
-              <InputComponent
+              {/* <InputComponent
                 disabled={modal ? true : false}
                 label={
                   this.props.errorKiedy ? "Data wysłana do raportu" : "Kiedy"
@@ -297,6 +298,20 @@ class PlanerAktywnosciForm extends Component {
                 edytuj={this.handleChange}
                 value={kiedy}
                 name="kiedy"
+              /> */}
+              <DatePickerMy
+                disabled={modal ? true : false}
+                enableDisableDates={this.props.sentDays.map(x => x.name)}
+                disallowed
+                label={
+                  this.props.errorKiedy ? "Data wysłana do raportu" : "Kiedy"
+                }
+                error={this.props.errorKiedy}
+                type="date"
+                edytuj={this.handleChange}
+                value={kiedy}
+                name="kiedy"
+                loading={this.props.loadingSentStatus}
               />
               {timesInputs("Początek", "Start", "start")}
               {timesInputs("Koniec", "Stop", "stop")}
@@ -389,9 +404,17 @@ function mapStateToProps({
   errorStopAction: errorStop,
   errorStartAction: errorStart,
   errorKiedyAction: errorKiedy,
-  sentDays
+  sentDays,
+  loadingSent: loadingSentStatus
 }) {
-  return { submitCheck, errorStop, errorStart, errorKiedy, sentDays };
+  return {
+    submitCheck,
+    errorStop,
+    errorStart,
+    errorKiedy,
+    sentDays,
+    loadingSentStatus
+  };
 }
 
 export default withStyles(styles, { withTheme: true })(

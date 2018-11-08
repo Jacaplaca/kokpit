@@ -8,6 +8,7 @@ import errorStopReducer from "./errorStopReducer";
 import errorStartReducer from "./errorStartReducer";
 import errorKiedyReducer from "./errorKiedyReducer";
 import sentDaysReducer from "./sendDaysReducer";
+import loadingSentReducer from "./loadingSentReducer";
 
 export default combineReducers({
   auth: authReducer,
@@ -18,5 +19,6 @@ export default combineReducers({
   errorStopAction: errorStopReducer,
   errorStartAction: errorStartReducer,
   errorKiedyAction: errorKiedyReducer,
-  sentDays: sentDaysReducer
+  sentDays: sentDaysReducer,
+  loadingSent: loadingSentReducer
 });

@@ -47,6 +47,7 @@ class PlanerRaporty extends Component {
 
   fetchRaporty = async range => {
     this.props.loading(true);
+    this.props.loadingSent(true);
     const { startDate, endDate } = this.state.rangeselection;
 
     const poczatek = range ? range.rangeselection.startDate : startDate;
@@ -59,6 +60,7 @@ class PlanerRaporty extends Component {
     await this.addFetchToState(fetch);
     await this.props.fetchSentDays();
     await this.props.loading(false);
+    this.props.loadingSent(false);
   };
 
   addFetchToState = fetch => {

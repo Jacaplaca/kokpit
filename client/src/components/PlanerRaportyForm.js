@@ -23,6 +23,7 @@ import { clientSuggestion } from "../common/inputs/Suggestions";
 import InputWyborBaza from "../common/inputs/InputWyborBaza";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputComponent from "../common/inputs/InputComponent";
+import DatePickerMy from "../common/inputs/DatePickerMy";
 
 import {
   wezGodzine,
@@ -487,21 +488,16 @@ class PlanerRaportyForm extends Component {
   };
 
   chipClick = akcja => {
-    console.log("on chipClick()");
     this.setState({ [akcja]: !this.state[akcja] });
   };
 
   handleChange = async event => {
     const { name, value, type, text } = event.target;
     const label = `${name}Text`;
-
-    //console.log(`${name}, ${value}, ${type}, ${text}`);
-
     if (name === "kiedy") {
-      console.log("name kiedy");
-      await this.props.edytuj(text);
+      await this.props.edytuj(value);
       await this.canSubmit();
-      await this.fetchujDate(text);
+      await this.fetchujDate(value);
     } else {
       if (type === "inputSelectBaza" && typeof value === "string") {
         this.setState({ [name]: "", [label]: value }, () => {
@@ -576,16 +572,16 @@ class PlanerRaportyForm extends Component {
               {modal ? (
                 <p>{kiedy}</p>
               ) : (
-                <InputSelectBaza
-                  object={this.props.sentDays}
-                  error={this.props.errorKiedy}
-                  wybrano={this.handleChange}
+                <DatePickerMy
+                  enableDisableDates={this.props.sentDays.map(x => x.name)}
+                  allowed
+                  edytuj={this.handleChange}
                   value={this.props.kiedy}
                   name="kiedy"
                   label="Kiedy"
-                  placeholder="Dzień"
-                  //baza="dniDoRaportu"
-                  reverse
+                  //placeholder="Wybierz dzień"
+                  error={this.state.errorKiedy}
+                  loading={this.props.loadingSentStatus}
                 />
               )}
               <div className={classes.aktyDoRaportu}>
@@ -727,9 +723,17 @@ function mapStateToProps({
   errorStopAction: errorStop,
   errorStartAction: errorStart,
   errorKiedyAction: errorKiedy,
-  sentDays
+  sentDays,
+  loadingSent: loadingSentStatus
 }) {
-  return { submitCheck, errorStop, errorStart, errorKiedy, sentDays };
+  return {
+    submitCheck,
+    errorStop,
+    errorStart,
+    errorKiedy,
+    sentDays,
+    loadingSentStatus
+  };
 }
 
 export default withStyles(styles, { withTheme: true })(

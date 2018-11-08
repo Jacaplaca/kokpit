@@ -5,6 +5,8 @@ export default function(state = [], action) {
   switch (action.type) {
     case FETCH_SENT_ACTIVITIES:
       return action.payload || false;
+    case "aaa":
+      return "action.payload" || "bbb";
     default:
       return state;
   }

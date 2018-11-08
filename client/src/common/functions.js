@@ -43,7 +43,7 @@ export const sprawdzPola = (aktywnosc_id, miejsce_id, inna) => {
 };
 
 export const validateKiedy = (data, sentDays, belongs) => {
-  //console.log(sentDays);
+  console.log(data);
   const nalezy = belongs
     ? sentDays.some(x => x.name === data)
     : !sentDays.some(x => x.name === data);

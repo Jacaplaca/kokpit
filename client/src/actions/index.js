@@ -8,7 +8,8 @@ import {
   ERRORSTOP,
   ERRORSTART,
   ERRORKIEDY,
-  FETCH_SENT_ACTIVITIES
+  FETCH_SENT_ACTIVITIES,
+  LOADING_SENT_ACITIVITIES
 } from "./types";
 
 export const fetchUser = () => async dispatch => {
@@ -19,6 +20,10 @@ export const fetchUser = () => async dispatch => {
 export const fetchSentDays = () => async dispatch => {
   const res = await axios.get(`/api/table/dniDoRaportu`);
   dispatch({ type: FETCH_SENT_ACTIVITIES, payload: res.data });
+};
+
+export const loadingSent = status => async dispatch => {
+  dispatch({ type: LOADING_SENT_ACITIVITIES, payload: status });
 };
 
 export const clicked = where => async dispatch => {
