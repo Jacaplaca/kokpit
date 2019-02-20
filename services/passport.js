@@ -31,7 +31,9 @@ passport.deserializeUser((user_id, done) => {
         costs,
         planer,
         raporty,
-        nextReports
+        nextReports,
+        serwis,
+        channel_first
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -45,7 +47,9 @@ passport.deserializeUser((user_id, done) => {
             costs,
             planer,
             raporty,
-            nextReports
+            nextReports,
+            serwis,
+            channel_first
           })
         );
       } else {

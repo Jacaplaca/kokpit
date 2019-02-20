@@ -18,9 +18,9 @@ class App extends Component {
 
   render() {
     return (
-      <BrowserRouter>
-        <div>
-          <StickyContainer>
+      <BrowserRouter style={{ height: "100%" }}>
+        <div id="app" style={{ height: "100%" }}>
+          <StickyContainer style={{ height: "100%" }}>
             <Sticky>
               {({ style }) => (
                 <div

@@ -15,6 +15,7 @@ import PlanerRaport from "./PlanerRaporty";
 import Login from "./Login";
 import PromowaneProdukty from "./PromowaneProdukty";
 import NextReports from "./NextReports";
+import Serwis from "./Serwis";
 
 let drawerWidth = 240;
 
@@ -44,7 +45,7 @@ const styles = theme => ({
 class MyComponent extends Component {
   render() {
     const TagName = this.props.component;
-    return <TagName title={this.props.title} />;
+    return <TagName title={this.props.title} channel={this.props.channel} />;
   }
 }
 
@@ -95,11 +96,18 @@ class MiniDrawer extends React.Component {
         path: "/nextreports",
         component: NextReports,
         title: ""
+      },
+      {
+        comp: "serwis",
+        path: "/serwis",
+        component: Serwis,
+        title: "Dodaj transakcję dla serwisu",
+        channel: auth ? auth.channel_first : 0
       }
     ];
     return (
       <BrowserRouter>
-        <div className={classes.root}>
+        <div className={classes.root} id="classesRoot">
           <TopNavBar
             open={this.state.open}
             handleDrawerOpen={this.handleDrawerOpen}
@@ -109,7 +117,7 @@ class MiniDrawer extends React.Component {
             handleDrawerClose={this.handleDrawerClose}
           />
           <main className={classes.content}>
-            <div className={classes.toolbar} />
+            <div className={classes.toolbar} id="classToolbar" />
             {!auth ? (
               <Route path="/" exact component={Login} />
             ) : (
@@ -120,13 +128,17 @@ class MiniDrawer extends React.Component {
               />
             )}
             {routes.map((route, i) => {
-              const { comp, path, component, title } = route;
+              const { comp, path, component, title, channel } = route;
               return auth && auth[comp] ? (
                 <Route
                   key={i}
                   path={path}
                   render={() => (
-                    <MyComponent title={title} component={component} />
+                    <MyComponent
+                      title={title}
+                      component={component}
+                      channel={channel}
+                    />
                   )}
                 />
               ) : null;

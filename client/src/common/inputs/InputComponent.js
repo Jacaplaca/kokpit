@@ -11,6 +11,8 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
+let formatField = null;
+
 const styles = theme => ({
   root: {
     display: "flex",
@@ -53,11 +55,50 @@ function NumberFormatCustom(props) {
   );
 }
 
+function simpleNumberFormat(props) {
+  const { inputRef, onChange, ...other } = props;
+  // console.log(props);
+
+  return (
+    <NumberFormat
+      {...other}
+      getInputRef={inputRef}
+      onValueChange={values => {
+        onChange({
+          target: {
+            value: values.formattedValue.replace(/ /g, "")
+          }
+        });
+      }}
+      decimalSeparator=","
+      thousandSeparator=" "
+      decimalScale={2}
+      // suffix="  zł"
+    />
+  );
+}
+
 class InputComponent extends React.Component {
   state = {
     input: "",
-    showPassword: this.props.password ? false : true
+    showPassword: this.props.password ? false : true,
+    format: null
   };
+
+  componentWillMount() {
+    switch (this.props.format) {
+      case "number":
+        this.setState({ format: simpleNumberFormat });
+        // formatField = simpleNumberFormat;
+        break;
+      case "zl":
+        this.setState({ format: NumberFormatCustom });
+        // formatField = NumberFormatCustom;
+        break;
+      default:
+        this.setState({ format: null });
+    }
+  }
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -66,6 +107,20 @@ class InputComponent extends React.Component {
   handleClickShowPassword = () => {
     this.setState(state => ({ showPassword: !state.showPassword }));
   };
+
+  // format = () => {
+  //   console.log("format", this.props.format);
+  //   switch (this.props.format) {
+  //     case "number":
+  //       return simpleNumberFormat;
+  //     // break;
+  //     case "zl":
+  //       return NumberFormatCustom;
+  //     // break;
+  //     default:
+  //       return;
+  //   }
+  // };
 
   render() {
     const {
@@ -95,7 +150,8 @@ class InputComponent extends React.Component {
           onChange={event => edytuj(event.target.value)}
           type={this.state.showPassword ? "text" : "password"}
           InputProps={{
-            inputComponent: kwota && NumberFormatCustom,
+            inputComponent: this.state.format,
+            // inputComponent: this.format,
             endAdornment: password && (
               <InputAdornment position="end">
                 <IconButton
@@ -115,7 +171,9 @@ class InputComponent extends React.Component {
 
 InputComponent.defaultProps = {
   error: false,
-  helperText: ""
+  helperText: "",
+  number: false,
+  format: "standard"
 };
 
 InputComponent.propTypes = {

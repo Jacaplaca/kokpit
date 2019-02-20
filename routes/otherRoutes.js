@@ -5,6 +5,7 @@ const db = require("../models/index");
 const User = db.users;
 const Group = db.groups;
 const Category = db.categories;
+const Item = db.channels_items;
 const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
 const Aktywnosci = db.planer_aktywnosci;
@@ -726,6 +727,14 @@ module.exports = app => {
     }
     const { clientId, role, user_id } = req.user;
     switch (table.table) {
+      case "items":
+        Item.findAll({ where: { clientId } })
+          .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
       case "category":
         Category.findAll({ where: { clientId } })
           .then(result => res.json(result))

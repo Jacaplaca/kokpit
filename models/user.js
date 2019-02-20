@@ -65,10 +65,17 @@ module.exports = (sequelize, Sequelize) => {
       nextReports: {
         type: Sequelize.TINYINT
       },
+      serwis: {
+        type: Sequelize.TINYINT
+      },
       nr_telefonu: {
         type: Sequelize.STRING
       },
       id_client_soft: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1
+      },
+      channel_first: {
         type: Sequelize.INTEGER,
         defaultValue: 1
       }

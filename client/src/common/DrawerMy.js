@@ -105,6 +105,12 @@ class DrawerMy extends React.Component {
         text: "Next Reports",
         link: "/nextreports",
         icon: "InsertChartOutlined"
+      },
+      {
+        comp: "serwis",
+        text: "Serwis",
+        link: "/serwis",
+        icon: "InsertChartOutlined"
       }
     ];
     return (

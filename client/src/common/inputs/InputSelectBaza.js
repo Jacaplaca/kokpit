@@ -138,8 +138,8 @@ class InputSelectBaza extends React.Component {
       ? this.setState({ clear: true })
       : this.setState({ clear: false });
 
-    wybrano ? this.props.wybrano(wybrano) : this.props.wybrano("");
     this.props.edytuj(newValue);
+    wybrano ? this.props.wybrano(wybrano) : this.props.wybrano("");
     // wybrano ? this.props.edytujValue(wybrano)
     //this.props.edytuj({ name: wybrano ? wybrano.namenewValue });
   };

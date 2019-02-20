@@ -335,7 +335,8 @@ class CostsForm extends Component {
                 type="text"
                 edytuj={kwota_netto => this.setState({ kwota_netto })}
                 value={this.state.kwota_netto.replace(".", ",")}
-                kwota
+                // kwota
+                format="zl"
               />
             </Grid>
             <Grid item xs={2}>
@@ -345,7 +346,8 @@ class CostsForm extends Component {
                 type="text"
                 edytuj={kwota_brutto => this.setState({ kwota_brutto })}
                 value={this.state.kwota_brutto.replace(".", ",")}
-                kwota
+                // kwota
+                format="zl"
               />
             </Grid>
           </Grid>
@@ -363,8 +365,8 @@ class CostsForm extends Component {
             {duplicate
               ? "Dodaj koszt"
               : edited
-                ? "Edytuj koszt"
-                : "Dodaj koszt"}
+              ? "Edytuj koszt"
+              : "Dodaj koszt"}
             {!submitCheck && <Send style={{ marginLeft: 10 }} />}
           </ButtonMy>
           {this.czyWypelniony() && (
