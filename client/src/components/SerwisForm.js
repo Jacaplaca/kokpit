@@ -8,6 +8,8 @@ import InputData from "../common/inputs/InputData";
 import axios from "axios";
 import ButtonMy from "../common/ButtonMy";
 import CitySearch from "./CitiesSearch";
+import NumberFormat from "react-number-format";
+import { formatNumber, cleanNumber } from "../common/functions";
 import Send from "@material-ui/icons/Send";
 
 class SerwisForm extends Component {
@@ -18,7 +20,10 @@ class SerwisForm extends Component {
     unit: null,
     quantity: 1,
     buy: null,
-    sell: null
+    sell: null,
+    month: null,
+    customer: null,
+    cityName: null
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -53,7 +58,7 @@ class SerwisForm extends Component {
       }
     }
 
-    if (date && name && quantity && buy && bonusUnit && bonusType) {
+    if (date && name && quantity && bonusUnit && bonusType) {
       if (
         prevDateState !== date ||
         prevNameState !== name ||
@@ -68,7 +73,46 @@ class SerwisForm extends Component {
     }
   }
 
-  count = () => {};
+  count = () => {
+    console.log("count()");
+    let {
+      marginUnit,
+      bonusType,
+      bonusUnit,
+      gross,
+      grossMargin,
+      bonus,
+      buy,
+      sell,
+      quantity
+    } = this.state;
+
+    bonusUnit = cleanNumber(bonusUnit);
+    buy = cleanNumber(buy);
+    sell = cleanNumber(sell);
+    quantity = cleanNumber(quantity);
+    // console.log(
+    //   "bonusUnit",
+    //   bonusUnit,
+    //   "buy",
+    //   buy,
+    //   "sell",
+    //   sell,
+    //   "quantity",
+    //   quantity
+    // );
+
+    if (bonusType === "% marży") {
+      const marginUnit = sell - buy;
+      const gross = sell * quantity;
+      const grossMargin = marginUnit * quantity;
+      const bonus = grossMargin * bonusUnit;
+      this.setState({ marginUnit, gross, grossMargin, bonus });
+    } else if (bonusType === "stawka") {
+      const bonus = bonusUnit * quantity;
+      this.setState({ bonus });
+    }
+  };
 
   askForConfig = async (date, name) => {
     console.log("askForConfig");
@@ -81,16 +125,103 @@ class SerwisForm extends Component {
     const result = await axios.get(
       `/api/config/channels/${properMonth}/${name}`
     );
+
+    console.log("result", result);
     const { bonus, bonusType } = result.data;
-    this.setState({ bonusUnit: bonus, bonusType });
-    // console.log("result", result);
+    const bonusUnit = cleanNumber(bonus);
+    this.setState({ bonusUnit, bonusType, month: properMonth });
   };
 
-  handleSubmit = async (values, cityId) => {
-    values.city.id = cityId;
-    const month = "201709";
-    const name = "Pulsator";
-    console.log("handleSubmit", values);
+  // handleSubmit = async (values, cityId) => {
+  //   values.city.id = cityId;
+  //   const month = "201709";
+  //   const name = "Pulsator";
+  //   console.log("handleSubmit", values);
+  // };
+
+  handleSubmit = async e => {
+    // this.props.submit(true);
+    e.preventDefault();
+    const {
+      bonus,
+      bonusType,
+      bonusUnit,
+      buy,
+      cityId,
+      date,
+      gross,
+      grossMargin,
+      marginUnit,
+      name,
+      quantity,
+      sell,
+      unit,
+      month,
+      customer,
+      cityName
+    } = this.state;
+    const url = "/api/transaction";
+
+    const resp = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        bonus: cleanNumber(bonus),
+        bonusType,
+        bonusUnit: cleanNumber(bonusUnit),
+        buy: cleanNumber(buy),
+        cityId,
+        date,
+        gross: cleanNumber(gross),
+        grossMargin: cleanNumber(grossMargin),
+        marginUnit: cleanNumber(marginUnit),
+        name,
+        quantity: cleanNumber(quantity),
+        sell: cleanNumber(sell),
+        unit,
+        month,
+        customer,
+        cityName
+      })
+    });
+    // const data = await resp.json();
+    // await this.props.changeRange(data);
+    // await this.props.fetchuj();
+    // await this.clearForm();
+    // await this.props.submit(false);
+  };
+
+  bonusType = () => {
+    if (this.state.bonusType === "stawka") {
+      return "Stawka: ";
+    } else if (this.state.bonusType === "% marży") {
+      return "% marży: ";
+    }
+  };
+
+  bonusUnit = () => {
+    if (this.state.bonusType === "stawka") {
+      return (
+        <NumberFormat
+          value={formatNumber(this.state.bonusUnit)}
+          displayType={"text"}
+          thousandSeparator={" "}
+          decimalSeparator={","}
+          suffix={" zł"}
+        />
+      );
+    } else if (this.state.bonusType === "% marży") {
+      return (
+        <NumberFormat
+          value={formatNumber(this.state.bonusUnit * 100)}
+          displayType={"text"}
+          thousandSeparator={" "}
+          decimalSeparator={","}
+          suffix={"%"}
+        />
+      );
+    }
   };
 
   render() {
@@ -106,7 +237,6 @@ class SerwisForm extends Component {
     } = this.state;
     return (
       <Paper style={{ padding: 20 }}>
-        <h1>My Form</h1>
         <Formik
           initialValues={{
             items: { name: "" },
@@ -197,7 +327,10 @@ class SerwisForm extends Component {
                       name="client"
                       label="Klient"
                       type="text"
-                      edytuj={value => props.setFieldValue("client", value)}
+                      edytuj={value => {
+                        props.setFieldValue("client", value);
+                        this.setState({ customer: value });
+                      }}
                       // onChange={props.handleChange}
                       value={props.values.client}
                     />
@@ -212,7 +345,10 @@ class SerwisForm extends Component {
                       // edytuj={miejsce_id => this.setState({ miejsce_id })}
                       edytuj={id => {
                         // this.setState({ categoryText });
-                        this.setState({ cityId: id });
+                        this.setState({
+                          cityId: id
+                          // cityName: props.values.city.name
+                        });
                         // console.log("city edytuj", id);
                         // props.setFieldValue("city", { id });
                         // console.log("edytuj", props.values.city);
@@ -226,6 +362,7 @@ class SerwisForm extends Component {
                         props.setFieldValue("city", {
                           name: wybranoLabel
                         });
+                        this.setState({ cityName: wybranoLabel });
                       }}
                     />
                   </Grid>
@@ -244,63 +381,100 @@ class SerwisForm extends Component {
                       value={props.values.quantity}
                     />
                   </Grid>
-                  <Grid item xs={3}>
-                    <InputComponent
-                      format="zl"
-                      name="buy"
-                      label="Cena zakupu jednostki brutto"
-                      type="text"
-                      edytuj={value => {
-                        props.setFieldValue("buy", value);
-                        this.setState({ buy: value });
-                      }}
-                      // onChange={props.handleChange}
-                      value={props.values.buy}
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <InputComponent
-                      format="zl"
-                      name="sell"
-                      label="Cena sprzedaży jednostki brutto"
-                      type="text"
-                      edytuj={value => {
-                        props.setFieldValue("sell", value);
-                        this.setState({ sell: value });
-                      }}
-                      // onChange={props.handleChange}
-                      value={props.values.sell}
-                    />
-                  </Grid>
+                  {bonusType === "% marży" && (
+                    <React.Fragment>
+                      <Grid item xs={3}>
+                        <InputComponent
+                          format="zl"
+                          name="buy"
+                          label="Cena zakupu jednostki brutto"
+                          type="text"
+                          edytuj={value => {
+                            props.setFieldValue("buy", value);
+                            this.setState({ buy: value });
+                          }}
+                          // onChange={props.handleChange}
+                          value={props.values.buy}
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <InputComponent
+                          format="zl"
+                          name="sell"
+                          label="Cena sprzedaży jednostki brutto"
+                          type="text"
+                          edytuj={value => {
+                            props.setFieldValue("sell", value);
+                            this.setState({ sell: value });
+                          }}
+                          // onChange={props.handleChange}
+                          value={props.values.sell}
+                        />
+                      </Grid>
+                    </React.Fragment>
+                  )}
                 </Grid>
-                <div
+                {/* <div
                   style={{ display: "grid", gridTemplateColumns: "50% 50%" }}
-                >
-                  <div>
-                    <span>Marża jednostkowa: </span>
-                    <span>{marginUnit}</span>
-                  </div>
-                  <div>
-                    <span>Typ premii: </span>
-                    <span>{bonusType}</span>
-                  </div>
-                  <div>
-                    <span>Stawka / % marży: </span>
-                    <span>{bonusUnit}</span>
-                  </div>
-                  <div>
-                    <span>Wartość brutto: </span>
-                    <span>{gross}</span>
-                  </div>
-                  <div>
-                    <span>Marża brutto: </span>
-                    <span>{grossMargin}</span>
-                  </div>
-                  <div>
-                    <span>Premia: </span>
-                    <span>{bonus}</span>
-                  </div>
-                </div>
+                > */}
+                <Grid container spacing={24}>
+                  <Grid item xs={4}>
+                    <div>
+                      <span>{this.bonusType()} </span>
+                      <span>{this.bonusUnit()}</span>
+                    </div>
+                    <div>
+                      <span>Premia: </span>
+                      <NumberFormat
+                        value={formatNumber(bonus)}
+                        displayType={"text"}
+                        thousandSeparator={" "}
+                        decimalSeparator={","}
+                        suffix={" zł"}
+                      />
+                    </div>
+                  </Grid>
+                  {bonusType === "% marży" && (
+                    <React.Fragment>
+                      <Grid item xs={4}>
+                        <div>
+                          <span>Marża jednostkowa: </span>
+                          <NumberFormat
+                            value={formatNumber(marginUnit)}
+                            displayType={"text"}
+                            thousandSeparator={" "}
+                            decimalSeparator={","}
+                            suffix={" zł"}
+                          />
+                        </div>
+                        <div>
+                          <span>Wartość brutto: </span>
+                          <NumberFormat
+                            value={formatNumber(gross)}
+                            displayType={"text"}
+                            thousandSeparator={" "}
+                            decimalSeparator={","}
+                            suffix={" zł"}
+                          />
+                        </div>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <div>
+                          <span>Marża brutto: </span>
+                          <NumberFormat
+                            value={formatNumber(grossMargin)}
+                            displayType={"text"}
+                            thousandSeparator={" "}
+                            decimalSeparator={","}
+                            suffix={" zł"}
+                          />
+                        </div>
+                      </Grid>
+                    </React.Fragment>
+                  )}
+                </Grid>
+
+                {/* </div> */}
                 <ButtonMy
                   progress
                   // disabled={submitIsDisable}
@@ -313,7 +487,7 @@ class SerwisForm extends Component {
                     //   }
                     // }
                     // console.log("sumbituje", props.values)
-                    this.handleSubmit(props.values, cityId)
+                    this.handleSubmit(e)
                   }
                 >
                   ok

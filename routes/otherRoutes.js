@@ -6,6 +6,7 @@ const User = db.users;
 const Group = db.groups;
 const Category = db.categories;
 const Item = db.channels_items;
+const Transaction = db.transactions;
 const ChannelsConfig = db.channels_config;
 const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
@@ -540,6 +541,33 @@ module.exports = app => {
       });
   });
 
+  app.post("/api/transaction/", (req, res, next) => {
+    console.log("api/transaction/");
+    console.log(req.body);
+    const { clientId, user_id } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    // const {
+    //   nr_dokumentu,
+    //   data_wystawienia,
+    //   nazwa_pozycji,
+    //   kwota_netto,
+    //   kwota_brutto,
+    //   categoryId,
+    //   groupId
+    // } = req.body;
+    Transaction.create(form)
+      .then(results => {
+        return res.json(results);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.post("/api/aktywnosci/", (req, res, next) => {
     console.log("api/cost/");
     console.log(req.body);
@@ -741,11 +769,19 @@ module.exports = app => {
 
   app.get("/api/table/:table", (req, res) => {
     const table = req.params;
-    if (!req.user) {
-      return res.redirect("/");
-    }
+    // if (!req.user) {
+    //   return res.redirect("/");
+    // }
     const { clientId, role, user_id } = req.user;
     switch (table.table) {
+      case "transactions":
+        Transaction.findAll({ where: { clientId } })
+          .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
       case "items":
         Item.findAll({ where: { clientId } })
           .then(result => res.json(result))

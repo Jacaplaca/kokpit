@@ -9,6 +9,30 @@ import {
   endOfWeek
 } from "date-fns";
 
+export const formatNumber = n => {
+  if (Number(n) === n && n % 1 !== 0) {
+    return n
+      .toFixed(2)
+      .toString()
+      .replace(".", ",");
+  } else {
+    return n;
+  }
+};
+
+export const cleanNumber = value => {
+  const type = typeof value;
+  if (type === "string") {
+    const parsed = parseFloat(value.replace(/,/g, "."));
+    console.log("cleanNumber", parsed, typeof parsed);
+    return parsed;
+  } else if (type === "number") {
+    return value;
+  } else {
+    return 0;
+  }
+};
+
 export const dataToString = element => {
   const data = new Date(element);
   const dzien =
@@ -118,4 +142,12 @@ export const shortPlace = str => {
   return len > 18
     ? `${remaining.join(" ").slice(0, 15)}...`
     : `${remaining.join(" ").slice(0, 18)}`;
+};
+
+export const shorting = (str, characters) => {
+  if (str.length > characters) {
+    return `${str.slice(0, characters - 3)}...`;
+  } else {
+    return str;
+  }
 };

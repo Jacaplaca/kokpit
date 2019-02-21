@@ -6,7 +6,7 @@ const MainFrameHOC = WrappedComponent => {
     render() {
       const styles = {
         container: {
-          display: "inline-block",
+          // display: "inline-block",
           flexWrap: "nowrap",
           padding: this.props.theme.spacing.unit * 3
           // height: "100%"

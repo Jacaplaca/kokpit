@@ -20,6 +20,7 @@ import CostsForm from "./CostsForm";
 import DateRangePickerMy from "../common/DateRangePickerMy";
 import CostsPodsumowanie from "./CostsPodsumowanie";
 import SerwisForm from "./SerwisForm";
+import TransactionList from "./TransactionList";
 
 const styles = theme => ({
   input: {
@@ -33,10 +34,47 @@ const styles = theme => ({
   }
 });
 
-const Serwis = props => {
-  console.log("props", props);
-  return <SerwisForm />;
-};
+class Serwis extends Component {
+  state = {
+    transactions: []
+  };
+
+  componentWillMount() {
+    this.fetchTransactions();
+  }
+
+  componentWillReceiveProps() {}
+
+  fetchTransactions = async range => {
+    // console.log(
+    //   `${defineds.startOfMonth} ${defineds.endOfMonth} last: ${
+    //     defineds.startOfLastMonth
+    //   } ${defineds.endOfLastMonth} `
+    // );
+    this.props.loading(true);
+    // const { startDate, endDate } = this.state.rangeselection;
+
+    // const poczatek = range ? range.rangeselection.startDate : startDate;
+    // const koniec = range ? range.rangeselection.endDate : endDate;
+
+    const transactions = await axios.get(`/api/table/transactions`);
+
+    this.setState({ transactions: transactions.data });
+    // await this.resultToState(fetch);
+    await this.props.loading(false);
+  };
+
+  render() {
+    return (
+      <React.Fragment>
+        <SerwisForm />
+        {this.state.transactions.length > 0 && (
+          <TransactionList transactions={this.state.transactions} />
+        )}
+      </React.Fragment>
+    );
+  }
+}
 
 function mapStateToProps({ auth }) {
   return { auth };
