@@ -6,6 +6,7 @@ const User = db.users;
 const Group = db.groups;
 const Category = db.categories;
 const Item = db.channels_items;
+const ChannelsConfig = db.channels_config;
 const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
 const Aktywnosci = db.planer_aktywnosci;
@@ -718,6 +719,24 @@ module.exports = app => {
       default:
         res.sendStatus(500);
     }
+  });
+
+  app.get("/api/config/channels/:month/:name", (req, res) => {
+    // console.log("/api/config/channels/:month/:name");
+    // console.log("asdf", Item);
+    const month = req.params.month;
+    const name = req.params.name;
+    // if (!req.user) {
+    //   return res.redirect("/");
+    // }
+    const clientId = 2;
+    // const { clientId, role, user_id } = req.user;
+    ChannelsConfig.find({ where: { clientId, month, name } })
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   });
 
   app.get("/api/table/:table", (req, res) => {

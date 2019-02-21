@@ -32,52 +32,6 @@ const styles = theme => ({
   }
 });
 
-function NumberFormatCustom(props) {
-  const { inputRef, onChange, ...other } = props;
-  // console.log(props);
-
-  return (
-    <NumberFormat
-      {...other}
-      getInputRef={inputRef}
-      onValueChange={values => {
-        onChange({
-          target: {
-            value: values.formattedValue.replace(/ /g, "")
-          }
-        });
-      }}
-      decimalSeparator=","
-      thousandSeparator=" "
-      decimalScale={2}
-      suffix="  zł"
-    />
-  );
-}
-
-function simpleNumberFormat(props) {
-  const { inputRef, onChange, ...other } = props;
-  // console.log(props);
-
-  return (
-    <NumberFormat
-      {...other}
-      getInputRef={inputRef}
-      onValueChange={values => {
-        onChange({
-          target: {
-            value: values.formattedValue.replace(/ /g, "")
-          }
-        });
-      }}
-      decimalSeparator=","
-      thousandSeparator=" "
-      decimalScale={2}
-      // suffix="  zł"
-    />
-  );
-}
-
 class InputComponent extends React.Component {
   state = {
     input: "",
@@ -88,17 +42,63 @@ class InputComponent extends React.Component {
   componentWillMount() {
     switch (this.props.format) {
       case "number":
-        this.setState({ format: simpleNumberFormat });
+        this.setState({ format: this.simpleNumberFormat });
         // formatField = simpleNumberFormat;
         break;
       case "zl":
-        this.setState({ format: NumberFormatCustom });
+        this.setState({ format: this.NumberFormatCustom });
         // formatField = NumberFormatCustom;
         break;
       default:
         this.setState({ format: null });
     }
   }
+
+  simpleNumberFormat = props => {
+    const { inputRef, onChange, ...other } = props;
+    // console.log(props);
+
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={values => {
+          onChange({
+            target: {
+              value: values.formattedValue.replace(/ /g, "")
+            }
+          });
+        }}
+        decimalSeparator=","
+        thousandSeparator=" "
+        decimalScale={2}
+        suffix={this.props.suffix ? ` ${this.props.suffix}` : null}
+      />
+    );
+  };
+
+  NumberFormatCustom = props => {
+    const { inputRef, onChange, ...other } = props;
+    // console.log(props);
+
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={values => {
+          onChange({
+            target: {
+              value: values.formattedValue.replace(/ /g, "")
+            }
+          });
+        }}
+        decimalSeparator=","
+        thousandSeparator=" "
+        decimalScale={2}
+        suffix="  zł"
+      />
+    );
+  };
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -132,7 +132,8 @@ class InputComponent extends React.Component {
       kwota,
       password,
       error,
-      helperText
+      helperText,
+      suffix
     } = this.props;
 
     return (
