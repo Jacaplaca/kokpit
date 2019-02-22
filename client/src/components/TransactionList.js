@@ -21,9 +21,13 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 
+import ButtonIconCircle from "../common/ButtonIconCircle";
+import EditIcon from "@material-ui/icons/Edit";
+
 import { connect } from "react-redux";
 import { compose } from "redux";
 
+import Confirmation from "./Confirmation";
 import * as actions from "../actions";
 import { formatNumber, shorting } from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
@@ -171,7 +175,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { numSelected, classes } = props;
+  const { numSelected, classes, deleteRows } = props;
 
   return (
     <Toolbar
@@ -182,7 +186,7 @@ let EnhancedTableToolbar = props => {
       <div className={classes.title}>
         {numSelected > 0 ? (
           <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
+            {numSelected} wybrano
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
@@ -194,17 +198,17 @@ let EnhancedTableToolbar = props => {
       <div className={classes.actions}>
         {numSelected > 0 ? (
           <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
+            <IconButton aria-label="Delete" onClick={deleteRows}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-        ) : (
-          <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
-        )}
+        ) : null
+        // <Tooltip title="Filter list">
+        //   <IconButton aria-label="Filter list">
+        //     <FilterListIcon />
+        //   </IconButton>
+        // </Tooltip>
+        }
       </div>
     </Toolbar>
   );
@@ -251,7 +255,8 @@ class EnhancedTable extends React.Component {
       createData("Oreo", 437, 18.0, 63, 4.0)
     ],
     page: 0,
-    rowsPerPage: 5
+    rowsPerPage: 5,
+    open: false
   };
 
   handleRequestSort = (event, property) => {
@@ -267,7 +272,9 @@ class EnhancedTable extends React.Component {
 
   handleSelectAllClick = event => {
     if (event.target.checked) {
-      this.setState(state => ({ selected: state.data.map(n => n.id) }));
+      this.setState(state => ({
+        selected: this.props.transactions.map(n => n.id)
+      }));
       return;
     }
     this.setState({ selected: [] });
@@ -304,132 +311,185 @@ class EnhancedTable extends React.Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleConfirmation = () => {
+    // console.log("handledelete", this.state.selected);
+    this.setState({ open: true });
+    // this.props.open();
+    // this.props.setDelete(this.state.selected);
+  };
+
+  handleDelete = () => {
+    console.log("handledelete", this.state.selected);
+    this.setState({ open: false });
+  };
+
   render() {
     const { classes, transactions } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const {
+      data,
+      order,
+      orderBy,
+      selected,
+      rowsPerPage,
+      page,
+      open
+    } = this.state;
     const emptyRows =
       // rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
       rowsPerPage -
       Math.min(rowsPerPage, transactions.length - page * rowsPerPage);
 
+    const iconProps = {
+      className: this.props.classes.icon,
+      style: { fontSize: 20 }
+    };
+
     return (
-      <Paper className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <div className={classes.tableWrapper}>
-          <Table className={classes.table} aria-labelledby="tableTitle">
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={this.handleSelectAllClick}
-              onRequestSort={this.handleRequestSort}
-              // rowCount={data.length}
-              rowCount={transactions.length}
-            />
-            <TableBody>
-              {stableSort(transactions, getSorting(order, orderBy))
-                // {stableSort(data, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
-                  const isSelected = this.isSelected(n.id);
-                  return (
-                    <TableRow
-                      hover
-                      onClick={event => this.handleClick(event, n.id)}
-                      role="checkbox"
-                      aria-checked={isSelected}
-                      tabIndex={-1}
-                      key={n.id}
-                      selected={isSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox checked={isSelected} />
-                      </TableCell>
-                      <TableCell align="right">{n.date}</TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.name}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {shorting(n.cityName, 30)}
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.customer}
-                      </TableCell>
-                      <TableCell align="right">
-                        <NumberFormat
-                          value={formatNumber(n.bonus)}
-                          displayType={"text"}
-                          thousandSeparator={" "}
-                          decimalSeparator={","}
-                          suffix={" zł"}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <NumberFormat
-                          value={n.quantity}
-                          displayType={"text"}
-                          thousandSeparator={" "}
-                          decimalSeparator={","}
-                          suffix={` ${n.unit}`}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {n.sell !== 0 && (
+      <React.Fragment>
+        <Confirmation
+          open={open}
+          close={this.handleClose}
+          action={this.handleDelete}
+          komunikat={"Czy na pewno chcesz usunąć tę pozycję kosztową?"}
+        />
+        <Paper className={classes.root}>
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            deleteRows={this.handleConfirmation}
+          />
+          <div className={classes.tableWrapper}>
+            <Table className={classes.table} aria-labelledby="tableTitle">
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={this.handleSelectAllClick}
+                onRequestSort={this.handleRequestSort}
+                // rowCount={data.length}
+                rowCount={transactions.length}
+              />
+              <TableBody>
+                {stableSort(transactions, getSorting(order, orderBy))
+                  // {stableSort(data, getSorting(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(n => {
+                    const isSelected = this.isSelected(n.id);
+                    return (
+                      <TableRow
+                        hover
+                        // onClick={event => this.handleClick(event, n.id)}
+                        role="checkbox"
+                        aria-checked={isSelected}
+                        tabIndex={-1}
+                        key={n.id}
+                        selected={isSelected}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={isSelected}
+                            onClick={event => this.handleClick(event, n.id)}
+                          />
+                        </TableCell>
+                        <TableCell align="right">{n.date}</TableCell>
+                        <TableCell component="th" scope="row" padding="none">
+                          {n.name}
+                        </TableCell>
+                        <TableCell component="th" scope="row" padding="none">
+                          {shorting(n.cityName, 30)}
+                        </TableCell>
+                        <TableCell component="th" scope="row" padding="none">
+                          {n.customer}
+                        </TableCell>
+                        <TableCell align="right">
                           <NumberFormat
-                            value={formatNumber(n.sell)}
+                            value={formatNumber(n.bonus)}
                             displayType={"text"}
                             thousandSeparator={" "}
                             decimalSeparator={","}
                             suffix={" zł"}
                           />
-                        )}
-                      </TableCell>
-                      <TableCell align="right">
-                        {n.gross !== 0 && (
+                        </TableCell>
+                        <TableCell align="right">
                           <NumberFormat
-                            value={formatNumber(n.gross)}
+                            value={n.quantity}
                             displayType={"text"}
                             thousandSeparator={" "}
                             decimalSeparator={","}
-                            suffix={" zł"}
+                            suffix={` ${n.unit}`}
                           />
-                        )}
-                      </TableCell>
-                      {/* <TableCell align="right">{n.calories}</TableCell>
+                        </TableCell>
+                        <TableCell align="right">
+                          {n.sell !== 0 && (
+                            <NumberFormat
+                              value={formatNumber(n.sell)}
+                              displayType={"text"}
+                              thousandSeparator={" "}
+                              decimalSeparator={","}
+                              suffix={" zł"}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell align="right">
+                          {n.gross !== 0 && (
+                            <NumberFormat
+                              value={formatNumber(n.gross)}
+                              displayType={"text"}
+                              thousandSeparator={" "}
+                              decimalSeparator={","}
+                              suffix={" zł"}
+                            />
+                          )}
+                        </TableCell>
+                        {/* <TableCell align="right">{n.calories}</TableCell>
                       <TableCell align="right">{n.fat}</TableCell>
                       <TableCell align="right">{n.carbs}</TableCell>
                       <TableCell align="right">{n.protein}</TableCell> */}
-                      <TableCell padding="checkbox">
-                        <Checkbox checked={isSelected} />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          // count={data.length}
-          count={transactions.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            "aria-label": "Previous Page"
-          }}
-          nextIconButtonProps={{
-            "aria-label": "Next Page"
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
-      </Paper>
+                        <TableCell padding="checkbox">
+                          {/* <Checkbox checked={is selected} /> */}
+                          <ButtonIconCircle
+                            akcja={() => {
+                              // props.edit(cell);
+                              console.log("edit", n.id);
+                              this.props.edit(n.id);
+                            }}
+                          >
+                            <EditIcon {...iconProps} />
+                          </ButtonIconCircle>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 49 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            // count={data.length}
+            count={transactions.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            backIconButtonProps={{
+              "aria-label": "Poprzednia"
+            }}
+            nextIconButtonProps={{
+              "aria-label": "Następna"
+            }}
+            labelRowsPerPage="Elementów na stronie"
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
+        </Paper>
+      </React.Fragment>
     );
   }
 }

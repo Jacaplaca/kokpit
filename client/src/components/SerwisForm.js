@@ -187,7 +187,7 @@ class SerwisForm extends Component {
     });
     // const data = await resp.json();
     // await this.props.changeRange(data);
-    // await this.props.fetchuj();
+    await this.props.fetch();
     // await this.clearForm();
     // await this.props.submit(false);
   };

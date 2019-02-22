@@ -36,14 +36,19 @@ const styles = theme => ({
 
 class Serwis extends Component {
   state = {
-    transactions: []
+    transactions: [],
+    openModal: false
   };
 
   componentWillMount() {
     this.fetchTransactions();
   }
 
-  componentWillReceiveProps() {}
+  // componentWillReceiveProps() {}
+
+  handleClose = () => {
+    this.setState({ openModal: false });
+  };
 
   fetchTransactions = async range => {
     // console.log(
@@ -67,9 +72,32 @@ class Serwis extends Component {
   render() {
     return (
       <React.Fragment>
-        <SerwisForm />
+        <ModalWindow
+          open={this.state.openModal}
+          close={this.handleClose}
+          maxWidth={900}
+        >
+          <SerwisForm
+            fetch={this.fetchTransactions}
+            // changeRange={data => this.changeRange(data)}
+            // editedId={this.state.editedId}
+            modal
+            // duplicate={this.state.duplicate}
+            closeModal={() => this.setState({ openModal: false })}
+          />
+        </ModalWindow>
+        <SerwisForm fetch={this.fetchTransactions} />
         {this.state.transactions.length > 0 && (
-          <TransactionList transactions={this.state.transactions} />
+          <TransactionList
+            transactions={this.state.transactions}
+            edit={id => {
+              this.setState({
+                openModal: true,
+                editedId: id,
+                duplicate: false
+              });
+            }}
+          />
         )}
       </React.Fragment>
     );
