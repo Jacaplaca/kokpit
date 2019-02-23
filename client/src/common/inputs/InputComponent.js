@@ -72,7 +72,7 @@ class InputComponent extends React.Component {
         decimalSeparator=","
         thousandSeparator=" "
         decimalScale={2}
-        suffix={this.props.suffix ? ` ${this.props.suffix}` : null}
+        // suffix={this.props.suffix ? ` ${this.props.suffix}` : null}
       />
     );
   };
@@ -153,7 +153,7 @@ class InputComponent extends React.Component {
           InputProps={{
             inputComponent: this.state.format,
             // inputComponent: this.format,
-            endAdornment: password && (
+            endAdornment: password ? (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="Toggle password visibility"
@@ -162,6 +162,8 @@ class InputComponent extends React.Component {
                   {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
+            ) : (
+              <InputAdornment position="end">{suffix}</InputAdornment>
             )
           }}
         />

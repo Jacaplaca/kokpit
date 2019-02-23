@@ -421,6 +421,19 @@ module.exports = app => {
       return res.redirect("/");
     }
     switch (table) {
+      case "transaction":
+        Transaction.find({
+          // include: [{ model: Category }, { model: Group }],
+          where: { clientId, id }
+        })
+          .then(result => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
       case "cost":
         Cost.find({
           include: [{ model: Category }, { model: Group }],
@@ -750,16 +763,32 @@ module.exports = app => {
   });
 
   app.get("/api/config/channels/:month/:name", (req, res) => {
-    // console.log("/api/config/channels/:month/:name");
     // console.log("asdf", Item);
     const month = req.params.month;
     const name = req.params.name;
-    // if (!req.user) {
-    //   return res.redirect("/");
-    // }
-    const clientId = 2;
-    // const { clientId, role, user_id } = req.user;
+    console.log(`/api/config/channels/${month}/${name}`);
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    // const clientId = 2;
+    const { clientId, role, user_id } = req.user;
     ChannelsConfig.find({ where: { clientId, month, name } })
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.get("/api/config/month_channel/:month/", (req, res) => {
+    const month = req.params.month;
+    console.log(`/api/config/month_channel/${month}/`);
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    // const clientId = 2;
+    const { clientId, role, user_id } = req.user;
+    ChannelsConfig.find({ where: { clientId, month } })
       .then(result => res.json(result))
       .catch(err => {
         console.log(err);
@@ -775,7 +804,7 @@ module.exports = app => {
     const { clientId, role, user_id } = req.user;
     switch (table.table) {
       case "transactions":
-        Transaction.findAll({ where: { clientId } })
+        Transaction.findAll({ where: { clientId, userId: user_id } })
           .then(result => res.json(result))
           .catch(err => {
             console.log(err);

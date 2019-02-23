@@ -262,8 +262,13 @@ class CitySearch extends React.Component {
     // }
 
     // console.log(this.state.single.length);
-    if (this.props.miejsceLabel !== "") {
+    if (
+      this.props.miejsceLabel !== "" &&
+      this.props.miejsceLabel !== "cancelLabel"
+    ) {
       return this.props.miejsceLabel;
+    } else if (this.props.miejsceLabel === "cancelLabel") {
+      return "";
     } else {
       return this.state.single;
     }
@@ -276,9 +281,9 @@ class CitySearch extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, error, helperText, label } = this.props;
 
-    const status = this.state.isLoading ? "Szukam..." : "Miejscowość";
+    const status = this.state.isLoading ? "Szukam..." : label;
 
     const inputProps = {
       clearValue: this.clearValue,
@@ -288,10 +293,12 @@ class CitySearch extends React.Component {
       value: this.editMiejsceLabel(),
       //value: this.state.single,
       //value: this.props.miejsceLabel,
-      onChange: this.handleChange("single")
+      onChange: this.handleChange("single"),
       // onBlur: () => console.log("on blur")
       // value: value
       // onChange: event => edytuj(event.target.value)
+      error,
+      helperText
     };
 
     const autosuggestProps = {

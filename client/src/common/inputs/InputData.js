@@ -27,7 +27,15 @@ class InputData extends React.Component {
   };
 
   render() {
-    const { classes, label, edytuj, value, error, disabled } = this.props;
+    const {
+      classes,
+      label,
+      edytuj,
+      value,
+      error,
+      disabled,
+      helperText
+    } = this.props;
 
     return (
       <FormControl
@@ -46,6 +54,7 @@ class InputData extends React.Component {
           InputLabelProps={{
             shrink: true
           }}
+          helperText={helperText}
         />
       </FormControl>
     );

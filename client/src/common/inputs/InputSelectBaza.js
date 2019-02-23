@@ -180,21 +180,24 @@ class InputSelectBaza extends React.Component {
       label,
       placeholder,
       value: valueProps,
-      error
+      error,
+      helperText
       // disabled
     } = this.props;
     const { suggestions, value, single } = this.state;
 
     const inputProps = {
       //autoFocus: focus,
-      label: error ? "Wybierz poprawną datę" : label,
+      label,
       placeholder,
       classes,
       value: valueProps,
       //value: value,
       onChange: this.onChange,
       error,
-      clearValue: this.clearValue
+      clearValue: this.clearValue,
+      helperText
+      // disabled: true
     };
 
     return (

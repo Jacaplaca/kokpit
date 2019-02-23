@@ -69,6 +69,41 @@ class Serwis extends Component {
     await this.props.loading(false);
   };
 
+  handleEdit = async id => {
+    const result = await axios.get(`/api/id/transaction/${id}`);
+
+    await this.addFetchToState(result);
+  };
+
+  addFetchToState = result => {
+    console.log("res", result.data);
+    // const {
+    //   id,
+    //   nr_dokumentu,
+    //   data_wystawienia,
+    //   nazwa_pozycji,
+    //   kwota_netto,
+    //   kwota_brutto,
+    //   categoryId,
+    //   groupId,
+    //   category,
+    //   group
+    // } = result.data;
+    // this.setState({
+    //   id,
+    //   nr_dokumentu,
+    //   kwota_netto,
+    //   kwota_brutto,
+    //   nazwa_pozycji,
+    //   data_wystawienia,
+    //   categoryId,
+    //   groupId,
+    //   edited: true,
+    //   categoryText: category.name,
+    //   groupText: group.name
+    // });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -96,6 +131,7 @@ class Serwis extends Component {
                 editedId: id,
                 duplicate: false
               });
+              this.handleEdit(id);
             }}
           />
         )}

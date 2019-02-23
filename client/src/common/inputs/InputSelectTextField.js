@@ -12,6 +12,7 @@ const InputSelectTextField = inputProps => {
     classes,
     inputRef = () => {},
     ref,
+    helperText,
     ...other
   } = inputProps;
 
@@ -19,6 +20,7 @@ const InputSelectTextField = inputProps => {
     <TextField
       // disabled={disabled ? true : false}
       error={error ? true : false}
+      helperText={helperText}
       fullWidth
       InputProps={{
         endAdornment: (
