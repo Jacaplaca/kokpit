@@ -117,14 +117,28 @@ class InputSelectBaza extends React.Component {
     //focus: false
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (typeof this.props.przeszukuje === "object") {
+      console.log("InputSelectBaza()", nextProps.przeszukuje);
+      if (nextProps.przeszukuje !== this.props.przeszukuje) {
+        this.setState({ fetchowane: nextProps.przeszukuje });
+      }
+    }
+  }
+
   componentWillMount() {
-    axios.get(`/api/table/${this.props.przeszukuje}`).then(result => {
-      const fetchowane = this.props.reverse
-        ? result.data.sort(dynamicSort("name")).reverse()
-        : result.data.sort(dynamicSort("name"));
-      this.setState({ fetchowane, isLoading: false });
-      this.props.daty(fetchowane);
-    });
+    if (typeof this.props.przeszukuje === "string") {
+      axios.get(`/api/table/${this.props.przeszukuje}`).then(result => {
+        const fetchowane = this.props.reverse
+          ? result.data.sort(dynamicSort("name")).reverse()
+          : result.data.sort(dynamicSort("name"));
+        this.setState({ fetchowane, isLoading: false });
+        this.props.daty(fetchowane);
+      });
+    } else if (typeof this.props.przeszukuje === "object") {
+      this.setState({ fetchowane: this.props.przeszukuje, isLoading: false });
+      this.props.daty(this.props.przeszukuje);
+    }
   }
 
   onChange = (event, { newValue, method }) => {

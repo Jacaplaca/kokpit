@@ -10,7 +10,7 @@ import * as Yup from "yup";
 import ButtonMy from "../common/ButtonMy";
 import CitySearch from "./CitiesSearch";
 import NumberFormat from "react-number-format";
-import { formatNumber, cleanNumber } from "../common/functions";
+import { formatNumber, cleanNumber, dynamicSort } from "../common/functions";
 import FormButtons from "../common/FormButtons";
 import Send from "@material-ui/icons/Send";
 
@@ -33,7 +33,8 @@ class SerwisForm extends Component {
     bonusType: null,
     bonusUnit: null,
     gross: null,
-    grossMargin: null
+    grossMargin: null,
+    items: []
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -176,6 +177,18 @@ class SerwisForm extends Component {
     const { bonus, bonusType } = result.data;
     const bonusUnit = cleanNumber(bonus);
     this.setState({ bonusUnit, bonusType, month: this.monthKey(date) });
+  };
+
+  fetchItems = async date => {
+    // return
+    console.log("fetchItems()", this.monthKey(date));
+    const result = await axios.get(
+      `/api/promoitems/month/${this.monthKey(date)}`
+    );
+    console.log("fetchItems()", result);
+    const items = result.data.sort(dynamicSort("name"));
+    this.setState({ items, isLoading: false });
+    // this.props.daty(items);
   };
 
   monthKey = date => {
@@ -412,6 +425,7 @@ class SerwisForm extends Component {
                       edytuj={value => {
                         props.setFieldValue("date", value);
                         this.setState({ date: value });
+                        this.fetchItems(value);
                         props.setFieldTouched("date", true);
                       }}
                       error={props.touched.date && Boolean(props.errors.date)}
@@ -467,7 +481,22 @@ class SerwisForm extends Component {
                           : "Towar/Usługa"
                       }
                       // placeholder="Kategorie kosztowe"
-                      przeszukuje="items"
+                      // przeszukuje={[
+                      //   {
+                      //     bonus: "5.00",
+                      //     bonusType: "stawka",
+                      //     channelId: 1,
+                      //     clientId: 2,
+                      //     createdAt: null,
+                      //     id: 268,
+                      //     key: "201902Dipping 10",
+                      //     month: 201902,
+                      //     name: "Dipping 10",
+                      //     updatedAt: null
+                      //   }
+                      // ]}
+                      przeszukuje={this.state.items}
+                      // przeszukuje="items"
                       name="items"
                     />
                   </Grid>
@@ -686,6 +715,7 @@ class SerwisForm extends Component {
                   cancelLabel={"Anuluj"}
                   cancelAction={() => {
                     // store.dispatch(actions.editFetch());
+                    this.props.modal && this.props.closeModal();
                     this.clearForm();
                     props.resetForm();
                     props.setFieldValue("city", {

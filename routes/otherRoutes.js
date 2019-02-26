@@ -796,6 +796,22 @@ module.exports = app => {
       });
   });
 
+  app.get("/api/promoitems/month/:month/", (req, res) => {
+    const month = req.params.month;
+    // console.log(`/api/config/month_channel/${month}/`);
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    // const clientId = 2;
+    const { clientId, role, user_id } = req.user;
+    ChannelsConfig.findAll({ where: { clientId, month } })
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.get("/api/table/:table", (req, res) => {
     const table = req.params;
     // if (!req.user) {

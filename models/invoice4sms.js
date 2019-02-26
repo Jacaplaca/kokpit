@@ -1,39 +1,39 @@
 module.exports = (sequelize, Sequelize) => {
   const Invoices4SMS = sequelize.define(
-    "invoices4sms",
+    "invoices4sms_intf",
     {
       id_client: {
         type: Sequelize.INTEGER
       },
-      nr_document: {
+      nr_pelny: {
         primaryKey: true,
         type: Sequelize.STRING
       },
-      date_issue: {
+      data_wystawienia: {
         type: Sequelize.DATE
       },
-      deadline: {
+      termin_platnosci: {
         type: Sequelize.DATE
       },
-      id_client_soft: {
+      id_pracownik: {
         type: Sequelize.INTEGER
       },
-      name_emp: {
+      imie_pracownika: {
         type: Sequelize.STRING
       },
-      surname_emp: {
+      nazwisko_pracownika: {
         type: Sequelize.STRING
       },
-      debtor: {
+      klient: {
         type: Sequelize.STRING
       },
-      amount: {
+      wartosc_brutto: {
         type: Sequelize.DOUBLE
       },
-      status: {
+      status_platnosci: {
         type: Sequelize.STRING
       },
-      remained: {
+      pozostalo_do_zaplacenia: {
         type: Sequelize.DOUBLE
       }
     },

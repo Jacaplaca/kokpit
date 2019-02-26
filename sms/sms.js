@@ -5,7 +5,7 @@ var SMSAPI = require("smsapi"),
 var schedule = require("node-schedule");
 
 const db = require("../models/index");
-const Invoices4SMS = db.invoices4sms;
+const Invoices4SMS = db.invoices4sms_intf;
 const Invoices4SMSsent = db.invoices4sms_sent;
 const User = db.users;
 const Sequelize = require("sequelize");
@@ -18,7 +18,8 @@ let minuteRandom = 20;
 console.log(`Now is ${today()} ${time()}`);
 
 var rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = [new schedule.Range(1, 5)];
+rule.dayOfWeek = [1, 3, 5];
+// rule.dayOfWeek = [new schedule.Range(1, 5)];
 rule.hour = 7;
 rule.minute = 30;
 rule.second = 0;
@@ -30,10 +31,10 @@ var randomizeSendingTime = schedule.scheduleJob(rule, function() {
   // var h = data.getHours();
   // var m = data.getMinutes();
   //randomTime(7, 37, 8, 26);
-  randomTime(7, 40, 8, 40);
+  randomTime(9, 10, 9, 50);
 });
 
-//fetchInvoices();
+// fetchInvoices();
 
 var runFetching = schedule.scheduleJob(
   {
@@ -89,69 +90,125 @@ function fetchInvoices() {
   })
     .then(result => result.map(invoice => invoice.nr_document))
     .then(sentNumbers => {
+      // console.log("sentNumbers", sentNumbers);
       Invoices4SMS.findAll({
         where: {
-          nr_document: { [Op.not]: sentNumbers }
+          nr_pelny: { [Op.not]: sentNumbers }
         },
         raw: true
-      }).then(sentInvoices =>
-        fetchUsers(sentInvoices.sort(dynamicSort("deadline")).reverse())
-      );
+      }).then(sentInvoices => {
+        console.log("sentInvoices", sentInvoices.length);
+        fetchUsers(
+          sentInvoices.sort(dynamicSort("termin_platnosci")).reverse()
+        );
+      });
     });
 }
 
 function fetchUsers(invoices) {
-  console.log("fetchUsers");
+  // console.log("fetchUsers");
   User.findAll({
     attributes: ["clientId", "id", "nr_telefonu", "id_client_soft"],
     raw: true
-  }).then(users => compareAddPhone(invoices, users));
+  }).then(users => {
+    // console.log("users", users);
+    compareAddPhone(invoices, users);
+  });
 }
 
 function compareAddPhone(invoices, users) {
+  let id = 0;
   //let invoicesWithPhone = []
+  // console.log("invoices", invoices);
   const notSentWithNumber = invoices.map(inv => {
+    // console.log("inv id_client", inv.id_client, inv.id_pracownik);
     const userData = users.filter(
       user =>
         inv.id_client === user.clientId &&
-        inv.id_client_soft === user.id_client_soft
+        inv.id_pracownik === user.id_client_soft
     );
+    // console.log("userData", userData);
     const {
-      nr_document,
-      date_issue,
-      id_client,
-      deadline,
-      name_emp,
-      surname_emp,
-      debtor,
-      amount,
-      remained,
-      status,
-      id_client_soft
+      nr_pelny,
+      data_wystawienia,
+      termin_platnosci,
+      id_pracownik,
+      imie_pracownika,
+      nazwisko_pracownika,
+      klient,
+      wartosc_brutto,
+      status_platnosci,
+      pozostalo_do_zaplacenia,
+      id_client
     } = inv;
+    id = id_client;
     return {
-      id_client_soft,
+      id_client_soft: id_pracownik,
       id_soft_odUsera: userData.length > 0 ? userData[0].id_client_soft : null,
       phone: userData.length > 0 ? userData[0].nr_telefonu : null,
-      nr_document,
-      date_issue,
+      nr_document: nr_pelny,
+      date_issue: data_wystawienia,
       id_client,
-      deadline,
-      name_emp,
-      surname_emp,
-      debtor,
-      amount,
-      remained,
-      status
+      deadline: termin_platnosci,
+      name_emp: imie_pracownika,
+      surname_emp: nazwisko_pracownika,
+      debtor: klient,
+      amount: wartosc_brutto,
+      remained: pozostalo_do_zaplacenia,
+      status: status_platnosci
     };
   });
-  sendSMS(
-    short(notSentWithNumber.filter(x => x.phone !== null), "id_client_soft", 3)
-  );
+  // console.log("notSentWithNumber", notSentWithNumber);
+  // console.log("compare", notSentWithNumber.filter(x => x.phone !== null));
+  Invoices4SMS.findAll({
+    where: {
+      id_client: id
+    },
+    raw: true
+  }).then(res => {
+    sendSMS(
+      short(
+        notSentWithNumber.filter(x => x.phone !== null),
+        "id_client_soft",
+        3
+      ),
+      res
+    );
+  });
 }
 
-function sendSMS(result) {
-  console.log(result);
+function sendSMS(result, all) {
+  // console.log(all);
+  const allByUser = podzielUnikalnymi(all, "id_pracownik");
+
+  let bigestInvoices = [];
+
+  for (let user of allByUser) {
+    // const userSortedInvoices = {}
+    // console.log("user", Object.keys(user), user.id_pracownik);
+    const invoices = user.values;
+    // console.log("invoices", invoices.length);
+    invoices.map(x =>
+      Object.assign(x, { pozostaloInt: Math.trunc(x.pozostalo_do_zaplacenia) })
+    );
+    invoices.sort(dynamicSort("pozostaloInt")).reverse();
+    const invoicesForUser = {
+      user: user.id_pracownik,
+      invoices: invoices.slice(0, 3)
+    };
+    bigestInvoices.push(invoicesForUser);
+  }
+
+  // console.log("bigestInvoices", bigestInvoices);
+
+  // allByUser.map(x =>
+  //   x.values
+  //     .map(y => Object.assign(y, { remainedInt: Math.trunc(y.remained) }))
+  //     .sort(dynamicSort("remainedInt"))
+  // );
+  // // .reverse();
+  // console.log("allByUser", allByUser.map(x => x.values));
+
   const byUsers = podzielUnikalnymi(result, "id_client_soft");
   //console.log(byUsers);
   byUsers.map(user => {
@@ -161,51 +218,64 @@ function sendSMS(result) {
     let message = "Nowe zaleglosci: ";
     Invoices4SMS.findAll({
       where: {
-        id_client_soft: idSoft
+        id_pracownik: idSoft
       },
       raw: true
     })
       .then(invoices => {
+        // console.log("invoices", invoices);
         const howManyInvoices = invoices.length;
         const remainedSum = invoices.reduce(
-          (cnt, invoice) => cnt + invoice.remained,
+          (cnt, invoice) => cnt + Math.trunc(invoice.pozostalo_do_zaplacenia),
           0
         );
         message = `Odzyskaj ${Math.floor(
           remainedSum
-        )}zl z ${howManyInvoices}fv. Nowe: `;
+        )}zl z ${howManyInvoices}fv. Ost: `;
         return { howManyInvoices, remainedSum };
       })
       .then(wholeSummary => {
         user["values"].map(invoice => {
-          const monthIssue = invoice.date_issue.slice(0, 10).split("-")[1];
-          const dayIssue = invoice.date_issue.slice(0, 10).split("-")[2];
-          const monthDeadline = invoice.deadline.slice(0, 10).split("-")[1];
-          const dayDeadline = invoice.deadline.slice(0, 10).split("-")[2];
-          const naKwote =
-            invoice.amount !== invoice.remained
-              ? ` na kwote: ${Math.floor(invoice.amount)}zl `
-              : "";
-          const remain =
-            invoice.amount !== invoice.remained ? ` pozostalo: ` : "";
-          message = `${message}${invoice.nr_document.replace(
-            /\s/g,
-            ""
-          )} z ${Math.trunc(dayIssue)}${months(
-            Math.trunc(monthIssue)
-          )}-${Math.trunc(dayDeadline)}${months(
-            Math.trunc(monthDeadline)
-          )} ${naKwote} ${invoice.debtor} ${remain}${Math.floor(
+          // return;
+          // console.log("invoice", invoice);
+          // const monthIssue = invoice.date_issue.slice(0, 10).split("-")[1];
+          // const dayIssue = invoice.date_issue.slice(0, 10).split("-")[2];
+          // const monthDeadline = invoice.deadline.slice(0, 10).split("-")[1];
+          // const dayDeadline = invoice.deadline.slice(0, 10).split("-")[2];
+          // const naKwote =
+          //   invoice.amount !== invoice.remained
+          //     ? ` na kwote: ${Math.floor(invoice.amount)}zl `
+          //     : "";
+          const remain = invoice.amount !== invoice.remained ? `` : "";
+          message = `${message}${invoice.debtor} ${remain}${Math.floor(
             invoice.remained
           )}zl, `;
         });
-        const sms = { tel, idSoft, sms: message };
-        //console.log("senduje");
+        // console.log("idSoft", idSoft);
+        const bigestFilteredByUser = bigestInvoices.filter(
+          x => x.user === idSoft
+        );
+        const bigest = bigestFilteredByUser[0].invoices;
+        // console.log("bigestInvoices filter", bigest);
+        let topMessage = `Top:`;
+        let tops = "";
+        for (let invoice of bigest) {
+          tops = `${tops}${
+            invoice.klient
+          } ${invoice.pozostalo_do_zaplacenia.slice(0, -3)}zl, `;
+        }
+
+        const sms = {
+          tel,
+          idSoft,
+          sms: `${message.slice(0, -2)}, ${topMessage} ${tops.slice(0, -2)}`
+        };
+        // console.log("senduje", sms);
         send(result, sms);
       });
   });
-  //send(result, sms);
-  //console.log(sms);
+  // send(result, sms);
+  // console.log(sms);
 }
 
 function months(number) {
@@ -240,7 +310,7 @@ function months(number) {
 }
 
 function send(invoices, sms) {
-  //console.log("sms");
+  console.log("sms");
   console.log(sms);
   smsapi.authentication
     .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
@@ -253,11 +323,11 @@ function send(invoices, sms) {
       .sms()
       .from("ECO")
       .to(sms.tel)
-      .message(sms.sms.slice(0, -2))
+      .message(sms.sms)
       .normalize()
       .execute(); // return Promise
   }
-
+  // updateToSent(invoices.filter(invoice => invoice.phone === "48502413498"));
   function displayResult(result) {
     console.log(result);
     const nr_telefonu = result.list[0].number;

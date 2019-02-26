@@ -37,7 +37,9 @@ const styles = theme => ({
 class Serwis extends Component {
   state = {
     transactions: [],
-    openModal: false
+    openModal: false,
+    editedId: null,
+    edit: null
   };
 
   componentWillMount() {
@@ -77,6 +79,7 @@ class Serwis extends Component {
 
   addFetchToState = result => {
     console.log("res", result.data);
+    this.setState({ edit: result.data });
     // const {
     //   id,
     //   nr_dokumentu,
@@ -114,14 +117,17 @@ class Serwis extends Component {
         >
           <SerwisForm
             fetch={this.fetchTransactions}
+            edit={this.state.edit}
             // changeRange={data => this.changeRange(data)}
             // editedId={this.state.editedId}
             modal
             // duplicate={this.state.duplicate}
-            closeModal={() => this.setState({ openModal: false })}
+            closeModal={() =>
+              this.setState({ openModal: false, edit: null, editedId: null })
+            }
           />
         </ModalWindow>
-        <SerwisForm fetch={this.fetchTransactions} />
+        <SerwisForm fetch={this.fetchTransactions} edit={this.state.edit} />
         {this.state.transactions.length > 0 && (
           <TransactionList
             transactions={this.state.transactions}

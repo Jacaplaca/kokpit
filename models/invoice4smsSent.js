@@ -2,6 +2,11 @@ module.exports = (sequelize, Sequelize) => {
   const Invoices4SMSsent = sequelize.define(
     "invoices4sms_sent",
     {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+      },
       id_client: {
         type: Sequelize.INTEGER
       },
