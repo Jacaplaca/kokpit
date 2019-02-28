@@ -16,7 +16,7 @@ module.exports = (sequelize, Sequelize) => {
       cityName: {
         type: Sequelize.STRING
       },
-      city: {
+      cityId: {
         type: Sequelize.INTEGER,
         defaultValue: 1
       },

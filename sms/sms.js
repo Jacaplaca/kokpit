@@ -34,7 +34,7 @@ var randomizeSendingTime = schedule.scheduleJob(rule, function() {
   randomTime(9, 10, 9, 50);
 });
 
-// fetchInvoices();
+// fetchInvoices();on index.js
 
 var runFetching = schedule.scheduleJob(
   {

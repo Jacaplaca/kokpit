@@ -79,10 +79,15 @@ const rows = [
     label: "Lokalizacja"
   },
   { id: "customer", numeric: false, disablePadding: false, label: "Klient" },
-  { id: "bonus", numeric: true, disablePadding: false, label: "Premia" },
   { id: "quantity", numeric: true, disablePadding: false, label: "Ilość" },
   { id: "sell", numeric: true, disablePadding: false, label: "Cena jedn." },
-  { id: "gross", numeric: true, disablePadding: false, label: "Wartość brutto" }
+  {
+    id: "gross",
+    numeric: true,
+    disablePadding: false,
+    label: "Wartość brutto"
+  },
+  { id: "bonus", numeric: true, disablePadding: false, label: "Premia" }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -118,7 +123,7 @@ class EnhancedTableHead extends React.Component {
                 sortDirection={orderBy === row.id ? order : false}
               >
                 <Tooltip
-                  title="Sort"
+                  title="Sortuj"
                   placement={row.numeric ? "bottom-end" : "bottom-start"}
                   enterDelay={300}
                 >
@@ -185,11 +190,17 @@ let EnhancedTableToolbar = props => {
     >
       <div className={classes.title}>
         {numSelected > 0 ? (
-          <Typography color="inherit" variant="subtitle1">
+          <Typography
+            color="inherit"
+            // variant="subtitle1"
+          >
             {numSelected} wybrano
           </Typography>
         ) : (
-          <Typography variant="h6" id="tableTitle">
+          <Typography
+            // variant="h6"
+            id="tableTitle"
+          >
             Lista transakcji
           </Typography>
         )}
@@ -197,7 +208,7 @@ let EnhancedTableToolbar = props => {
       <div className={classes.spacer} />
       <div className={classes.actions}>
         {numSelected > 0 ? (
-          <Tooltip title="Delete">
+          <Tooltip title="Usuń">
             <IconButton aria-label="Delete" onClick={deleteRows}>
               <DeleteIcon />
             </IconButton>
@@ -324,7 +335,8 @@ class EnhancedTable extends React.Component {
 
   handleDelete = () => {
     console.log("handledelete", this.state.selected);
-    this.setState({ open: false });
+    this.props.delete(this.state.selected);
+    this.setState({ open: false, selected: [] });
   };
 
   render() {
@@ -404,15 +416,7 @@ class EnhancedTable extends React.Component {
                         <TableCell component="th" scope="row" padding="none">
                           {n.customer}
                         </TableCell>
-                        <TableCell align="right">
-                          <NumberFormat
-                            value={formatNumber(n.bonus)}
-                            displayType={"text"}
-                            thousandSeparator={" "}
-                            decimalSeparator={","}
-                            suffix={" zł"}
-                          />
-                        </TableCell>
+
                         <TableCell align="right">
                           <NumberFormat
                             value={n.quantity}
@@ -443,6 +447,15 @@ class EnhancedTable extends React.Component {
                               suffix={" zł"}
                             />
                           )}
+                        </TableCell>
+                        <TableCell align="right">
+                          <NumberFormat
+                            value={formatNumber(n.bonus)}
+                            displayType={"text"}
+                            thousandSeparator={" "}
+                            decimalSeparator={","}
+                            suffix={" zł"}
+                          />
                         </TableCell>
                         {/* <TableCell align="right">{n.calories}</TableCell>
                       <TableCell align="right">{n.fat}</TableCell>

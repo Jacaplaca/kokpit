@@ -77,8 +77,16 @@ class Serwis extends Component {
     await this.addFetchToState(result);
   };
 
+  handleDelete = async id => {
+    const result = await axios.post(`/api/transaction/remove/${id}`);
+
+    // await this.addFetchToState(result);
+    // console.log("result", result);
+    this.fetchTransactions();
+  };
+
   addFetchToState = result => {
-    console.log("res", result.data);
+    // console.log("res", result.data);
     this.setState({ edit: result.data });
     // const {
     //   id,
@@ -118,6 +126,7 @@ class Serwis extends Component {
           <SerwisForm
             fetch={this.fetchTransactions}
             edit={this.state.edit}
+            editClean={() => this.setState({ edit: null })}
             // changeRange={data => this.changeRange(data)}
             // editedId={this.state.editedId}
             modal
@@ -127,9 +136,13 @@ class Serwis extends Component {
             }
           />
         </ModalWindow>
-        <SerwisForm fetch={this.fetchTransactions} edit={this.state.edit} />
+        <SerwisForm
+          fetch={this.fetchTransactions}
+          // edit={this.state.edit}
+        />
         {this.state.transactions.length > 0 && (
           <TransactionList
+            delete={this.handleDelete}
             transactions={this.state.transactions}
             edit={id => {
               this.setState({

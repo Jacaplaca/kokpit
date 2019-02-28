@@ -213,45 +213,6 @@ module.exports = app => {
     res.send(message);
   });
 
-  app.post("/api/cost/edit/:id", (req, res, next) => {
-    console.log("edytuje cost api");
-    const id = req.params.id;
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      kwota_brutto,
-      categoryId,
-      groupId
-    } = req.body;
-    console.log(req.body);
-    const { user_id, clientId } = req.user;
-    Cost.update(
-      {
-        nr_dokumentu,
-        data_wystawienia,
-        nazwa_pozycji,
-        kwota_netto: kwota_netto.replace(",", ".").replace("zł", ""),
-        kwota_brutto: kwota_brutto.replace(",", ".").replace("zł", ""),
-        categoryId,
-        groupId
-      },
-      {
-        where: { clientId, id }
-      }
-    )
-      .then(() => res.end())
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   app.post("/api/:table/edit/:id", (req, res, next) => {
     console.log("edytuje aktywnosc api");
     // const id = req.params.id;
@@ -351,6 +312,24 @@ module.exports = app => {
     const { user_id, clientId } = req.user;
     Cost.destroy({ where: { clientId, id } })
       .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/api/transaction/remove/:id", (req, res, next) => {
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    console.log("trans remove id", id.split(","));
+    Transaction.destroy({ where: { clientId, id: id.split(",") } })
+      .then(result => {
+        res.json(result);
+      })
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
@@ -762,6 +741,24 @@ module.exports = app => {
     }
   });
 
+  app.get("/api/item/channels/:name", (req, res) => {
+    // console.log("asdf", Item);
+    const month = req.params.month;
+    const name = req.params.name;
+    console.log(`/api/item/channels/${name}`);
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    // const clientId = 2;
+    const { clientId, role, user_id } = req.user;
+    Item.find({ where: { clientId, name } })
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.get("/api/config/channels/:month/:name", (req, res) => {
     // console.log("asdf", Item);
     const month = req.params.month;
@@ -913,5 +910,25 @@ module.exports = app => {
       default:
         res.redirect("/");
     }
+  });
+
+  app.post("/api/transaction/edit/id/:id", (req, res, next) => {
+    console.log("edytuje transaction api");
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    // console.log(req.body);
+    Transaction.update(form, {
+      where: { clientId, id }
+    })
+      .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   });
 };

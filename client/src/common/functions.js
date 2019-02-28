@@ -24,7 +24,7 @@ export const cleanNumber = value => {
   const type = typeof value;
   if (type === "string") {
     const parsed = parseFloat(value.replace(/,/g, "."));
-    console.log("cleanNumber", parsed, typeof parsed);
+    // console.log("cleanNumber", parsed, typeof parsed);
     return parsed;
   } else if (type === "number") {
     return value;

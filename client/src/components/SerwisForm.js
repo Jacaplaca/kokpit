@@ -16,26 +16,98 @@ import Send from "@material-ui/icons/Send";
 
 class SerwisForm extends Component {
   state = {
-    cityId: null,
-    date: null,
-    name: null,
-    item: null,
-    unit: null,
-    quantity: 1,
-    buy: null,
-    sell: null,
-    month: null,
-    customer: null,
-    cityName: null,
-    submitIsDisable: true,
     bonus: 0,
-    marginUnit: null,
     bonusType: null,
     bonusUnit: null,
+    buy: null,
+    cityId: null,
+    cityName: null,
+
+    customer: null,
+    date: null,
     gross: null,
     grossMargin: null,
-    items: []
+
+    item: null,
+
+    marginUnit: null,
+    month: null,
+    name: null,
+    quantity: 1,
+    sell: null,
+    unit: null,
+
+    items: [],
+    submitIsDisable: true
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.edit && nextProps.edit !== this.props.edit) {
+      //Perform some operation
+      // this.setState({ customer: nextProps.edit.customer });
+      // this.clearSummary();
+      const {
+        bonus,
+        bonusType,
+        bonusUnit,
+        buy,
+        cityId,
+        date,
+        gross,
+        grossMargin,
+        item,
+        marginUnit,
+        name,
+        quantity,
+        sell,
+        unit,
+        month,
+        customer,
+        cityName
+      } = nextProps.edit;
+
+      this.fetchItems(date);
+      this.askForConfig(date, name);
+
+      this.setState(
+        {
+          bonus,
+          bonusType,
+          bonusUnit,
+          buy: `${buy}`,
+          cityId,
+          date,
+          gross,
+          grossMargin,
+          item,
+          marginUnit,
+          name,
+          quantity,
+          sell: sell.toString(),
+          unit,
+          month,
+          customer,
+          cityName
+        },
+        () => this.count()
+      );
+
+      // if (bonusType === "% marży") {
+      //   // const marginUnit = sell - buy;
+      //   // const gross = sell * quantity;
+      //   // const grossMargin = marginUnit * quantity;
+      //   // const bonus = grossMargin * bonusUnit;
+      //   // this.validate(bonus);
+      //   this.setState({ marginUnit, gross, grossMargin, bonus });
+      // } else if (bonusType === "stawka") {
+      //   // const bonus = bonusUnit * quantity;
+      //   // this.validate(bonus);
+      //   this.setState({ bonus });
+      // }
+
+      // this.setState(nextProps.edit);
+    }
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const {
@@ -57,39 +129,77 @@ class SerwisForm extends Component {
       bonusUnit: prevBonusUnitState,
       bonusType: prevBonusTypeState
     } = prevState;
-    // if (date) {
-    //
-    // }
-    // console.log("prevState", prevState);
-    // console.log("state", this.state);
-    if (date && name) {
-      // console.log("prevNameState", prevNameState);
-      // console.log("name", name);
-      if (prevDateState !== date || prevNameState !== name) {
-        this.askForConfig(date, name);
-      }
-    }
 
-    if (date && name && quantity && bonusUnit && bonusType) {
-      if (
-        prevDateState !== date ||
-        prevNameState !== name ||
-        prevQuantityState !== quantity ||
-        prevBuyState !== buy ||
-        prevSellState !== sell ||
-        prevBonusUnitState !== bonusUnit ||
-        prevBonusTypeState !== bonusType
-      ) {
-        this.count();
-      } else if (!date || !name || !quantity || !bonusUnit || !bonusType) {
-        this.clearSummary();
-      }
-      this.state.item || this.setState({ bonusType: null });
-      // this.validate(bonus);
-    }
+    const { edit: editPrevProps } = prevProps;
+
+    // console.log("czy do clear", bonusType, prevBonusTypeState);
+    // if (bonusType !== prevBonusTypeState) {
+    //   // console.log("clean buy and sell", editPrevProps, this.props.edit);
+    //   this.clearSummary();
+    //   this.setState({ buy: "0", sell: null });
+    // }
+
+    // if (!this.props.edit) {
+    //   // if (bonusType !== prevBonusTypeState) {
+    //   //   // console.log("clean buy and sell", editPrevProps, this.props.edit);
+    //   //   this.setState({ buy: "0", sell: null });
+    //   // }
+    //
+    //   // if (date) {
+    //   //
+    //   // }
+    //   // console.log("prevState", prevState);
+    //   // console.log("state", this.state);
+    //   if (date && name) {
+    //     // console.log("prevNameState", prevNameState);
+    //     // console.log("name", name);
+    //     if (prevDateState !== date || prevNameState !== name) {
+    //       // console.log("asking for cnfig");
+    //       this.askForConfig(date, name);
+    //     }
+    //   }
+    //   // console.log(
+    //   //
+    //   //   prevEdit,
+    //   //   this.props.edit
+    //   // );
+    //   if (
+    //     date &&
+    //     name &&
+    //     quantity &&
+    //     bonusUnit &&
+    //     bonusType
+    //     // editPrevProps === this.props.edit
+    //   ) {
+    //     if (
+    //       prevDateState !== date ||
+    //       prevNameState !== name ||
+    //       prevQuantityState !== quantity ||
+    //       prevBuyState !== buy ||
+    //       prevSellState !== sell ||
+    //       prevBonusUnitState !== bonusUnit ||
+    //       prevBonusTypeState !== bonusType
+    //     ) {
+    //       console.log(
+    //         "count m cdu",
+    //         date,
+    //         name,
+    //         quantity,
+    //         bonusUnit,
+    //         bonusType
+    //       );
+    //       this.count();
+    //     } else if (!date || !name || !quantity || !bonusUnit || !bonusType) {
+    //       this.clearSummary();
+    //     }
+    //     this.state.item || this.setState({ bonusType: null });
+    //     // this.validate(bonus);
+    //   }
+    // }
   }
 
   clearSummary = () => {
+    console.log("clearSummary");
     this.setState({ marginUnit: 0, gross: 0, grossMargin: 0, bonus: 0 });
   };
 
@@ -158,6 +268,24 @@ class SerwisForm extends Component {
       const grossMargin = marginUnit * quantity;
       const bonus = grossMargin * bonusUnit;
       this.validate(bonus);
+      console.log(
+        "count marzy sell",
+        sell,
+        "buy",
+        buy,
+        "quantity",
+        quantity,
+        "bonusUnit",
+        bonusUnit,
+        "marginUnit",
+        marginUnit,
+        "gross",
+        gross,
+        "grossMargin",
+        grossMargin,
+        "bonus",
+        bonus
+      );
       this.setState({ marginUnit, gross, grossMargin, bonus });
     } else if (bonusType === "stawka") {
       const bonus = bonusUnit * quantity;
@@ -167,16 +295,27 @@ class SerwisForm extends Component {
   };
 
   askForConfig = async (date, name) => {
+    this.clearSummary();
+    this.setState({ buy: "0", sell: null });
+
+    console.log("askForConfig", date, name);
     const oldType = this.state.bonusType;
     const result = await axios.get(
       `/api/config/channels/${this.monthKey(date)}/${name}`
     );
-    if (bonusType !== oldType) {
-      this.setState({ buy: "0", sell: null });
-    }
+    const unitFetch = await axios.get(`/api/item/channels/${name}`);
+
+    console.log("unitFetch", unitFetch.data);
+
     const { bonus, bonusType } = result.data;
     const bonusUnit = cleanNumber(bonus);
-    this.setState({ bonusUnit, bonusType, month: this.monthKey(date) });
+    this.setState({
+      bonusUnit,
+      bonusType,
+      month: this.monthKey(date),
+      unit: unitFetch.data.unit
+    });
+    this.count();
   };
 
   fetchItems = async date => {
@@ -207,6 +346,14 @@ class SerwisForm extends Component {
   // };
 
   handleSubmit = async e => {
+    let url;
+
+    if (this.props.edit) {
+      url = `/api/transaction/edit/id/${this.props.edit.id}`;
+    } else {
+      url = "/api/transaction";
+    }
+
     // this.props.submit(true);
     e.preventDefault();
     const {
@@ -227,8 +374,6 @@ class SerwisForm extends Component {
       customer,
       cityName
     } = this.state;
-    const url = "/api/transaction";
-
     const resp = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -291,7 +436,108 @@ class SerwisForm extends Component {
     }
   };
 
+  handleChange = (field, value) => {
+    // console.log("handleChange", field, value);
+
+    const {
+      date,
+      name,
+      quantity,
+      buy,
+      sell,
+      bonusUnit,
+      bonusType,
+      bonus
+    } = this.state;
+
+    const prevState = {
+      date,
+      name,
+      quantity,
+      buy,
+      sell,
+      bonusUnit,
+      bonusType,
+      bonus
+    };
+
+    if (field === "items") {
+      this.setState(
+        { name: value.name, item: value.id, unit: value.unit },
+        () => this.handleUpdate(prevState)
+      );
+    } else {
+      this.setState({ [field]: value }, () => this.handleUpdate(prevState));
+    }
+  };
+
+  handleUpdate = prevState => {
+    const {
+      date,
+      name,
+      quantity,
+      buy,
+      sell,
+      bonusUnit,
+      bonusType,
+      bonus
+    } = this.state;
+    const {
+      date: prevDateState,
+      name: prevNameState,
+      quantity: prevQuantityState,
+      buy: prevBuyState,
+      sell: prevSellState,
+      bonusUnit: prevBonusUnitState,
+      bonusType: prevBonusTypeState
+    } = prevState;
+
+    if (date && name) {
+      // console.log("prevNameState", prevNameState);
+      // console.log("name", name);
+      if (prevDateState !== date || prevNameState !== name) {
+        // console.log("asking for cnfig");
+        this.askForConfig(date, name);
+      }
+    }
+    console.log(
+      "date name quantity, bonusUnit bonusType",
+      date,
+      name,
+      quantity,
+      bonusUnit,
+      bonusType
+    );
+    if (
+      date &&
+      name &&
+      quantity &&
+      bonusUnit &&
+      bonusType
+      // editPrevProps === this.props.edit
+    ) {
+      if (
+        prevDateState !== date ||
+        prevNameState !== name ||
+        prevQuantityState !== quantity ||
+        prevBuyState !== buy ||
+        prevSellState !== sell ||
+        prevBonusUnitState !== bonusUnit ||
+        prevBonusTypeState !== bonusType
+      ) {
+        console.log("count m cdu", date, name, quantity, bonusUnit, bonusType);
+        this.count();
+      } else if (!date || !name || !quantity || !bonusUnit || !bonusType) {
+        this.clearSummary();
+      }
+      this.state.item || this.setState({ bonusType: null });
+      // this.validate(bonus);
+    }
+  };
+
   render() {
+    const { edit, modal } = this.props;
+
     const validationSchemaFlat = props => {
       return {
         // date: Yup.string().required("Podaj prawidłową datę"),
@@ -346,6 +592,7 @@ class SerwisForm extends Component {
       bonus,
       submitIsDisable
     } = this.state;
+    // console.log("edit", edit);
     return (
       <Paper style={{ padding: 20 }}>
         <Formik
@@ -366,14 +613,17 @@ class SerwisForm extends Component {
           // }
           // validateOnBlur={true}
           // validateOnChange={true}
+          enableReinitialize={true}
           initialValues={{
-            items: { name: "" },
-            date: "",
-            customer: "",
-            city: { name: "", id: 1 },
-            quantity: "1",
-            buy: "0",
-            sell: ""
+            items: edit ? { name: `${edit.name}` } : { name: "" },
+            date: edit ? edit.date : "",
+            customer: edit ? edit.customer : "",
+            city: edit
+              ? { name: `${edit.cityName}`, id: `${edit.city}` }
+              : { name: "", id: 1 },
+            quantity: edit ? edit.quantity : "1",
+            buy: edit ? `${edit.buy}` : "0",
+            sell: edit ? `${edit.sell}` : ""
           }}
           onSubmit={(values, actions) => {
             setTimeout(() => {
@@ -382,8 +632,11 @@ class SerwisForm extends Component {
             }, 1000);
           }}
           render={props => {
-            console.log("propsy w SerwisForm()", props);
-            console.log("touched", props.touched);
+            // if (edit && props.values.customer === "") {
+            //   props.setFieldValue("customer", edit.customer);
+            // }
+            console.log("propsy w SerwisForm()", props.values);
+            // console.log("touched", props.touched);
             return (
               <form
                 onSubmit={() => {
@@ -424,7 +677,8 @@ class SerwisForm extends Component {
                       //label="Kiedy"
                       edytuj={value => {
                         props.setFieldValue("date", value);
-                        this.setState({ date: value });
+                        // this.setState({ date: value });
+                        this.handleChange("date", value);
                         this.fetchItems(value);
                         props.setFieldTouched("date", true);
                       }}
@@ -445,17 +699,18 @@ class SerwisForm extends Component {
                       //     ? props.errors.items
                       //     : " "
                       // }
-                      daty={daty => console.log(daty)}
+                      daty={daty => {}}
                       // daty={datyDoRaportu => this.setState({ datyDoRaportu })}
                       wybrano={item => {
                         // category && this.setState({ categoryId: category.id });
                         // console.log("item", item.id);
                         item.id && props.setFieldValue("items", item);
-                        this.setState({
-                          name: item.name,
-                          unit: item.unit,
-                          item: item.id
-                        });
+                        // this.setState({
+                        //   name: item.name,
+                        //   unit: item.unit,
+                        //   item: item.id
+                        // });
+                        this.handleChange("items", item);
                         props.setFieldTouched("items", true);
                         // console.log("wybrano", item, props.values.items);
                       }}
@@ -465,6 +720,7 @@ class SerwisForm extends Component {
                         edytuj.id ||
                           props.setFieldValue("items", { name: edytuj, id: 0 });
                         props.setFieldTouched("items", true);
+
                         // console.log("edytuj", edytuj, props.values.items);
                       }}
                       czysc={() => {
@@ -511,7 +767,8 @@ class SerwisForm extends Component {
                       type="text"
                       edytuj={value => {
                         props.setFieldValue("customer", value);
-                        this.setState({ customer: value });
+                        // this.setState({ customer: value });
+                        this.handleChange("customer", value);
                         props.setFieldTouched("customer", true);
                       }}
                       error={
@@ -531,10 +788,11 @@ class SerwisForm extends Component {
                       // edytuj={miejsce_id => this.setState({ miejsce_id })}
                       edytuj={id => {
                         // this.setState({ categoryText });
-                        this.setState({
-                          cityId: id
-                          // cityName: props.values.city.name
-                        });
+                        // this.setState({
+                        //   cityId: id
+                        //   // cityName: props.values.city.name
+                        // });
+                        this.handleChange("cityId", id);
                         // console.log("city edytuj", id);
                         // props.setFieldValue("city", { id });
                         // console.log("edytuj", props.values.city);
@@ -578,8 +836,9 @@ class SerwisForm extends Component {
                       type="text"
                       edytuj={value => {
                         props.setFieldValue("quantity", value);
-                        this.setState({ quantity: value });
+                        // this.setState({ quantity: value });
                         props.setFieldTouched("quantity", true);
+                        this.handleChange("quantity", value);
                       }}
                       // onChange={props.handleChange}
                       value={props.values.quantity}
@@ -596,13 +855,14 @@ class SerwisForm extends Component {
                           label={
                             props.touched.buy && props.errors.buy
                               ? props.errors.buy
-                              : "Cena zakupu jednostki brutto"
+                              : "Cena zakupu jedn. brutto"
                           }
                           type="text"
                           edytuj={value => {
                             props.setFieldValue("buy", value);
-                            this.setState({ buy: value });
+                            // this.setState({ buy: value });
                             props.setFieldTouched("buy", true);
+                            this.handleChange("buy", value);
                           }}
                           // onChange={props.handleChange}
                           value={this.state.buy}
@@ -620,13 +880,14 @@ class SerwisForm extends Component {
                           label={
                             props.touched.sell && props.errors.sell
                               ? props.errors.sell
-                              : "Cena sprzedaży jednostki brutto"
+                              : "Cena sprzed. jedn. brutto"
                           }
                           type="text"
                           edytuj={value => {
                             props.setFieldValue("sell", value);
-                            this.setState({ sell: value });
+                            // this.setState({ sell: value });
                             props.setFieldTouched("sell", true);
+                            this.handleChange("sell", value);
                           }}
                           // onChange={props.handleChange}
                           value={this.state.sell}
@@ -707,8 +968,18 @@ class SerwisForm extends Component {
                   //     return true;
                   //   }
                   // }}
-                  subLabel="Dodaj organizatora"
-                  subAction={e => this.handleSubmit(e)}
+                  subLabel={
+                    modal && edit ? "Edytuj transakcję" : "Dodaj transakcję"
+                  }
+                  subAction={e => {
+                    this.handleSubmit(e);
+                    this.props.modal && this.props.closeModal();
+                    this.clearForm();
+                    props.resetForm();
+                    props.setFieldValue("city", {
+                      name: "cancelLabel"
+                    });
+                  }}
                   // subLabel={
                   //   toEdit !== null ? "Edytuj organizatora" : "Dodaj organizatora"
                   // }
@@ -731,5 +1002,9 @@ class SerwisForm extends Component {
     );
   }
 }
+
+InputComponent.defaultProps = {
+  modal: false
+};
 
 export default SerwisForm;

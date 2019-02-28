@@ -119,7 +119,7 @@ class InputSelectBaza extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (typeof this.props.przeszukuje === "object") {
-      console.log("InputSelectBaza()", nextProps.przeszukuje);
+      // console.log("InputSelectBaza()", nextProps.przeszukuje);
       if (nextProps.przeszukuje !== this.props.przeszukuje) {
         this.setState({ fetchowane: nextProps.przeszukuje });
       }
