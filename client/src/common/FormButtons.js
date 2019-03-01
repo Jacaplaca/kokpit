@@ -1,5 +1,8 @@
 import React from "react";
-import Key from "@material-ui/icons/VpnKey";
+// import Key from "@material-ui/icons/VpnKey";
+import Send from "@material-ui/icons/Send";
+//import Edit from "@material-ui/icons/Edit";
+import Cancel from "@material-ui/icons/Clear";
 import ButtonMy from "./ButtonMy";
 
 const FormButtons = ({
@@ -19,7 +22,7 @@ const FormButtons = ({
         disabled={subDisable}
       >
         {subLabel}
-        <Key style={{ marginLeft: 10 }} />
+        <Send style={{ marginLeft: 10 }} />
       </ButtonMy>
       <ButtonMy
         onClick={cancelAction}
@@ -29,7 +32,7 @@ const FormButtons = ({
         // disabled={!isValid}
       >
         {cancelLabel}
-        <Key style={{ marginLeft: 10 }} />
+        <Cancel style={{ marginLeft: 10 }} />
       </ButtonMy>
     </React.Fragment>
   );

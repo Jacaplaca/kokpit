@@ -11,7 +11,12 @@ import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 
 import * as actions from "../actions";
-import { dataToString, defineds, dynamicSort } from "../common/functions";
+import {
+  dataToString,
+  defineds,
+  dynamicSort,
+  timeDiff
+} from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
 //import SiteHeader from "../common/SiteHeader";
 import CostsTable from "./CostsTable2Remote";
@@ -37,82 +42,92 @@ const styles = theme => ({
 class Serwis extends Component {
   state = {
     transactions: [],
+    transactionsUnfiltered: [],
     openModal: false,
     editedId: null,
-    edit: null
+    edit: null,
+    rangeselection: {
+      startDate: defineds.startOfMonth,
+      endDate: defineds.endOfMonth,
+      key: "rangeselection"
+    }
   };
 
-  componentWillMount() {
-    this.fetchTransactions();
-  }
-
-  // componentWillReceiveProps() {}
+  componentWillMount = async () => {
+    // const dates = []
+    await this.fetchTransactions();
+    // const dates = range
+    //   .map(x => x.date)
+    //   .sort((a, b) => new Date(b) - new Date(a));
+    // const min = dates[dates.length - 1];
+    // const max = dates[0];
+    // console.log("fetchuje w cwm", min, max);
+    // console.log(
+    //   `${defineds.startOfMonth} ${defineds.endOfMonth} last: ${
+    //     defineds.startOfLastMonth
+    //   } ${defineds.endOfLastMonth} `
+    // // );
+    // const startDate = defineds.startOfMonth
+    // const endDate = defineds.endOfLastMonth
+    // const rangeselection = { endDate, startDate, key: "rangeselection" };
+    // this.setState({ rangeselection });
+  };
 
   handleClose = () => {
     this.setState({ openModal: false });
   };
 
+  handleSelect = ranges => {
+    const { startDate, endDate } = ranges.rangeselection;
+    this.setState({
+      ...ranges
+    });
+    this.setState({
+      transactions: this.handleDateFilter(
+        this.state.transactionsUnfiltered,
+        startDate,
+        endDate
+      )
+    });
+  };
+
+  handleDateFilter = (array, startDate, endDate) => {
+    const arrayFiltered = array.filter(x => {
+      const data = new Date(x.date);
+      return (
+        data.getTime() > startDate.getTime() &&
+        data.getTime() < endDate.getTime()
+      );
+    });
+    return arrayFiltered;
+  };
+
   fetchTransactions = async range => {
-    // console.log(
-    //   `${defineds.startOfMonth} ${defineds.endOfMonth} last: ${
-    //     defineds.startOfLastMonth
-    //   } ${defineds.endOfLastMonth} `
-    // );
     this.props.loading(true);
-    // const { startDate, endDate } = this.state.rangeselection;
+    const { startDate, endDate } = this.state.rangeselection;
 
-    // const poczatek = range ? range.rangeselection.startDate : startDate;
-    // const koniec = range ? range.rangeselection.endDate : endDate;
-
-    const transactions = await axios.get(`/api/table/transactions`);
-
-    this.setState({ transactions: transactions.data });
-    // await this.resultToState(fetch);
+    const fetched = await axios.get(`/api/table/transactions`);
+    const transactions = this.handleDateFilter(
+      fetched.data,
+      startDate,
+      endDate
+    );
+    this.setState({ transactions, transactionsUnfiltered: fetched.data });
     await this.props.loading(false);
   };
 
   handleEdit = async id => {
     const result = await axios.get(`/api/id/transaction/${id}`);
-
     await this.addFetchToState(result);
   };
 
   handleDelete = async id => {
     const result = await axios.post(`/api/transaction/remove/${id}`);
-
-    // await this.addFetchToState(result);
-    // console.log("result", result);
     this.fetchTransactions();
   };
 
   addFetchToState = result => {
-    // console.log("res", result.data);
     this.setState({ edit: result.data });
-    // const {
-    //   id,
-    //   nr_dokumentu,
-    //   data_wystawienia,
-    //   nazwa_pozycji,
-    //   kwota_netto,
-    //   kwota_brutto,
-    //   categoryId,
-    //   groupId,
-    //   category,
-    //   group
-    // } = result.data;
-    // this.setState({
-    //   id,
-    //   nr_dokumentu,
-    //   kwota_netto,
-    //   kwota_brutto,
-    //   nazwa_pozycji,
-    //   data_wystawienia,
-    //   categoryId,
-    //   groupId,
-    //   edited: true,
-    //   categoryText: category.name,
-    //   groupText: group.name
-    // });
   };
 
   render() {
@@ -139,6 +154,10 @@ class Serwis extends Component {
         <SerwisForm
           fetch={this.fetchTransactions}
           // edit={this.state.edit}
+        />
+        <DateRangePickerMy
+          range={[this.state.rangeselection]}
+          onChange={this.handleSelect}
         />
         {this.state.transactions.length > 0 && (
           <TransactionList

@@ -13,6 +13,7 @@ const Cost = db.costs;
 const Aktywnosci = db.planer_aktywnosci;
 const Raporty = db.planer_raporty;
 const Miejsca = db.miejsca;
+const Place = db.places;
 const City = db.gus_simc;
 const Street = db.gus_ulic;
 const Terc = db.gus_terc;
@@ -165,6 +166,32 @@ module.exports = app => {
         //     });
         //   }
         // });
+      });
+    }
+  });
+  app.get("/api/places/:city", (req, res, next) => {
+    const wyszukiwanie = req.params.city;
+    const city = wyszukiwanie;
+    console.log("places", city);
+    // const city = wyszukiwanie.split(" ")[0];
+    const drugiCzlon = wyszukiwanie.split(" ")[1];
+    console.log(city);
+    // console.log(drugiCzlon);
+    if (city.length < 3) {
+      res.json([]);
+    } else {
+      const { user_id, clientId } = req.user;
+      if (!req.user) {
+        return res.redirect("/");
+      }
+      let mods = [];
+      Place.findAll({
+        where: {
+          name: { [Op.like]: `%${city}%` }
+        },
+        limit: 30
+      }).then(result => {
+        return res.json(result);
       });
     }
   });

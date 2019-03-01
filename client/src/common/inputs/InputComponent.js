@@ -133,15 +133,17 @@ class InputComponent extends React.Component {
       password,
       error,
       helperText,
-      suffix
+      suffix,
+      disabled
     } = this.props;
-
+    console.log("inputComponent", label, value);
     return (
       <FormControl
         className={classes.formControl}
         aria-describedby="name-helper-text"
       >
         <TextField
+          disabled={disabled}
           helperText={helperText}
           error={error}
           label={label}
@@ -176,7 +178,8 @@ InputComponent.defaultProps = {
   error: false,
   helperText: "",
   number: false,
-  format: "standard"
+  format: "standard",
+  disabled: false
 };
 
 InputComponent.propTypes = {

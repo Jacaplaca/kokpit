@@ -161,11 +161,18 @@ class CitySearch extends React.Component {
   loadSuggestions(value) {
     console.log("loadSuggestions");
 
+    let url;
+    if (this.props.places) {
+      url = `/api/places/${value}`;
+    } else {
+      url = `/api/city/${value}`;
+    }
+
     this.setState({
       isLoading: true
     });
 
-    axios.get(`/api/city/${value}`).then(result => {
+    axios.get(url).then(result => {
       const suggestions = result.data;
       console.log(suggestions);
 
