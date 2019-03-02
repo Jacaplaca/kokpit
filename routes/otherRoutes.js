@@ -5,9 +5,12 @@ const db = require("../models/index");
 const User = db.users;
 const Group = db.groups;
 const Category = db.categories;
+
+const Channel = db.sales_channels;
 const Item = db.channels_items;
-const Transaction = db.transactions;
 const ChannelsConfig = db.channels_config;
+const Transaction = db.transactions;
+
 const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
 const Aktywnosci = db.planer_aktywnosci;
@@ -560,6 +563,60 @@ module.exports = app => {
       });
   });
 
+  app.post("/api/sales_channel/", (req, res, next) => {
+    console.log("api/sales_channel/");
+    console.log(req.body);
+    const { clientId, user_id } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    // const form = Object.assign(req.body, { clientId: 2 });
+    Channel.create(form)
+      .then(results => {
+        console.log("res", results.dataValues.id);
+        return res.json(results);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+  app.post("/api/channel_item/", (req, res, next) => {
+    console.log("api/channel_item/");
+    console.log(req.body);
+    const { clientId, user_id } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    Item.create(form)
+      .then(results => {
+        return res.json(results);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+  app.post("/api/channels_config/", (req, res, next) => {
+    console.log("api/channels_config/");
+    console.log(req.body);
+    const { clientId, user_id } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    ChannelsConfig.create(form)
+      .then(results => {
+        return res.json(results);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.post("/api/transaction/", (req, res, next) => {
     console.log("api/transaction/");
     console.log(req.body);
@@ -568,15 +625,6 @@ module.exports = app => {
       return res.redirect("/");
     }
     const form = Object.assign(req.body, { clientId, userId: user_id });
-    // const {
-    //   nr_dokumentu,
-    //   data_wystawienia,
-    //   nazwa_pozycji,
-    //   kwota_netto,
-    //   kwota_brutto,
-    //   categoryId,
-    //   groupId
-    // } = req.body;
     Transaction.create(form)
       .then(results => {
         return res.json(results);
@@ -820,6 +868,28 @@ module.exports = app => {
       });
   });
 
+  app.get("/api/channels/items/:channel", (req, res) => {
+    const channelId = req.params.channel;
+    console.log(
+      `get channels items "/api/channels/items/${channelId}/`,
+      req.user
+    );
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    // const clientId = 2;
+    const { clientId, role, user_id } = req.user;
+    Item.findAll({ where: { clientId, channelId } })
+      .then(result => {
+        // console.log(result);
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.get("/api/promoitems/month/:month/", (req, res) => {
     const month = req.params.month;
     // console.log(`/api/config/month_channel/${month}/`);
@@ -843,6 +913,14 @@ module.exports = app => {
     // }
     const { clientId, role, user_id } = req.user;
     switch (table.table) {
+      case "channels":
+        Channel.findAll({ where: { clientId } })
+          .then(result => res.json(result))
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+        break;
       case "transactions":
         Transaction.findAll({ where: { clientId, userId: user_id } })
           .then(result => res.json(result))

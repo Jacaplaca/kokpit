@@ -33,7 +33,8 @@ passport.deserializeUser((user_id, done) => {
         raporty,
         nextReports,
         serwis,
-        channel_first
+        channel_first,
+        chanprodconf
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -49,7 +50,8 @@ passport.deserializeUser((user_id, done) => {
             raporty,
             nextReports,
             serwis,
-            channel_first
+            channel_first,
+            chanprodconf
           })
         );
       } else {

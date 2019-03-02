@@ -118,6 +118,10 @@ class InputSelectBaza extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    // console.log(
+    //   "czy otrzymuje nowe propsy imput select InputSelectBaza, nextProps",
+    //   nextProps
+    // );
     if (typeof this.props.przeszukuje === "object") {
       // console.log("InputSelectBaza()", nextProps.przeszukuje);
       if (nextProps.przeszukuje !== this.props.przeszukuje) {
@@ -142,9 +146,11 @@ class InputSelectBaza extends React.Component {
   }
 
   onChange = (event, { newValue, method }) => {
-    console.log(newValue);
-    const wybrano = this.state.fetchowane.filter(x => x.name === newValue)[0];
-    console.log(wybrano);
+    console.log("newValue", newValue, this.state.fetchowane);
+    const wybrano = this.state.fetchowane.filter(
+      x => x.name.toLowerCase() === newValue.toLowerCase()
+    )[0];
+    console.log("wybrano", wybrano);
     this.setState({
       value: newValue
     });

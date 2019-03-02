@@ -16,6 +16,7 @@ import Login from "./Login";
 import PromowaneProdukty from "./PromowaneProdukty";
 import NextReports from "./NextReports";
 import Serwis from "./Serwis";
+import ChanProdConf from "./ChanProdConf";
 
 let drawerWidth = 240;
 
@@ -103,6 +104,13 @@ class MiniDrawer extends React.Component {
         component: Serwis,
         title: "Dodaj transakcję dla serwisu",
         channel: auth ? auth.channel_first : 0
+      },
+      {
+        comp: "chanprodconf",
+        path: "/channelconfiguration",
+        component: ChanProdConf,
+        title: "Skonfiguruj kanały sprzedaży"
+        //channel: auth ? auth.channel_first : 0
       }
     ];
     return (

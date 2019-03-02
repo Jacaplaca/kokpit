@@ -68,6 +68,9 @@ module.exports = (sequelize, Sequelize) => {
       serwis: {
         type: Sequelize.TINYINT
       },
+      chanprodconf: {
+        type: Sequelize.TINYINT
+      },
       nr_telefonu: {
         type: Sequelize.STRING
       },
