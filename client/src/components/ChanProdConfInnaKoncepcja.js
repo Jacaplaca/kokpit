@@ -27,12 +27,11 @@ import CostsPodsumowanie from "./CostsPodsumowanie";
 import SerwisForm from "./SerwisForm";
 import TransactionList from "./TransactionList";
 import AddCircle from "@material-ui/icons/AddCircle";
-// import Channels from "../common/inputs/SelectFromDBForAdding";
+import Channels from "../common/inputs/SelectFromDBForAdding";
 import ButtonIconCircle from "../common/ButtonIconCircle";
 import Confirmation from "./Confirmation";
 import SelectOrAdd from "../common/inputs/SelectOrAdd";
 import InputComponent from "../common/inputs/InputComponent";
-import Channels from "./ChannelsProdConfig/Channels";
 
 const styles = theme => ({
   input: {
@@ -65,6 +64,59 @@ class ChanProdConf extends Component {
     confirmation: false,
     confirmationField: null,
     field2disabled: true
+  };
+
+  componentWillMount = async () => {
+    const channels = await this.fetch(channelsFetchUrl);
+    this.setState({ channels, isLoading: false });
+  };
+
+  fetch = async url => {
+    const result = await axios.get(url);
+    console.log("fetch", result.data);
+    return result.data.sort(dynamicSort("name"));
+    // axios.get(url).then(result => {
+    // const list = result.data.sort(dynamicSort("name"));
+    // console.log("list", list);
+    // this.setState({ [listName]: list, isLoading: false });
+    // });
+  };
+
+  handleAddChannel = async (e, postUrl, body, getUrl) => {
+    console.log("handleAddChannel()");
+
+    e.preventDefault();
+    const { whatToAdd } = this.state;
+    console.log("handleAddChannel()", whatToAdd, postUrl);
+    const resp = await fetch(postUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body
+    });
+    this.handleCloseConfirmation();
+    const channels = await this.fetch(getUrl);
+    this.setState({ channels });
+    const response = await resp.json();
+    return response.id;
+    // this.setState({ insertedId: response.id });
+  };
+
+  handlePost = async e => {
+    const { confirmationField, channel } = this.state;
+    let postUrl;
+    let getUrl;
+    let body;
+    if (confirmationField === "channel") {
+      postUrl = "/api/sales_channel/";
+      getUrl = channelsFetchUrl;
+      body = JSON.stringify({
+        name: `${channel.name.charAt(0).toUpperCase()}${channel.name.slice(1)}`
+      });
+    }
+    const id = await this.handleAddChannel(e, postUrl, body, getUrl);
+    // console.log("handlepost", id);
+    this.setState({ [confirmationField]: { id } });
   };
 
   handleOpenConfirmation = field => {
@@ -152,9 +204,52 @@ class ChanProdConf extends Component {
     } = this.state;
     return (
       <React.Fragment>
-        <Paper>
-          <Channels />
-        </Paper>
+        <Confirmation
+          open={confirmation}
+          close={this.handleCloseConfirmation}
+          action={this.handlePost}
+          komunikat={`Czy jesteś pewny że chcesz dodać`}
+        >
+          {/* <div>{`${labelOdmieniony} ${whatToAdd}?`}</div>
+          {field2show && <div>{`${field2label} ${input2}?`}</div>} */}
+        </Confirmation>
+        <SelectOrAdd
+          name="channel"
+          // fetchUrl={`/api/table/channels`}
+          confirmationOpen={() => this.handleOpenConfirmation("channel")}
+          changeValue={this.handleChange}
+          // form={this.state.itemForm}
+          label="kanał sprzedaży"
+          labelOdmieniony="kanał sprzedaży"
+          // add={this.actionFun}
+          // add={this.handleAddChannel}
+
+          list={channels}
+          // modal
+          // child={<UnitForm form={this.state.itemForm} />}
+        />
+        <SelectOrAdd
+          disabled={channel.id === 0}
+          // fetchUrl={`/api/channels/items/${channelId}`}
+          changeId={id => this.handleChange("item", id)}
+          // form={this.state.itemForm}
+          label="Produkt lub usługa"
+          labelOdmieniony="produkt lub usługę"
+          field2show
+          field2label="Jednostka"
+          list={items}
+          // field2disabled
+          // modal
+          // child={<UnitForm form={this.state.itemForm} />}
+        >
+          {/* <InputComponent
+            name="unit"
+            label="Jednostka"
+            type="text"
+            edytuj={unit => this.setState({ itemForm: { name: unit } })}
+            value={this.state.itemForm.unit}
+          /> */}
+        </SelectOrAdd>
       </React.Fragment>
     );
   }

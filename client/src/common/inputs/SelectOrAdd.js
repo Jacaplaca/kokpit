@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
+import InputComponent from "../inputs/InputComponent";
 
 import * as actions from "../../actions";
 import {
@@ -24,7 +25,6 @@ import ModalWindow from "../../components/ModalWindow";
 import AddCircle from "@material-ui/icons/AddCircle";
 import SelectFromDBForAdding from "./SelectFromDBForAdding";
 import ButtonIconCircle from "../ButtonIconCircle";
-import Confirmation from "../../components/Confirmation";
 
 const styles = theme => ({
   input: {
@@ -46,17 +46,14 @@ class SelectOrAdd extends Component {
     showAdd: false,
     whatToAdd: "",
     list: [],
-    insertedId: 0
+    insertedId: 0,
+    input2: ""
   };
 
-  componentWillReceiveProps = nextProps => {
-    nextProps.fetchUrl !== this.props.fetchUrl &&
-      this.fetch(nextProps.fetchUrl);
-  };
-
-  componentWillMount = async () => {
-    await this.fetch(this.props.fetchUrl);
-  };
+  // componentWillReceiveProps = nextProps => {
+  //   nextProps.fetchUrl !== this.props.fetchUrl &&
+  //     this.fetch(nextProps.fetchUrl);
+  // };
 
   handleOpenModal = () => {
     this.setState({ openModal: true });
@@ -69,45 +66,12 @@ class SelectOrAdd extends Component {
     this.setState({ edit: result.data });
   };
 
-  handleOpenConfirmation = module => {
-    this.setState({ [module]: true });
-  };
-
-  handleCloseConfirmation = module => {
-    this.setState({ [module]: false });
-  };
-
   handleShowAdd = (showAdd, whatToAdd, id) => {
+    const { name } = this.props;
     whatToAdd.length > 0
       ? this.setState({ showAdd, whatToAdd })
       : this.setState({ showAdd: false, whatToAdd });
-    this.props.changeId(id);
-  };
-
-  handleAdd = async e => {
-    let url = "/api/sales_channel/";
-    e.preventDefault();
-    const { whatToAdd } = this.state;
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        name: `${whatToAdd.charAt(0).toUpperCase()}${whatToAdd.slice(1)}`
-      })
-    });
-    this.handleCloseConfirmation("addChannelConfirmation");
-    this.fetch(this.props.fetchUrl);
-    const response = await resp.json();
-    this.setState({ insertedId: response.id });
-  };
-
-  fetch = url => {
-    axios.get(url).then(result => {
-      const list = result.data.sort(dynamicSort("name"));
-      console.log("list", list);
-      this.setState({ list, isLoading: false });
-    });
+    this.props.changeValue(name, showAdd, whatToAdd, id);
   };
 
   render() {
@@ -115,17 +79,39 @@ class SelectOrAdd extends Component {
       showAdd,
       addChannelConfirmation,
       whatToAdd,
-      openModal
+      openModal,
+      input2
     } = this.state;
-    const { label, modal, child, children, labelOdmieniony } = this.props;
+    const {
+      label,
+      modal,
+      child,
+      children,
+      labelOdmieniony,
+      disabled,
+      field2label,
+      field2disabled,
+      field2show,
+      add,
+      confirmation,
+      confirmationClose,
+      confirmationOpen,
+      list
+    } = this.props;
+    console.log("SelectOrAdd(), add", add);
+    const whentToShowAdd = () => {
+      if (field2show && showAdd && input2 !== "") {
+        // console.log('field2show && showAdd && input2 !== ""');
+        return true;
+      } else if (!field2show && showAdd) {
+        // console.log("!field2show && showAdd");
+        return true;
+      } else {
+        return false;
+      }
+    };
     return (
       <React.Fragment>
-        <Confirmation
-          open={addChannelConfirmation}
-          close={() => this.handleCloseConfirmation("addChannelConfirmation")}
-          action={this.handleAdd}
-          komunikat={`Czy jesteś pewny że chcesz dodać ${labelOdmieniony} ${whatToAdd}?`}
-        />
         <ModalWindow
           open={openModal}
           close={this.handleCloseModal}
@@ -137,16 +123,28 @@ class SelectOrAdd extends Component {
           style={{
             display: "grid",
             gridGap: "1rem",
-            gridTemplateColumns: "1fr 75px",
+            gridTemplateColumns: "1fr 75px 1fr",
             color: "white"
           }}
         >
           <SelectFromDBForAdding
+            disabled={disabled}
             showAdd={this.handleShowAdd}
-            list={this.state.list}
+            list={list}
             insertedId={this.state.insertedId}
             label={labelOdmieniony}
           />
+
+          {showAdd && field2show && (
+            <InputComponent
+              name="input2"
+              label={field2label}
+              type="text"
+              edytuj={input2 => this.setState({ input2 })}
+              value={this.state.input2}
+              disabled={field2disabled}
+            />
+          )}
           <div
             style={{
               alignSelf: "center",
@@ -154,12 +152,10 @@ class SelectOrAdd extends Component {
               fontWeight: "900"
             }}
           >
-            {showAdd && (
+            {whentToShowAdd() && (
               <ButtonIconCircle
                 akcja={() => {
-                  modal
-                    ? this.handleOpenModal()
-                    : this.handleOpenConfirmation("addChannelConfirmation");
+                  modal ? this.handleOpenModal() : confirmationOpen();
                 }}
               >
                 <AddCircle />

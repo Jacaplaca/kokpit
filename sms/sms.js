@@ -34,7 +34,7 @@ var randomizeSendingTime = schedule.scheduleJob(rule, function() {
   randomTime(9, 10, 9, 50);
 });
 
-// fetchInvoices();on index.js
+// fetchInvoices();
 
 var runFetching = schedule.scheduleJob(
   {
@@ -45,7 +45,7 @@ var runFetching = schedule.scheduleJob(
   },
   function() {
     console.log("Lecimy z smsami!");
-    fetchInvoices();
+    // fetchInvoices();
   }
 );
 
@@ -97,7 +97,7 @@ function fetchInvoices() {
         },
         raw: true
       }).then(sentInvoices => {
-        console.log("sentInvoices", sentInvoices.length);
+        // console.log("sentInvoices", sentInvoices.length);
         fetchUsers(
           sentInvoices.sort(dynamicSort("termin_platnosci")).reverse()
         );
@@ -106,7 +106,7 @@ function fetchInvoices() {
 }
 
 function fetchUsers(invoices) {
-  // console.log("fetchUsers");
+  console.log("fetchUsers");
   User.findAll({
     attributes: ["clientId", "id", "nr_telefonu", "id_client_soft"],
     raw: true
@@ -122,6 +122,7 @@ function compareAddPhone(invoices, users) {
   // console.log("invoices", invoices);
   const notSentWithNumber = invoices.map(inv => {
     // console.log("inv id_client", inv.id_client, inv.id_pracownik);
+    // console.log("users", users);
     const userData = users.filter(
       user =>
         inv.id_client === user.clientId &&
@@ -158,7 +159,7 @@ function compareAddPhone(invoices, users) {
       status: status_platnosci
     };
   });
-  // console.log("notSentWithNumber", notSentWithNumber);
+  // console.log("notSentWithNumber", notSentWithNumber[0]);
   // console.log("compare", notSentWithNumber.filter(x => x.phone !== null));
   Invoices4SMS.findAll({
     where: {
@@ -178,7 +179,7 @@ function compareAddPhone(invoices, users) {
 }
 
 function sendSMS(result, all) {
-  // console.log(all);
+  // console.log("sendSMS", result, all.length);
   const allByUser = podzielUnikalnymi(all, "id_pracownik");
 
   let bigestInvoices = [];
@@ -310,23 +311,23 @@ function months(number) {
 }
 
 function send(invoices, sms) {
-  console.log("sms");
-  console.log(sms);
-  smsapi.authentication
-    .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
-    .then(sendMessage)
-    .then(displayResult)
-    .catch(displayError);
-
-  function sendMessage() {
-    return smsapi.message
-      .sms()
-      .from("ECO")
-      .to(sms.tel)
-      .message(sms.sms)
-      .normalize()
-      .execute(); // return Promise
-  }
+  console.log("sms", sms);
+  // console.log(sms);
+  // smsapi.authentication
+  //   .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
+  //   .then(sendMessage)
+  //   .then(displayResult)
+  //   .catch(displayError);
+  //
+  // function sendMessage() {
+  //   return smsapi.message
+  //     .sms()
+  //     .from("ECO")
+  //     .to(sms.tel)
+  //     .message(sms.sms)
+  //     .normalize()
+  //     .execute(); // return Promise
+  // }
   // updateToSent(invoices.filter(invoice => invoice.phone === "48502413498"));
   function displayResult(result) {
     console.log(result);

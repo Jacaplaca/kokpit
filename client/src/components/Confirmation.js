@@ -18,6 +18,8 @@ const styles = theme => ({
 
 class Confirmation extends Component {
   render() {
+    const { children, action } = this.props;
+    console.log("confirmatrion, action", action);
     return (
       <Dialog
         //disableBackdropClick
@@ -27,17 +29,14 @@ class Confirmation extends Component {
       >
         <DialogTitle id="form-dialog-title">{this.props.komunikat}</DialogTitle>
         <DialogContent>
+          {children}
           {/* <DialogContentText>
             To subscribe to this website, please enter your email address
             here. We will send updates occasionally.
           </DialogContentText> */}
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={this.props.action}
-            variant="contained"
-            color="primary"
-          >
+          <Button onClick={action} variant="contained" color="primary">
             Tak
           </Button>
           <Button

@@ -201,8 +201,8 @@ class InputSelectBaza extends React.Component {
       placeholder,
       value: valueProps,
       error,
-      helperText
-      // disabled
+      helperText,
+      disabled
     } = this.props;
     const { suggestions, value, single } = this.state;
 
@@ -216,8 +216,8 @@ class InputSelectBaza extends React.Component {
       onChange: this.onChange,
       error,
       clearValue: this.clearValue,
-      helperText
-      // disabled: true
+      helperText,
+      disabled
     };
 
     return (

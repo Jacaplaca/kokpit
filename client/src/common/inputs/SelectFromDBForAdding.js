@@ -19,18 +19,19 @@ class SelectFromDBForAdding extends Component {
     // this.setState({  });
   };
 
-  componentWillReceiveProps = nextProps => {
-    console.log("channels receive props");
-    const { insertedId } = nextProps;
-    if (this.props.insertedId !== insertedId) {
-      this.setState({ id: insertedId });
-    }
-  };
+  // componentWillReceiveProps = nextProps => {
+  //   console.log("channels receive props");
+  //   const { insertedId } = nextProps;
+  //   if (this.props.insertedId !== insertedId) {
+  //     this.setState({ id: insertedId });
+  //   }
+  // };
 
   render() {
-    const { label, list } = this.props;
+    const { label, list, disabled } = this.props;
     return (
       <InputSelectBaza
+        disabled={disabled}
         wybrano={value => {
           value && this.handleChange(value);
         }}
