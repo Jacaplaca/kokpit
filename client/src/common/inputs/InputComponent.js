@@ -143,6 +143,7 @@ class InputComponent extends React.Component {
         aria-describedby="name-helper-text"
       >
         <TextField
+          disableUnderline
           disabled={disabled}
           helperText={helperText}
           error={error}

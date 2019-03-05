@@ -613,14 +613,19 @@ module.exports = app => {
         res.sendStatus(500);
       });
   });
-  app.post("/api/channel_item/", (req, res, next) => {
+  app.post("/api/channel_item/:channelId", (req, res, next) => {
     console.log("api/channel_item/");
     console.log(req.body);
+    const { channelId } = req.params;
     const { clientId, user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
-    const form = Object.assign(req.body, { clientId, userId: user_id });
+    const form = Object.assign(req.body, {
+      clientId,
+      userId: user_id,
+      channelId
+    });
     Item.create(form)
       .then(results => {
         return res.json(results);

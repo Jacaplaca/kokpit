@@ -32,7 +32,7 @@ import ButtonIconCircle from "../common/ButtonIconCircle";
 import Confirmation from "./Confirmation";
 import SelectOrAdd from "../common/inputs/SelectOrAdd";
 import InputComponent from "../common/inputs/InputComponent";
-import Channels from "./ChannelsProdConfig/Channels";
+import EditableList from "../common/EditableList";
 
 const styles = theme => ({
   input: {
@@ -51,110 +51,57 @@ let itemsFetchUrlBase = `/api/channels/items/`;
 
 class ChanProdConf extends Component {
   state = {
-    openModal: false,
-
-    addChannelConfirmation: false,
-    showAdd: false,
-    whatToAdd: "",
-    channels: [],
-    items: [],
-    insertedId: 0,
-    itemForm: { name: "" },
-    // channelId: 0,
-    channel: { name: "", id: 0 },
-    confirmation: false,
-    confirmationField: null,
-    field2disabled: true
+    clickedChannel: 0,
+    clickedItem: 0
   };
 
-  handleOpenConfirmation = field => {
-    this.setState({ confirmation: true, confirmationField: field });
-  };
-
-  handleCloseConfirmation = () => {
-    this.setState({ confirmation: false });
-  };
-
-  // componentWillMount = async () => {
-  //   await this.fetch();
-  // };
-  //
-  // handleClose = () => {
-  //   this.setState({ openModal: false });
-  // };
-  //
-  // addFetchToState = result => {
-  //   this.setState({ edit: result.data });
-  // };
-  //
-  // handleOpenConfirmation = module => {
-  //   this.setState({ [module]: true });
-  // };
-  //
-  // handleCloseConfirmation = module => {
-  //   this.setState({ [module]: false });
-  // };
-  //
-  // handleShowAdd = (showAdd, whatToAdd) => {
-  //   whatToAdd.length > 0
-  //     ? this.setState({ showAdd, whatToAdd })
-  //     : this.setState({ showAdd: false, whatToAdd });
-  // };
-  //
-  // handleAdd = async e => {
-  //   let url = "/api/sales_channel/";
-  //   e.preventDefault();
-  //   const { whatToAdd } = this.state;
-  //   const resp = await fetch(url, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     credentials: "same-origin",
-  //     body: JSON.stringify({
-  //       name: `${whatToAdd.charAt(0).toUpperCase()}${whatToAdd.slice(1)}`
-  //     })
-  //   });
-  //   this.handleCloseConfirmation("addChannelConfirmation");
-  //   this.fetch();
-  //   const response = await resp.json();
-  //   this.setState({ insertedId: response.id });
-  // };
-  //
-  // fetch = () => {
-  //   axios.get(`/api/table/channels`).then(result => {
-  //     const list = result.data.sort(dynamicSort("name"));
-  //     this.setState({ list, isLoading: false });
-  //   });
-  // };
-  handleChange = async (dbTable, showAdd, name, id) => {
-    const { channel } = this.state;
-    // let field2disabled;
-    let list = [];
-    console.log("handleChange", dbTable, showAdd, name, id);
-    if (dbTable === "channel" && id !== 0) {
-      console.log("handleChange wybrano channel i nie jest 0");
-      const itemsFetchUrl = `${itemsFetchUrlBase}${id}`;
-      list = await this.fetch(itemsFetchUrl, "items");
-    }
-    this.setState({ [dbTable]: { id, name }, items: list });
+  handleClickOnRow = (comp, row) => {
+    this.setState({ [comp]: row });
   };
 
   render() {
-    const {
-      showAdd,
-      addChannelConfirmation,
-      whatToAdd,
-      channelId,
-      channel,
-      channels,
-      items,
-      confirmation,
-      field2disabled
-    } = this.state;
+    const { clickedChannel, clickedItem } = this.state;
     return (
       <React.Fragment>
-        <Paper>
-          <Channels />
-        </Paper>
+        <div
+          style={{
+            marginTop: "1rem",
+            display: "grid",
+            gridGap: "1rem",
+            gridTemplateColumns: "1fr 2fr"
+          }}
+        >
+          <Paper>
+            <EditableList
+              fetchUrl="/api/table/channels"
+              postUrl="/api/sales_channel/"
+              listLabel="Lista kanałów przedaży"
+              addLabel="Dodaj kanał sprzedaży"
+              clickedRow={clickedChannel}
+              clickOnRow={clickedRow =>
+                this.handleClickOnRow("clickedChannel", clickedRow)
+              }
+              addFields={[{ dbField: "name", label: "Nazwa" }]}
+            />
+          </Paper>
+          <Paper>
+            <EditableList
+              disabled={clickedChannel <= 0}
+              addLabel="Dodaj produkt lub usługę"
+              listLabel="Lista produktów i usług"
+              fetchUrl={`/api/channels/items/${clickedChannel}`}
+              postUrl={`/api/channel_item/${clickedChannel}`}
+              clickedRow={clickedItem}
+              clickOnRow={clickedRow =>
+                this.handleClickOnRow("clickedItem", clickedRow)
+              }
+              addFields={[
+                { dbField: "name", label: "Nazwa" },
+                { dbField: "unit", label: "Jednostka" }
+              ]}
+            />
+          </Paper>
+        </div>
       </React.Fragment>
     );
   }

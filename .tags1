@@ -4,8 +4,10 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-class.transactions	C:\work\kokpit\client\src\components\Serwis.js	/^    transactions: [],$/;"	property	line:39
-componentWillMount	C:\work\kokpit\client\src\components\Serwis.js	/^  componentWillMount() {$/;"	function	line:45
-render	C:\work\kokpit\client\src\components\Serwis.js	/^  render() {$/;"	function	line:118
-mapStateToProps	C:\work\kokpit\client\src\components\Serwis.js	/^function mapStateToProps({ auth }) {$/;"	function	line:162
-mapStateToProps	C:\work\kokpit\client\src\components\Serwis.js	/^function mapStateToProps({ auth }) {$/;"	function	line:162
+class.channel	C:\work\kokpit\client\src\common\EditableList.js	/^    channel: "",$/;"	property	line:104
+class.addedId	C:\work\kokpit\client\src\common\EditableList.js	/^    addedId: 0,$/;"	property	line:105
+class.confirmation	C:\work\kokpit\client\src\common\EditableList.js	/^    confirmation: false,$/;"	property	line:106
+class.list	C:\work\kokpit\client\src\common\EditableList.js	/^    list: [],$/;"	property	line:107
+render	C:\work\kokpit\client\src\common\EditableList.js	/^  render() {$/;"	function	line:342
+mapStateToProps	C:\work\kokpit\client\src\common\EditableList.js	/^function mapStateToProps({ auth }) {$/;"	function	line:712
+mapStateToProps	C:\work\kokpit\client\src\common\EditableList.js	/^function mapStateToProps({ auth }) {$/;"	function	line:712
