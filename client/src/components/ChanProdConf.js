@@ -75,6 +75,8 @@ class ChanProdConf extends Component {
             <EditableList
               fetchUrl="/api/table/channels"
               postUrl="/api/sales_channel/"
+              editUrl="/api/channel/edit/id/"
+              removeUrl="/api/channel/remove/"
               listLabel="Lista kanałów przedaży"
               addLabel="Dodaj kanał sprzedaży"
               clickedRow={clickedChannel}
@@ -86,6 +88,8 @@ class ChanProdConf extends Component {
           </Paper>
           <Paper>
             <EditableList
+              editUrl="/api/channel_item/edit/id/"
+              removeUrl="/api/channel_item/remove/"
               disabled={clickedChannel <= 0}
               addLabel="Dodaj produkt lub usługę"
               listLabel="Lista produktów i usług"

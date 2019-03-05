@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import MenuItem from "@material-ui/core/MenuItem";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Add from "@material-ui/icons/Add";
@@ -180,37 +181,44 @@ class EditableList extends Component {
     // this.setState({ insertedId: response.id });
   };
 
-  handleEditChannel = async (e, postUrl, body, getUrl) => {
-    e.preventDefault();
-    const resp = await fetch(postUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body
-    });
-    // this.handleCloseConfirmation();
-
-    // return await resp.json();
-    // this.setState({ insertedId: response.id });
-  };
+  // handleEditChannel = async (e, postUrl, body, getUrl) => {
+  //   e.preventDefault();
+  //   const resp = await fetch(postUrl, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     credentials: "same-origin",
+  //     body
+  //   });
+  //   // this.handleCloseConfirmation();
+  //
+  //   // return await resp.json();
+  //   // this.setState({ insertedId: response.id });
+  // };
 
   handlePost = async e => {
-    const { adding } = this.state;
-    let postUrl;
-    let getUrl;
+    const { adding, editedFields, editedId } = this.state;
+    const { fetchUrl, postUrl, editUrl } = this.props;
     let body;
-    postUrl = this.props.postUrl;
-    getUrl = this.props.fetchUrl;
-    body = JSON.stringify(adding);
-    const id = await this.handleAddChannel(e, postUrl, body, getUrl);
-    // console.log("handlepost", id);
-    const list = await this.fetch(getUrl);
+    let sendingUrl;
+    if (editedId === 0) {
+      body = JSON.stringify(adding);
+      sendingUrl = postUrl;
+    } else {
+      body = JSON.stringify(editedFields);
+      sendingUrl = `${editUrl}/${editedId}`;
+    }
+
+    const id = await this.handleAddChannel(e, sendingUrl, body, fetchUrl);
+    console.log("handlepost", id);
+    const list = await this.fetch(fetchUrl);
     this.setState({
       list,
       listUnfiltered: list,
       isLoading: false,
       addedId: { id },
-      adding: {}
+      adding: {},
+      editedId: 0,
+      editedFields: {}
     });
   };
 
@@ -226,7 +234,7 @@ class EditableList extends Component {
 
     // const value = e.target.value;
     this.setState({
-      adding: Object.assign(this.state[inState], { [dbField]: value })
+      [dbField]: Object.assign(this.state[inState], { [dbField]: value })
     });
     // this.setState({ [name]: value });
   };
@@ -248,6 +256,7 @@ class EditableList extends Component {
   };
 
   handleDelete = () => {
+    console.log("handleDelete");
     this.handleOpenConfirmation();
     this.setState({ confirmationAction: this.remove });
   };
@@ -258,9 +267,10 @@ class EditableList extends Component {
   };
 
   remove = async () => {
-    const result = await axios.post(
-      `/api/channel/remove/${this.state.checked}`
-    );
+    const url = `${this.props.removeUrl}${this.state.checked}`;
+    console.log("remove", url);
+    const result = await axios.post(url);
+    console.log("remove result", result);
     this.handleCloseConfirmation();
     this.setState({ checked: [] });
     const list = await this.fetch(this.props.fetchUrl);
@@ -287,6 +297,10 @@ class EditableList extends Component {
     this.setState({ editedFields, editedId: item.id });
   };
 
+  cancelEdit = () => {
+    this.setState({ editedFields: {}, editedId: 0 });
+  };
+
   handleSelectAllClick = () => {
     console.log("checked");
     if (this.state.checked.length === 0) {
@@ -307,33 +321,33 @@ class EditableList extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-  handleEdit = async e => {
-    const { changing, editedId } = this.state;
-
-    let postUrl;
-    let getUrl;
-    let body;
-    postUrl = `/api/channel/edit/id/${editedId}`;
-    getUrl = this.props.fetchUrl;
-    body = JSON.stringify({
-      name: `${changing.charAt(0).toUpperCase()}${changing.slice(1)}`
-    });
-    await this.handleEditChannel(e, postUrl, body, getUrl);
-    // console.log("handlepost", id);
-    const list = await this.fetch(this.props.fetchUrl);
-    this.handleClickForEdit(0);
-    this.setState({
-      list,
-      listUnfiltered: list,
-      isLoading: false,
-      // editedId: 0,
-      changing: ""
-    });
-
-    // const result = await axios.get(`/api/id/channel/${editedId}`);
-    // const list = await this.fetch(channelsFetchUrl);
-    // this.setState({ list, isLoading: false, action: this.handlePost });
-  };
+  // handleEdit = async e => {
+  //   const { changing, editedId } = this.state;
+  //
+  //   let postUrl;
+  //   let getUrl;
+  //   let body;
+  //   postUrl = `/api/channel/edit/id/${editedId}`;
+  //   getUrl = this.props.fetchUrl;
+  //   body = JSON.stringify({
+  //     name: `${changing.charAt(0).toUpperCase()}${changing.slice(1)}`
+  //   });
+  //   await this.handleEditChannel(e, postUrl, body, getUrl);
+  //   // console.log("handlepost", id);
+  //   const list = await this.fetch(this.props.fetchUrl);
+  //   this.handleClickForEdit(0);
+  //   this.setState({
+  //     list,
+  //     listUnfiltered: list,
+  //     isLoading: false,
+  //     // editedId: 0,
+  //     changing: ""
+  //   });
+  //
+  //   // const result = await axios.get(`/api/id/channel/${editedId}`);
+  //   // const list = await this.fetch(channelsFetchUrl);
+  //   // this.setState({ list, isLoading: false, action: this.handlePost });
+  // };
 
   handleSearch = searched => {
     this.setState({ list: searched });
@@ -403,6 +417,8 @@ class EditableList extends Component {
             listLabel={listLabel}
             addFields={addFields}
             editedFields={editedFields}
+            cancelEdit={this.cancelEdit}
+            sendToDb={this.handlePost}
           />
         )}
         <TablePagination
@@ -448,7 +464,9 @@ const ListMy = ({
   listUnfiltered,
   listLabel,
   addFields,
-  editedFields
+  editedFields,
+  cancelEdit,
+  sendToDb
 }) => {
   return (
     <List className={classes.root}>
@@ -490,13 +508,17 @@ const ListMy = ({
                 disableRipple
               />
               <div>
-                <EditableField
-                  fields={addFields}
-                  edited={edited}
-                  item={item}
-                  change={change}
-                  value={editedFields}
-                />
+                {edited === item.id ? (
+                  <EditableField
+                    fields={addFields}
+                    edited={edited}
+                    item={item}
+                    change={change}
+                    value={editedFields}
+                  />
+                ) : (
+                  <ShowOnlyField fields={addFields} item={item} />
+                )}
 
                 {edited !== item.id ? (
                   <ListItemSecondaryAction>
@@ -511,21 +533,17 @@ const ListMy = ({
                 ) : (
                   <div>
                     <ListItemSecondaryAction
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr "
-                      }}
+                    // style={{
+                    //   display: "grid",
+                    //   gridTemplateColumns: "1fr 1fr "
+                    // }}
                     >
-                      {validateEdit(value)}
-                      {value.length > 0 && (
-                        <IconButton aria-label="Comments" onClick={confirmEdit}>
+                      {validateEdit(editedFields) ? (
+                        <IconButton aria-label="Comments" onClick={sendToDb}>
                           <DoneIcon />
                         </IconButton>
-                      )}
-                      <IconButton
-                        aria-label="Comments"
-                        onClick={() => edit({})}
-                      >
+                      ) : null}
+                      <IconButton aria-label="Comments" onClick={cancelEdit}>
                         <CloseIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -542,18 +560,22 @@ const ListMy = ({
 const validateEdit = object => {
   let validates = [];
   for (var property in object) {
-    console.log("validateEdit", property);
     if (object.hasOwnProperty(property)) {
-      validates.push(object.property !== "");
+      validates.push(object[property] !== "");
     }
   }
-  console.log("validates", validates);
+  return !validates.includes(false);
 };
 
 const EditableField = ({ fields, edited, item, value, change }) => {
   return fields.map((field, i) => {
-    return edited === item.id ? (
+    // console.log("EditableField", value, field, field.label);
+    return (
       <Input
+        startAdornment={
+          <InputAdornment position="start">{`${field.label}: `}</InputAdornment>
+        }
+        // label={value[field.label]}
         key={i}
         disableUnderline
         autoFocus={item.id === edited}
@@ -561,9 +583,14 @@ const EditableField = ({ fields, edited, item, value, change }) => {
         value={value[field.dbField]}
         onChange={e => change(field.dbField, e.target.value, "editedFields")}
       />
-    ) : (
-      <ListItemText primary={item.name} key={i} />
     );
+  });
+};
+
+const ShowOnlyField = ({ fields, item }) => {
+  return fields.map((field, i) => {
+    // return <ListItemText primary={item[field.dbField]} key={i} />;
+    return <span key={i}>{item[field.dbField]} </span>;
   });
 };
 
@@ -576,7 +603,7 @@ const AddToDB = ({
   addFields,
   disabled
 }) => {
-  console.log("value, Add", value);
+  // console.log("value, Add", value);
   return (
     <div
       style={{
