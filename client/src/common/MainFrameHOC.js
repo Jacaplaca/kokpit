@@ -8,7 +8,8 @@ const MainFrameHOC = WrappedComponent => {
         container: {
           // display: "inline-block",
           flexWrap: "nowrap",
-          padding: this.props.theme.spacing.unit * 3
+          padding: this.props.theme.spacing.unit * 3,
+          position: "relative"
           // height: "100%"
         }
       };

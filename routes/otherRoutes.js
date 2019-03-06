@@ -1,4 +1,5 @@
 const permit = require("../services/permission");
+const to = require("await-to-js").default;
 // import permit from '../services/permission';
 
 const db = require("../models/index");
@@ -961,6 +962,20 @@ module.exports = app => {
       });
   });
 
+  app.get("/api/channel_config/item/id/:id/", async (req, res) => {
+    const itemId = req.params.id;
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
+    const [err, result] = await to(
+      ChannelsConfig.findAll({ where: { clientId, itemId } })
+    );
+    if (!result) {
+      res.sendStatus(500);
+    } else {
+      res.json(result);
+    }
+  });
+
   app.get("/api/table/:table", (req, res) => {
     const table = req.params;
     // if (!req.user) {
@@ -1132,4 +1147,24 @@ module.exports = app => {
         res.sendStatus(500);
       });
   });
+
+  //helper route to assign id for config according item Id
+  // app.get("/api/modyfikuj/konfiguracje/po/itemsach", async (req, res, next) => {
+  //   console.log("po itemsach");
+  //   const items = await Item.findAll({ where: { clientId: 2 }, raw: true });
+  //   const configs = await ChannelsConfig.findAll({
+  //     where: { clientId: 2 },
+  //     raw: true
+  //   });
+  //   const promises = configs.map(config => {
+  //     const item = items.filter(item => config.name === item.name);
+  //     return ChannelsConfig.update(
+  //       { itemId: item[0].id },
+  //       { where: { id: config.id } }
+  //     );
+  //   });
+  //   await Promise.all(promises);
+  //   console.log("Done!");
+  //   res.json(items);
+  // });
 };

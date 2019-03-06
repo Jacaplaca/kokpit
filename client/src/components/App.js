@@ -3,12 +3,18 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actions from "../actions";
 import { StickyContainer, Sticky } from "react-sticky";
+import { MuiPickersUtilsProvider } from "material-ui-pickers";
+// import DateFnsUtils from "@date-io/date-fns";
+import MomentUtils from "@date-io/moment";
 
 import Register from "./Register";
 import Login from "./Login";
 import ResetPassword from "./ResetPassword";
 import MiniDrawer from "./MiniDrawer";
 import LinearProgress from "../common/LinearProgress";
+
+import moment from "moment";
+import "moment/locale/pl";
 
 class App extends Component {
   componentDidMount() {
@@ -37,11 +43,17 @@ class App extends Component {
                 </div>
               )}
             </Sticky>
-            <MiniDrawer>
-              <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/reset" component={ResetPassword} />
-            </MiniDrawer>
+            <MuiPickersUtilsProvider
+              utils={MomentUtils}
+              locale={"pl"}
+              moment={moment}
+            >
+              <MiniDrawer>
+                <Route path="/login" component={Login} />
+                <Route path="/register" component={Register} />
+                <Route path="/reset" component={ResetPassword} />
+              </MiniDrawer>
+            </MuiPickersUtilsProvider>
           </StickyContainer>
         </div>
       </BrowserRouter>

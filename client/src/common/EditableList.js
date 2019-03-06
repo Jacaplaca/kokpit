@@ -8,6 +8,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
+import Switch from "@material-ui/core/Switch";
 import Paper from "@material-ui/core/Paper";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -31,9 +32,21 @@ import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import CommentIcon from "@material-ui/icons/Comment";
 import * as actions from "../actions";
-import { dataToString, defineds, dynamicSort, timeDiff } from "./functions";
+import {
+  dataToString,
+  defineds,
+  dynamicSort,
+  timeDiff,
+  dateToYM,
+  YMtoDate
+} from "./functions";
 import MainFrameHOC from "./MainFrameHOC";
 import ButtonMy from "./ButtonMy";
+import SelectItem from "./inputs/SelectItem";
+import InputData from "./inputs/InputData";
+import { DatePicker, InlineDatePicker } from "material-ui-pickers";
+
+// import SelectMonth from "./inputs/SelectMonth";
 //import SiteHeader from "../common/SiteHeader";
 // import CostsTable from "./CostsTable2Remote";
 // import ModalWindow from "./ModalWindow";
@@ -111,15 +124,23 @@ class EditableList extends Component {
     confirmationAction: null,
     editedId: 0,
     // changing: "",
-    // clickedRow: 0,
+    clickedRowState: 0,
     rowsPerPage: 6,
     page: 0,
     adding: {},
-    editedFields: {}
+    editedFields: {},
+    suffixes: [],
+    suffix: {}
   };
 
   componentWillMount = () => {
+    const withSuffix = this.props.addFields.filter(field => field.suffix);
+    this.setState({ suffixes: withSuffix });
+    console.log("withSuffix", withSuffix);
     this.urlToState(this.props.fetchUrl);
+    if (this.props.month) {
+      this.setState({ adding: { month: dateToYM(new Date()) } });
+    }
   };
 
   componentWillReceiveProps = nextProps => {
@@ -229,14 +250,34 @@ class EditableList extends Component {
   // };
 
   handleChange = (dbField, value, inState) => {
-    console.log("handleChange", dbField, value, inState);
-    const { adding, editedFields } = this.state;
+    const { adding, editedFields, suffixes, suffix } = this.state;
+    const fieldsToWatch = suffixes.map(x => x.suffixDynamic);
+    console.log("handleChange", dbField, value, inState, fieldsToWatch);
+    let suffixToState = {};
+    for (let field of fieldsToWatch) {
+      if (field === dbField) {
+        const fieldsDependent = suffixes.filter(
+          x => x.suffixDynamic === dbField
+        );
 
-    // const value = e.target.value;
+        for (let fieldDepen of fieldsDependent) {
+          const add = fieldDepen.suffix.filter(x => x.field === value);
+          console.log("adddddd", add);
+          const tempSuffixToState = Object.assign(suffixToState, {
+            [fieldDepen.dbField]: add[0].add
+          });
+          suffixToState = tempSuffixToState;
+        }
+      }
+    }
+    console.log("suffixToState", suffixToState);
+
     this.setState({
-      [dbField]: Object.assign(this.state[inState], { [dbField]: value })
+      [dbField]: Object.assign(this.state[inState], {
+        [dbField]: value
+      }),
+      suffix: suffixToState
     });
-    // this.setState({ [name]: value });
   };
 
   handleOpenConfirmation = () => {
@@ -262,7 +303,7 @@ class EditableList extends Component {
   };
 
   handleRowClick = clickedRow => {
-    // this.setState({ clickedRow });
+    this.setState({ clickedRowState: clickedRow });
     this.props.clickOnRow(clickedRow);
   };
 
@@ -366,18 +407,29 @@ class EditableList extends Component {
       page,
       listUnfiltered,
       adding,
-      editedFields
+      editedFields,
+      suffix,
+      clickedRowState
     } = this.state;
     const {
       classes,
-      clickedRow,
+      // clickedRow,
       addLabel,
       listLabel,
       addFields,
-      disabled
+      disabled,
+      switchSomething,
+      children
     } = this.props;
     return (
       <React.Fragment>
+        {/* <Switch
+          // checked={itemsConfig}
+          onChange={switchSomething}
+          aria-label="Collapse"
+        /> */}
+        {children}
+
         <Confirmation
           open={confirmation}
           close={this.handleCloseConfirmation}
@@ -394,6 +446,7 @@ class EditableList extends Component {
           value={adding}
           addLabel={addLabel}
           addFields={addFields}
+          suffix={suffix}
         />
         {list && (
           <ListMy
@@ -409,7 +462,7 @@ class EditableList extends Component {
             change={this.handleChange}
             confirmEdit={this.handleEdit}
             click={this.handleRowClick}
-            clickedRow={clickedRow}
+            clickedRow={clickedRowState}
             onSelectAllClick={this.handleSelectAllClick}
             rowsPerPage={rowsPerPage}
             page={page}
@@ -495,7 +548,6 @@ const ListMy = ({
               role={undefined}
               dense
               button
-              onClick={() => click(item.id)}
               style={{ height: 49 }}
             >
               {clickedRow === item.id && (
@@ -507,7 +559,7 @@ const ListMy = ({
                 tabIndex={-1}
                 disableRipple
               />
-              <div>
+              <div onClick={() => click(item.id)}>
                 {edited === item.id ? (
                   <EditableField
                     fields={addFields}
@@ -601,7 +653,8 @@ const AddToDB = ({
   action,
   addLabel,
   addFields,
-  disabled
+  disabled,
+  suffix
 }) => {
   // console.log("value, Add", value);
   return (
@@ -612,7 +665,7 @@ const AddToDB = ({
         gridTemplateColumns: `repeat(${addFields.length}, 1fr) 70px`
       }}
     >
-      <InputComponent
+      {/* <InputComponent
         disabled={disabled}
         name="channel"
         label={addLabel}
@@ -626,12 +679,13 @@ const AddToDB = ({
         }
         value={value[addFields[0].dbField] || ""}
         // disabled={field2disabled}
-      />
+      /> */}
       <AdditionalAddFields
         fields={addFields}
         change={change}
         value={value}
         disabled={disabled}
+        suffix={suffix}
       />
       <ButtonMy
         onClick={action}
@@ -645,19 +699,64 @@ const AddToDB = ({
   );
 };
 
-const AdditionalAddFields = ({ fields, change, value, disabled }) => {
-  return fields.slice(1).map((field, i) => (
-    <InputComponent
-      disabled={disabled}
-      key={i}
-      name="channel"
-      label={field.label}
-      type="text"
-      edytuj={value => change(field.dbField, value, "adding")}
-      value={value[field.dbField] || ""}
-      // disabled={field2disabled}
-    />
-  ));
+const AdditionalAddFields = ({ fields, change, value, disabled, suffix }) => {
+  console.log("suffix in AdditionalAddFields", suffix);
+  return fields.map((field, i) => {
+    if (field.select) {
+      return (
+        <SelectItem
+          disabled={disabled}
+          key={i}
+          label={field.label}
+          select={field.select}
+          value={value[field.dbField] || ""}
+          updateSelected={value => change(field.dbField, value, "adding")}
+        />
+      );
+    } else if (field.number) {
+      return (
+        <InputComponent
+          key={i}
+          disabled={disabled}
+          format="number"
+          suffix={suffix[field.dbField] || ""}
+          name="buy"
+          // error={props.touched.buy && Boolean(props.errors.buy)}
+          label={field.label}
+          type="text"
+          edytuj={value => change(field.dbField, value, "adding")}
+          value={value[field.dbField] || ""}
+        />
+      );
+    } else if (field.month) {
+      return (
+        <DatePicker
+          key={i}
+          disabled={disabled}
+          views={["year", "month"]}
+          label={field.label}
+          // helperText="With min and max"
+          minDate={new Date("2018-01-01")}
+          maxDate={new Date("2020-01-01")}
+          value={YMtoDate(value[field.dbField]) || new Date()}
+          onChange={value => change(field.dbField, dateToYM(value), "adding")}
+        />
+      );
+    } else {
+      return (
+        <InputComponent
+          disabled={disabled}
+          key={i}
+          name="channel"
+          label={field.label}
+          type="text"
+          edytuj={value => change(field.dbField, value, "adding")}
+          value={value[field.dbField] || ""}
+          // disabled={field2disabled}
+        />
+      );
+    }
+  });
 };
 
 let EnhancedTableToolbar = props => {

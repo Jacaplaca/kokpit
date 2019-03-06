@@ -8,6 +8,7 @@ import {
   startOfWeek,
   endOfWeek
 } from "date-fns";
+import moment from "moment";
 
 export const formatNumber = n => {
   if (Number(n) === n && n % 1 !== 0) {
@@ -17,6 +18,28 @@ export const formatNumber = n => {
       .replace(".", ",");
   } else {
     return n;
+  }
+};
+
+export const dateToYM = date => {
+  const dateObj = moment(date).toObject();
+  let month;
+  if (dateObj.months + 1 < 10) {
+    month = `0${dateObj.months + 1}`;
+  } else {
+    month = dateObj.months + 1;
+  }
+  return `${dateObj.years}${month}`;
+};
+
+export const YMtoDate = yearMonth => {
+  // let afterConv
+  let ym;
+  if (yearMonth) {
+    ym = yearMonth;
+    return new Date(`${ym.slice(0, 4)}-${ym.slice(4)}-01`);
+  } else {
+    return new Date();
   }
 };
 

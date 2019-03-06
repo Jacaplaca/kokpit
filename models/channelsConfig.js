@@ -29,6 +29,10 @@ module.exports = (sequelize, Sequelize) => {
       channelId: {
         type: Sequelize.INTEGER,
         defaultValue: 1
+      },
+      itemId: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1
       }
     },
     {

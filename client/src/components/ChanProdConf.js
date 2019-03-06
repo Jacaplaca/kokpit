@@ -4,6 +4,8 @@ import { Formik } from "formik";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { startOfMonth, endOfMonth } from "date-fns";
+
+import Slide from "@material-ui/core/Slide";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -33,6 +35,7 @@ import Confirmation from "./Confirmation";
 import SelectOrAdd from "../common/inputs/SelectOrAdd";
 import InputComponent from "../common/inputs/InputComponent";
 import EditableList from "../common/EditableList";
+import ItemsConfig from "./ChannelsProdConfig/ItemsConfig";
 
 const styles = theme => ({
   input: {
@@ -46,21 +49,40 @@ const styles = theme => ({
   }
 });
 
-const channelsFetchUrl = "/api/table/channels";
-let itemsFetchUrlBase = `/api/channels/items/`;
-
 class ChanProdConf extends Component {
   state = {
     clickedChannel: 0,
-    clickedItem: 0
+    clickedItem: 0,
+    itemsConfig: false
+  };
+
+  showItemsConfig = () => {
+    this.setState(state => ({ itemsConfig: true }));
+  };
+
+  hideItemsConfig = () => {
+    this.setState(state => ({ itemsConfig: false }));
+  };
+
+  switchItemsConfig = () => {
+    this.setState(state => ({ itemsConfig: !state.itemsConfig }));
   };
 
   handleClickOnRow = (comp, row) => {
     this.setState({ [comp]: row });
+    if (comp === "clickedChannel") {
+      this.hideItemsConfig();
+    } else if (comp === "clickedItem") {
+      if (row === this.state.clickedItem) {
+        this.switchItemsConfig();
+      } else {
+        this.showItemsConfig();
+      }
+    }
   };
 
   render() {
-    const { clickedChannel, clickedItem } = this.state;
+    const { clickedChannel, clickedItem, itemsConfig } = this.state;
     return (
       <React.Fragment>
         <div
@@ -68,7 +90,9 @@ class ChanProdConf extends Component {
             marginTop: "1rem",
             display: "grid",
             gridGap: "1rem",
-            gridTemplateColumns: "1fr 2fr"
+            gridTemplateColumns: "1fr 2fr",
+            gridTemplateRows: "100%",
+            minHeight: "82vh"
           }}
         >
           <Paper>
@@ -86,25 +110,89 @@ class ChanProdConf extends Component {
               addFields={[{ dbField: "name", label: "Nazwa" }]}
             />
           </Paper>
-          <Paper>
-            <EditableList
-              editUrl="/api/channel_item/edit/id/"
-              removeUrl="/api/channel_item/remove/"
-              disabled={clickedChannel <= 0}
-              addLabel="Dodaj produkt lub usługę"
-              listLabel="Lista produktów i usług"
-              fetchUrl={`/api/channels/items/${clickedChannel}`}
-              postUrl={`/api/channel_item/${clickedChannel}`}
-              clickedRow={clickedItem}
-              clickOnRow={clickedRow =>
-                this.handleClickOnRow("clickedItem", clickedRow)
-              }
-              addFields={[
-                { dbField: "name", label: "Nazwa" },
-                { dbField: "unit", label: "Jednostka" }
-              ]}
-            />
-          </Paper>
+          {/* <Paper> */}
+          <EditableList
+            switchSomething={this.showItemsConfig}
+            editUrl="/api/channel_item/edit/id/"
+            removeUrl="/api/channel_item/remove/"
+            disabled={clickedChannel <= 0}
+            addLabel="Dodaj produkt lub usługę"
+            listLabel="Lista produktów i usług"
+            fetchUrl={`/api/channels/items/${clickedChannel}`}
+            postUrl={`/api/channel_item/${clickedChannel}`}
+            clickedRow={clickedItem}
+            clickOnRow={clickedRow =>
+              this.handleClickOnRow("clickedItem", clickedRow)
+            }
+            addFields={[
+              { dbField: "name", label: "Nazwa" },
+              { dbField: "unit", label: "Jednostka" }
+            ]}
+          >
+            <Slide
+              direction="left"
+              in={itemsConfig}
+              mountOnEnter
+              unmountOnExit
+              timeout={500}
+              style={{
+                // gridRow: "2 / 4",
+                // gridColumn: "2 /4",
+                // backgroundColor: "yellow",
+                // opacity: 0.5,
+                // height: 200,
+                // width: 222,
+                // right: 23,
+                // position: "absolute"
+                // backgroundColor: "green",
+                opacity: 1,
+                height: "100%",
+                width: "95%",
+                position: "absolute",
+                top: 0,
+                right: 0,
+                zIndex: 23
+              }}
+            >
+              <Paper elevation={4}>
+                {/* <ItemsConfig
+                  showId={clickedItem}
+                  fetchUrl={`/api/channel_config/item/id/${clickedItem}/`}
+                /> */}
+                <EditableList
+                  fetchUrl={`/api/channel_config/item/id/${clickedItem}/`}
+                  postUrl="/api/sales_channel/"
+                  editUrl="/api/channel/edit/id/"
+                  removeUrl="/api/channel/remove/"
+                  listLabel="Lista kanałów przedaży"
+                  addLabel="Dodaj kanał sprzedaży"
+                  clickedRow={clickedItem}
+                  clickOnRow={clickedRow =>
+                    this.handleClickOnRow("clickedConfigMonth", clickedRow)
+                  }
+                  addFields={[
+                    { dbField: "month", label: "Miesiąc", month: true },
+                    {
+                      dbField: "bonusType",
+                      label: "Typ prowizji",
+                      select: ["stawka", "% marży"]
+                    },
+                    {
+                      dbField: "bonus",
+                      label: "Wysokość prowizji",
+                      number: true,
+                      suffixDynamic: "bonusType",
+                      suffix: [
+                        { field: "stawka", add: "zł" },
+                        { field: "% marży", add: "%" }
+                      ]
+                    }
+                  ]}
+                />
+              </Paper>
+            </Slide>
+          </EditableList>
+          {/* </Paper> */}
         </div>
       </React.Fragment>
     );
