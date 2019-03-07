@@ -6,6 +6,7 @@ import { compose } from "redux";
 import { startOfMonth, endOfMonth } from "date-fns";
 import axios from "axios";
 import PropTypes from "prop-types";
+import NumberFormat from "react-number-format";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
@@ -13,10 +14,12 @@ import Paper from "@material-ui/core/Paper";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import MenuItem from "@material-ui/core/MenuItem";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
+import TextField from "@material-ui/core/TextField";
 import Add from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import DoneIcon from "@material-ui/icons/Done";
+
 import CloseIcon from "@material-ui/icons/Close";
 import classNames from "classnames";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -38,7 +41,9 @@ import {
   dynamicSort,
   timeDiff,
   dateToYM,
-  YMtoDate
+  YMtoDate,
+  YMtoMonthYear,
+  formatNumber
 } from "./functions";
 import MainFrameHOC from "./MainFrameHOC";
 import ButtonMy from "./ButtonMy";
@@ -62,6 +67,7 @@ import Confirmation from "../components/Confirmation";
 // import SelectOrAdd from "../common/inputs/SelectOrAdd";
 import InputComponent from "./inputs/InputComponent";
 import SearchField from "./inputs/SearchField";
+import SimpleNumberFormat from "./inputs/SimpleNumberFormat";
 
 const styles = theme => ({
   input: {
@@ -136,7 +142,7 @@ class EditableList extends Component {
   componentWillMount = () => {
     const withSuffix = this.props.addFields.filter(field => field.suffix);
     this.setState({ suffixes: withSuffix });
-    console.log("withSuffix", withSuffix);
+    console.log("will mount withSuffix", withSuffix);
     this.urlToState(this.props.fetchUrl);
     if (this.props.month) {
       this.setState({ adding: { month: dateToYM(new Date()) } });
@@ -331,7 +337,10 @@ class EditableList extends Component {
     let editedFields = {};
     addFields.map(field => {
       Object.assign(editedFields, {
-        [field.dbField]: listUnfiltered[idInList][field.dbField]
+        [field.dbField]:
+          listUnfiltered[idInList].suffix === "%"
+            ? listUnfiltered[idInList][field.dbField] * 100
+            : listUnfiltered[idInList][field.dbField]
       });
     });
     console.log("handleClickForEdit", item, id, idInList, editedFields);
@@ -472,6 +481,7 @@ class EditableList extends Component {
             editedFields={editedFields}
             cancelEdit={this.cancelEdit}
             sendToDb={this.handlePost}
+            suffix={suffix}
           />
         )}
         <TablePagination
@@ -519,7 +529,8 @@ const ListMy = ({
   addFields,
   editedFields,
   cancelEdit,
-  sendToDb
+  sendToDb,
+  suffix
 }) => {
   return (
     <List className={classes.root}>
@@ -559,17 +570,44 @@ const ListMy = ({
                 tabIndex={-1}
                 disableRipple
               />
-              <div onClick={() => click(item.id)}>
+              <div
+                style={
+                  {
+                    // opacity: 0.5
+                  }
+                }
+              >
                 {edited === item.id ? (
                   <EditableField
+                    // style={{ display: "grid" }}
+
                     fields={addFields}
                     edited={edited}
                     item={item}
                     change={change}
                     value={editedFields}
+                    suffix={suffix}
                   />
                 ) : (
-                  <ShowOnlyField fields={addFields} item={item} />
+                  <div
+                    onClick={() => click(item.id)}
+                    style={{
+                      display: "grid",
+                      // gridTemplateRows: "1fr",
+                      // gridTemplateColumns: "1fr",
+                      // backgroundColor: "red",
+                      // height: 49,
+                      gridAutoFlow: "column",
+                      alignItems: "center",
+                      gridGap: 5
+                    }}
+                  >
+                    <ShowOnlyField
+                      fields={addFields}
+                      item={item}
+                      style={{ backgroundColor: "green" }}
+                    />
+                  </div>
                 )}
 
                 {edited !== item.id ? (
@@ -619,30 +657,135 @@ const validateEdit = object => {
   return !validates.includes(false);
 };
 
-const EditableField = ({ fields, edited, item, value, change }) => {
-  return fields.map((field, i) => {
-    // console.log("EditableField", value, field, field.label);
-    return (
-      <Input
-        startAdornment={
-          <InputAdornment position="start">{`${field.label}: `}</InputAdornment>
+const EditableField = ({
+  fields,
+  edited,
+  item,
+  value,
+  change,
+  disabled,
+  suffix
+}) => {
+  return (
+    <div
+      style={{
+        display: "grid",
+        // gridTemplateRows: "1fr",
+        // gridTemplateColumns: "1fr",
+        // backgroundColor: "red",
+        // height: 49,
+        gridAutoFlow: "column",
+        alignItems: "center",
+        gridGap: 10
+      }}
+    >
+      {fields.map((field, i) => {
+        // console.log("EditableField", value, field, field.label);
+        if (field.select) {
+          return (
+            <SelectItem
+              simpleInput
+              short
+              format={"select"}
+              prefix={field.label}
+              disabled={disabled}
+              key={i}
+              label={value[field.dbField] || field.label}
+              select={field.select}
+              // value={value[field.dbField] || ""}
+              updateSelected={value =>
+                change(field.dbField, value, "editedFields")
+              }
+            />
+          );
+        } else if (field.number) {
+          return (
+            <Input
+              startAdornment={
+                <InputAdornment position="start">
+                  {/* <EditIcon
+                    style={{ fontSize: 17, opacity: 0.5, marginRight: 5 }}
+                  /> */}
+                  {`${field.label}: `}
+                </InputAdornment>
+              }
+              // suffix={suffix[field.dbField] || ""}
+              endAdornment={
+                <InputAdornment position="end">
+                  {suffix[field.dbField] || item.suffix}
+                </InputAdornment>
+              }
+              // label={value[field.label]}
+              key={i}
+              // disableUnderline
+              // autoFocus={item.id === edited}
+              type="text"
+              value={formatNumber(value[field.dbField])}
+              onChange={e => {
+                console.log("input on change", e);
+                change(field.dbField, e, "editedFields");
+              }}
+              inputComponent={SimpleNumberFormat}
+              inputProps={{
+                style: {
+                  // textAlign: "end",
+                  // width: value[field.dbField].length * 10
+                  width: value[field.dbField].length > 5 ? 100 : 50,
+                  textAlign: "center",
+                  webkitTransition: "width 1s" /* Safari */,
+                  transition: "width 1s",
+                  transitionTimingFunction: "ease"
+                }
+              }}
+            />
+          );
+        } else if (field.month) {
+          return <span key={i}>{YMtoMonthYear(item[field.dbField])}</span>;
+        } else {
+          return (
+            <Input
+              startAdornment={
+                <InputAdornment position="start">{`${
+                  field.label
+                }: `}</InputAdornment>
+              }
+              // label={value[field.label]}
+              key={i}
+              // disableUnderline
+              // autoFocus={item.id === edited}
+              type="text"
+              value={value[field.dbField]}
+              onChange={e =>
+                change(field.dbField, e.target.value, "editedFields")
+              }
+            />
+          );
         }
-        // label={value[field.label]}
-        key={i}
-        disableUnderline
-        autoFocus={item.id === edited}
-        type="text"
-        value={value[field.dbField]}
-        onChange={e => change(field.dbField, e.target.value, "editedFields")}
-      />
-    );
-  });
+      })}
+    </div>
+  );
 };
 
 const ShowOnlyField = ({ fields, item }) => {
   return fields.map((field, i) => {
     // return <ListItemText primary={item[field.dbField]} key={i} />;
-    return <span key={i}>{item[field.dbField]} </span>;
+    // console.log("ShowOnlyField", item[field.dbField]);
+    if (field.month) {
+      return <span key={i}>{YMtoMonthYear(item[field.dbField])}</span>;
+    } else if (field.number) {
+      return (
+        <NumberFormat
+          key={i}
+          value={formatNumber(item[field.dbField], item.suffix)}
+          displayType={"text"}
+          thousandSeparator={" "}
+          decimalSeparator={","}
+          suffix={item.suffix}
+        />
+      );
+    } else {
+      return <span key={i}>{item[field.dbField]} </span>;
+    }
   });
 };
 
@@ -705,9 +848,10 @@ const AdditionalAddFields = ({ fields, change, value, disabled, suffix }) => {
     if (field.select) {
       return (
         <SelectItem
+          format={"select"}
           disabled={disabled}
           key={i}
-          label={field.label}
+          label={value[field.dbField] || field.label}
           select={field.select}
           value={value[field.dbField] || ""}
           updateSelected={value => change(field.dbField, value, "adding")}

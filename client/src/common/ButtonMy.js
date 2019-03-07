@@ -29,6 +29,7 @@ const styles = theme => ({
     borderColor: "gray"
   },
   text: {
+    fontWeight: "600",
     height: 4
   }
 });
@@ -61,18 +62,13 @@ function ButtonMy(props) {
         text: classes.text // class name, e.g. `classes-nesting-label-x`
       }}
       style={style}
-      size={size}
+      size={"small"}
       disabled={disabled ? true : false}
     >
       {children}
-      {progress &&
-        submit && (
-          <CircularProgress
-            size={23}
-            color="white"
-            style={{ marginLeft: 10 }}
-          />
-        )}
+      {progress && submit && (
+        <CircularProgress size={23} color="white" style={{ marginLeft: 10 }} />
+      )}
     </Button>
   );
 }

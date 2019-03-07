@@ -33,6 +33,9 @@ module.exports = (sequelize, Sequelize) => {
       itemId: {
         type: Sequelize.INTEGER,
         defaultValue: 1
+      },
+      suffix: {
+        type: Sequelize.STRING
       }
     },
     {

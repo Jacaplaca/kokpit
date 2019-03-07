@@ -10,14 +10,22 @@ import {
 } from "date-fns";
 import moment from "moment";
 
-export const formatNumber = n => {
-  if (Number(n) === n && n % 1 !== 0) {
-    return n
+export const formatNumber = (n, suffix) => {
+  let number = Number(n);
+  if (suffix === "%") {
+    number = Number(n) * 100;
+  }
+  // console.log("formatNumber()", number);
+  if (number % 1 !== 0) {
+    return number
       .toFixed(2)
       .toString()
       .replace(".", ",");
+  } else if (n === "") {
+    return "";
   } else {
-    return n;
+    console.log("formatNumber()", n, number, "second");
+    return number.toString().replace(".", ",");
   }
 };
 
@@ -37,10 +45,17 @@ export const YMtoDate = yearMonth => {
   let ym;
   if (yearMonth) {
     ym = yearMonth;
-    return new Date(`${ym.slice(0, 4)}-${ym.slice(4)}-01`);
+    return new Date(
+      `${ym.toString().slice(0, 4)}-${ym.toString().slice(4)}-01`
+    );
   } else {
     return new Date();
   }
+};
+
+export const YMtoMonthYear = number => {
+  const date = YMtoDate(number);
+  return moment(date).format("MMMM, YYYY");
 };
 
 export const cleanNumber = value => {

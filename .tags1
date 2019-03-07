@@ -4,10 +4,5 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-class.channel	C:\work\kokpit\client\src\common\EditableList.js	/^    channel: "",$/;"	property	line:104
-class.addedId	C:\work\kokpit\client\src\common\EditableList.js	/^    addedId: 0,$/;"	property	line:105
-class.confirmation	C:\work\kokpit\client\src\common\EditableList.js	/^    confirmation: false,$/;"	property	line:106
-class.list	C:\work\kokpit\client\src\common\EditableList.js	/^    list: [],$/;"	property	line:107
-render	C:\work\kokpit\client\src\common\EditableList.js	/^  render() {$/;"	function	line:342
-mapStateToProps	C:\work\kokpit\client\src\common\EditableList.js	/^function mapStateToProps({ auth }) {$/;"	function	line:712
-mapStateToProps	C:\work\kokpit\client\src\common\EditableList.js	/^function mapStateToProps({ auth }) {$/;"	function	line:712
+class.open	C:\work\kokpit\client\src\common\inputs\SelectItem.js	/^  state = { open: false };$/;"	property	line:12
+render	C:\work\kokpit\client\src\common\inputs\SelectItem.js	/^  render() {$/;"	function	line:27

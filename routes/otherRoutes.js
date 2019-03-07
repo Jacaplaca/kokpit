@@ -1148,7 +1148,7 @@ module.exports = app => {
       });
   });
 
-  //helper route to assign id for config according item Id
+  // helper route to assign id for config according item Id
   // app.get("/api/modyfikuj/konfiguracje/po/itemsach", async (req, res, next) => {
   //   console.log("po itemsach");
   //   const items = await Item.findAll({ where: { clientId: 2 }, raw: true });
@@ -1166,5 +1166,28 @@ module.exports = app => {
   //   await Promise.all(promises);
   //   console.log("Done!");
   //   res.json(items);
+  // });
+  //wypelnienie suffixa po bonusType
+  // app.get("/api/modyfikuj/konfiguracje/po/itemsach", async (req, res, next) => {
+  //   console.log("po itemsach");
+  //   // const items = await Item.findAll({ where: { clientId: 2 }, raw: true });
+  //   const configs = await ChannelsConfig.findAll({
+  //     where: { clientId: 2 },
+  //     raw: true
+  //   });
+  //
+  //   const promises = configs.map(config => {
+  //     // const item = items.filter(item => config.name === item.name);
+  //     let suffix;
+  //     if (config.bonusType === "stawka") {
+  //       suffix = "zł";
+  //     } else if (config.bonusType === "% marży") {
+  //       suffix = "%";
+  //     }
+  //     return ChannelsConfig.update({ suffix }, { where: { id: config.id } });
+  //   });
+  //   await Promise.all(promises);
+  //   console.log("Done!");
+  //   res.json(configs);
   // });
 };

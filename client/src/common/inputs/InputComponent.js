@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import NumberFormat from "react-number-format";
 import TextField from "@material-ui/core/TextField";
+import Input from "@material-ui/core/Input";
+
 import FormControl from "@material-ui/core/FormControl";
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
@@ -21,8 +23,8 @@ const styles = theme => ({
   formControl: {
     //marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
-    minWidth: 120,
-    width: "100%"
+    minWidth: 120
+    // width: "100%"
   },
   selectEmpty: {
     marginTop: theme.spacing.unit * 2
@@ -36,11 +38,17 @@ class InputComponent extends React.Component {
   state = {
     input: "",
     showPassword: this.props.password ? false : true,
-    format: null
+    format: null,
+    width: 100
   };
 
   componentWillMount() {
+    this.setState({ width: 10 + this.props.value.length * 8 });
     switch (this.props.format) {
+      case "select":
+        this.setState({ format: this.selectFormat });
+        // formatField = simpleNumberFormat;
+        break;
       case "number":
         this.setState({ format: this.simpleNumberFormat });
         // formatField = simpleNumberFormat;
@@ -54,18 +62,32 @@ class InputComponent extends React.Component {
     }
   }
 
+  // componentWillReceiveProps = nextProps => {
+  //   // console.log("inputComponent, componentWillReceiveProps", nextProps);
+  //   if (this.props.value.length !== nextProps.value.length) {
+  //     this.setState({ width: nextProps.value.length * 10 });
+  //   }
+  // };
+
+  selectFormat = props => {
+    const { inputRef, onChange, ...other } = props;
+
+    return <span>sadf</span>;
+  };
   simpleNumberFormat = props => {
     const { inputRef, onChange, ...other } = props;
-    // console.log(props);
 
     return (
       <NumberFormat
         {...other}
         getInputRef={inputRef}
         onValueChange={values => {
+          // console.log("simpleNumberFormat", values);
+          this.setState({ width: 10 + values.value.length * 8 });
           onChange({
             target: {
-              value: values.formattedValue.replace(/ /g, "")
+              value: values.value
+              // value: values.formattedValue.replace(/ /g, "")
             }
           });
         }}
@@ -134,42 +156,81 @@ class InputComponent extends React.Component {
       error,
       helperText,
       suffix,
-      disabled
+      disabled,
+      simpleInput,
+      autoFocus,
+      short,
+      prefix
     } = this.props;
-    console.log("inputComponent", label, value);
+
+    const { width } = this.state;
+    // console.log("inputComponent value label, state", value, label, this.state);
     return (
       <FormControl
         className={classes.formControl}
         aria-describedby="name-helper-text"
+        style={{ width: !short && "100%" }}
       >
-        <TextField
-          disableUnderline
-          disabled={disabled}
-          helperText={helperText}
-          error={error}
-          label={label}
-          name="input"
-          id="name-helper"
-          value={value}
-          onChange={event => edytuj(event.target.value)}
-          type={this.state.showPassword ? "text" : "password"}
-          InputProps={{
-            inputComponent: this.state.format,
-            // inputComponent: this.format,
-            endAdornment: password ? (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="Toggle password visibility"
-                  onClick={this.handleClickShowPassword}
-                >
-                  {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ) : (
+        {simpleInput ? (
+          <Input
+            name="input"
+            startAdornment={
+              <InputAdornment position="start">{prefix}</InputAdornment>
+            }
+            endAdornment={
               <InputAdornment position="end">{suffix}</InputAdornment>
-            )
-          }}
-        />
+            }
+            // label={value[field.label]}
+            disableUnderline
+            autoFocus={autoFocus}
+            type="text"
+            value={value}
+            onChange={event => {
+              edytuj(event.target.value);
+              // console.log("onChange", event);
+            }}
+            // onClick={() => {
+            //   return;
+            // }}
+            inputComponent={this.state.format}
+            inputProps={{
+              style: { textAlign: "end", width }
+            }}
+          />
+        ) : (
+          <TextField
+            disableUnderline={true}
+            disabled={disabled}
+            helperText={helperText}
+            error={error}
+            label={label}
+            name="input"
+            id="name-helper"
+            value={value}
+            onChange={event => edytuj(event.target.value)}
+            type={this.state.showPassword ? "text" : "password"}
+            InputProps={{
+              inputComponent: this.state.format,
+              // inputComponent: this.format,
+              endAdornment: password ? (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="Toggle password visibility"
+                    onClick={this.handleClickShowPassword}
+                  >
+                    {this.state.showPassword ? (
+                      <VisibilityOff />
+                    ) : (
+                      <Visibility />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ) : (
+                <InputAdornment position="end">{suffix}</InputAdornment>
+              )
+            }}
+          />
+        )}
       </FormControl>
     );
   }
@@ -180,7 +241,9 @@ InputComponent.defaultProps = {
   helperText: "",
   number: false,
   format: "standard",
-  disabled: false
+  disabled: false,
+  prefix: "",
+  suffix: ""
 };
 
 InputComponent.propTypes = {

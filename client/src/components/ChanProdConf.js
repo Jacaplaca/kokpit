@@ -11,6 +11,8 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
+import Button from "@material-ui/core/Button";
+import ChevronRight from "@material-ui/icons/ChevronRight";
 
 import * as actions from "../actions";
 import {
@@ -51,8 +53,8 @@ const styles = theme => ({
 
 class ChanProdConf extends Component {
   state = {
-    clickedChannel: 0,
-    clickedItem: 0,
+    clickedChannel: 1,
+    clickedItem: 1,
     itemsConfig: false
   };
 
@@ -147,18 +149,31 @@ class ChanProdConf extends Component {
                 // backgroundColor: "green",
                 opacity: 1,
                 height: "100%",
-                width: "95%",
+                width: "100%",
                 position: "absolute",
                 top: 0,
                 right: 0,
                 zIndex: 23
               }}
             >
-              <Paper elevation={4}>
+              <Paper
+                elevation={4}
+                style={{ display: "grid", gridTemplateColumns: "13px 1fr" }}
+              >
                 {/* <ItemsConfig
                   showId={clickedItem}
                   fetchUrl={`/api/channel_config/item/id/${clickedItem}/`}
                 /> */}
+                <Button
+                  onClick={this.hideItemsConfig}
+                  style={{
+                    height: "100%",
+                    // backgroundColor: "grey",
+                    zIndex: 24
+                  }}
+                >
+                  <ChevronRight />
+                </Button>
                 <EditableList
                   fetchUrl={`/api/channel_config/item/id/${clickedItem}/`}
                   postUrl="/api/sales_channel/"
