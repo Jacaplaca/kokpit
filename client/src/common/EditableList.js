@@ -225,6 +225,7 @@ class EditableList extends Component {
   handlePost = async e => {
     const { adding, editedFields, editedId } = this.state;
     const { fetchUrl, postUrl, editUrl } = this.props;
+
     let body;
     let sendingUrl;
     if (editedId === 0) {

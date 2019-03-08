@@ -5,6 +5,7 @@ const cookieSession = require("cookie-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bodyParser = require("body-parser");
+const { YMtoMonthYear } = require("./client/src/common/functions");
 // const { check, validationResult } = require('express-validator/check');
 var session = require("express-session");
 var flash = require("connect-flash");
@@ -32,6 +33,7 @@ const jsonParser = bodyParser.json();
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 require("dotenv").config();
 app.use(morgan("short"));
+console.log("datazmienia", YMtoMonthYear(201905));
 // console.log(db);
 
 // Client.findAll({

@@ -10,6 +10,19 @@ import {
 } from "date-fns";
 import moment from "moment";
 
+export const dynamicSort = property => {
+  let sortOrder = 1;
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+  return function(a, b) {
+    const result =
+      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    return result * sortOrder;
+  };
+};
+
 export const formatNumber = (n, suffix) => {
   let number = Number(n);
   if (suffix === "%") {
@@ -135,19 +148,6 @@ export const minutes2hours = minutes => {
   godziny = godziny < 10 ? `0${godziny}` : godziny;
   minuty = minuty < 10 ? `0${minuty}` : minuty;
   return `${godziny}:${minuty}`;
-};
-
-export const dynamicSort = property => {
-  let sortOrder = 1;
-  if (property[0] === "-") {
-    sortOrder = -1;
-    property = property.substr(1);
-  }
-  return function(a, b) {
-    const result =
-      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-    return result * sortOrder;
-  };
 };
 
 export const defineds = {

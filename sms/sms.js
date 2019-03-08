@@ -5,6 +5,7 @@ var SMSAPI = require("smsapi"),
 var schedule = require("node-schedule");
 
 const db = require("../models/index");
+const sendingMailAfterSms = require("./sendMailAfterSMS");
 const Invoices4SMS = db.invoices4sms_intf;
 const Invoices4SMSsent = db.invoices4sms_sent;
 const User = db.users;
@@ -13,6 +14,7 @@ const Op = Sequelize.Op;
 
 let hourRandom = 7;
 let minuteRandom = 20;
+let smsArray = [];
 //let randomizeTime;
 
 console.log(`Now is ${today()} ${time()}`);
@@ -108,7 +110,14 @@ function fetchInvoices() {
 function fetchUsers(invoices) {
   console.log("fetchUsers");
   User.findAll({
-    attributes: ["clientId", "id", "nr_telefonu", "id_client_soft"],
+    attributes: [
+      "clientId",
+      "id",
+      "nr_telefonu",
+      "id_client_soft",
+      "name",
+      "surname"
+    ],
     raw: true
   }).then(users => {
     // console.log("users", users);
@@ -147,6 +156,8 @@ function compareAddPhone(invoices, users) {
       id_client_soft: id_pracownik,
       id_soft_odUsera: userData.length > 0 ? userData[0].id_client_soft : null,
       phone: userData.length > 0 ? userData[0].nr_telefonu : null,
+      name: userData.length > 0 ? userData[0].name : null,
+      surname: userData.length > 0 ? userData[0].surname : null,
       nr_document: nr_pelny,
       date_issue: data_wystawienia,
       id_client,
@@ -211,10 +222,13 @@ function sendSMS(result, all) {
   // console.log("allByUser", allByUser.map(x => x.values));
 
   const byUsers = podzielUnikalnymi(result, "id_client_soft");
+  smsArray = [];
   //console.log(byUsers);
   byUsers.map(user => {
     //console.log(user.values);
     const tel = user.values[0].phone;
+    const name = user.values[0].name;
+    const surname = user.values[0].surname;
     const idSoft = user.values[0].id_client_soft;
     let message = "Nowe zaleglosci: ";
     Invoices4SMS.findAll({
@@ -269,9 +283,12 @@ function sendSMS(result, all) {
         const sms = {
           tel,
           idSoft,
+          name,
+          surname,
           sms: `${message.slice(0, -2)}, ${topMessage} ${tops.slice(0, -2)}`
         };
         // console.log("senduje", sms);
+        smsArray.push(sms);
         send(result, sms);
       });
   });
@@ -310,8 +327,10 @@ function months(number) {
   }
 }
 
+let promisy = [];
+
 function send(invoices, sms) {
-  console.log("sms", sms);
+  // console.log("sms", sms);
   // console.log(sms);
   // smsapi.authentication
   //   .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
@@ -329,11 +348,11 @@ function send(invoices, sms) {
   //     .execute(); // return Promise
   // }
   // updateToSent(invoices.filter(invoice => invoice.phone === "48502413498"));
+  //
   function displayResult(result) {
     console.log(result);
     const nr_telefonu = result.list[0].number;
     updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
-    //updateToSent(invoices.filter(invoice => invoice.phone === sms.tel));
   }
 
   function displayError(err) {
@@ -341,7 +360,25 @@ function send(invoices, sms) {
     //const nr_telefonu = "48507478971";
     //updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
   }
+
+  const promise1 = new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      resolve("foo");
+    }, 1000);
+  });
+
+  promisy.push(promise1);
+  // waitForEverySending();
 }
+
+const waitForEverySending = async () => {
+  const result = await Promise.all(promisy);
+  const len = promisy.length;
+  console.log("result", result, len);
+  result.filter(x => x === "foo").length === len &&
+    sendingMailAfterSms(smsArray);
+  // .every(x => x.Promise === "foo");
+};
 
 function updateToSent(invoices) {
   const promises = [];

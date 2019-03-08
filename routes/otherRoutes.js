@@ -1,10 +1,8 @@
 const permit = require("../services/permission");
 const to = require("await-to-js").default;
 // import permit from '../services/permission';
-const {
-  YMtoMonthYear,
-  dynamicSort
-} = require("../client/src/common/functions");
+// const YMtoMonthYear = require("../client/src/common/functions");
+import { YMtoMonthYear, dynamicSort } from "../client/src/common/functions";
 
 const db = require("../models/index");
 const User = db.users;
@@ -15,6 +13,8 @@ const Channel = db.sales_channels;
 const Item = db.channels_items;
 const ChannelsConfig = db.channels_config;
 const Transaction = db.transactions;
+
+const Invoices4SMS = db.invoices4sms_intf;
 
 const RodzajAktywnosci = db.planer_akt_rodz;
 const Cost = db.costs;
@@ -1232,5 +1232,19 @@ module.exports = app => {
   //   await Promise.all(promises);
   //   console.log("Done!");
   //   res.json(configs);
+  // });
+  // wypelnienie id_client dla vitala
+  // app.get("/api/modyfikuj/invoices4sms/po/client", async (req, res, next) => {
+  //   console.log("po itemsach");
+  //   const invoices = await Invoices4SMS.findAll({
+  //     raw: true
+  //   });
+  //
+  //   const promises = invoices.map(config => {
+  //     return Invoices4SMS.update({ id_client: 2 }, { where: {} });
+  //   });
+  //   await Promise.all(promises);
+  //   console.log("Done!");
+  //   res.json(invoices);
   // });
 };
