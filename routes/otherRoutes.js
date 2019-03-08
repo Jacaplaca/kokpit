@@ -1,6 +1,10 @@
 const permit = require("../services/permission");
 const to = require("await-to-js").default;
 // import permit from '../services/permission';
+const {
+  YMtoMonthYear,
+  dynamicSort
+} = require("../client/src/common/functions");
 
 const db = require("../models/index");
 const User = db.users;
@@ -36,18 +40,18 @@ const onlyUnique = (value, index, self) => {
 // const User = require('../models/user');
 // const Op = Sequelize.Op;
 
-dynamicSort = property => {
-  let sortOrder = 1;
-  if (property[0] === "-") {
-    sortOrder = -1;
-    property = property.substr(1);
-  }
-  return function(a, b) {
-    const result =
-      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-    return result * sortOrder;
-  };
-};
+// dynamicSort = property => {
+//   let sortOrder = 1;
+//   if (property[0] === "-") {
+//     sortOrder = -1;
+//     property = property.substr(1);
+//   }
+//   return function(a, b) {
+//     const result =
+//       a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+//     return result * sortOrder;
+//   };
+// };
 
 module.exports = app => {
   app.get("/api/city/:city", (req, res, next) => {
@@ -403,6 +407,24 @@ module.exports = app => {
       });
   });
 
+  app.post("/api/channel_config/remove/:id", (req, res, next) => {
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    console.log("trans remove id", id.split(","));
+    ChannelsConfig.destroy({ where: { clientId, id: id.split(",") } })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.post("/api/:table/remove/:id", (req, res, next) => {
     const { id, table } = req.params;
     if (!req.user) {
@@ -656,7 +678,7 @@ module.exports = app => {
   });
 
   app.post("/api/channels_config/", (req, res, next) => {
-    console.log("api/channels_config/");
+    console.log("api/channels_config/", req.body);
     console.log(req.body);
     const { clientId, user_id } = req.user;
     if (!req.user) {
@@ -1139,6 +1161,27 @@ module.exports = app => {
     const form = Object.assign(req.body, { clientId, userId: user_id });
     // console.log(req.body);
     Item.update(form, {
+      where: { clientId, id }
+    })
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/api/channel_config/edit/id/:id", (req, res, next) => {
+    console.log("/api/channel_config/edit/:id");
+    const id = req.params.id;
+    console.log("edytuje channel item api,", id, req.body);
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    // console.log(req.body);
+    ChannelsConfig.update(form, {
       where: { clientId, id }
     })
       .then(result => res.json(result))

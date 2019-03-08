@@ -176,9 +176,9 @@ class ChanProdConf extends Component {
                 </Button>
                 <EditableList
                   fetchUrl={`/api/channel_config/item/id/${clickedItem}/`}
-                  postUrl="/api/sales_channel/"
-                  editUrl="/api/channel/edit/id/"
-                  removeUrl="/api/channel/remove/"
+                  postUrl="/api/channels_config/"
+                  editUrl="/api/channel_config/edit/id/"
+                  removeUrl="/api/channel_config/remove/"
                   listLabel="Lista kanałów przedaży"
                   addLabel="Dodaj kanał sprzedaży"
                   clickedRow={clickedItem}

@@ -272,7 +272,9 @@ class EditableList extends Component {
           const tempSuffixToState = Object.assign(suffixToState, {
             [fieldDepen.dbField]: add[0].add
           });
-          suffixToState = tempSuffixToState;
+          suffixToState = Object.assign(suffix, {
+            [inState]: tempSuffixToState
+          });
         }
       }
     }
@@ -712,7 +714,9 @@ const EditableField = ({
               // suffix={suffix[field.dbField] || ""}
               endAdornment={
                 <InputAdornment position="end">
-                  {suffix[field.dbField] || item.suffix}
+                  {(suffix["editedFields"] &&
+                    suffix["editedFields"][field.dbField]) ||
+                    item.suffix}
                 </InputAdornment>
               }
               // label={value[field.label]}
@@ -863,7 +867,8 @@ const AdditionalAddFields = ({ fields, change, value, disabled, suffix }) => {
           key={i}
           disabled={disabled}
           format="number"
-          suffix={suffix[field.dbField] || ""}
+          // suffix={suffix[field.dbField] || ""}
+          suffix={(suffix["adding"] && suffix["adding"][field.dbField]) || ""}
           name="buy"
           // error={props.touched.buy && Boolean(props.errors.buy)}
           label={field.label}
