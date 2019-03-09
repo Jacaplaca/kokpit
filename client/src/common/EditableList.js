@@ -224,18 +224,19 @@ class EditableList extends Component {
 
   handlePost = async e => {
     const { adding, editedFields, editedId } = this.state;
-    const { fetchUrl, postUrl, editUrl } = this.props;
+    const { fetchUrl, postUrl, editUrl, clickedRow } = this.props;
 
     let body;
     let sendingUrl;
     if (editedId === 0) {
-      body = JSON.stringify(adding);
+      body = adding;
       sendingUrl = postUrl;
     } else {
-      body = JSON.stringify(editedFields);
+      body = editedFields;
       sendingUrl = `${editUrl}/${editedId}`;
     }
-
+    body = Object.assign(body, { clickedRow });
+    body = JSON.stringify(body);
     const id = await this.handleAddChannel(e, sendingUrl, body, fetchUrl);
     console.log("handlepost", id);
     const list = await this.fetch(fetchUrl);
@@ -259,33 +260,42 @@ class EditableList extends Component {
   handleChange = (dbField, value, inState) => {
     const { adding, editedFields, suffixes, suffix } = this.state;
     const fieldsToWatch = suffixes.map(x => x.suffixDynamic);
-    console.log("handleChange", dbField, value, inState, fieldsToWatch);
+    console.log(
+      "handleChange dbField, value, inState, fieldsToWatch, suffix",
+      dbField,
+      value,
+      inState,
+      fieldsToWatch,
+      suffix
+    );
     let suffixToState = {};
-    for (let field of fieldsToWatch) {
-      if (field === dbField) {
-        const fieldsDependent = suffixes.filter(
-          x => x.suffixDynamic === dbField
-        );
+    if (fieldsToWatch.includes(dbField)) {
+      for (let field of fieldsToWatch) {
+        if (field === dbField) {
+          const fieldsDependent = suffixes.filter(
+            x => x.suffixDynamic === dbField
+          );
 
-        for (let fieldDepen of fieldsDependent) {
-          const add = fieldDepen.suffix.filter(x => x.field === value);
-          console.log("adddddd", add);
-          const tempSuffixToState = Object.assign(suffixToState, {
-            [fieldDepen.dbField]: add[0].add
-          });
-          suffixToState = Object.assign(suffix, {
-            [inState]: tempSuffixToState
-          });
+          for (let fieldDepen of fieldsDependent) {
+            const add = fieldDepen.suffix.filter(x => x.field === value);
+            console.log("handleChange add", add);
+            const tempSuffixToState = Object.assign(suffixToState, {
+              [fieldDepen.dbField]: add[0].add
+            });
+            suffixToState = Object.assign(suffix, {
+              [inState]: tempSuffixToState
+            });
+          }
         }
       }
+      console.log("handleChange suffixToState", suffixToState);
     }
-    console.log("suffixToState", suffixToState);
 
     this.setState({
       [dbField]: Object.assign(this.state[inState], {
         [dbField]: value
       }),
-      suffix: suffixToState
+      suffix: suffixToState === {} || suffix
     });
   };
 
@@ -334,19 +344,18 @@ class EditableList extends Component {
   };
 
   handleClickForEdit = (item, id) => {
+    // console.log("handleClickForEdit()", item, id);
     const { addFields } = this.props;
     const { listUnfiltered } = this.state;
     const idInList = listUnfiltered.map(e => e.id).indexOf(id);
     let editedFields = {};
     addFields.map(field => {
       Object.assign(editedFields, {
-        [field.dbField]:
-          listUnfiltered[idInList].suffix === "%"
-            ? listUnfiltered[idInList][field.dbField] * 100
-            : listUnfiltered[idInList][field.dbField]
+        [field.dbField]: listUnfiltered[idInList][field.dbField]
       });
     });
-    console.log("handleClickForEdit", item, id, idInList, editedFields);
+    // console.log("handleClickForEdit", item, id, idInList, addFields);
+    // console.log("handleClickForEdit", item, id, idInList, editedFields);
     this.setState({ editedFields, editedId: item.id });
   };
 
@@ -431,7 +440,8 @@ class EditableList extends Component {
       addFields,
       disabled,
       switchSomething,
-      children
+      children,
+      validate
     } = this.props;
     return (
       <React.Fragment>
@@ -459,6 +469,8 @@ class EditableList extends Component {
           addLabel={addLabel}
           addFields={addFields}
           suffix={suffix}
+          adding={adding}
+          validate={validate}
         />
         {list && (
           <ListMy
@@ -485,6 +497,7 @@ class EditableList extends Component {
             cancelEdit={this.cancelEdit}
             sendToDb={this.handlePost}
             suffix={suffix}
+            validate={validate}
           />
         )}
         <TablePagination
@@ -533,7 +546,8 @@ const ListMy = ({
   editedFields,
   cancelEdit,
   sendToDb,
-  suffix
+  suffix,
+  validate
 }) => {
   return (
     <List className={classes.root}>
@@ -631,7 +645,7 @@ const ListMy = ({
                     //   gridTemplateColumns: "1fr 1fr "
                     // }}
                     >
-                      {validateEdit(editedFields) ? (
+                      {validateEdit(editedFields, validate) ? (
                         <IconButton aria-label="Comments" onClick={sendToDb}>
                           <DoneIcon />
                         </IconButton>
@@ -650,12 +664,11 @@ const ListMy = ({
   );
 };
 
-const validateEdit = object => {
+const validateEdit = (object, validate) => {
+  // console.log("validateEdit", object, validate);
   let validates = [];
-  for (var property in object) {
-    if (object.hasOwnProperty(property)) {
-      validates.push(object[property] !== "");
-    }
+  for (let field of validate) {
+    validates.push(!!object[field] && !object[field] !== "");
   }
   return !validates.includes(false);
 };
@@ -684,7 +697,7 @@ const EditableField = ({
     >
       {fields.map((field, i) => {
         // console.log("EditableField", value, field, field.label);
-        if (field.select) {
+        if (field.type === "select") {
           return (
             <SelectItem
               simpleInput
@@ -701,7 +714,7 @@ const EditableField = ({
               }
             />
           );
-        } else if (field.number) {
+        } else if (field.type === "number") {
           return (
             <Input
               startAdornment={
@@ -744,7 +757,7 @@ const EditableField = ({
               }}
             />
           );
-        } else if (field.month) {
+        } else if (field.type === "date") {
           return <span key={i}>{YMtoMonthYear(item[field.dbField])}</span>;
         } else {
           return (
@@ -777,11 +790,11 @@ const ShowOnlyField = ({ fields, item }) => {
     // console.log("ShowOnlyField", item[field.dbField]);
     if (field.month) {
       return <span key={i}>{YMtoMonthYear(item[field.dbField])}</span>;
-    } else if (field.number) {
+    } else if (field.type === "number") {
       return (
         <NumberFormat
           key={i}
-          value={formatNumber(item[field.dbField], item.suffix)}
+          value={formatNumber(item[field.dbField])}
           displayType={"text"}
           thousandSeparator={" "}
           decimalSeparator={","}
@@ -802,9 +815,11 @@ const AddToDB = ({
   addLabel,
   addFields,
   disabled,
-  suffix
+  suffix,
+  adding,
+  validate
 }) => {
-  // console.log("value, Add", value);
+  // console.log("AddToDB", adding, validate);
   return (
     <div
       style={{
@@ -839,7 +854,7 @@ const AddToDB = ({
         onClick={action}
         variant="contained"
         color="primary"
-        disabled={disabled}
+        disabled={!validateEdit(adding, validate)}
       >
         <Add />
       </ButtonMy>
@@ -850,7 +865,7 @@ const AddToDB = ({
 const AdditionalAddFields = ({ fields, change, value, disabled, suffix }) => {
   console.log("suffix in AdditionalAddFields", suffix);
   return fields.map((field, i) => {
-    if (field.select) {
+    if (field.type === "select") {
       return (
         <SelectItem
           format={"select"}
@@ -862,7 +877,7 @@ const AdditionalAddFields = ({ fields, change, value, disabled, suffix }) => {
           updateSelected={value => change(field.dbField, value, "adding")}
         />
       );
-    } else if (field.number) {
+    } else if (field.type === "number") {
       return (
         <InputComponent
           key={i}
@@ -878,7 +893,7 @@ const AdditionalAddFields = ({ fields, change, value, disabled, suffix }) => {
           value={value[field.dbField] || ""}
         />
       );
-    } else if (field.month) {
+    } else if (field.type === "date") {
       return (
         <DatePicker
           key={i}

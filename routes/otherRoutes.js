@@ -2,7 +2,11 @@ const permit = require("../services/permission");
 const to = require("await-to-js").default;
 // import permit from '../services/permission';
 // const YMtoMonthYear = require("../client/src/common/functions");
-import { YMtoMonthYear, dynamicSort } from "../client/src/common/functions";
+import {
+  YMtoMonthYear,
+  dynamicSort,
+  dateToYM
+} from "../client/src/common/functions";
 
 const db = require("../models/index");
 const User = db.users;
@@ -13,6 +17,7 @@ const Channel = db.sales_channels;
 const Item = db.channels_items;
 const ChannelsConfig = db.channels_config;
 const Transaction = db.transactions;
+const BonusType = db.bonus_type;
 
 const Invoices4SMS = db.invoices4sms_intf;
 
@@ -677,14 +682,40 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/channels_config/", (req, res, next) => {
+  app.post("/api/channels_config/", async (req, res, next) => {
     console.log("api/channels_config/", req.body);
     console.log(req.body);
+    const { month, clickedRow, bonusType, bonus } = req.body;
     const { clientId, user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
-    const form = Object.assign(req.body, { clientId, userId: user_id });
+    const item = await Item.find({
+      where: { clientId: 2, id: clickedRow },
+      raw: true
+    });
+
+    const bonus_type = await BonusType.find({
+      where: { name: bonusType },
+      raw: true
+    });
+
+    const monthConverted = month ? month : dateToYM(new Date());
+
+    const { name, unit, channelId } = item;
+    const form = Object.assign(req.body, {
+      name,
+      unit,
+      channelId,
+      bonus: bonus_type.suffix === "%" ? bonus / 100 : bonus,
+      itemId: clickedRow,
+      key: `${monthConverted}${name}`,
+      month: monthConverted,
+      clientId,
+      userId: user_id,
+      suffix: bonus_type.suffix
+    });
+
     ChannelsConfig.create(form)
       .then(results => {
         return res.json(results);
@@ -986,7 +1017,7 @@ module.exports = app => {
 
   app.get("/api/channel_config/item/id/:id/", async (req, res) => {
     const itemId = req.params.id;
-    if (!req.user) res.redirect("/");
+    // if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
     const [err, result] = await to(
       ChannelsConfig.findAll({ where: { clientId, itemId } })
@@ -994,7 +1025,17 @@ module.exports = app => {
     if (!result) {
       res.sendStatus(500);
     } else {
-      res.json(result);
+      // res.json(result);
+      res.json(
+        result.map(x => {
+          const suffix = x.get().suffix;
+          const bonus = x.get().bonus;
+          return Object.assign(x.get(), {
+            bonus: suffix === "%" ? `${bonus * 100}` : `${bonus}`
+          });
+          // console.log(x);
+        })
+      );
     }
   });
 
@@ -1170,7 +1211,7 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/channel_config/edit/id/:id", (req, res, next) => {
+  app.post("/api/channel_config/edit/id/:id", async (req, res, next) => {
     console.log("/api/channel_config/edit/:id");
     const id = req.params.id;
     console.log("edytuje channel item api,", id, req.body);
@@ -1178,8 +1219,21 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
+    const { bonusType, bonus } = req.body;
+
     const { user_id, clientId } = req.user;
-    const form = Object.assign(req.body, { clientId, userId: user_id });
+
+    const bonus_type = await BonusType.find({
+      where: { name: bonusType },
+      raw: true
+    });
+
+    const form = Object.assign(req.body, {
+      clientId,
+      userId: user_id,
+      bonus: bonus_type.suffix === "%" ? bonus / 100 : bonus,
+      suffix: bonus_type.suffix
+    });
     // console.log(req.body);
     ChannelsConfig.update(form, {
       where: { clientId, id }

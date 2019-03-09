@@ -109,7 +109,8 @@ class ChanProdConf extends Component {
               clickOnRow={clickedRow =>
                 this.handleClickOnRow("clickedChannel", clickedRow)
               }
-              addFields={[{ dbField: "name", label: "Nazwa" }]}
+              addFields={[{ dbField: "name", label: "Nazwa", type: "string" }]}
+              validate={["name"]}
             />
           </Paper>
           {/* <Paper> */}
@@ -127,9 +128,10 @@ class ChanProdConf extends Component {
               this.handleClickOnRow("clickedItem", clickedRow)
             }
             addFields={[
-              { dbField: "name", label: "Nazwa" },
-              { dbField: "unit", label: "Jednostka" }
+              { dbField: "name", label: "Nazwa", type: "string" },
+              { dbField: "unit", label: "Jednostka", type: "string" }
             ]}
+            validate={["name", "unit"]}
           >
             <Slide
               direction="left"
@@ -186,16 +188,23 @@ class ChanProdConf extends Component {
                     this.handleClickOnRow("clickedConfigMonth", clickedRow)
                   }
                   addFields={[
-                    { dbField: "month", label: "Miesiąc", month: true },
+                    {
+                      dbField: "month",
+                      label: "Miesiąc",
+                      month: true,
+                      type: "date"
+                    },
                     {
                       dbField: "bonusType",
                       label: "Typ prowizji",
-                      select: ["stawka", "% marży"]
+                      select: ["stawka", "% marży"],
+                      type: "select"
                     },
                     {
                       dbField: "bonus",
                       label: "Wysokość prowizji",
                       number: true,
+                      type: "number",
                       suffixDynamic: "bonusType",
                       suffix: [
                         { field: "stawka", add: "zł" },
@@ -203,6 +212,7 @@ class ChanProdConf extends Component {
                       ]
                     }
                   ]}
+                  validate={["bonusType", "bonus"]}
                 />
               </Paper>
             </Slide>
