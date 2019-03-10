@@ -4,9 +4,66 @@ const User = db.users;
 const Channel = db.sales_channels;
 const Item = db.items;
 const ChannelItems = db.channel_items;
+const ChannelsConfig = db.channels_config;
 const to = require("await-to-js").default;
 
 module.exports = app => {
+  //remove configs
+  app.post("/api/channel_config/destroy/:id", (req, res, next) => {
+    const id = req.params.id;
+    // if (!req.user) {
+    //   console.log("przekierowanie");
+    //   return res.redirect("/");
+    // }
+    // const { user_id, clientId } = req.user;
+    console.log("trans remove id", id.split(","));
+    ChannelsConfig.destroy({ where: { clientId: 2, id: id.split(",") } })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/api/channel/destroy/:id", (req, res, next) => {
+    const id = req.params.id;
+    // if (!req.user) {
+    //   console.log("przekierowanie");
+    //   return res.redirect("/");
+    // }
+    // const { user_id, clientId } = req.user;
+    console.log("trans remove id", id.split(","));
+    Channel.destroy({ where: { clientId: 2, id: id.split(",") } })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  //remove item
+  app.post("/api/item/destroy/:id", (req, res, next) => {
+    const id = req.params.id;
+    // if (!req.user) {
+    //   console.log("przekierowanie");
+    //   return res.redirect("/");
+    // }
+    // const { user_id, clientId } = req.user;
+    console.log("trans remove id", id.split(","));
+    Item.destroy({ where: { clientId: 2, id: id.split(",") } })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   //adding items to channel
   app.post("/api/channel/:channel_id/item/:item_id", async (req, res) => {
     //   // if (!req.user) res.redirect("/");

@@ -32,7 +32,11 @@ module.exports = (sequelize, Sequelize) => {
       },
       itemId: {
         type: Sequelize.INTEGER,
-        defaultValue: 1
+        references: {
+          model: "Channels",
+          key: "id"
+        },
+        allowNull: false
       },
       suffix: {
         type: Sequelize.STRING

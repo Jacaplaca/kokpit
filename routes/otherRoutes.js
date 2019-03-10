@@ -376,60 +376,6 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/channel/remove/:id", (req, res, next) => {
-    const id = req.params.id;
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { user_id, clientId } = req.user;
-    console.log("trans remove id", id.split(","));
-    Channel.destroy({ where: { clientId, id: id.split(",") } })
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
-  app.post("/api/channel_item/remove/:id", (req, res, next) => {
-    const id = req.params.id;
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { user_id, clientId } = req.user;
-    console.log("trans remove id", id.split(","));
-    Item.destroy({ where: { clientId, id: id.split(",") } })
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
-  app.post("/api/channel_config/remove/:id", (req, res, next) => {
-    const id = req.params.id;
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { user_id, clientId } = req.user;
-    console.log("trans remove id", id.split(","));
-    ChannelsConfig.destroy({ where: { clientId, id: id.split(",") } })
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   app.post("/api/:table/remove/:id", (req, res, next) => {
     const { id, table } = req.params;
     if (!req.user) {
