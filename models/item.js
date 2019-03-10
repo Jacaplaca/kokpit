@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
-  const ChannelsItems = sequelize.define(
-    "channels_items",
+  const Items = sequelize.define(
+    "items",
     {
       id: {
         autoIncrement: true,
@@ -27,5 +27,5 @@ module.exports = (sequelize, Sequelize) => {
     }
   );
 
-  return ChannelsItems;
+  return Items;
 };

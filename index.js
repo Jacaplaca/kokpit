@@ -138,6 +138,7 @@ require("./routes/authRoutes")(app);
 require("./routes/billingRoutes")(app);
 require("./routes/otherRoutes")(app);
 require("./routes/smsRoutes")(app);
+require("./routes/transactionsRoutes")(app);
 // require('./routes/surveyRoutes')(app);
 
 if (process.env.NODE_ENV === "online") {

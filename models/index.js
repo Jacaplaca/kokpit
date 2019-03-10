@@ -58,6 +58,11 @@ Object.keys(db).forEach(modelName => {
 });
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+const ChannelItems = db.channel_items;
+const Channel = db.sales_channels;
+const Item = db.items;
+
 // console.log(db);
 ///
 // db.users = require('./user')(sequelize, Sequelize);
@@ -158,6 +163,23 @@ db.overdue_payments.belongsTo(db.planer_klienci, {
   foreignKey: "id_customer_client",
   targetKey: "id"
 });
+
+Channel.belongsToMany(Item, {
+  as: "SalesItems",
+  through: db.channel_items, //this can be string or a model,
+  foreignKey: "channel_id"
+});
+
+Item.belongsToMany(Channel, {
+  as: "SalesChannels",
+  through: db.channel_items,
+  foreignKey: "item_id"
+});
+
+// db.channels_items.belongsTo(db.sales_channels, {
+//   foreignKey: "channelId",
+//   targetKey: "id"
+// });
 
 // db.gus_simc.belongsToMany(db.gus_terc_pow, {
 //   through: db.gus_terc_woj,

@@ -14,7 +14,7 @@ const Group = db.groups;
 const Category = db.categories;
 
 const Channel = db.sales_channels;
-const Item = db.channels_items;
+const Item = db.items;
 const ChannelsConfig = db.channels_config;
 const Transaction = db.transactions;
 const BonusType = db.bonus_type;
@@ -1022,6 +1022,7 @@ module.exports = app => {
     const [err, result] = await to(
       ChannelsConfig.findAll({ where: { clientId, itemId } })
     );
+
     if (!result) {
       res.sendStatus(500);
     } else {
