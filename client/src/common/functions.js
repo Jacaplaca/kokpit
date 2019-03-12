@@ -10,6 +10,35 @@ import {
 } from "date-fns";
 import moment from "moment";
 
+export const escapeRegexCharacters = str => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
+export const getSuggestions = (fetchowane, value, names) => {
+  const regex = new RegExp(escapeRegexCharacters(value).toLowerCase());
+  let filtered = [];
+
+  for (let field of names) {
+    const main = field.split("[")[0];
+    const subs = field.split("[")[1] && field.split("[")[1].slice(0, -1);
+    const subsArr = subs && subs.split(",");
+    filtered.push(
+      ...fetchowane.filter(suggestion => {
+        if (!subs) {
+          return regex.test(suggestion[field].toString().toLowerCase());
+        } else {
+          const subsValues = [];
+          for (let sub of subsArr) {
+            subsValues.push(`${suggestion[main][sub]} `);
+          }
+          return regex.test(subsValues.toString().toLowerCase());
+        }
+      })
+    );
+  }
+  return filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), []);
+};
+
 // export const dynamicSort = property => {
 //   let sortOrder = 1;
 //   if (property[0] === "-") {

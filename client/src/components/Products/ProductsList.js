@@ -14,7 +14,6 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -23,7 +22,9 @@ import { lighten } from "@material-ui/core/styles/colorManipulator";
 
 import ButtonIconCircle from "../../common/ButtonIconCircle";
 import EditIcon from "@material-ui/icons/Edit";
-
+import Checkbox from "@material-ui/core/Checkbox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/RadioButtonUnchecked";
+import CheckBoxIcon from "@material-ui/icons/CheckCircle";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
@@ -32,7 +33,8 @@ import * as actions from "../../actions";
 import {
   formatNumber,
   shorting,
-  simpleSortUpDown
+  simpleSortUpDown,
+  getSuggestions
 } from "../../common/functions";
 import MainFrameHOC from "../../common/MainFrameHOC";
 import SearchField from "../../common/inputs/SearchField";
@@ -121,7 +123,8 @@ class EnhancedTableHead extends React.Component {
       order,
       orderBy,
       numSelected,
-      rowCount
+      rowCount,
+      classes
     } = this.props;
 
     const { headCols } = this.state;
@@ -153,6 +156,18 @@ class EnhancedTableHead extends React.Component {
                     active={orderBy === row.id}
                     direction={order}
                     onClick={this.createSortHandler(row.id)}
+                    hideSortIcon
+                    classes={{
+                      // Override with the active class if this is the selected column or inactive otherwise
+                      icon:
+                        orderBy === row.id
+                          ? classes.activeSortIcon
+                          : classes.inactiveSortIcon,
+                      root:
+                        orderBy === row.id
+                          ? classes.activeTableSort
+                          : classes.inactiveTableSort
+                    }}
                   >
                     {row.label}
                   </TableSortLabel>
@@ -180,6 +195,18 @@ class EnhancedTableHead extends React.Component {
                     active={orderBy === channel.id}
                     direction={order}
                     onClick={this.createSortHandler(channel.id)}
+                    hideSortIcon
+                    classes={{
+                      // Override with the active class if this is the selected column or inactive otherwise
+                      icon:
+                        orderBy === channel.id
+                          ? classes.activeSortIcon
+                          : classes.inactiveSortIcon,
+                      root:
+                        orderBy === channel.id
+                          ? classes.activeTableSort
+                          : classes.inactiveTableSort
+                    }}
                   >
                     {channel.label}
                   </TableSortLabel>
@@ -293,6 +320,25 @@ const styles = theme => ({
   },
   tableWrapper: {
     overflowX: "auto"
+  },
+  activeSortIcon: {
+    opacity: 1,
+    // width: 13,
+    webkitTransition: "opacity 0.5s" /* Safari */,
+    transition: "opacity 0.5s",
+    transitionTimingFunction: "ease"
+  },
+  activeTableSort: {
+    fontWeight: "500"
+  },
+
+  // Half visible for inactive icons
+  inactiveSortIcon: {
+    opacity: 0.2,
+    // opacity: 0,
+    webkitTransition: "opacity 0.5s" /* Safari */,
+    transition: "opacity 0.5s",
+    transitionTimingFunction: "ease"
   }
 });
 
@@ -306,7 +352,8 @@ class EnhancedTable extends React.Component {
     open: false,
     list: [],
     ordering: [],
-    listUnfiltered: []
+    listUnfiltered: [],
+    query: ""
   };
 
   componentWillMount() {
@@ -316,12 +363,21 @@ class EnhancedTable extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // console.log("componentWillReceiveProps()");
+    const { query } = this.state;
     const { transactions } = this.props;
     const { transactions: transNext } = nextProps;
     if (transactions !== transNext) {
       // console.log("componentWillReceiveProps(), change");
       const list = this.loadOrder(transNext);
-      this.setState({ list, listUnfiltered: list, orderBy: "order" });
+      if (query !== "") {
+        this.setState({
+          list: getSuggestions(list, query, ["name"]),
+          listUnfiltered: list,
+          orderBy: "order"
+        });
+      } else {
+        this.setState({ list, listUnfiltered: list, orderBy: "order" });
+      }
     }
   }
 
@@ -336,7 +392,7 @@ class EnhancedTable extends React.Component {
       const order = ordering.indexOf(el.id);
       return Object.assign(el, { order });
     });
-    return simpleSortUpDown(sortedList, "order", ord);
+    return simpleSortUpDown(sortedList, "order");
   };
 
   handleRequestSort = (event, property, field) => {
@@ -435,9 +491,9 @@ class EnhancedTable extends React.Component {
     this.setState({ open: false, selected: [] });
   };
 
-  handleSearch = (result, searchQuery) => {
+  handleSearch = (result, query) => {
     // console.log("searched", searched);
-    this.setState({ list: result, searchQuery });
+    this.setState({ list: result, query });
   };
 
   render() {
@@ -462,6 +518,10 @@ class EnhancedTable extends React.Component {
     const iconProps = {
       className: this.props.classes.icon,
       style: { fontSize: 20 }
+    };
+    const iconPropsOpacity = {
+      className: this.props.classes.icon,
+      style: { opacity: 0.5, fontSize: 20 }
     };
 
     return (
@@ -490,6 +550,7 @@ class EnhancedTable extends React.Component {
                 onRequestSort={this.handleRequestSort}
                 // rowCount={data.length}
                 rowCount={transactions.length}
+                classes={classes}
               />
               <TableBody>
                 {/* {stableSort(transactions, getSorting(order, orderBy)) */}
@@ -538,6 +599,18 @@ class EnhancedTable extends React.Component {
                             >
                               <Checkbox
                                 checked={item[channel.id] === 1}
+                                icon={
+                                  <CheckBoxOutlineBlankIcon
+                                    {...iconPropsOpacity}
+                                  />
+                                }
+                                checkedIcon={
+                                  <CheckBoxIcon
+                                    {...iconProps}
+                                    // fontSize={{ fontSize: 15 }}
+                                  />
+                                }
+                                // style={{ fontSize: 4 }}
                                 // checked={
                                 //   item.SalesChannels.filter(
                                 //     sch => sch.id === channel.id

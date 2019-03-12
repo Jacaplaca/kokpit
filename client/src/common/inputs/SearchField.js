@@ -11,6 +11,7 @@ import { fade } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
+import { getSuggestions } from "../../common/functions";
 
 const styles = theme => ({
   root: {
@@ -79,10 +80,6 @@ class SearchField extends Component {
     dataUnfiltered: []
   };
 
-  escapeRegexCharacters = str => {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  };
-
   componentDidMount() {
     this.setState({ dataUnfiltered: this.props.data });
     document.addEventListener("keydown", this.escFunction, false);
@@ -90,35 +87,6 @@ class SearchField extends Component {
   componentWillUnmount() {
     document.removeEventListener("keydown", this.escFunction, false);
   }
-
-  getSuggestions = (fetchowane, value, names) => {
-    const regex = new RegExp(this.escapeRegexCharacters(value).toLowerCase());
-    let filtered = [];
-
-    for (let field of names) {
-      const main = field.split("[")[0];
-      const subs = field.split("[")[1] && field.split("[")[1].slice(0, -1);
-      const subsArr = subs && subs.split(",");
-      filtered.push(
-        ...fetchowane.filter(suggestion => {
-          if (!subs) {
-            return regex.test(suggestion[field].toString().toLowerCase());
-          } else {
-            const subsValues = [];
-            for (let sub of subsArr) {
-              subsValues.push(`${suggestion[main][sub]} `);
-            }
-            return regex.test(subsValues.toString().toLowerCase());
-          }
-        })
-      );
-    }
-    // console.log(
-    //   "search",
-    //   filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), [])
-    // );
-    return filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), []);
-  };
 
   handleChange = e => {
     const value = e.target.value;
@@ -128,7 +96,7 @@ class SearchField extends Component {
     if (value === "") {
       search(data);
     } else {
-      search(this.getSuggestions(data, value, this.props.columns), value);
+      search(getSuggestions(data, value, this.props.columns), value);
     }
     // if (e.target.value !== "") {
     //   this.setState({ showOkSearch: true });
