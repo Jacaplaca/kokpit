@@ -181,7 +181,7 @@ class InputComponent extends React.Component {
               <InputAdornment position="end">{suffix}</InputAdornment>
             }
             // label={value[field.label]}
-            disableUnderline
+            // disableUnderline
             autoFocus={autoFocus}
             type="text"
             value={value}
@@ -199,7 +199,7 @@ class InputComponent extends React.Component {
           />
         ) : (
           <TextField
-            disableUnderline={true}
+            // disableUnderline={true}
             disabled={disabled}
             helperText={helperText}
             error={error}

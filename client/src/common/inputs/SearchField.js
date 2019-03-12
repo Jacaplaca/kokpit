@@ -113,21 +113,22 @@ class SearchField extends Component {
         })
       );
     }
-    console.log(
-      "search",
-      filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), [])
-    );
+    // console.log(
+    //   "search",
+    //   filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), [])
+    // );
     return filtered.reduce((x, y) => (x.includes(y) ? x : [...x, y]), []);
   };
 
   handleChange = e => {
     const value = e.target.value;
     const { search, data } = this.props;
+    // console.log("handleChange search", value, search);
     this.setState({ value });
     if (value === "") {
       search(data);
     } else {
-      search(this.getSuggestions(data, this.state.value, this.props.columns));
+      search(this.getSuggestions(data, value, this.props.columns), value);
     }
     // if (e.target.value !== "") {
     //   this.setState({ showOkSearch: true });

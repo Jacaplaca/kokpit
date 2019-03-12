@@ -1,43 +1,43 @@
 import React, { Component } from "react";
-import { Formik } from "formik";
+// import { Formik } from "formik";
 
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { startOfMonth, endOfMonth } from "date-fns";
+// import { startOfMonth, endOfMonth } from "date-fns";
 
 import Slide from "@material-ui/core/Slide";
-import axios from "axios";
-import PropTypes from "prop-types";
+// import axios from "axios";
+// import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import MenuItem from "@material-ui/core/MenuItem";
+// import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 
 import * as actions from "../actions";
-import {
-  dataToString,
-  defineds,
-  dynamicSort,
-  timeDiff
-} from "../common/functions";
+// import {
+//   dataToString,
+//   defineds,
+//   dynamicSort,
+//   timeDiff
+// } from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
 //import SiteHeader from "../common/SiteHeader";
-import CostsTable from "./CostsTable2Remote";
-import ModalWindow from "./ModalWindow";
-import CostsForm from "./CostsForm";
-import DateRangePickerMy from "../common/DateRangePickerMy";
-import CostsPodsumowanie from "./CostsPodsumowanie";
-import SerwisForm from "./SerwisForm";
-import TransactionList from "./TransactionList";
-import AddCircle from "@material-ui/icons/AddCircle";
+// import CostsTable from "./CostsTable2Remote";
+// import ModalWindow from "./ModalWindow";
+// import CostsForm from "./CostsForm";
+// import DateRangePickerMy from "../common/DateRangePickerMy";
+// import CostsPodsumowanie from "./CostsPodsumowanie";
+// import SerwisForm from "./SerwisForm";
+// import TransactionList from "./TransactionList";
+// import AddCircle from "@material-ui/icons/AddCircle";
 // import Channels from "../common/inputs/SelectFromDBForAdding";
-import ButtonIconCircle from "../common/ButtonIconCircle";
-import Confirmation from "./Confirmation";
-import SelectOrAdd from "../common/inputs/SelectOrAdd";
-import InputComponent from "../common/inputs/InputComponent";
+// import ButtonIconCircle from "../common/ButtonIconCircle";
+// import Confirmation from "./Confirmation";
+// import SelectOrAdd from "../common/inputs/SelectOrAdd";
+// import InputComponent from "../common/inputs/InputComponent";
 import EditableList from "../common/EditableList";
-import ItemsConfig from "./ChannelsProdConfig/ItemsConfig";
+// import ItemsConfig from "./ChannelsProdConfig/ItemsConfig";
 
 const styles = theme => ({
   input: {

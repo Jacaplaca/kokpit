@@ -71,6 +71,9 @@ module.exports = (sequelize, Sequelize) => {
       chanprodconf: {
         type: Sequelize.TINYINT
       },
+      products: {
+        type: Sequelize.TINYINT
+      },
       nr_telefonu: {
         type: Sequelize.STRING
       },

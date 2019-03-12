@@ -19,6 +19,7 @@
   "dependencies": {
     "@date-io/moment": "^1.1.0",
     "@material-ui/core": "^1.5.1",
+    "@material-ui/icons": "^3.0.2",
     "autosuggest-highlight": "^3.1.1",
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
@@ -64,7 +65,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "test5": "jest",
+    "test3": "jest -c src/__tests__/jestconfig.json",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "react-testing-library": "^6.0.0"
   }
 }

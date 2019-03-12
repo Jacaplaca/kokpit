@@ -17,6 +17,7 @@ import PromowaneProdukty from "./PromowaneProdukty";
 import NextReports from "./NextReports";
 import Serwis from "./Serwis";
 import ChanProdConf from "./ChanProdConf";
+import Products from "./Products";
 
 let drawerWidth = 240;
 
@@ -110,6 +111,13 @@ class MiniDrawer extends React.Component {
         path: "/channelconfiguration",
         component: ChanProdConf,
         title: "Skonfiguruj kanały sprzedaży"
+        //channel: auth ? auth.channel_first : 0
+      },
+      {
+        comp: "products",
+        path: "/products",
+        component: Products,
+        title: "Produkty"
         //channel: auth ? auth.channel_first : 0
       }
     ];

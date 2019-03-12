@@ -54,7 +54,7 @@ const styles = theme => ({
 class TopNavBar extends React.Component {
   renderContent() {
     // const { classes } = this.props;
-    console.log(this.props.auth);
+    // console.log(this.props.auth);
     switch (this.props.auth) {
       case null:
         return;

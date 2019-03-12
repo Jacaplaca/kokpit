@@ -87,6 +87,10 @@ module.exports = app => {
         res.json(adding);
       }
     } else {
+      const [errAdding, adding] = await to(
+        ChannelItems.destroy({ where: { item_id, channel_id } })
+      );
+
       if (!items) {
         res.sendStatus(500);
       } else {
@@ -111,6 +115,47 @@ module.exports = app => {
             where: { id }
           }
         ],
+        where: {}
+      })
+    );
+
+    if (!items) {
+      res.sendStatus(500);
+    } else {
+      res.json(items);
+    }
+  });
+
+  app.get("/api/allitem/channel/", async (req, res) => {
+    //   // if (!req.user) res.redirect("/");
+    //   // const { clientId, role, user_id } = req.user;
+
+    const [err, items] = await to(
+      Item.findAll({
+        include: [
+          {
+            model: Channel,
+            as: "SalesChannels"
+            // where: {}
+          }
+        ],
+        where: {}
+      })
+    );
+
+    if (!items) {
+      res.sendStatus(500);
+    } else {
+      res.json(items);
+    }
+  });
+
+  app.get("/api/channel_items/", async (req, res) => {
+    //   // if (!req.user) res.redirect("/");
+    //   // const { clientId, role, user_id } = req.user;
+
+    const [err, items] = await to(
+      Item.findAll({
         where: {}
       })
     );

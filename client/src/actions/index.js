@@ -3,6 +3,7 @@ import { FETCH_USER, FETCH_FORM, CLICKED, LOADING, SUBMIT } from "./types";
 
 export const fetchUser = () => async dispatch => {
   const res = await axios.get("/api/current_user");
+  // console.log("fetchUser()", JSON.stringify(res.data));
   dispatch({ type: FETCH_USER, payload: res.data });
 };
 

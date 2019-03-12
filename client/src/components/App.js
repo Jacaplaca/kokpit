@@ -5,6 +5,7 @@ import * as actions from "../actions";
 import { StickyContainer, Sticky } from "react-sticky";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
 // import DateFnsUtils from "@date-io/date-fns";
+import { Provider } from "react-redux";
 import MomentUtils from "@date-io/moment";
 
 import Register from "./Register";
@@ -16,6 +17,24 @@ import LinearProgress from "../common/LinearProgress";
 import moment from "moment";
 import "moment/locale/pl";
 
+import { createStore, applyMiddleware } from "redux";
+// import { composeWithDevTools } from "redux-devtools-extension";
+import reduxThunk from "redux-thunk";
+
+import reducers from "../reducers";
+import store from "../store";
+
+// const store = createStore(reducers, {}, composeWithDevTools((applyMiddleware(reduxThunk)));
+// const store = createStore(
+//   reducers,
+//   composeWithDevTools(
+//     applyMiddleware(reduxThunk)
+//     // other store enhancers if any
+//   )
+// );
+
+// const store = createStore(reducers, applyMiddleware(reduxThunk));
+
 class App extends Component {
   componentDidMount() {
     this.props.fetchUser();
@@ -23,6 +42,7 @@ class App extends Component {
   }
 
   render() {
+    // console.log("props", this.props);
     return (
       <BrowserRouter style={{ height: "100%" }}>
         <div id="app" style={{ height: "100%" }}>

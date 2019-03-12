@@ -1,24 +1,13 @@
 import React, { Component } from "react";
-import { Formik } from "formik";
 
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { startOfMonth, endOfMonth } from "date-fns";
 import axios from "axios";
-import PropTypes from "prop-types";
 import NumberFormat from "react-number-format";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
-import Switch from "@material-ui/core/Switch";
-import Paper from "@material-ui/core/Paper";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import MenuItem from "@material-ui/core/MenuItem";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import TextField from "@material-ui/core/TextField";
 import Add from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import DoneIcon from "@material-ui/icons/Done";
 
 import CloseIcon from "@material-ui/icons/Close";
 import classNames from "classnames";
@@ -28,28 +17,21 @@ import Tooltip from "@material-ui/core/Tooltip";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
 import TablePagination from "@material-ui/core/TablePagination";
 import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
-import CommentIcon from "@material-ui/icons/Comment";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import DoneIcon from "@material-ui/icons/Done";
 import * as actions from "../actions";
-import {
-  dataToString,
-  defineds,
-  dynamicSort,
-  timeDiff,
-  dateToYM,
-  YMtoDate,
-  YMtoMonthYear,
-  formatNumber
-} from "./functions";
+import { dateToYM, YMtoDate, YMtoMonthYear, formatNumber } from "./functions";
 import MainFrameHOC from "./MainFrameHOC";
 import ButtonMy from "./ButtonMy";
 import SelectItem from "./inputs/SelectItem";
-import InputData from "./inputs/InputData";
-import { DatePicker, InlineDatePicker } from "material-ui-pickers";
+import { DatePicker } from "material-ui-pickers";
+// import ChannelsPickToolbar from "../components/Products/ChannelsPickToolbar";
+// import ChannelsPickRow from "../components/Products/ChannelsPickRow";
 
 // import SelectMonth from "./inputs/SelectMonth";
 //import SiteHeader from "../common/SiteHeader";
@@ -68,6 +50,7 @@ import Confirmation from "../components/Confirmation";
 import InputComponent from "./inputs/InputComponent";
 import SearchField from "./inputs/SearchField";
 import SimpleNumberFormat from "./inputs/SimpleNumberFormat";
+import TableHeadProducts from "../components/Products/TableHeadProducts";
 
 const styles = theme => ({
   input: {
@@ -142,7 +125,7 @@ class EditableList extends Component {
   componentWillMount = () => {
     const withSuffix = this.props.addFields.filter(field => field.suffix);
     this.setState({ suffixes: withSuffix });
-    console.log("will mount withSuffix", withSuffix);
+    // console.log("will mount withSuffix", withSuffix);
     this.urlToState(this.props.fetchUrl);
     if (this.props.month) {
       this.setState({ adding: { month: dateToYM(new Date()) } });
@@ -159,6 +142,7 @@ class EditableList extends Component {
 
   urlToState = async url => {
     const list = await this.fetch(url);
+    // console.log("list", JSON.stringify(list));
     this.setState({
       list,
       listUnfiltered: list,
@@ -441,7 +425,9 @@ class EditableList extends Component {
       disabled,
       switchSomething,
       children,
-      validate
+      validate,
+      toolbar,
+      channels
     } = this.props;
     return (
       <React.Fragment>
@@ -498,6 +484,8 @@ class EditableList extends Component {
             sendToDb={this.handlePost}
             suffix={suffix}
             validate={validate}
+            toolbar={toolbar}
+            channels={channels}
           />
         )}
         <TablePagination
@@ -547,11 +535,14 @@ const ListMy = ({
   cancelEdit,
   sendToDb,
   suffix,
-  validate
+  validate,
+  toolbar,
+  channels
 }) => {
   return (
     <List className={classes.root}>
-      <EnhancedTableToolbar
+      <TableHeadProducts
+        toolbar={toolbar}
         classes={classes}
         checked={checked}
         remove={remove}
@@ -560,7 +551,19 @@ const ListMy = ({
         search={search}
         listUnfiltered={listUnfiltered}
         listLabel={listLabel}
+        headCols={channels}
       />
+      {/* <EnhancedTableToolbar
+        toolbar={toolbar}
+        classes={classes}
+        checked={checked}
+        remove={remove}
+        list={list}
+        onSelectAllClick={onSelectAllClick}
+        search={search}
+        listUnfiltered={listUnfiltered}
+        listLabel={listLabel}
+      /> */}
       <div
       // style={{
       //   display: "grid",
@@ -587,75 +590,76 @@ const ListMy = ({
                 tabIndex={-1}
                 disableRipple
               />
-              <div
-                style={
-                  {
-                    // opacity: 0.5
-                  }
-                }
-              >
-                {edited === item.id ? (
-                  <EditableField
-                    // style={{ display: "grid" }}
+              <div>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "200px 1fr"
+                  }}
+                >
+                  {edited === item.id ? (
+                    <EditableField
+                      // style={{ display: "grid" }}
 
-                    fields={addFields}
-                    edited={edited}
-                    item={item}
-                    change={change}
-                    value={editedFields}
-                    suffix={suffix}
-                  />
-                ) : (
-                  <div
-                    onClick={() => click(item.id)}
-                    style={{
-                      display: "grid",
-                      // gridTemplateRows: "1fr",
-                      // gridTemplateColumns: "1fr",
-                      // backgroundColor: "red",
-                      // height: 49,
-                      gridAutoFlow: "column",
-                      alignItems: "center",
-                      gridGap: 5
-                    }}
-                  >
-                    <ShowOnlyField
                       fields={addFields}
+                      edited={edited}
                       item={item}
-                      style={{ backgroundColor: "green" }}
+                      change={change}
+                      value={editedFields}
+                      suffix={suffix}
                     />
-                  </div>
-                )}
-
-                {edited !== item.id ? (
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      aria-label="Comments"
-                      onClick={() => edit(item, item.id)}
-                      // onClick={() => edit(item.name, item.id)}
+                  ) : (
+                    <div
+                      onClick={() => click(item.id)}
+                      style={{
+                        display: "grid",
+                        // gridTemplateRows: "1fr",
+                        // gridTemplateColumns: "1fr",
+                        // backgroundColor: "red",
+                        // height: 49,
+                        gridAutoFlow: "column",
+                        alignItems: "center",
+                        gridGap: 5
+                      }}
                     >
-                      <EditIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                ) : (
-                  <div>
-                    <ListItemSecondaryAction
-                    // style={{
-                    //   display: "grid",
-                    //   gridTemplateColumns: "1fr 1fr "
-                    // }}
-                    >
-                      {validateEdit(editedFields, validate) ? (
-                        <IconButton aria-label="Comments" onClick={sendToDb}>
-                          <DoneIcon />
-                        </IconButton>
-                      ) : null}
-                      <IconButton aria-label="Comments" onClick={cancelEdit}>
-                        <CloseIcon />
+                      <ShowOnlyField
+                        fields={addFields}
+                        item={item}
+                        style={{ backgroundColor: "green" }}
+                      />
+                    </div>
+                  )}
+                  {/* <ChannelsPickRow cols={channels} /> */}
+                  {edited !== item.id ? (
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        aria-label="Comments"
+                        onClick={() => edit(item, item.id)}
+                        // onClick={() => edit(item.name, item.id)}
+                      >
+                        <EditIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
-                  </div>
-                )}
+                  ) : (
+                    <div>
+                      <ListItemSecondaryAction
+                      // style={{
+                      //   display: "grid",
+                      //   gridTemplateColumns: "1fr 1fr "
+                      // }}
+                      >
+                        {validateEdit(editedFields, validate) ? (
+                          <IconButton aria-label="Comments" onClick={sendToDb}>
+                            <DoneIcon />
+                          </IconButton>
+                        ) : null}
+                        <IconButton aria-label="Comments" onClick={cancelEdit}>
+                          <CloseIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </div>
+                  )}
+                </div>
               </div>
             </ListItem>
           ))}
@@ -735,7 +739,6 @@ const EditableField = ({
               }
               // label={value[field.label]}
               key={i}
-              // disableUnderline
               // autoFocus={item.id === edited}
               type="text"
               value={formatNumber(value[field.dbField])}
@@ -769,7 +772,6 @@ const EditableField = ({
               }
               // label={value[field.label]}
               key={i}
-              // disableUnderline
               // autoFocus={item.id === edited}
               type="text"
               value={value[field.dbField]}
@@ -863,7 +865,7 @@ const AddToDB = ({
 };
 
 const AdditionalAddFields = ({ fields, change, value, disabled, suffix }) => {
-  console.log("suffix in AdditionalAddFields", suffix);
+  // console.log("suffix in AdditionalAddFields", suffix);
   return fields.map((field, i) => {
     if (field.type === "select") {
       return (
@@ -934,7 +936,8 @@ let EnhancedTableToolbar = props => {
     onSelectAllClick,
     search,
     listUnfiltered,
-    listLabel
+    listLabel,
+    toolbar
     // edited
   } = props;
 
@@ -949,7 +952,7 @@ let EnhancedTableToolbar = props => {
         checked={list.length !== 0 && checked.length === list.length}
         onChange={onSelectAllClick}
       />
-      <div className={classes.title}>
+      <div style={{ width: "100%" }}>
         {checked.length > 0 ? (
           <Typography
             color="inherit"
@@ -975,6 +978,7 @@ let EnhancedTableToolbar = props => {
         Sortuj
       </TableSortLabel> */}
       <div className={classes.spacer} />
+      <div style={{ width: "100%" }}>{toolbar}</div>
       <div className={classes.actions}>
         {checked.length > 0 ? (
           <Tooltip title="Usuń">
