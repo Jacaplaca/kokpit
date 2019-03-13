@@ -605,28 +605,6 @@ module.exports = app => {
         res.sendStatus(500);
       });
   });
-  app.post("/api/channel_item/:channelId", (req, res, next) => {
-    console.log("api/channel_item/");
-    console.log(req.body);
-    const { channelId } = req.params;
-    const { clientId, user_id } = req.user;
-    if (!req.user) {
-      return res.redirect("/");
-    }
-    const form = Object.assign(req.body, {
-      clientId,
-      userId: user_id,
-      channelId
-    });
-    Item.create(form)
-      .then(results => {
-        return res.json(results);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
 
   app.post("/api/channels_config/", async (req, res, next) => {
     console.log("api/channels_config/", req.body);
@@ -1128,27 +1106,6 @@ module.exports = app => {
     const form = Object.assign(req.body, { clientId, userId: user_id });
     // console.log(req.body);
     Channel.update(form, {
-      where: { clientId, id }
-    })
-      .then(result => res.json(result))
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
-  app.post("/api/channel_item/edit/id/:id", (req, res, next) => {
-    console.log("/api/channel_item/edit/:id");
-    const id = req.params.id;
-    console.log("edytuje channel item api,", id, req.body);
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { user_id, clientId } = req.user;
-    const form = Object.assign(req.body, { clientId, userId: user_id });
-    // console.log(req.body);
-    Item.update(form, {
       where: { clientId, id }
     })
       .then(result => res.json(result))

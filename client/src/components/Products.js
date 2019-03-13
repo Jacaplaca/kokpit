@@ -39,7 +39,13 @@ import MainFrameHOC from "../common/MainFrameHOC";
 import EditableList from "../common/EditableList";
 import ChannelsPickToolbar from "./Products/ChannelsPickToolbar";
 import ProductsList from "../components/Products/ProductsList";
+import ProductForm from "../components/Products/ProductForm";
 // import ItemsConfig from "./ChannelsProdConfig/ItemsConfig";
+
+const postUrl = "/api/item/";
+const fetchItemsUrl = "api/allitem/channel";
+const fetchChannels = "/api/table/channels";
+const editUrl = "/api/item/edit/id/";
 
 const styles = theme => ({
   input: {
@@ -59,12 +65,16 @@ class Products extends Component {
     clickedItem: 1,
     itemsConfig: false,
     channels: [],
-    items: []
+    items: [],
+    adding: { name: "", unit: "" },
+    editing: { name: "", unit: "" },
+    disableSubmit: true,
+    editedId: 0
   };
 
   componentWillMount = async () => {
-    await this.urlToState("/api/table/channels", "channels");
-    this.itemsToState("api/allitem/channel", "items");
+    await this.urlToState(fetchChannels, "channels");
+    this.itemsToState(fetchItemsUrl, "items");
   };
 
   urlToState = async (url, name) => {
@@ -77,12 +87,39 @@ class Products extends Component {
   };
 
   itemsToState = async (url, name) => {
+    console.log("itemsToState()", url, name);
     const result = await this.fetch(url);
     // console.log("itemsToState", this.addChannelsToItems(result));
 
     this.setState({
-      [name]: this.addChannelsToItems(result)
+      [name]: this.addChannelsToItems(result).reverse()
     });
+  };
+
+  handleChange = (dbField, value, inState) => {
+    const { adding, editing } = this.state;
+    const values = Object.assign(this.state[inState], {
+      [dbField]: value
+    });
+    console.log("han", dbField, value, inState, values);
+    this.setState({
+      [inState]: values,
+      disableSubmit: this.validate(values)
+    });
+  };
+
+  validate = values => {
+    let valids = [];
+    for (var key in values) {
+      if (values.hasOwnProperty(key)) {
+        if (values[key] !== "") {
+          valids.push(true);
+        } else {
+          valids.push(false);
+        }
+      }
+    }
+    return valids.includes(false);
   };
 
   addChannelsToItems = result => {
@@ -154,10 +191,87 @@ class Products extends Component {
     this.itemsToState("api/allitem/channel", "items");
   };
 
+  handleSubmit = async e => {
+    const { adding, editing, editedId } = this.state;
+    // const { fetchUrl, postUrl, editUrl, clickedRow } = this.props;
+
+    let body;
+    let sendingUrl;
+    if (editedId === 0) {
+      body = adding;
+      sendingUrl = postUrl;
+    } else {
+      body = editing;
+      sendingUrl = `${editUrl}/${editedId}`;
+    }
+    // body = Object.assign(body, { clickedRow });
+    body = JSON.stringify(body);
+    const id = await this.handleAddToDb(e, sendingUrl, body, fetchItemsUrl);
+    console.log("handlepost", id);
+    this.itemsToState(fetchItemsUrl, "items");
+    this.setState({
+      isLoading: false,
+      addedId: { id },
+      adding: { name: "", unit: "" },
+      editedId: 0,
+      editing: { name: "", unit: "" }
+    });
+  };
+
+  handleAddToDb = async (e, postUrl, body, getUrl) => {
+    console.log("handleAddToDb()");
+
+    e.preventDefault();
+    // const { whatToAdd } = this.state;
+    // console.log("handleAddToDb()", whatToAdd, postUrl);
+    const resp = await fetch(postUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body
+    });
+
+    const response = await resp.json();
+    return response.id;
+    // this.setState({ insertedId: response.id });
+  };
+
+  handleEdit = id => {
+    const { items, editedId } = this.state;
+    const editedItem = items.filter(item => item.id === id);
+    this.setState({
+      editedId: editedId === 0 ? id : 0,
+      editing: { name: editedItem[0].name, unit: editedItem[0].unit }
+    });
+  };
+  // this.handleCloseConfirmation();
   render() {
-    const { clickedChannel, clickedItem, itemsConfig } = this.state;
+    const {
+      clickedChannel,
+      clickedItem,
+      itemsConfig,
+      adding,
+      disableSubmit,
+      editedId,
+      editing
+    } = this.state;
     return (
       <React.Fragment>
+        <Paper>
+          <ProductForm
+            // disabled={disabled}
+            action={this.handleConfirmPosting}
+            change={this.handleChange}
+            values={adding}
+            addLabel="Dodaj kanał sprzedaży"
+            submit={this.handleSubmit}
+            disableSubmit={disableSubmit}
+            // suffix={suffix}
+            // adding={adding}
+            // validate={validate}
+            // addFields={[{ dbField: "name", label: "Nazwa", type: "string" }]}
+          />
+        </Paper>
         <div
           style={{
             marginTop: "1rem",
@@ -194,15 +308,11 @@ class Products extends Component {
               // delete={this.handleDelete}
               transactions={this.state.items}
               headCols={this.state.channels}
-              edit={id => {
-                this.setState({
-                  openModal: true,
-                  editedId: id,
-                  duplicate: false
-                });
-                // this.handleEdit(id);
-              }}
+              edit={this.handleEdit}
               clickOnChannel={this.handleClickOnChannel}
+              editedId={editedId}
+              change={this.handleChange}
+              values={editing}
             />
           )}
           {/* <Paper> */}

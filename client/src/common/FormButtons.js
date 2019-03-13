@@ -13,7 +13,7 @@ const FormButtons = ({
   cancelAction
 }) => {
   return (
-    <React.Fragment>
+    <div>
       <ButtonMy
         // type="submit"
         onClick={subAction}
@@ -34,7 +34,7 @@ const FormButtons = ({
         {cancelLabel}
         <Cancel style={{ marginLeft: 10 }} />
       </ButtonMy>
-    </React.Fragment>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-
+import React, { Component, PureComponent } from "react";
+import Input from "@material-ui/core/Input";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import NumberFormat from "react-number-format";
@@ -87,7 +87,7 @@ const rows = [
   }
 ];
 
-class EnhancedTableHead extends React.Component {
+class EnhancedTableHead extends Component {
   state = {
     headCols: []
   };
@@ -342,7 +342,7 @@ const styles = theme => ({
   }
 });
 
-class EnhancedTable extends React.Component {
+class EnhancedTable extends Component {
   state = {
     order: "desc",
     orderBy: "order",
@@ -360,6 +360,18 @@ class EnhancedTable extends React.Component {
     const list = this.makeOrder(this.props.transactions);
     this.setState({ list, listUnfiltered: list });
   }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (
+  //     this.props.transactions === nextProps.transactions &&
+  //     this.state === nextState &&
+  //     this.props.editedId !== nextProps.editedId
+  //   ) {
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
   componentWillReceiveProps(nextProps) {
     // console.log("componentWillReceiveProps()");
@@ -497,8 +509,15 @@ class EnhancedTable extends React.Component {
   };
 
   render() {
-    const { classes, transactions, headCols } = this.props;
-    // console.log("items", transactions);
+    const {
+      classes,
+      transactions,
+      headCols,
+      edit,
+      editedId,
+      values,
+      change
+    } = this.props;
     const {
       data,
       order,
@@ -524,6 +543,7 @@ class EnhancedTable extends React.Component {
       style: { opacity: 0.5, fontSize: 20 }
     };
 
+    console.log("product list", values);
     return (
       <React.Fragment>
         <Confirmation
@@ -576,17 +596,74 @@ class EnhancedTable extends React.Component {
                           />
                         </TableCell>
                         {/* <TableCell align="right">{n.name}</TableCell> */}
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          padding="none"
-                          style={{ width: 200 }}
-                        >
-                          {item.name}
-                        </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
-                          {item.unit}
-                        </TableCell>
+                        {editedId === item.id ? (
+                          <TableCell
+                            key={values["name"]}
+                            component="th"
+                            scope="row"
+                            padding="none"
+                            style={{ width: 200 }}
+                          >
+                            <Input
+                              inputProps={{ style: { fontSize: 13 } }}
+                              // style={{ marginTop: 6 }}
+                              // disableUnderline
+                              // startAdornment={
+                              //   <InputAdornment position="start">{`${
+                              //     field.label
+                              //   }: `}</InputAdornment>
+                              // }
+                              // label={value[field.label]}
+                              key={"name"}
+                              // autoFocus={item.id === editedId}
+                              type="text"
+                              value={values["name"]}
+                              onChange={e =>
+                                change("name", e.target.value, "editing")
+                              }
+                            />
+                          </TableCell>
+                        ) : (
+                          <TableCell
+                            component="th"
+                            scope="row"
+                            padding="none"
+                            style={{ width: 200 }}
+                          >
+                            {item.name}
+                          </TableCell>
+                        )}
+                        {editedId === item.id ? (
+                          <TableCell
+                            component="th"
+                            scope="row"
+                            padding="none"
+                            // style={{ width: 200 }}
+                          >
+                            <Input
+                              inputProps={{ style: { fontSize: 13 } }}
+                              // style={{ marginTop: 6 }}
+                              // disableUnderline
+                              // startAdornment={
+                              //   <InputAdornment position="start">{`${
+                              //     field.label
+                              //   }: `}</InputAdornment>
+                              // }
+                              // label={value[field.label]}
+                              // key={i}
+                              // autoFocus={item.id === editedId}
+                              type="text"
+                              value={values["unit"]}
+                              onChange={e =>
+                                change("unit", e.target.value, "editing")
+                              }
+                            />
+                          </TableCell>
+                        ) : (
+                          <TableCell component="th" scope="row" padding="none">
+                            {item.unit}
+                          </TableCell>
+                        )}
                         {headCols.map(channel => {
                           return (
                             <TableCell
@@ -633,7 +710,7 @@ class EnhancedTable extends React.Component {
                             akcja={() => {
                               // props.edit(cell);
                               console.log("edit", item.id);
-                              this.props.edit(item.id);
+                              edit(item.id);
                             }}
                           >
                             <EditIcon {...iconProps} />
