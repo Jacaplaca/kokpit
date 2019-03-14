@@ -11,7 +11,7 @@ var session = require("express-session");
 var flash = require("connect-flash");
 var morgan = require("morgan");
 // const seql = require('./seql');
-// require("./sms/sms");
+require("./sms/sms");
 
 // const User = require('./models/user');
 // const Client = require('./models/client');

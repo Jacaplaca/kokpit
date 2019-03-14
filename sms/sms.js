@@ -95,7 +95,10 @@ function fetchInvoices() {
       // console.log("sentNumbers", sentNumbers);
       Invoices4SMS.findAll({
         where: {
-          nr_pelny: { [Op.not]: sentNumbers }
+          nr_pelny: { [Op.not]: sentNumbers },
+          termin_platnosci: {
+            [Op.lt]: new Date(new Date() - 15 * 24 * 60 * 60 * 1000)
+          }
         },
         raw: true
       }).then(sentInvoices => {
@@ -244,9 +247,10 @@ function sendSMS(result, all) {
           (cnt, invoice) => cnt + Math.trunc(invoice.pozostalo_do_zaplacenia),
           0
         );
-        message = `Odzyskaj ${Math.floor(
-          remainedSum
-        )}zl z ${howManyInvoices}fv. Ost: `;
+        message = ``;
+        // message = `Odzyskaj ${Math.floor(
+        //   remainedSum
+        // )}zl z ${howManyInvoices}fv. Ost: `;
         return { howManyInvoices, remainedSum };
       })
       .then(wholeSummary => {
@@ -264,7 +268,9 @@ function sendSMS(result, all) {
           const remain = invoice.amount !== invoice.remained ? `` : "";
           message = `${message}${invoice.debtor} ${remain}${Math.floor(
             invoice.remained
-          )}zl, `;
+          )}zl(${Math.floor(
+            (new Date() - new Date(invoice.deadline)) / 1000 / 60 / 60 / 24
+          )}dni po term.), `;
         });
         // console.log("idSoft", idSoft);
         const bigestFilteredByUser = bigestInvoices.filter(
@@ -285,7 +291,8 @@ function sendSMS(result, all) {
           idSoft,
           name,
           surname,
-          sms: `${message.slice(0, -2)}, ${topMessage} ${tops.slice(0, -2)}`
+          // sms: `${message.slice(0, -2)}, ${topMessage} ${tops.slice(0, -2)}`
+          sms: `${message.slice(0, -2)}`
         };
         // console.log("senduje", sms);
         smsArray.push(sms);
@@ -330,7 +337,7 @@ function months(number) {
 let promisy = [];
 
 function send(invoices, sms) {
-  // console.log("sms", sms);
+  console.log("sms", sms);
   // console.log(sms);
   // smsapi.authentication
   //   .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
@@ -347,7 +354,7 @@ function send(invoices, sms) {
   //     .normalize()
   //     .execute(); // return Promise
   // }
-  // updateToSent(invoices.filter(invoice => invoice.phone === "48502413498"));
+  // updateToSent(invoices.filter(invoice => invoice.phone === sms.tel));
   //
   function displayResult(result) {
     console.log(result);

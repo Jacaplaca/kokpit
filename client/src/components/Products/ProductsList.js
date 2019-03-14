@@ -7,9 +7,12 @@ import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
+import Checkbox from "@material-ui/core/Checkbox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/RadioButtonUnchecked";
+import CheckBoxIcon from "@material-ui/icons/CheckCircle";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -22,9 +25,6 @@ import { lighten } from "@material-ui/core/styles/colorManipulator";
 
 import ButtonIconCircle from "../../common/ButtonIconCircle";
 import EditIcon from "@material-ui/icons/Edit";
-import Checkbox from "@material-ui/core/Checkbox";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/RadioButtonUnchecked";
-import CheckBoxIcon from "@material-ui/icons/CheckCircle";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
@@ -38,6 +38,8 @@ import {
 } from "../../common/functions";
 import MainFrameHOC from "../../common/MainFrameHOC";
 import SearchField from "../../common/inputs/SearchField";
+import InputInRow from "../../common/inputs/InputInRow";
+import Row from "./Row";
 
 let counter = 0;
 function createData(name, calories, fat, carbs, protein) {
@@ -256,7 +258,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { numSelected, classes, deleteRows, data, search } = props;
+  const { numSelected, classes, deleteRows, data, search, labelList } = props;
 
   return (
     <Toolbar
@@ -277,7 +279,7 @@ let EnhancedTableToolbar = props => {
             // variant="h6"
             id="tableTitle"
           >
-            Lista transakcji
+            {labelList}
           </Typography>
         )}
       </div>
@@ -358,14 +360,16 @@ class EnhancedTable extends Component {
 
   componentWillMount() {
     const list = this.makeOrder(this.props.transactions);
-    this.setState({ list, listUnfiltered: list });
+    const ordering = list.map(el => el.id);
+    this.setState({ list, ordering, listUnfiltered: list });
   }
 
   // shouldComponentUpdate(nextProps, nextState) {
   //   if (
   //     this.props.transactions === nextProps.transactions &&
   //     this.state === nextState &&
-  //     this.props.editedId !== nextProps.editedId
+  //     this.props.editedId === nextProps.editedId
+  //     // && this.props.values === nextProps.values
   //   ) {
   //     return false;
   //   } else {
@@ -374,6 +378,7 @@ class EnhancedTable extends Component {
   // }
 
   componentWillReceiveProps(nextProps) {
+    // console.log("componentWillReceiveProps", nextProps.values);
     // console.log("componentWillReceiveProps()");
     const { query } = this.state;
     const { transactions } = this.props;
@@ -462,16 +467,16 @@ class EnhancedTable extends Component {
 
   handleClickChannel = (item, channel, i) => {
     // console.log("handleClickChannel()", item, channel, i);
-    const { list } = this.state;
-    // const list = JSON.parse(JSON.stringify(list));
-    // const status = list.filter(x => x.id === item)[0][channel];
-    // console.log("stat", status);
-
-    const status = list[i][channel];
-    // console.log("status", status, list[i].name);
-    list[i][channel] = status === 0 ? 1 : 0;
-    // list[i]
-    this.setState({ list });
+    // const { list } = this.state;
+    // // const list = JSON.parse(JSON.stringify(list));
+    // // const status = list.filter(x => x.id === item)[0][channel];
+    // // console.log("stat", status);
+    //
+    // const status = list[i][channel];
+    // // console.log("status", status, list[i].name);
+    // list[i][channel] = status === 0 ? 1 : 0;
+    // // list[i]
+    // this.setState({ list });
 
     this.props.clickOnChannel(item, channel);
   };
@@ -516,7 +521,10 @@ class EnhancedTable extends Component {
       edit,
       editedId,
       values,
-      change
+      change,
+      disableSubmit,
+      onSubmit,
+      labelList
     } = this.props;
     const {
       data,
@@ -543,7 +551,7 @@ class EnhancedTable extends Component {
       style: { opacity: 0.5, fontSize: 20 }
     };
 
-    console.log("product list", values);
+    // console.log("product list", values, values["name"], values["unit"]);
     return (
       <React.Fragment>
         <Confirmation
@@ -558,6 +566,7 @@ class EnhancedTable extends Component {
             deleteRows={this.handleConfirmation}
             search={this.handleSearch}
             data={listUnfiltered}
+            labelList={labelList}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
@@ -580,143 +589,23 @@ class EnhancedTable extends Component {
                   .map((item, i) => {
                     const isSelected = this.isSelected(item.id);
                     return (
-                      <TableRow
-                        hover
-                        // onClick={event => this.handleClick(event, n.id)}
-                        role="checkbox"
-                        aria-checked={isSelected}
-                        tabIndex={-1}
+                      <Row
                         key={item.id}
-                        selected={isSelected}
-                      >
-                        <TableCell padding="checkbox" style={{ width: 35 }}>
-                          <Checkbox
-                            checked={isSelected}
-                            onClick={event => this.handleClick(event, item.id)}
-                          />
-                        </TableCell>
-                        {/* <TableCell align="right">{n.name}</TableCell> */}
-                        {editedId === item.id ? (
-                          <TableCell
-                            key={values["name"]}
-                            component="th"
-                            scope="row"
-                            padding="none"
-                            style={{ width: 200 }}
-                          >
-                            <Input
-                              inputProps={{ style: { fontSize: 13 } }}
-                              // style={{ marginTop: 6 }}
-                              // disableUnderline
-                              // startAdornment={
-                              //   <InputAdornment position="start">{`${
-                              //     field.label
-                              //   }: `}</InputAdornment>
-                              // }
-                              // label={value[field.label]}
-                              key={"name"}
-                              // autoFocus={item.id === editedId}
-                              type="text"
-                              value={values["name"]}
-                              onChange={e =>
-                                change("name", e.target.value, "editing")
-                              }
-                            />
-                          </TableCell>
-                        ) : (
-                          <TableCell
-                            component="th"
-                            scope="row"
-                            padding="none"
-                            style={{ width: 200 }}
-                          >
-                            {item.name}
-                          </TableCell>
-                        )}
-                        {editedId === item.id ? (
-                          <TableCell
-                            component="th"
-                            scope="row"
-                            padding="none"
-                            // style={{ width: 200 }}
-                          >
-                            <Input
-                              inputProps={{ style: { fontSize: 13 } }}
-                              // style={{ marginTop: 6 }}
-                              // disableUnderline
-                              // startAdornment={
-                              //   <InputAdornment position="start">{`${
-                              //     field.label
-                              //   }: `}</InputAdornment>
-                              // }
-                              // label={value[field.label]}
-                              // key={i}
-                              // autoFocus={item.id === editedId}
-                              type="text"
-                              value={values["unit"]}
-                              onChange={e =>
-                                change("unit", e.target.value, "editing")
-                              }
-                            />
-                          </TableCell>
-                        ) : (
-                          <TableCell component="th" scope="row" padding="none">
-                            {item.unit}
-                          </TableCell>
-                        )}
-                        {headCols.map(channel => {
-                          return (
-                            <TableCell
-                              padding="checkbox"
-                              style={{ width: 35 }}
-                              key={channel.id}
-                              // component="th"
-                              // scope="row"
-                              // padding="none"
-                            >
-                              <Checkbox
-                                checked={item[channel.id] === 1}
-                                icon={
-                                  <CheckBoxOutlineBlankIcon
-                                    {...iconPropsOpacity}
-                                  />
-                                }
-                                checkedIcon={
-                                  <CheckBoxIcon
-                                    {...iconProps}
-                                    // fontSize={{ fontSize: 15 }}
-                                  />
-                                }
-                                // style={{ fontSize: 4 }}
-                                // checked={
-                                //   item.SalesChannels.filter(
-                                //     sch => sch.id === channel.id
-                                //   ).length > 0
-                                // }
-                                onClick={() =>
-                                  this.handleClickChannel(
-                                    item.id,
-                                    channel.id,
-                                    i
-                                  )
-                                }
-                              />
-                            </TableCell>
-                          );
-                        })}
-                        <TableCell padding="checkbox" style={{ width: 35 }}>
-                          {/* <Checkbox checked={is selected} /> */}
-                          <ButtonIconCircle
-                            akcja={() => {
-                              // props.edit(cell);
-                              console.log("edit", item.id);
-                              edit(item.id);
-                            }}
-                          >
-                            <EditIcon {...iconProps} />
-                          </ButtonIconCircle>
-                        </TableCell>
-                      </TableRow>
+                        isSelected={isSelected}
+                        item={item}
+                        editedId={editedId}
+                        values={values}
+                        change={change}
+                        headCols={headCols}
+                        iconProps={iconProps}
+                        iconPropsOpacity={iconPropsOpacity}
+                        i={i}
+                        edit={edit}
+                        handleClick={this.handleClick}
+                        handleClickChannel={this.handleClickChannel}
+                        disableSubmit={disableSubmit}
+                        submit={onSubmit}
+                      />
                     );
                   })}
                 {/* {emptyRows > 0 && (

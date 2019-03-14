@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 // import { Formik } from "formik";
+import _ from "lodash";
 
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -46,6 +47,7 @@ const postUrl = "/api/item/";
 const fetchItemsUrl = "api/allitem/channel";
 const fetchChannels = "/api/table/channels";
 const editUrl = "/api/item/edit/id/";
+const deleteUrl = "/api/item/destroy/";
 
 const styles = theme => ({
   input: {
@@ -68,7 +70,7 @@ class Products extends Component {
     items: [],
     adding: { name: "", unit: "" },
     editing: { name: "", unit: "" },
-    disableSubmit: true,
+    disableSubmit: { adding: true, editing: true },
     editedId: 0
   };
 
@@ -96,15 +98,33 @@ class Products extends Component {
     });
   };
 
+  // handleChange = (dbField, value, inState) => {
+  //   const { adding, editing } = this.state;
+  //   // this.setState({ value });
+  //   const values = Object.assign([inState], {
+  //     [dbField]: value
+  //   });
+  //   console.log("han", dbField, value, inState, values);
+  //   this.setState({
+  //     [inState]: values,
+  //     disableSubmit: this.validate(values)
+  //   });
+  // };
   handleChange = (dbField, value, inState) => {
-    const { adding, editing } = this.state;
-    const values = Object.assign(this.state[inState], {
+    // console.log("handlechange", dbField, value, inState);
+    // const { adding, editing } = this.state;
+    // this.setState({ value });
+    const modyfied = _.clone(this.state[inState]);
+    const disableSubmitState = _.clone(this.state.disableSubmit);
+    const values = Object.assign(modyfied, {
       [dbField]: value
     });
-    console.log("han", dbField, value, inState, values);
+    const disableSubmit = Object.assign(disableSubmitState, {
+      [inState]: this.validate(values)
+    });
     this.setState({
       [inState]: values,
-      disableSubmit: this.validate(values)
+      disableSubmit
     });
   };
 
@@ -137,6 +157,7 @@ class Products extends Component {
           [channel.id]: channInItem.length > 0 ? 1 : 0
         });
       }
+      delete modItem["SalesChannels"];
       items.push(modItem);
     }
 
@@ -193,6 +214,7 @@ class Products extends Component {
 
   handleSubmit = async e => {
     const { adding, editing, editedId } = this.state;
+    console.log("handleSubmit", adding, editing, editedId);
     // const { fetchUrl, postUrl, editUrl, clickedRow } = this.props;
 
     let body;
@@ -219,7 +241,7 @@ class Products extends Component {
   };
 
   handleAddToDb = async (e, postUrl, body, getUrl) => {
-    console.log("handleAddToDb()");
+    console.log("handleAddToDb()", postUrl, body, getUrl);
 
     e.preventDefault();
     // const { whatToAdd } = this.state;
@@ -240,9 +262,18 @@ class Products extends Component {
     const { items, editedId } = this.state;
     const editedItem = items.filter(item => item.id === id);
     this.setState({
-      editedId: editedId === 0 ? id : 0,
+      editedId: editedId !== 0 ? (editedId === id ? 0 : id) : id,
+      // editedId: editedId !== 0 || editedId !== id ? id : 0,
       editing: { name: editedItem[0].name, unit: editedItem[0].unit }
     });
+  };
+
+  handleDelete = async selected => {
+    console.log("handleDelete");
+    await axios.post(`${deleteUrl}${selected}`);
+    this.itemsToState(fetchItemsUrl, "items");
+    // this.handleOpenConfirmation();
+    // this.setState({ confirmationAction: this.remove });
   };
   // this.handleCloseConfirmation();
   render() {
@@ -253,8 +284,10 @@ class Products extends Component {
       adding,
       disableSubmit,
       editedId,
-      editing
+      editing,
+      value
     } = this.state;
+    // console.log("products", editing);
     return (
       <React.Fragment>
         <Paper>
@@ -265,7 +298,7 @@ class Products extends Component {
             values={adding}
             addLabel="Dodaj kanał sprzedaży"
             submit={this.handleSubmit}
-            disableSubmit={disableSubmit}
+            disableSubmit={disableSubmit["adding"]}
             // suffix={suffix}
             // adding={adding}
             // validate={validate}
@@ -305,7 +338,7 @@ class Products extends Component {
             /> */}
           {this.state.items.length > 0 && (
             <ProductsList
-              // delete={this.handleDelete}
+              delete={this.handleDelete}
               transactions={this.state.items}
               headCols={this.state.channels}
               edit={this.handleEdit}
@@ -313,6 +346,10 @@ class Products extends Component {
               editedId={editedId}
               change={this.handleChange}
               values={editing}
+              value={value}
+              disableSubmit={disableSubmit["editing"]}
+              onSubmit={this.handleSubmit}
+              labelList={"Lista produktów/usług"}
             />
           )}
           {/* <Paper> */}

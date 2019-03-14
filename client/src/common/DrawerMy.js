@@ -112,12 +112,12 @@ class DrawerMy extends React.Component {
         link: "/serwis",
         icon: "InsertChartOutlined"
       },
-      {
-        comp: "chanprodconf",
-        text: "Konfiguracja",
-        link: "/channelconfiguration",
-        icon: "InsertChartOutlined"
-      },
+      // {
+      //   comp: "chanprodconf",
+      //   text: "Konfiguracja",
+      //   link: "/channelconfiguration",
+      //   icon: "InsertChartOutlined"
+      // },
       {
         comp: "products",
         text: "Produkty",
