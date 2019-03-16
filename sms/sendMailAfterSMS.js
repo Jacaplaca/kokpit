@@ -68,7 +68,7 @@ const sendingMailAfterSms = sms => {
     } sms o treści: "${x.sms}".`;
     text = `${text} ${line}`;
   });
-  console.log("raport", html);
+  // console.log("raport", html);
   main(text, html, timeFormated, formatedDay).catch(console.error);
 };
 

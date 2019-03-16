@@ -40,19 +40,19 @@ console.log("datazmienia", YMtoMonthYear(201905));
 //   include: [{ model: User }]
 // }).then(result => result.forEach(one => console.log(one)));
 
-User.findAll({
-  // where: { id: 3 },
-  // attributes: ['email'],
-  include: [
-    {
-      model: Client
-      // where: { name: 'Salana' }
-    }
-  ]
-}).then(
-  results => results.forEach(one => one.isAdmin(one.client))
-  // console.log(`${results[4].dataValues.email} ${results[4].client.name}`)
-);
+// User.findAll({
+//   // where: { id: 3 },
+//   // attributes: ['email'],
+//   include: [
+//     {
+//       model: Client
+//       // where: { name: 'Salana' }
+//     }
+//   ]
+// }).then(
+//   results => results.forEach(one => one.isAdmin(one.client))
+//   // console.log(`${results[4].dataValues.email} ${results[4].client.name}`)
+// );
 
 // User.findAll({
 //   limit: 100,

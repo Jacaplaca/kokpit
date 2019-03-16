@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import Key from "@material-ui/icons/VpnKey";
@@ -12,6 +11,7 @@ import PropTypes from "prop-types";
 import * as actions from "../actions";
 
 import InputComponent from "../common/inputs/InputComponent";
+import CenteringComponent from "../common/CenteringComponent";
 
 const emailHelperMessage = "Adres email podany przy rejestracji";
 
@@ -63,95 +63,73 @@ class Login extends Component {
 
   render() {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          //padding: 20
-          height: "100%",
-          position: "relative",
-          overflow: "auto"
-        }}
-      >
-        <Paper
-          style={{
-            textAlign: "center",
-            width: 500,
-            padding: 30,
-            margin: 0,
-            position: "absolute",
-            top: "40%",
-            left: "50%",
-            //-ms-transform: translate(-50%, -50%);
-            transform: "translate(-40%, -50%)"
-          }}
-        >
-          {/* {this.state.error} */}
-          {this.props.formTemp[0] ? (
-            <div style={{ display: !this.state.resetShow && "none" }}>
-              {this.props.formTemp[0].errors}
-              {"email" in this.props.formTemp[0] && (
-                <form method="POST" action="/auth/reset">
-                  <input name="email" type="hidden" value={this.state.email} />
-                  <Button
-                    style={{ margin: 8 }}
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                  >
-                    Tak
-                  </Button>
-                  <Button
-                    onClick={() => this.setState({ resetShow: false })}
-                    style={{ margin: 8 }}
-                    //type="submit"
-                    variant="contained"
-                    color="primary"
-                  >
-                    Nie
-                  </Button>
-                </form>
-              )}
-            </div>
-          ) : null}
-          <form method="POST" action="/auth/login">
-            <Input name="email" type="email" value={this.state.email} hidden />
-            <InputComponent
-              name="email"
-              label="Email"
-              type="email"
-              edytuj={email => this.setState({ email })}
-              value={this.state.email}
-              error={this.state.errorEmail}
-              helperText={this.state.emailHelper}
-            />
-            <InputComponent
-              name="password"
-              label="Password"
-              type="password"
-              edytuj={password => this.onChangePassword(password)}
-              value={this.state.password}
-              password
-            />
-            <Input
-              name="password"
-              type="password"
-              value={this.state.password}
-              hidden
-            />
-            <div style={{ width: "100%", marginTop: 40 }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={this.state.disabledButton}
-              >
-                Zaloguj się
-                <Key style={{ marginLeft: 10 }} />
-              </Button>
-            </div>
-          </form>
-        </Paper>
-      </div>
+      <CenteringComponent>
+        {/* {this.state.error} */}
+        {this.props.formTemp[0] ? (
+          <div style={{ display: !this.state.resetShow && "none" }}>
+            {this.props.formTemp[0].errors}
+            {"email" in this.props.formTemp[0] && (
+              <form method="POST" action="/auth/reset">
+                <input name="email" type="hidden" value={this.state.email} />
+                <Button
+                  style={{ margin: 8 }}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                >
+                  Tak
+                </Button>
+                <Button
+                  onClick={() => this.setState({ resetShow: false })}
+                  style={{ margin: 8 }}
+                  //type="submit"
+                  variant="contained"
+                  color="primary"
+                >
+                  Nie
+                </Button>
+              </form>
+            )}
+          </div>
+        ) : null}
+        <form method="POST" action="/auth/login">
+          <Input name="email" type="email" value={this.state.email} hidden />
+          <InputComponent
+            name="email"
+            label="Email"
+            type="email"
+            edytuj={email => this.setState({ email })}
+            value={this.state.email}
+            error={this.state.errorEmail}
+            helperText={this.state.emailHelper}
+          />
+          <InputComponent
+            name="password"
+            label="Password"
+            type="password"
+            edytuj={password => this.onChangePassword(password)}
+            value={this.state.password}
+            password
+          />
+          <Input
+            name="password"
+            type="password"
+            value={this.state.password}
+            hidden
+          />
+          <div style={{ width: "100%", marginTop: 40 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={this.state.disabledButton}
+            >
+              Zaloguj się
+              <Key style={{ marginLeft: 10 }} />
+            </Button>
+          </div>
+        </form>
+      </CenteringComponent>
     );
   }
 }

@@ -36,7 +36,7 @@ var randomizeSendingTime = schedule.scheduleJob(rule, function() {
   randomTime(9, 10, 9, 50);
 });
 
-fetchInvoices();
+// fetchInvoices();
 
 var runFetching = schedule.scheduleJob(
   {
@@ -381,7 +381,7 @@ function send(invoices, sms) {
 const waitForEverySending = async () => {
   const result = await Promise.all(promisy);
   const len = promisy.length;
-  console.log("result", result, len);
+  // console.log("result", result, len);
   result.filter(x => x === "foo").length === len &&
     sendingMailAfterSms(smsArray);
   // .every(x => x.Promise === "foo");

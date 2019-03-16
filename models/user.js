@@ -95,11 +95,16 @@ module.exports = (sequelize, Sequelize) => {
   //   console.log(models);
   // };
 
-  User.prototype.isAdmin = function(client) {
-    // console.log(client);
-    // return console.log(this.clientId === 1);
-    return client.name === "Salana";
-  };
+  // User.prototype.isAdmin = function(client) {
+  //   // console.log(client);
+  //   // return console.log(this.clientId === 1);
+  //   return client.name === "Salana";
+  // };
+  // User.prototype.isAdmin = function() {
+  //   // console.log(client);
+  //   // return console.log(this.clientId === 1);
+  //   return User.clientId === 1;
+  // };
 
   return User;
 };
