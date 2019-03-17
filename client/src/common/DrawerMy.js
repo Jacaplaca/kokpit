@@ -123,6 +123,12 @@ class DrawerMy extends React.Component {
         text: "Produkty",
         link: "/products",
         icon: "InsertChartOutlined"
+      },
+      {
+        comp: "users",
+        text: "Użytkownicy",
+        link: "/users",
+        icon: "InsertChartOutlined"
       }
     ];
     return (

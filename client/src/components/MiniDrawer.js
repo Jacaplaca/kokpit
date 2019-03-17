@@ -18,6 +18,7 @@ import NextReports from "./NextReports";
 import Serwis from "./Serwis";
 import ChanProdConf from "./ChanProdConf";
 import Products from "./Products";
+import Users from "./Users";
 
 let drawerWidth = 240;
 
@@ -118,6 +119,13 @@ class MiniDrawer extends React.Component {
         path: "/products",
         component: Products,
         title: "Produkty"
+        //channel: auth ? auth.channel_first : 0
+      },
+      {
+        comp: "users",
+        path: "/users",
+        component: Users,
+        title: "Użytkownicy"
         //channel: auth ? auth.channel_first : 0
       }
     ];

@@ -172,8 +172,8 @@ module.exports = app => {
   });
 
   app.get("/api/allitem/channel/", async (req, res) => {
-    //   // if (!req.user) res.redirect("/");
-    //   // const { clientId, role, user_id } = req.user;
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
 
     const [err, items] = await to(
       Item.findAll({
@@ -184,7 +184,31 @@ module.exports = app => {
             // where: {}
           }
         ],
-        where: {}
+        where: { clientId }
+      })
+    );
+
+    if (!items) {
+      res.sendStatus(500);
+    } else {
+      res.json(items);
+    }
+  });
+
+  app.get("/api/allusers/channel/", async (req, res) => {
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
+
+    const [err, items] = await to(
+      User.findAll({
+        include: [
+          {
+            model: Channel,
+            as: "SalesChannels"
+            // where: {}
+          }
+        ],
+        where: { clientId }
       })
     );
 

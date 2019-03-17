@@ -72,12 +72,16 @@ module.exports = app => {
     console.log("email pass", email, password);
     console.log("req.user", req.user);
     let clientId = 0;
+    let users = 0;
+    let products = 0;
     let role = "pracownik";
     if (req.user) {
       clientId = req.user.clientId;
     } else {
       clientId = (await findMaxClientId()) + 1;
       role = "master";
+      users = 1;
+      products = 1;
     }
 
     const message = { email };
@@ -111,6 +115,8 @@ module.exports = app => {
                 password: hash,
                 role: role,
                 clientId,
+                products,
+                users,
                 status: "active"
               })
                 .then(results => {

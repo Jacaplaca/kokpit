@@ -7,14 +7,14 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      // firstname: {
-      //     type: Sequelize.STRING,
-      //     notEmpty: true
-      // },
-      // lastname: {
-      //     type: Sequelize.STRING,
-      //     notEmpty: true
-      // },
+      name: {
+        type: Sequelize.STRING
+        // notEmpty: true
+      },
+      surname: {
+        type: Sequelize.STRING
+        // notEmpty: true
+      },
       // username: {
       //     type: Sequelize.TEXT
       // },
@@ -72,6 +72,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.TINYINT
       },
       products: {
+        type: Sequelize.TINYINT
+      },
+      users: {
         type: Sequelize.TINYINT
       },
       nr_telefonu: {

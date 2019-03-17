@@ -62,6 +62,7 @@ db.Sequelize = Sequelize;
 const ChannelItems = db.channel_items;
 const Channel = db.sales_channels;
 const Item = db.items;
+const User = db.users;
 
 // console.log(db);
 ///
@@ -174,6 +175,18 @@ Item.belongsToMany(Channel, {
   as: "SalesChannels",
   through: db.channel_items,
   foreignKey: "item_id"
+});
+
+Channel.belongsToMany(User, {
+  as: "SalesUsers",
+  through: db.channel_users, //this can be string or a model,
+  foreignKey: "channel_id"
+});
+
+User.belongsToMany(Channel, {
+  as: "SalesChannels",
+  through: db.channel_users,
+  foreignKey: "user_id"
 });
 
 // db.channels_items.belongsTo(db.sales_channels, {
