@@ -97,15 +97,14 @@ function fetchInvoices() {
         where: {
           nr_pelny: { [Op.not]: sentNumbers },
           termin_platnosci: {
-            [Op.lt]: new Date(new Date() - 15 * 24 * 60 * 60 * 1000)
+            [Op.lt]: new Date(new Date() - 15 * 24 * 60 * 60 * 1000),
+            [Op.gt]: new Date(new Date() - 30 * 24 * 60 * 60 * 1000)
           }
         },
         raw: true
       }).then(sentInvoices => {
         // console.log("sentInvoices", sentInvoices.length);
-        fetchUsers(
-          sentInvoices.sort(dynamicSort("termin_platnosci")).reverse()
-        );
+        fetchUsers(sentInvoices.sort(dynamicSort("termin_platnosci")));
       });
     });
 }
@@ -359,7 +358,7 @@ function send(invoices, sms) {
   function displayResult(result) {
     console.log(result);
     const nr_telefonu = result.list[0].number;
-    updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
+    // updateToSent(invoices.filter(invoice => invoice.phone === nr_telefonu));
   }
 
   function displayError(err) {

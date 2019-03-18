@@ -4,6 +4,7 @@ const User = db.users;
 const Channel = db.sales_channels;
 const Item = db.items;
 const ChannelItems = db.channel_items;
+const ChannelUsers = db.channel_users;
 const ChannelsConfig = db.channels_config;
 const to = require("await-to-js").default;
 
@@ -93,13 +94,13 @@ module.exports = app => {
   //remove item
   app.post("/api/item/destroy/:id", (req, res, next) => {
     const id = req.params.id;
-    // if (!req.user) {
-    //   console.log("przekierowanie");
-    //   return res.redirect("/");
-    // }
-    // const { user_id, clientId } = req.user;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
     console.log("trans remove id", id.split(","));
-    Item.destroy({ where: { clientId: 2, id: id.split(",") } })
+    Item.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {
         res.json(result);
       })
@@ -111,8 +112,8 @@ module.exports = app => {
 
   //adding items to channel
   app.post("/api/channel/:channel_id/item/:item_id", async (req, res) => {
-    //   // if (!req.user) res.redirect("/");
-    //   // const { clientId, role, user_id } = req.user;
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
 
     const { channel_id, item_id } = req.params;
     console.log("channelId itemId", channel_id, item_id);
@@ -134,6 +135,41 @@ module.exports = app => {
     } else {
       const [errAdding, adding] = await to(
         ChannelItems.destroy({ where: { item_id, channel_id } })
+      );
+
+      if (!items) {
+        res.sendStatus(500);
+      } else {
+        res.json(items);
+      }
+    }
+  });
+
+  //adding user to channel
+  app.post("/api/channel/:channel_id/user/:user_id", async (req, res) => {
+    if (!req.user) res.redirect("/");
+    const { clientId, role } = req.user;
+
+    const { channel_id, user_id } = req.params;
+    console.log("channel_id user_id", channel_id, user_id);
+
+    const [errItem, items] = await to(
+      ChannelUsers.findAll({ where: { user_id, channel_id } })
+    );
+
+    if (items.length === 0) {
+      const [errAdding, adding] = await to(
+        ChannelUsers.create({ user_id, channel_id })
+      );
+
+      if (!adding) {
+        res.sendStatus(500);
+      } else {
+        res.json(adding);
+      }
+    } else {
+      const [errAdding, adding] = await to(
+        ChannelUsers.destroy({ where: { user_id, channel_id } })
       );
 
       if (!items) {

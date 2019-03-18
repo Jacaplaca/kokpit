@@ -74,20 +74,20 @@ function desc(a, b, orderBy) {
 //     : (a, b) => -desc(a, b, orderBy);
 // }
 
-const rows = [
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: true,
-    label: "Towar/Usługa"
-  },
-  {
-    id: "unit",
-    numeric: false,
-    disablePadding: true,
-    label: "Jednostka"
-  }
-];
+// const rows = [
+//   {
+//     id: "name",
+//     numeric: false,
+//     disablePadding: true,
+//     label: "Towar/Usługa"
+//   },
+//   {
+//     id: "unit",
+//     numeric: false,
+//     disablePadding: true,
+//     label: "Jednostka"
+//   }
+// ];
 
 class EnhancedTableHead extends Component {
   state = {
@@ -126,7 +126,8 @@ class EnhancedTableHead extends Component {
       orderBy,
       numSelected,
       rowCount,
-      classes
+      classes,
+      headRow
     } = this.props;
 
     const { headCols } = this.state;
@@ -141,7 +142,7 @@ class EnhancedTableHead extends Component {
               onChange={onSelectAllClick}
             />
           </TableCell>
-          {rows.map(
+          {headRow.map(
             row => (
               <TableCell
                 key={row.id}
@@ -524,7 +525,9 @@ class EnhancedTable extends Component {
       change,
       disableSubmit,
       onSubmit,
-      labelList
+      labelList,
+      headRow,
+      rowType
     } = this.props;
     const {
       data,
@@ -580,6 +583,8 @@ class EnhancedTable extends Component {
                 // rowCount={data.length}
                 rowCount={transactions.length}
                 classes={classes}
+                headRow={headRow}
+                rowType={rowType}
               />
               <TableBody>
                 {/* {stableSort(transactions, getSorting(order, orderBy)) */}
@@ -605,6 +610,7 @@ class EnhancedTable extends Component {
                         handleClickChannel={this.handleClickChannel}
                         disableSubmit={disableSubmit}
                         submit={onSubmit}
+                        rowType={rowType}
                       />
                     );
                   })}

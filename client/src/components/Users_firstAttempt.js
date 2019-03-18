@@ -37,15 +37,18 @@ import MainFrameHOC from "../common/MainFrameHOC";
 // import Confirmation from "./Confirmation";
 // import SelectOrAdd from "../common/inputs/SelectOrAdd";
 // import InputComponent from "../common/inputs/InputComponent";
+import EditableList from "../common/EditableList";
+import ChannelsPickToolbar from "./Products/ChannelsPickToolbar";
 import ProductsList from "../components/Products/ProductsList";
 import ProductForm from "../components/Products/ProductForm";
 // import ItemsConfig from "./ChannelsProdConfig/ItemsConfig";
 
-// const postUrl = "/api/item/";
+const postUrl = "/api/item/";
 // const fetchItemsUrl = "api/allitem/channel";
-// const fetchChannels = "/api/table/channels";
-// const editUrl = "/api/item/edit/id/";
-// const deleteUrl = "/api/item/destroy/";
+const fetchItemsUrl = "api/allusers/channel";
+const fetchChannels = "/api/table/channels";
+const editUrl = "/api/item/edit/id/";
+const deleteUrl = "/api/item/destroy/";
 
 const styles = theme => ({
   input: {
@@ -59,7 +62,7 @@ const styles = theme => ({
   }
 });
 
-class FormWithListClicks extends Component {
+class Users extends Component {
   state = {
     clickedChannel: 1,
     clickedItem: 1,
@@ -73,8 +76,8 @@ class FormWithListClicks extends Component {
   };
 
   componentWillMount = async () => {
-    await this.urlToState(this.props.fetchChannels, "channels");
-    this.itemsToState(this.props.fetchItemsUrl, "items");
+    await this.urlToState(fetchChannels, "channels");
+    this.itemsToState(fetchItemsUrl, "items");
   };
 
   urlToState = async (url, name) => {
@@ -141,52 +144,36 @@ class FormWithListClicks extends Component {
   };
 
   addChannelsToItems = result => {
-    const { headRow } = this.props;
-    let keysValue = [];
-    let fieldLength = {};
-    for (var property in headRow) {
-      if (headRow.hasOwnProperty(property)) {
-        keysValue.push(headRow[property].id);
-      }
-    }
-    for (let key of keysValue) {
-      fieldLength = Object.assign(fieldLength, { [key]: [] });
-    }
+    console.log("addChannelsToItems()");
     const { channels } = this.state;
     // console.log("addFetchToItems", result, channels);
-    if (channels.length > 0) {
-      let items = [];
-      for (let item of result) {
-        for (let key of keysValue) {
-          // fieldLength[key]
-          // fieldLength = Object.assign(fieldLength, {[key]: item[key].length})
-          fieldLength[key].push(item[key].length);
-        }
-        let modItem = {};
-        for (let channel of channels) {
-          const channInItem = item.SalesChannels.filter(
-            sch => sch.id === channel.id
-          );
-          modItem = Object.assign(item, {
-            [channel.id]: channInItem.length > 0 ? 1 : 0
-          });
-        }
-
-        for (let key of keysValue) {
-          modItem = Object.assign(item, {
-            [`${key}_max`]: Math.max(...fieldLength[key])
-          });
-        }
-
-        console.log("addChannelsToItems()", keysValue, fieldLength, modItem);
-        delete modItem["SalesChannels"];
-        items.push(modItem);
+    let items = [];
+    for (let item of result) {
+      let modItem = {};
+      for (let channel of channels) {
+        const channInItem = item.SalesChannels.filter(
+          sch => sch.id === channel.id
+        );
+        modItem = Object.assign(item, {
+          [channel.id]: channInItem.length > 0 ? 1 : 0
+        });
       }
-
-      return items;
-    } else {
-      return result;
+      delete modItem["SalesChannels"];
+      items.push(modItem);
     }
+
+    return items;
+
+    // return result.map(item => {
+    //   return channels.map(channel => {
+    //     const channInItem = item.SalesChannels.filter(
+    //       sch => sch.id === channel.id
+    //     );
+    //     return Object.assign(item, {
+    //       [`${channel.id}`]: channInItem.length > 0 ? 1 : 0
+    //     });
+    //   });
+    // });
   };
 
   fetch = async url => {
@@ -222,10 +209,8 @@ class FormWithListClicks extends Component {
 
   handleClickOnChannel = async (item, channel) => {
     console.log("handleClickOnChannel()", item, channel);
-    await axios.post(
-      `/api/${this.props.manyOne}/${channel}/${this.props.manyTwo}/${item}`
-    );
-    this.itemsToState(this.props.fetchItemsUrl, "items");
+    await axios.post(`/api/channel/${channel}/item/${item}`);
+    this.itemsToState("api/allitem/channel", "items");
   };
 
   handleSubmit = async e => {
@@ -237,21 +222,16 @@ class FormWithListClicks extends Component {
     let sendingUrl;
     if (editedId === 0) {
       body = adding;
-      sendingUrl = this.props.postUrl;
+      sendingUrl = postUrl;
     } else {
       body = editing;
-      sendingUrl = `${this.props.editUrl}/${editedId}`;
+      sendingUrl = `${editUrl}/${editedId}`;
     }
     // body = Object.assign(body, { clickedRow });
     body = JSON.stringify(body);
-    const id = await this.handleAddToDb(
-      e,
-      sendingUrl,
-      body,
-      this.props.fetchItemsUrl
-    );
+    const id = await this.handleAddToDb(e, sendingUrl, body, fetchItemsUrl);
     console.log("handlepost", id);
-    this.itemsToState(this.props.fetchItemsUrl, "items");
+    this.itemsToState(fetchItemsUrl, "items");
     this.setState({
       isLoading: false,
       addedId: { id },
@@ -291,14 +271,13 @@ class FormWithListClicks extends Component {
 
   handleDelete = async selected => {
     console.log("handleDelete");
-    await axios.post(`${this.props.deleteUrl}${selected}`);
-    this.itemsToState(this.props.fetchItemsUrl, "items");
+    await axios.post(`${deleteUrl}${selected}`);
+    this.itemsToState(fetchItemsUrl, "items");
     // this.handleOpenConfirmation();
     // this.setState({ confirmationAction: this.remove });
   };
   // this.handleCloseConfirmation();
   render() {
-    const { headRow, rowType } = this.props;
     const {
       clickedChannel,
       clickedItem,
@@ -372,8 +351,6 @@ class FormWithListClicks extends Component {
               disableSubmit={disableSubmit["editing"]}
               onSubmit={this.handleSubmit}
               labelList={"Lista produktów/usług"}
-              headRow={headRow}
-              rowType={rowType}
             />
           )}
           {/* <Paper> */}
@@ -396,4 +373,4 @@ export default compose(
     actions
   ),
   MainFrameHOC
-)(FormWithListClicks);
+)(Users);

@@ -63,7 +63,8 @@ class Row extends Component {
       handleClick,
       handleClickChannel,
       disableSubmit,
-      submit
+      submit,
+      rowType
     } = this.props;
     return (
       <TableRow
@@ -75,106 +76,42 @@ class Row extends Component {
         key={item.id}
         selected={isSelected}
       >
-        <TableCell padding="checkbox" style={{ width: 35 }}>
+        <TableCell padding="checkbox" style={{ maxWidth: 35, width: 35 }}>
           <Checkbox
             checked={isSelected}
             onClick={event => handleClick(event, item.id)}
           />
         </TableCell>
         {/* <TableCell align="right">{n.name}</TableCell> */}
-        {editedId === item.id ? (
-          <TableCell
-            key={"name"}
-            component="th"
-            scope="row"
-            padding="none"
-            style={{ width: 200 }}
-          >
-            <Input
-              inputProps={{ style: { fontSize: 13 } }}
-              // style={{ marginTop: 6 }}
-              // disableUnderline
-              // startAdornment={
-              //   <InputAdornment position="start">{`${
-              //     field.label
-              //   }: `}</InputAdornment>
-              // }
-              // label={value[field.label]}
-              // key={"unit"}
-              name={"name"}
-              // autoFocus={item.id === editedId}
-              type="text"
-              value={values["name"]}
-              onChange={e => change("name", e.target.value, "editing")}
-            />
-          </TableCell>
-        ) : (
-          <TableCell
-            component="th"
-            scope="row"
-            padding="none"
-            style={{ width: 200 }}
-          >
-            {item.name}
-          </TableCell>
-        )}
-        {editedId === item.id ? (
-          <TableCell
-            component="th"
-            scope="row"
-            padding="none"
-            // style={{ width: 200 }}
-          >
-            <Input
-              inputProps={{ style: { fontSize: 13 } }}
-              // style={{ marginTop: 6 }}
-              // disableUnderline
-              // startAdornment={
-              //   <InputAdornment position="start">{`${
-              //     field.label
-              //   }: `}</InputAdornment>
-              // }
-              // label={value[field.label]}
-              // key={i}
-              // autoFocus={item.id === editedId}
-              type="text"
-              value={values["unit"]}
-              onChange={e => change("unit", e.target.value, "editing")}
-            />
-            <ButtonMy onClick={submit} disabled={disableSubmit}>
-              Ok{" "}
-            </ButtonMy>
-          </TableCell>
-        ) : (
-          <TableCell component="th" scope="row" padding="none">
-            {item.unit}
-          </TableCell>
-        )}
+
+        <Field1
+          rowType={rowType}
+          row={item}
+          values={values}
+          change={change}
+          editedId={editedId}
+        />
+        <Field2
+          editedId={editedId}
+          rowType={rowType}
+          row={item}
+          values={values}
+          submit={submit}
+          disableSubmit={disableSubmit}
+          change={change}
+        />
+        <Field3 rowType={rowType} row={item} />
         {headCols.map(channel => {
           return (
             <TableCell
               padding="checkbox"
               style={{ width: 35 }}
               key={channel.id}
-              // component="th"
-              // scope="row"
-              // padding="none"
             >
               <Checkbox
                 checked={item[channel.id] === 1}
                 icon={<CheckBoxOutlineBlankIcon {...iconPropsOpacity} />}
-                checkedIcon={
-                  <CheckBoxIcon
-                    {...iconProps}
-                    // fontSize={{ fontSize: 15 }}
-                  />
-                }
-                // style={{ fontSize: 4 }}
-                // checked={
-                //   item.SalesChannels.filter(
-                //     sch => sch.id === channel.id
-                //   ).length > 0
-                // }
+                checkedIcon={<CheckBoxIcon {...iconProps} />}
                 onClick={() => handleClickChannel(item.id, channel.id, i)}
               />
             </TableCell>
@@ -196,5 +133,124 @@ class Row extends Component {
     );
   }
 }
+
+const Field1 = ({ rowType, row, editedId, values, change }) => {
+  switch (rowType) {
+    case "product":
+      return editedId === row.id ? (
+        <TableCell
+          key={"name"}
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 25 + row["name_max"] * 7, paddingRight: 23 }}
+        >
+          <Input
+            inputProps={{
+              style: { fontSize: 13, width: 20 + row["name_max"] * 7 }
+            }}
+            name={"name"}
+            type="text"
+            value={values["name"]}
+            onChange={e => change("name", e.target.value, "editing")}
+          />
+        </TableCell>
+      ) : (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 10 + row["name_max"] * 7 }}
+        >
+          {row.name}
+        </TableCell>
+      );
+    // break;
+    case "user":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ width: 15 + row["name_max"] * 6.5 }}
+        >
+          {row.name}
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+const Field2 = ({
+  rowType,
+  row,
+  editedId,
+  values,
+  submit,
+  disableSubmit,
+  change
+}) => {
+  switch (rowType) {
+    case "product":
+      return editedId === row.id ? (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+        >
+          <Input
+            // inputProps={{ style: { fontSize: 13 } }}
+            inputProps={{
+              style: { fontSize: 13, width: 10 + row["unit_max"] * 7 }
+            }}
+            type="text"
+            value={values["unit"]}
+            onChange={e => change("unit", e.target.value, "editing")}
+          />
+          <ButtonMy onClick={submit} disabled={disableSubmit}>
+            Ok
+          </ButtonMy>
+        </TableCell>
+      ) : (
+        <TableCell component="th" scope="row" padding="none">
+          {row.unit}
+        </TableCell>
+      );
+    // break;
+    case "user":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 15 + row["surname_max"] * 6.5 }}
+        >
+          {row.surname}
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+
+const Field3 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "product":
+      return null;
+    // break;
+    case "user":
+      return (
+        <TableCell component="th" scope="row" padding="none">
+          {row.role}
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
 
 export default Row;
