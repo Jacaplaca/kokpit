@@ -67,8 +67,9 @@ module.exports = app => {
   );
 
   app.post("/auth/register", validatorsRegister, async (req, res) => {
+    // console.log('register', req.body);
     // Finds the validation errors in this request and wraps them in an object with handy functions
-    const { email, password } = req.body;
+    const { email, password, name, surname } = req.body;
     console.log("email pass", email, password);
     console.log("req.user", req.user);
     let clientId = 0;
@@ -117,12 +118,19 @@ module.exports = app => {
                 clientId,
                 products,
                 users,
+                name: name || "Nie podano",
+                surname: surname || "Nie podano",
                 status: "active"
               })
                 .then(results => {
-                  console.log("after register", results.get().id);
+                  // console.log("after register", results.get().id);
                   // res.json({ accountCreated: true });
-                  res.json(result);
+                  return res.json({
+                    name: results.get().name,
+                    id: results.get().id,
+                    surname: results.get().surname,
+                    email: results.get().email
+                  });
                   // const user_id = JSON.parse(JSON.stringify(results));
                   // req.login({ user_id: user_id.id }, function(err) {
                   //   res.redirect("/");

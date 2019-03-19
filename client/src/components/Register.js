@@ -3,7 +3,7 @@ import axios from "axios";
 import CenteringComponent from "../common/CenteringComponent";
 import InputComponent from "../common/inputs/InputComponent";
 import FormButtons from "../common/FormButtons";
-import { validateEmail } from "../common/functions";
+import { validateEmail, validateRegister } from "../common/functions";
 
 import { connect } from "react-redux";
 import * as actions from "../actions";
@@ -49,44 +49,25 @@ class Register extends Component {
 
   validate = async () => {
     const { email, password, password2 } = this.state;
-    const goodEmail = "Podaj prawidłowy adres email";
-    const wrongEmail = "Podany email jest już wykorzystany";
-    const badPass = `Hasło powinno mieć conajmniej 5 znaków. Brakuje: ${6 -
-      password.length}`;
-    const goodPass = "Im dłuższe i bardziej skomplikowane hasło tym lepiej";
-    const badPass2 = "Hasła nie mogą się różnić";
-    const goodPass2 = "Hasła są identyczne";
-    let validates = [];
-    let freeEmail = false;
-    const validEmail = validateEmail(email);
-    let emailHelper = goodEmail;
-    let passwordHelper = badPass;
-    let passwordHelper2 = badPass2;
-    if (validEmail) {
-      freeEmail = await this.emailFree(email);
-      freeEmail ? (emailHelper = goodEmail) : (emailHelper = wrongEmail);
-    }
-    const passwordValid = password.length > 5;
-    const password2Valid = password === password2;
-    passwordValid ? (passwordHelper = goodPass) : (passwordHelper = badPass);
-    passwordValid && password2Valid
-      ? (passwordHelper2 = goodPass2)
-      : (passwordHelper2 = badPass2);
-    validates.push(freeEmail);
-    validates.push(passwordValid);
-    validates.push(password2Valid);
+    const validate = await validateRegister({
+      email,
+      password,
+      password2
+    });
+    const {
+      disableSubmit,
+      emailHelper,
+      passwordHelper,
+      passwordHelper2
+    } = validate;
+    console.log("validate", validate);
+
     this.setState({
-      disableSubmit: validates.includes(false),
+      disableSubmit,
       emailHelper,
       passwordHelper,
       passwordHelper2
     });
-  };
-
-  emailFree = async email => {
-    const body = { email };
-    const result = await axios.get(`/auth/email/${email}`);
-    return result.data.free;
   };
 
   onSubmit = async () => {

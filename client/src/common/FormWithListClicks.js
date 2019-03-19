@@ -1,51 +1,14 @@
 import React, { Component } from "react";
-// import { Formik } from "formik";
 import _ from "lodash";
-
 import { connect } from "react-redux";
 import { compose } from "redux";
-// import { startOfMonth, endOfMonth } from "date-fns";
-
-import Slide from "@material-ui/core/Slide";
 import axios from "axios";
-// import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-// import MenuItem from "@material-ui/core/MenuItem";
-import Button from "@material-ui/core/Button";
-import ChevronRight from "@material-ui/icons/ChevronRight";
-
 import * as actions from "../actions";
-// import {
-//   dataToString,
-//   defineds,
-//   dynamicSort,
-//   timeDiff
-// } from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
-//import SiteHeader from "../common/SiteHeader";
-// import CostsTable from "./CostsTable2Remote";
-// import ModalWindow from "./ModalWindow";
-// import CostsForm from "./CostsForm";
-// import DateRangePickerMy from "../common/DateRangePickerMy";
-// import CostsPodsumowanie from "./CostsPodsumowanie";
-// import SerwisForm from "./SerwisForm";
-// import TransactionList from "./TransactionList";
-// import AddCircle from "@material-ui/icons/AddCircle";
-// import Channels from "../common/inputs/SelectFromDBForAdding";
-// import ButtonIconCircle from "../common/ButtonIconCircle";
-// import Confirmation from "./Confirmation";
-// import SelectOrAdd from "../common/inputs/SelectOrAdd";
-// import InputComponent from "../common/inputs/InputComponent";
 import ProductsList from "../components/Products/ProductsList";
 import ProductForm from "../components/Products/ProductForm";
-// import ItemsConfig from "./ChannelsProdConfig/ItemsConfig";
-
-// const postUrl = "/api/item/";
-// const fetchItemsUrl = "api/allitem/channel";
-// const fetchChannels = "/api/table/channels";
-// const editUrl = "/api/item/edit/id/";
-// const deleteUrl = "/api/item/destroy/";
 
 const styles = theme => ({
   input: {
@@ -59,6 +22,8 @@ const styles = theme => ({
   }
 });
 
+const MyContext = React.createContext();
+
 class FormWithListClicks extends Component {
   state = {
     clickedChannel: 1,
@@ -66,13 +31,21 @@ class FormWithListClicks extends Component {
     itemsConfig: false,
     channels: [],
     items: [],
-    adding: { name: "", unit: "" },
-    editing: { name: "", unit: "" },
+    adding: {},
+    editing: {},
     disableSubmit: { adding: true, editing: true },
     editedId: 0
   };
 
   componentWillMount = async () => {
+    const { formFields } = this.props;
+    let adding = {};
+    let editing = {};
+    for (let field of formFields) {
+      Object.assign(adding, { [field]: "" });
+      Object.assign(editing, { [field]: "" });
+    }
+    this.setState({ adding, editing });
     await this.urlToState(this.props.fetchChannels, "channels");
     this.itemsToState(this.props.fetchItemsUrl, "items");
   };
@@ -96,22 +69,7 @@ class FormWithListClicks extends Component {
     });
   };
 
-  // handleChange = (dbField, value, inState) => {
-  //   const { adding, editing } = this.state;
-  //   // this.setState({ value });
-  //   const values = Object.assign([inState], {
-  //     [dbField]: value
-  //   });
-  //   console.log("han", dbField, value, inState, values);
-  //   this.setState({
-  //     [inState]: values,
-  //     disableSubmit: this.validate(values)
-  //   });
-  // };
   handleChange = (dbField, value, inState) => {
-    // console.log("handlechange", dbField, value, inState);
-    // const { adding, editing } = this.state;
-    // this.setState({ value });
     const modyfied = _.clone(this.state[inState]);
     const disableSubmitState = _.clone(this.state.disableSubmit);
     const values = Object.assign(modyfied, {
@@ -178,7 +136,7 @@ class FormWithListClicks extends Component {
           });
         }
 
-        console.log("addChannelsToItems()", keysValue, fieldLength, modItem);
+        // console.log("addChannelsToItems()", keysValue, fieldLength, modItem);
         delete modItem["SalesChannels"];
         items.push(modItem);
       }
@@ -244,21 +202,24 @@ class FormWithListClicks extends Component {
     }
     // body = Object.assign(body, { clickedRow });
     body = JSON.stringify(body);
-    const id = await this.handleAddToDb(
+    const justAdded = await this.handleAddToDb(
       e,
       sendingUrl,
       body,
       this.props.fetchItemsUrl
     );
-    console.log("handlepost", id);
+    // console.log("handlepost", id);
     this.itemsToState(this.props.fetchItemsUrl, "items");
     this.setState({
       isLoading: false,
-      addedId: { id },
+      addedId: { id: justAdded.id },
+      // justAdded,
       adding: { name: "", unit: "" },
       editedId: 0,
       editing: { name: "", unit: "" }
     });
+
+    return justAdded;
   };
 
   handleAddToDb = async (e, postUrl, body, getUrl) => {
@@ -273,9 +234,9 @@ class FormWithListClicks extends Component {
       credentials: "same-origin",
       body
     });
-
     const response = await resp.json();
-    return response.id;
+    console.log("response", response);
+    return response;
     // this.setState({ insertedId: response.id });
   };
 
@@ -298,7 +259,7 @@ class FormWithListClicks extends Component {
   };
   // this.handleCloseConfirmation();
   render() {
-    const { headRow, rowType } = this.props;
+    const { headRow, rowType, children } = this.props;
     const {
       clickedChannel,
       clickedItem,
@@ -308,56 +269,30 @@ class FormWithListClicks extends Component {
       editedId,
       editing,
       value
+      // justAdded
     } = this.state;
-    // console.log("products", editing);
+    const childrenWithProps = React.Children.map(children, child =>
+      React.cloneElement(child, {
+        values: adding,
+        change: this.handleChange,
+        disableSubmit: disableSubmit["adding"],
+        submit: this.handleSubmit
+        // justAdded
+      })
+    );
     return (
       <React.Fragment>
-        <Paper>
-          <ProductForm
-            // disabled={disabled}
-            action={this.handleConfirmPosting}
-            change={this.handleChange}
-            values={adding}
-            addLabel="Dodaj kanał sprzedaży"
-            submit={this.handleSubmit}
-            disableSubmit={disableSubmit["adding"]}
-            // suffix={suffix}
-            // adding={adding}
-            // validate={validate}
-            // addFields={[{ dbField: "name", label: "Nazwa", type: "string" }]}
-          />
-        </Paper>
+        <Paper>{childrenWithProps}</Paper>
         <div
           style={{
             marginTop: "1rem",
             display: "grid",
             // gridGap: "1rem",
             // gridTemplateColumns: "1fr 2fr",
-            gridTemplateRows: "100%",
-            minHeight: "82vh"
+            gridTemplateRows: "100%"
+            // minHeight: "82vh"
           }}
         >
-          {/* <EditableList
-              switchSomething={this.showItemsConfig}
-              editUrl="/api/channel_item/edit/id/"
-              removeUrl="/api/channel_item/remove/"
-              disabled={clickedChannel <= 0}
-              addLabel="Dodaj produkt lub usługę"
-              listLabel="Lista produktów i usług"
-              fetchUrl={`/api/channels/items/${clickedChannel}`}
-              postUrl={`/api/channel_item/${clickedChannel}`}
-              clickedRow={clickedItem}
-              clickOnRow={clickedRow =>
-                this.handleClickOnRow("clickedItem", clickedRow)
-              }
-              addFields={[
-                { dbField: "name", label: "Nazwa", type: "string" },
-                { dbField: "unit", label: "Jednostka", type: "string" }
-              ]}
-              validate={["name", "unit"]}
-              toolbar={<ChannelsPickToolbar toolbar={this.state.channels} />}
-              channels={this.state.channels}
-            /> */}
           {this.state.items.length > 0 && (
             <ProductsList
               delete={this.handleDelete}
@@ -376,9 +311,6 @@ class FormWithListClicks extends Component {
               rowType={rowType}
             />
           )}
-          {/* <Paper> */}
-
-          {/* </Paper> */}
         </div>
       </React.Fragment>
     );

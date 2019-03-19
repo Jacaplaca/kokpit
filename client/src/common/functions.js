@@ -8,7 +8,46 @@ import {
   startOfWeek,
   endOfWeek
 } from "date-fns";
+import axios from "axios";
 import moment from "moment";
+
+export const validateRegister = async ({ email, password, password2 }) => {
+  const goodEmail = "Podaj prawidłowy adres email";
+  const wrongEmail = "Podany email jest już wykorzystany";
+  const badPass = `Hasło powinno mieć conajmniej 5 znaków. Brakuje: ${6 -
+    password.length}`;
+  const goodPass = "Im dłuższe i bardziej skomplikowane hasło tym lepiej";
+  const badPass2 = "Hasła nie mogą się różnić";
+  const goodPass2 = "Hasła są identyczne";
+  let validates = [];
+  let freeEmail = false;
+  const validEmail = validateEmail(email);
+  let emailHelper = goodEmail;
+  let passwordHelper = badPass;
+  let passwordHelper2 = badPass2;
+  if (validEmail) {
+    freeEmail = await emailFree(email);
+    freeEmail ? (emailHelper = goodEmail) : (emailHelper = wrongEmail);
+  }
+  const passwordValid = password.length > 5;
+  const password2Valid = password === password2;
+  passwordValid ? (passwordHelper = goodPass) : (passwordHelper = badPass);
+  passwordValid && password2Valid
+    ? (passwordHelper2 = goodPass2)
+    : (passwordHelper2 = badPass2);
+  validates.push(freeEmail);
+  validates.push(passwordValid);
+  validates.push(password2Valid);
+  const disableSubmit = validates.includes(false);
+
+  return { disableSubmit, emailHelper, passwordHelper, passwordHelper2 };
+};
+
+export const emailFree = async email => {
+  // const body = { email };
+  const result = await axios.get(`/auth/email/${email}`);
+  return result.data.free;
+};
 
 export const validateEmail = email => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

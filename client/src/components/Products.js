@@ -1,5 +1,8 @@
 import React from "react";
+import Paper from "@material-ui/core/Paper";
 import FormWithListClicks from "../common/FormWithListClicks";
+import ProductForm from "../components/Products/ProductForm";
+// import Test from "../components/Products/Test";
 
 const Products = () => (
   <FormWithListClicks
@@ -10,6 +13,7 @@ const Products = () => (
     deleteUrl="/api/item/destroy/"
     manyOne="channel"
     manyTwo="item"
+    formFields={["name", "unit"]}
     headRow={[
       {
         id: "name",
@@ -25,7 +29,9 @@ const Products = () => (
       }
     ]}
     rowType="product"
-  />
+  >
+    <ProductForm addLabel={"Dodaj"} />
+  </FormWithListClicks>
 );
 
 export default Products;
