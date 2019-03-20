@@ -12,7 +12,7 @@ import {
 } from "../../common/functions";
 import SummaryAddingUser from "./SummaryAddingUser";
 
-class Form extends React.Component {
+class UserForm extends React.Component {
   // static contextType = MyContext;
   state = {
     name: "",
@@ -69,7 +69,10 @@ class Form extends React.Component {
     const { values } = this.props;
     const result = await this.props.submit(e);
     // console.log("handleSubmit( in user form)", result);
-    const report = Object.assign(result, { password: values.password });
+    const report = Object.assign(result, {
+      password: values.password,
+      ediadd: "adding"
+    });
     this.setState({ report });
   };
 
@@ -89,6 +92,11 @@ class Form extends React.Component {
 
   nullingReport = () => {
     this.setState({ report: null, sendAccountInfo: null });
+  };
+
+  handleCancel = () => {
+    this.props.cancel();
+    this.nullingReport();
   };
 
   render() {
@@ -112,7 +120,9 @@ class Form extends React.Component {
       // adding,
       validate,
       values,
-      submit
+      submit,
+      activity,
+      cancel
     } = this.props;
 
     return (
@@ -143,7 +153,7 @@ class Form extends React.Component {
                 name="name"
                 label="Imię"
                 type="text"
-                edytuj={value => change("name", value, "adding")}
+                edytuj={value => change("name", value, activity)}
                 value={values.name || ""}
                 // disabled={field2disabled}
               />
@@ -155,7 +165,7 @@ class Form extends React.Component {
                 name="surname"
                 label="Nazwisko"
                 type="text"
-                edytuj={value => change("surname", value, "adding")}
+                edytuj={value => change("surname", value, activity)}
                 value={values.surname || ""}
                 // disabled={field2disabled}
               />
@@ -167,7 +177,7 @@ class Form extends React.Component {
                 name="email"
                 label="Email"
                 type="text"
-                edytuj={value => change("email", value, "adding")}
+                edytuj={value => change("email", value, activity)}
                 value={values.email || ""}
                 helperText={emailHelper}
                 // disabled={field2disabled}
@@ -180,7 +190,7 @@ class Form extends React.Component {
                 name="password"
                 label="Hasło"
                 type="password"
-                edytuj={value => change("password", value, "adding")}
+                edytuj={value => change("password", value, activity)}
                 value={values.password || ""}
                 password
                 helperText={passwordHelper}
@@ -194,7 +204,7 @@ class Form extends React.Component {
                 name="password2"
                 label="Potwierdź hasło"
                 type="password2"
-                edytuj={value => change("password2", value, "adding")}
+                edytuj={value => change("password2", value, activity)}
                 value={values.password2 || ""}
                 password
                 helperText={passwordHelper2}
@@ -210,7 +220,7 @@ class Form extends React.Component {
                     change(
                       addFields[0].dbField,
                       `${value.charAt(0).toUpperCase()}${value.slice(1)}`,
-                      "adding"
+                      activity
                     )
                   }
                   value={value[addFields[0].dbField] || ""}
@@ -245,9 +255,7 @@ class Form extends React.Component {
                 }
                 subAction={e => this.handleSubmit(e)}
                 cancelLabel={"Anuluj"}
-                cancelAction={() => {
-                  console.log("clear");
-                }}
+                cancelAction={this.handleCancel}
               />
             </div>
           </div>
@@ -273,4 +281,4 @@ class Form extends React.Component {
 //   ) : null;
 // };
 
-export default Form;
+export default UserForm;

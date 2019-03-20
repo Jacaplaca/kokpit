@@ -14,8 +14,14 @@ module.exports = app => {
     if (!req.user) {
       return res.redirect("/");
     }
-    const { name, surname, email, password } = req.body;
-    const response = await sendAccountInfo({ name, surname, email, password });
+    const { name, surname, email, password, ediadd } = req.body;
+    const response = await sendAccountInfo({
+      name,
+      surname,
+      email,
+      password,
+      ediadd
+    });
     console.log("response", response);
     return res.json(response);
   });

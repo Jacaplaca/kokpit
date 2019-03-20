@@ -9,6 +9,7 @@ import * as actions from "../actions";
 import MainFrameHOC from "../common/MainFrameHOC";
 import ProductsList from "../components/Products/ProductsList";
 import ProductForm from "../components/Products/ProductForm";
+import ModalWindow from "../components/ModalWindow";
 
 const styles = theme => ({
   input: {
@@ -34,10 +35,17 @@ class FormWithListClicks extends Component {
     adding: {},
     editing: {},
     disableSubmit: { adding: true, editing: true },
-    editedId: 0
+    editedId: 0,
+    openModal: false
   };
 
   componentWillMount = async () => {
+    this.createEmptyFields();
+    await this.urlToState(this.props.fetchChannels, "channels");
+    this.itemsToState(this.props.fetchItemsUrl, "items");
+  };
+
+  createEmptyFields = () => {
     const { formFields } = this.props;
     let adding = {};
     let editing = {};
@@ -46,8 +54,6 @@ class FormWithListClicks extends Component {
       Object.assign(editing, { [field]: "" });
     }
     this.setState({ adding, editing });
-    await this.urlToState(this.props.fetchChannels, "channels");
-    this.itemsToState(this.props.fetchItemsUrl, "items");
   };
 
   urlToState = async (url, name) => {
@@ -70,6 +76,7 @@ class FormWithListClicks extends Component {
   };
 
   handleChange = (dbField, value, inState) => {
+    console.log("handlechange", dbField, value, inState);
     const modyfied = _.clone(this.state[inState]);
     const disableSubmitState = _.clone(this.state.disableSubmit);
     const values = Object.assign(modyfied, {
@@ -242,11 +249,28 @@ class FormWithListClicks extends Component {
 
   handleEdit = id => {
     const { items, editedId } = this.state;
+    const { editFields } = this.props;
     const editedItem = items.filter(item => item.id === id);
+    console.log("editedItem", editedItem);
+    let editing = {};
+    for (let field of editFields) {
+      if (field === "password" || field === "password2") {
+        Object.assign(editing, { [field]: "" });
+      } else if (field === "email") {
+        Object.assign(editing, {
+          [field]: editedItem[0][field],
+          originalEmail: editedItem[0][field]
+        });
+      } else {
+        Object.assign(editing, { [field]: editedItem[0][field] });
+      }
+    }
     this.setState({
       editedId: editedId !== 0 ? (editedId === id ? 0 : id) : id,
+      openModal: true,
       // editedId: editedId !== 0 || editedId !== id ? id : 0,
-      editing: { name: editedItem[0].name, unit: editedItem[0].unit }
+      // editing: { name: editedItem[0].name, unit: editedItem[0].unit }
+      editing
     });
   };
 
@@ -256,6 +280,11 @@ class FormWithListClicks extends Component {
     this.itemsToState(this.props.fetchItemsUrl, "items");
     // this.handleOpenConfirmation();
     // this.setState({ confirmationAction: this.remove });
+  };
+
+  handleCancel = () => {
+    this.createEmptyFields();
+    this.setState({ openModal: false, editedId: 0 });
   };
   // this.handleCloseConfirmation();
   render() {
@@ -271,18 +300,46 @@ class FormWithListClicks extends Component {
       value
       // justAdded
     } = this.state;
-    const childrenWithProps = React.Children.map(children, child =>
-      React.cloneElement(child, {
-        values: adding,
-        change: this.handleChange,
-        disableSubmit: disableSubmit["adding"],
-        submit: this.handleSubmit
-        // justAdded
-      })
-    );
+    // console.log("reactchio", React.Children);
+    const childrenWithProps = React.Children.map(children, (child, i) => {
+      // console.log("child", child, i);
+      if (i !== 1) {
+        return (
+          <Paper>
+            {React.cloneElement(child, {
+              values: adding,
+              change: this.handleChange,
+              disableSubmit: disableSubmit["adding"],
+              submit: this.handleSubmit,
+              cancel: this.handleCancel
+              // justAdded
+            })}
+          </Paper>
+        );
+      } else {
+        return (
+          <ModalWindow
+            open={this.state.openModal}
+            // close={this.handleClose}
+            maxWidth={1000}
+          >
+            <div style={{ backgroundColor: "white" }}>
+              {React.cloneElement(child, {
+                values: editing,
+                change: this.handleChange,
+                disableSubmit: disableSubmit["editing"],
+                submit: this.handleSubmit,
+                cancel: this.handleCancel
+                // justAdded
+              })}
+            </div>
+          </ModalWindow>
+        );
+      }
+    });
     return (
       <React.Fragment>
-        <Paper>{childrenWithProps}</Paper>
+        {childrenWithProps}
         <div
           style={{
             marginTop: "1rem",

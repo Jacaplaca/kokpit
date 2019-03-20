@@ -16,7 +16,7 @@ import Send from "@material-ui/icons/Send";
 
 class SummaryAddingUser extends Component {
   render() {
-    let { report, cancel, send, ok } = this.props;
+    let { report, cancel, send, ok, headline, footer } = this.props;
 
     const styles = {
       summaryTitles: {
@@ -62,7 +62,7 @@ class SummaryAddingUser extends Component {
               textAlign: "center"
             }}
           >
-            Konto pracownika zostało założone pomyślnie!
+            {headline}
           </h6>
           <Grid container spacing={0}>
             <Grid item xs={4}>
@@ -123,10 +123,7 @@ class SummaryAddingUser extends Component {
             </Grid>
           </Grid>
           <div style={{ marginTop: 30, textAlign: "center" }}>
-            <p style={{ fontSize: "0.8em" }}>
-              Czy chcesz wysłać pracownikowi email z danymi dostępowymi do jego
-              konta?
-            </p>
+            <p style={{ fontSize: "0.8em" }}>{footer}</p>
             <FormButtons
               subAction={() => send(report)}
               // subDisable={}
@@ -220,6 +217,10 @@ class SummaryAddingUser extends Component {
 //   // label: "Button Text"
 // };
 
-// InputComponent.defaultProps = {};
+SummaryAddingUser.defaultProps = {
+  headline: "Konto pracownika zostało założone pomyślnie!",
+  footer:
+    "Czy chcesz wysłać pracownikowi email z danymi dostępowymi do jego konta?"
+};
 
 export default SummaryAddingUser;

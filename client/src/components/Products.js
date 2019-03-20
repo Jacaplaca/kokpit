@@ -14,6 +14,7 @@ const Products = () => (
     manyOne="channel"
     manyTwo="item"
     formFields={["name", "unit"]}
+    editFields={["name", "unit"]}
     headRow={[
       {
         id: "name",

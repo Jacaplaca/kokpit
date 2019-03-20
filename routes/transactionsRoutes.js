@@ -235,7 +235,7 @@ module.exports = app => {
     if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
 
-    const [err, items] = await to(
+    const [err, users] = await to(
       User.findAll({
         include: [
           {
@@ -248,10 +248,34 @@ module.exports = app => {
       })
     );
 
-    if (!items) {
+    if (!users) {
       res.sendStatus(500);
     } else {
-      res.json(items);
+      res.json(users);
+      // res.json(
+      //   users.map(x => {
+      //     const id = x.get().id;
+      //     const name = x.get().name;
+      //     const surname = x.get().surname;
+      //     const email = x.get().email;
+      //     const password = password;
+      //     // return Object.assign(x.get(), {
+      //     //   bonus: suffix === "%" ? `${bonus * 100}` : `${bonus}`
+      //     // });
+      //     // console.log(x);
+      //   })
+      // );
+      // return res.json(
+      //   users.map((x, i) => {
+      //     return Object.assign(users, {
+      //       // id: x.get().id,
+      //       // name: x.get().name,
+      //       // surname: x.get().surname,
+      //       password: ""
+      //       // email: x.get().email
+      //     });
+      //   })
+      // );
     }
   });
 

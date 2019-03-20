@@ -11,22 +11,28 @@ import {
 import axios from "axios";
 import moment from "moment";
 
-export const validateRegister = async ({ email, password, password2 }) => {
+export const validateRegister = async ({
+  email,
+  password,
+  password2,
+  originalEmail
+}) => {
+  console.log("validateRegister()", email, password, password2, originalEmail);
   const goodEmail = "Podaj prawidłowy adres email";
   const wrongEmail = "Podany email jest już wykorzystany";
-  const badPass = `Hasło powinno mieć conajmniej 5 znaków. Brakuje: ${6 -
+  const badPass = `Hasło powinno mieć conajmniej 6 znaków. Brakuje: ${6 -
     password.length}`;
   const goodPass = "Im dłuższe i bardziej skomplikowane hasło tym lepiej";
   const badPass2 = "Hasła nie mogą się różnić";
   const goodPass2 = "Hasła są identyczne";
   let validates = [];
   let freeEmail = false;
-  const validEmail = validateEmail(email);
+  const validEmail = originalEmail === email || validateEmail(email);
   let emailHelper = goodEmail;
   let passwordHelper = badPass;
   let passwordHelper2 = badPass2;
   if (validEmail) {
-    freeEmail = await emailFree(email);
+    freeEmail = originalEmail === email || (await emailFree(email));
     freeEmail ? (emailHelper = goodEmail) : (emailHelper = wrongEmail);
   }
   const passwordValid = password.length > 5;
@@ -38,6 +44,13 @@ export const validateRegister = async ({ email, password, password2 }) => {
   validates.push(freeEmail);
   validates.push(passwordValid);
   validates.push(password2Valid);
+  console.log(
+    "validatesregister",
+    validates,
+    originalEmail === email,
+    originalEmail,
+    email
+  );
   const disableSubmit = validates.includes(false);
 
   return { disableSubmit, emailHelper, passwordHelper, passwordHelper2 };

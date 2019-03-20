@@ -38,6 +38,71 @@ module.exports = app => {
   //   res.send('req.user');
   // });
 
+  app.post("/auth/user/edit/id/:id", (req, res, next) => {
+    console.log("/auth/user/edit/id/:id");
+    const id = req.params.id;
+    const { name, surname, email, password } = req.body;
+    console.log("edytuje usera api,", id, req.body);
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    let form = {};
+    if (password === "") {
+      form = Object.assign({}, { name, surname, email });
+
+      User.update(form, {
+        where: { clientId, id }
+      })
+        .then(result => {
+          console.log("result", result);
+          // return res.json(result);
+          return res.json({
+            name,
+            id,
+            surname,
+            email,
+            password: "Nie zmieniono"
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          res.sendStatus(500);
+        });
+    } else {
+      // form = Object.assign(req.body, { password });
+      bcrypt.hash(password, saltRounds, function(err, hash) {
+        User.update(
+          {
+            email: email,
+            password: hash,
+            name: name || "Nie podano",
+            surname: surname || "Nie podano",
+            status: "active"
+          },
+          { where: { clientId, id } }
+        )
+          .then(result => {
+            console.log("result", result);
+            // return res.json(result);
+            return res.json({
+              name,
+              id,
+              surname,
+              email,
+              password
+            });
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+      });
+    }
+    // console.log(req.body);
+  });
+
   app.get("/auth/email/:email", (req, res) => {
     User.findOne({
       where: { email: req.params.email }

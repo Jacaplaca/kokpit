@@ -48,32 +48,23 @@ const main = async (text, html, time, date, email, subject) => {
 
 // ;
 
-const sendAccountInfo = async ({ name, surname, email, password }) => {
+const sendAccountInfo = async ({ name, surname, email, password, ediadd }) => {
   const data = new Date();
   const timeFormated = moment(data).format("H:mm");
   const formatedDay = moment(data).format("DD MMMM YYYY");
   // console.log(formatedDay, timeFormated);
-  const subject = `✉️ Nowe konto dla ${email} w serwisie Świadoma Firma 📈`;
-  let html = `<h3>Dnia ${formatedDay} dla konta ${email} w serwisie Świadoma Firma zostało założone konto.</h3><p>Aby się zalogować prosimy kliknąć w ten link oraz podać następujące dane dostępowe:</p><p>Login: ${email}</p><p>Hasło: ${password}</p>`;
-  // const html = sms.map(x => {
-  //   const line = `<p>${x.name} ${
-  //     x.surname
-  //   } otrzymał dziś o godzinie ${timeFormated} na nr tel.: ${
-  //     x.tel
-  //   } sms o treści: "${x.sms}".</p>`;
-  //   html = `${html} ${line}`;
-  // });
-
-  let text = `Dnia ${formatedDay} dla konta ${email} w serwisie Świadoma Firma zostało założone konto. Aby się zalogować prosimy kliknąć w ten link oraz podać następujące dane dostępowe: Login: ${email} Hasło: ${password}`;
-  // sms.map(x => {
-  //   const line = `${x.name} ${
-  //     x.surname
-  //   } otrzymał dziś o godzinie ${timeFormated} na nr tel.: ${
-  //     x.tel
-  //   } sms o treści: "${x.sms}".`;
-  //   text = `${text} ${line}`;
-  // });
-  // console.log("html", html);
+  let subject;
+  let html;
+  let text;
+  if (ediadd === "adding") {
+    subject = `✉️ Nowe konto dla ${email} w serwisie Świadoma Firma 📈`;
+    html = `<h3>Dnia ${formatedDay} dla konta ${email} w serwisie Świadoma Firma zostało założone konto.</h3><p>Aby się zalogować prosimy kliknąć w ten link oraz podać następujące dane dostępowe:</p><p>Login: ${email}</p><p>Hasło: ${password}</p>`;
+    text = `Dnia ${formatedDay} dla konta ${email} w serwisie Świadoma Firma zostało założone konto. Aby się zalogować prosimy kliknąć w ten link oraz podać następujące dane dostępowe: Login: ${email} Hasło: ${password}`;
+  } else if (ediadd === "editing") {
+    subject = `✉️ Konto dla ${email} w serwisie Świadoma Firma 📈 zostało zmienione`;
+    html = `<h3>Dnia ${formatedDay} dla konta ${email} w serwisie Świadoma Firma zostały zmienione niektóre dane.</h3><p>Aby się zalogować prosimy kliknąć w ten link oraz podać następujące dane dostępowe:</p><p>Login: ${email}</p><p>Hasło: ${password}</p>`;
+    text = `Dnia ${formatedDay} dla konta ${email} w serwisie Świadoma Firma zostały zmienione niektóre dane. Aby się zalogować prosimy kliknąć w ten link oraz podać następujące dane dostępowe: Login: ${email} Hasło: ${password}`;
+  }
   return main(text, html, timeFormated, formatedDay, email, subject)
     .then(response => {
       console.log("sendAccountInfo()", response);
