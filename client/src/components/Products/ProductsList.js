@@ -550,7 +550,8 @@ class EnhancedTable extends Component {
       clickOnRow,
       disableEdit,
       disableDelete,
-      searchColumns
+      searchColumns,
+      children
     } = this.props;
     const {
       data,
@@ -580,6 +581,7 @@ class EnhancedTable extends Component {
     // console.log("product list", values, values["name"], values["unit"]);
     return (
       <React.Fragment>
+        <div style={{ position: "relative" }}>{children}</div>
         <Confirmation
           open={open}
           close={this.handleClose}

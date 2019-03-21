@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Paper from "@material-ui/core/Paper";
-
+import Slide from "@material-ui/core/Slide";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
@@ -29,7 +29,8 @@ class Channels extends Component {
   state = {
     items: null,
     itemsUnfilter: null,
-    channel: " we wszystkich systemach"
+    channel: " we wszystkich systemach",
+    itemsConfig: false
   };
 
   componentWillMount = async () => {
@@ -52,37 +53,61 @@ class Channels extends Component {
     // return list.data.sort(dynamicSort("name"));
   };
 
-  handleRowClick = id => {
-    const { itemsUnfilter } = this.state;
-    let filteredItems = [];
-    let name;
-    for (let item of itemsUnfilter) {
-      const channels = item.SalesChannels;
-      for (let channel of channels) {
-        if (channel.id === id) {
-          name = channel.name;
-          filteredItems.push(item);
+  handleRowClick = (comp, id) => {
+    console.log("handleRowClick", comp, id);
+
+    this.handleClickOnRow(comp, id);
+  };
+
+  showItemsConfig = () => {
+    this.setState(state => ({ itemsConfig: true }));
+  };
+
+  hideItemsConfig = () => {
+    this.setState(state => ({ itemsConfig: false }));
+  };
+
+  switchItemsConfig = () => {
+    this.setState(state => ({ itemsConfig: !state.itemsConfig }));
+  };
+
+  handleClickOnRow = (comp, id) => {
+    console.log("handleClickOnRow", comp, id);
+    this.setState({ [comp]: id });
+    if (comp === "clickedChannel") {
+      const { itemsUnfilter } = this.state;
+      let filteredItems = [];
+      let name;
+      for (let item of itemsUnfilter) {
+        const channels = item.SalesChannels;
+        for (let channel of channels) {
+          if (channel.id === id) {
+            name = channel.name;
+            filteredItems.push(item);
+          }
         }
       }
+      this.setState({
+        items: filteredItems,
+        channel: ` w ${name}`
+      });
+
+      this.hideItemsConfig();
+    } else if (comp === "clickedItem") {
+      if (id === this.state.clickedItem) {
+        this.switchItemsConfig();
+      } else {
+        this.showItemsConfig();
+      }
     }
-
-    // const channel =
-    //   filteredItems[0] &&
-    //   filteredItems[0].SalesChannels[0] &&
-    //   filteredItems[0].SalesChannels[0].name;
-
-    this.setState({
-      items: filteredItems,
-      channel: ` w ${name}`
-    });
   };
 
-  handleClickOnItem = id => {
-    console.log("id id", id);
-  };
+  // handleClickOnItem = id => {
+  //   console.log("id id", id);
+  // };
 
   render() {
-    const { items, channel } = this.state;
+    const { items, channel, itemsConfig } = this.state;
     return (
       <div
         style={{
@@ -93,7 +118,7 @@ class Channels extends Component {
       >
         <div>
           <FormWithListClicks
-            rowClick={this.handleRowClick}
+            rowClick={id => this.handleClickOnRow("clickedChannel", id)}
             postUrl="/api/channel/"
             fetchItemsUrl="/api/channels"
             //fetchChannels="/api/table/channels"
@@ -126,8 +151,10 @@ class Channels extends Component {
           {items && items.length > 0 && (
             <Config
               data={items}
-              rowClick={this.handleClickOnItem}
+              rowClick={id => this.handleClickOnRow("clickedItem", id)}
               label={channel}
+              showChild={itemsConfig}
+              hideChild={this.hideItemsConfig}
             />
           )}
         </div>
