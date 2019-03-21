@@ -73,24 +73,6 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/channel/destroy/:id", (req, res, next) => {
-    const id = req.params.id;
-    // if (!req.user) {
-    //   console.log("przekierowanie");
-    //   return res.redirect("/");
-    // }
-    // const { user_id, clientId } = req.user;
-    console.log("trans remove id", id.split(","));
-    Channel.destroy({ where: { clientId: 2, id: id.split(",") } })
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   //remove item
   app.post("/api/item/destroy/:id", (req, res, next) => {
     const id = req.params.id;
@@ -208,6 +190,7 @@ module.exports = app => {
   });
 
   app.get("/api/allitem/channel/", async (req, res) => {
+    console.log("allitem/channel");
     if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
 
@@ -252,30 +235,6 @@ module.exports = app => {
       res.sendStatus(500);
     } else {
       res.json(users);
-      // res.json(
-      //   users.map(x => {
-      //     const id = x.get().id;
-      //     const name = x.get().name;
-      //     const surname = x.get().surname;
-      //     const email = x.get().email;
-      //     const password = password;
-      //     // return Object.assign(x.get(), {
-      //     //   bonus: suffix === "%" ? `${bonus * 100}` : `${bonus}`
-      //     // });
-      //     // console.log(x);
-      //   })
-      // );
-      // return res.json(
-      //   users.map((x, i) => {
-      //     return Object.assign(users, {
-      //       // id: x.get().id,
-      //       // name: x.get().name,
-      //       // surname: x.get().surname,
-      //       password: ""
-      //       // email: x.get().email
-      //     });
-      //   })
-      // );
     }
   });
 

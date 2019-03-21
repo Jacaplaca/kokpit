@@ -1,29 +1,17 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import { connect } from "react-redux";
-import { compose } from "redux";
 import axios from "axios";
-import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import * as actions from "../actions";
-import MainFrameHOC from "../common/MainFrameHOC";
+// import { connect } from "react-redux";
+// import { compose } from "redux";
+// import { withStyles } from "@material-ui/core/styles";
+// import * as actions from "../actions";
+// import MainFrameHOC from "../common/MainFrameHOC";
 import ProductsList from "../components/Products/ProductsList";
-import ProductForm from "../components/Products/ProductForm";
+// import ProductForm from "../components/Products/ProductForm";
 import ModalWindow from "../components/ModalWindow";
 
-const styles = theme => ({
-  input: {
-    display: "flex",
-    padding: 0
-  },
-  placeholder: {
-    position: "absolute",
-    left: 2,
-    fontSize: 16
-  }
-});
-
-const MyContext = React.createContext();
+// const MyContext = React.createContext();
 
 class FormWithListClicks extends Component {
   state = {
@@ -40,8 +28,9 @@ class FormWithListClicks extends Component {
   };
 
   componentWillMount = async () => {
+    const { fetchChannels } = this.props;
     this.createEmptyFields();
-    await this.urlToState(this.props.fetchChannels, "channels");
+    fetchChannels && (await this.urlToState(fetchChannels, "channels"));
     this.itemsToState(this.props.fetchItemsUrl, "items");
   };
 
@@ -288,7 +277,7 @@ class FormWithListClicks extends Component {
   };
   // this.handleCloseConfirmation();
   render() {
-    const { headRow, rowType, children } = this.props;
+    const { headRow, rowType, children, rowClick } = this.props;
     const {
       clickedChannel,
       clickedItem,
@@ -352,11 +341,12 @@ class FormWithListClicks extends Component {
         >
           {this.state.items.length > 0 && (
             <ProductsList
+              clickOnChannel={this.handleClickOnChannel}
               delete={this.handleDelete}
               transactions={this.state.items}
               headCols={this.state.channels}
               edit={this.handleEdit}
-              clickOnChannel={this.handleClickOnChannel}
+              clickOnRow={rowClick}
               editedId={editedId}
               change={this.handleChange}
               values={editing}
@@ -374,15 +364,17 @@ class FormWithListClicks extends Component {
   }
 }
 
-function mapStateToProps({ auth }) {
-  return { auth };
-}
+// function mapStateToProps({ auth }) {
+//   return { auth };
+// }
+//
+// export default compose(
+//   withStyles(styles, { withTheme: true }),
+//   connect(
+//     mapStateToProps,
+//     actions
+//   ),
+//   MainFrameHOC
+// )(FormWithListClicks);
 
-export default compose(
-  withStyles(styles, { withTheme: true }),
-  connect(
-    mapStateToProps,
-    actions
-  ),
-  MainFrameHOC
-)(FormWithListClicks);
+export default FormWithListClicks;

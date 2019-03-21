@@ -129,7 +129,25 @@ class DrawerMy extends React.Component {
         text: "Użytkownicy",
         link: "/users",
         icon: "InsertChartOutlined"
+      },
+      {
+        comp: "channels",
+        text: "Systemy prowizyjne",
+        link: "/systems",
+        icon: "InsertChartOutlined"
+      },
+      {
+        comp: "invoices",
+        text: "Faktury",
+        link: "/invoices",
+        icon: "InsertChartOutlined"
       }
+      // {
+      //   comp: "channels_config",
+      //   text: "Konfiguracja systemów",
+      //   link: "/configs",
+      //   icon: "InsertChartOutlined"
+      // }
     ];
     return (
       <Drawer

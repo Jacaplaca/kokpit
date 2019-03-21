@@ -1,4 +1,5 @@
 import React, { Component, PureComponent } from "react";
+import currency from "currency.js";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -12,9 +13,9 @@ import { shallowEqual } from "../../common/functions";
 import ButtonMy from "../../common/ButtonMy";
 
 class Row extends Component {
-  componentWillReceiveProps(nextProps) {
-    // console.log("row", this.shallowEqual(this.props.item, nextProps.item));
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   // console.log("row", this.shallowEqual(this.props.item, nextProps.item));
+  // }
 
   shouldComponentUpdate(nextProps, nextState) {
     const { item, editedId, values, isSelected } = this.props;
@@ -61,15 +62,19 @@ class Row extends Component {
       i,
       edit,
       handleClick,
+      rowClick,
       handleClickChannel,
       disableSubmit,
       submit,
-      rowType
+      rowType,
+      disableEdit,
+      disableDelete
     } = this.props;
     return (
       <TableRow
         hover
-        // onClick={event => this.handleClick(event, n.id)}
+        onClick={() => rowClick(item.id)}
+        style={{ cursor: "pointer" }}
         role="checkbox"
         aria-checked={isSelected}
         tabIndex={-1}
@@ -77,11 +82,14 @@ class Row extends Component {
         selected={isSelected}
       >
         <TableCell padding="checkbox" style={{ maxWidth: 35, width: 35 }}>
-          <Checkbox
-            checked={isSelected}
-            onClick={event => handleClick(event, item.id)}
-          />
+          {disableDelete || (
+            <Checkbox
+              checked={isSelected}
+              onClick={event => handleClick(event, item.id)}
+            />
+          )}
         </TableCell>
+
         {/* <TableCell align="right">{n.name}</TableCell> */}
 
         <Field1
@@ -90,6 +98,8 @@ class Row extends Component {
           values={values}
           change={change}
           editedId={editedId}
+          submit={submit}
+          disableSubmit={disableSubmit}
         />
         <Field2
           editedId={editedId}
@@ -101,6 +111,7 @@ class Row extends Component {
           change={change}
         />
         <Field3 rowType={rowType} row={item} />
+        <Field4 rowType={rowType} row={item} />
         {headCols.map(channel => {
           return (
             <TableCell
@@ -119,22 +130,32 @@ class Row extends Component {
         })}
         <TableCell padding="checkbox" style={{ width: 35 }}>
           {/* <Checkbox checked={is selected} /> */}
-          <ButtonIconCircle
-            akcja={() => {
-              // props.edit(cell);
-              console.log("edit", item.id);
-              edit(item.id);
-            }}
-          >
-            <EditIcon {...iconProps} />
-          </ButtonIconCircle>
+          {disableDelete || (
+            <ButtonIconCircle
+              akcja={() => {
+                // props.edit(cell);
+                console.log("edit", item.id);
+                edit(item.id);
+              }}
+            >
+              <EditIcon {...iconProps} />
+            </ButtonIconCircle>
+          )}
         </TableCell>
       </TableRow>
     );
   }
 }
 
-const Field1 = ({ rowType, row, editedId, values, change }) => {
+const Field1 = ({
+  rowType,
+  row,
+  editedId,
+  values,
+  change,
+  submit,
+  disableSubmit
+}) => {
   switch (rowType) {
     case "product":
       return editedId === row.id ? (
@@ -167,6 +188,40 @@ const Field1 = ({ rowType, row, editedId, values, change }) => {
           {row.name}
         </TableCell>
       );
+    case "channel":
+      return editedId === row.id ? (
+        <TableCell
+          key={"name"}
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 25 + row["name_max"] * 7, paddingRight: 23 }}
+        >
+          <Input
+            inputProps={{
+              style: { fontSize: 13, width: 15 + values["name"].length * 6.25 }
+            }}
+            name={"name"}
+            type="text"
+            value={values["name"]}
+            onChange={e => change("name", e.target.value, "editing")}
+          />
+          <ButtonMy onClick={submit} disabled={disableSubmit}>
+            Ok
+          </ButtonMy>
+        </TableCell>
+      ) : (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 10 + row["name_max"] * 7 }}
+        >
+          {row.name}
+        </TableCell>
+      );
     // break;
     case "user":
       return (
@@ -177,6 +232,28 @@ const Field1 = ({ rowType, row, editedId, values, change }) => {
           style={{ width: 15 + row["name_max"] * 6.5 }}
         >
           {row.name}
+        </TableCell>
+      );
+    case "productsInChannel":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ width: 15 + row["name_max"] * 6.5 }}
+        >
+          {row.name}
+        </TableCell>
+      );
+    case "invoices":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ width: 100 }}
+        >
+          {row.nr_pelny}
         </TableCell>
       );
     default:
@@ -232,6 +309,18 @@ const Field2 = ({
           {row.surname}
         </TableCell>
       );
+    case "invoices":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 60 }}
+        >
+          {row.termin_platnosci}
+        </TableCell>
+      );
     default:
       return null;
   }
@@ -246,6 +335,40 @@ const Field3 = ({ rowType, row }) => {
       return (
         <TableCell component="th" scope="row" padding="none">
           {row.role}
+        </TableCell>
+      );
+    case "invoices":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 60 }}
+        >
+          {`${currency(row.pozostalo_do_zaplacenia, {
+            separator: " ",
+            decimal: ","
+          }).format()} zł`}
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+
+const Field4 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "invoices":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 100 }}
+        >
+          {row.klient}
         </TableCell>
       );
     default:

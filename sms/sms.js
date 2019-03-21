@@ -99,6 +99,9 @@ function fetchInvoices() {
           termin_platnosci: {
             [Op.lt]: new Date(new Date() - 15 * 24 * 60 * 60 * 1000),
             [Op.gt]: new Date(new Date() - 30 * 24 * 60 * 60 * 1000)
+          },
+          pozostalo_do_zaplacenia: {
+            [Op.gt]: 1
           }
         },
         raw: true

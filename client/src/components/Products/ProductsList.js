@@ -127,7 +127,8 @@ class EnhancedTableHead extends Component {
       numSelected,
       rowCount,
       classes,
-      headRow
+      headRow,
+      disableDelete
     } = this.props;
 
     const { headCols } = this.state;
@@ -136,11 +137,13 @@ class EnhancedTableHead extends Component {
       <TableHead>
         <TableRow>
           <TableCell padding="checkbox">
-            <Checkbox
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={numSelected === rowCount}
-              onChange={onSelectAllClick}
-            />
+            {disableDelete || (
+              <Checkbox
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={numSelected === rowCount}
+                onChange={onSelectAllClick}
+              />
+            )}
           </TableCell>
           {headRow.map(
             row => (
@@ -259,7 +262,15 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { numSelected, classes, deleteRows, data, search, labelList } = props;
+  const {
+    numSelected,
+    classes,
+    deleteRows,
+    data,
+    search,
+    labelList,
+    searchColumns
+  } = props;
 
   return (
     <Toolbar
@@ -293,7 +304,11 @@ let EnhancedTableToolbar = props => {
             </IconButton>
           </Tooltip>
         ) : (
-          <SearchField data={data} columns={["name"]} search={search} />
+          <SearchField
+            data={data}
+            columns={searchColumns || ["name"]}
+            search={search}
+          />
         )
         // <Tooltip title="Filter list">
         //   <IconButton aria-label="Filter list">
@@ -315,11 +330,11 @@ EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
 const styles = theme => ({
   root: {
-    width: "100%",
-    marginTop: theme.spacing.unit * 3
+    width: "100%"
+    // marginTop: theme.spacing.unit * 3
   },
   table: {
-    minWidth: 1020
+    // minWidth: 1020
   },
   tableWrapper: {
     overflowX: "auto"
@@ -514,6 +529,10 @@ class EnhancedTable extends Component {
     this.setState({ list: result, query });
   };
 
+  // handleRowClick = id => {
+  //   console.log("id", id);
+  // };
+
   render() {
     const {
       classes,
@@ -527,7 +546,11 @@ class EnhancedTable extends Component {
       onSubmit,
       labelList,
       headRow,
-      rowType
+      rowType,
+      clickOnRow,
+      disableEdit,
+      disableDelete,
+      searchColumns
     } = this.props;
     const {
       data,
@@ -570,10 +593,12 @@ class EnhancedTable extends Component {
             search={this.handleSearch}
             data={listUnfiltered}
             labelList={labelList}
+            searchColumns={searchColumns}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
               <EnhancedTableHead
+                disableDelete={disableDelete}
                 headCols={headCols}
                 numSelected={selected.length}
                 order={order}
@@ -595,6 +620,8 @@ class EnhancedTable extends Component {
                     const isSelected = this.isSelected(item.id);
                     return (
                       <Row
+                        disableEdit={disableEdit}
+                        disableDelete={disableDelete}
                         key={item.id}
                         isSelected={isSelected}
                         item={item}
@@ -607,6 +634,7 @@ class EnhancedTable extends Component {
                         i={i}
                         edit={edit}
                         handleClick={this.handleClick}
+                        rowClick={clickOnRow}
                         handleClickChannel={this.handleClickChannel}
                         disableSubmit={disableSubmit}
                         submit={onSubmit}

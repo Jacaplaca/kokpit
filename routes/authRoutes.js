@@ -38,6 +38,24 @@ module.exports = app => {
   //   res.send('req.user');
   // });
 
+  app.post("/api/user/destroy/:id", (req, res, next) => {
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    console.log("user remove id", id.split(","));
+    User.destroy({ where: { clientId, id: id.split(",") } })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.post("/auth/user/edit/id/:id", (req, res, next) => {
     console.log("/auth/user/edit/id/:id");
     const id = req.params.id;
@@ -140,6 +158,8 @@ module.exports = app => {
     let clientId = 0;
     let users = 0;
     let products = 0;
+    let channels = 0;
+    let channels_config = 0;
     let role = "pracownik";
     if (req.user) {
       clientId = req.user.clientId;
@@ -148,6 +168,8 @@ module.exports = app => {
       role = "master";
       users = 1;
       products = 1;
+      channels = 1;
+      channels_config = 1;
     }
 
     const message = { email };

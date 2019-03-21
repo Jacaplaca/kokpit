@@ -1,29 +1,10 @@
 import React, { Component } from "react";
-
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { withStyles } from "@material-ui/core/styles";
-import * as actions from "../actions";
-import MainFrameHOC from "../common/MainFrameHOC";
-
 import FormWithListClicks from "../common/FormWithListClicks";
 import Form from "../components/Users/Form";
 import EditUserForm from "../components/Users/EditForm";
 import ModalWindow from "./ModalWindow";
 
-const styles = theme => ({
-  input: {
-    display: "flex",
-    padding: 0
-  },
-  placeholder: {
-    position: "absolute",
-    left: 2,
-    fontSize: 16
-  }
-});
-
-class Users extends Component {
+class ChannelsConfig extends Component {
   state = {
     openModal: true,
     editedId: null,
@@ -33,7 +14,6 @@ class Users extends Component {
   render() {
     return (
       <FormWithListClicks
-        rowClick={id => console.log(id)}
         postUrl="/auth/register"
         fetchItemsUrl="api/allusers/channel"
         fetchChannels="/api/channels"
@@ -79,17 +59,4 @@ class Users extends Component {
   }
 }
 
-// export default Users;
-
-function mapStateToProps({ auth }) {
-  return { auth };
-}
-
-export default compose(
-  withStyles(styles, { withTheme: true }),
-  connect(
-    mapStateToProps,
-    actions
-  ),
-  MainFrameHOC
-)(Users);
+export default ChannelsConfig;

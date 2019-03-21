@@ -19,6 +19,9 @@ import Serwis from "./Serwis";
 import ChanProdConf from "./ChanProdConf";
 import Products from "./Products";
 import Users from "./Users";
+import Channels from "./Channels";
+import ChannelsConfig from "./ChannelsConfig";
+import Invoices from "./Invoices";
 
 let drawerWidth = 240;
 
@@ -126,6 +129,27 @@ class MiniDrawer extends React.Component {
         path: "/users",
         component: Users,
         title: "Użytkownicy"
+        //channel: auth ? auth.channel_first : 0
+      },
+      {
+        comp: "channels",
+        path: "/systems",
+        component: Channels,
+        title: "Systemy prowizyjne"
+        //channel: auth ? auth.channel_first : 0
+      },
+      // {
+      //   comp: "channels_config",
+      //   path: "/configs",
+      //   component: ChannelsConfig,
+      //   title: "Konfiguracja systemów"
+      //   //channel: auth ? auth.channel_first : 0
+      // }
+      {
+        comp: "invoices",
+        path: "/invoices",
+        component: Invoices,
+        title: "Zaległe faktury"
         //channel: auth ? auth.channel_first : 0
       }
     ];

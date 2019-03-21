@@ -26,6 +26,7 @@ passport.deserializeUser((user_id, done) => {
       const result = JSON.parse(JSON.stringify(project));
       const {
         clientId,
+        id_client_soft,
         email,
         role,
         costs,
@@ -36,7 +37,10 @@ passport.deserializeUser((user_id, done) => {
         channel_first,
         chanprodconf,
         products,
-        users
+        users,
+        channels,
+        channels_config,
+        invoices
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -46,6 +50,7 @@ passport.deserializeUser((user_id, done) => {
           Object.assign(user_id, {
             clientId,
             email,
+            id_client_soft,
             role,
             costs,
             planer,
@@ -55,7 +60,10 @@ passport.deserializeUser((user_id, done) => {
             channel_first,
             chanprodconf,
             products,
-            users
+            users,
+            channels,
+            channels_config,
+            invoices
           })
         );
       } else {

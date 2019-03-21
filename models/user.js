@@ -77,6 +77,15 @@ module.exports = (sequelize, Sequelize) => {
       users: {
         type: Sequelize.TINYINT
       },
+      channels: {
+        type: Sequelize.TINYINT
+      },
+      channels_config: {
+        type: Sequelize.TINYINT
+      },
+      invoices: {
+        type: Sequelize.TINYINT
+      },
       nr_telefonu: {
         type: Sequelize.STRING
       },
