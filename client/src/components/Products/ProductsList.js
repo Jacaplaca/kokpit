@@ -2,6 +2,7 @@ import React, { Component, PureComponent } from "react";
 import Input from "@material-ui/core/Input";
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import Slide from "@material-ui/core/Slide";
 import NumberFormat from "react-number-format";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -371,7 +372,8 @@ class EnhancedTable extends Component {
     list: [],
     ordering: [],
     listUnfiltered: [],
-    query: ""
+    query: "",
+    clickedRow: 0
   };
 
   componentWillMount() {
@@ -397,8 +399,8 @@ class EnhancedTable extends Component {
     // console.log("componentWillReceiveProps", nextProps.values);
     // console.log("componentWillReceiveProps()");
     const { query } = this.state;
-    const { transactions } = this.props;
-    const { transactions: transNext } = nextProps;
+    const { transactions, showChild } = this.props;
+    const { transactions: transNext, shoChNext } = nextProps;
     if (transactions !== transNext) {
       // console.log("componentWillReceiveProps(), change");
       const list = this.loadOrder(transNext);
@@ -411,6 +413,9 @@ class EnhancedTable extends Component {
       } else {
         this.setState({ list, listUnfiltered: list, orderBy: "order" });
       }
+    }
+    if (showChild !== shoChNext) {
+      this.setState({ clickedRow: 0 });
     }
   }
 
@@ -506,6 +511,10 @@ class EnhancedTable extends Component {
   };
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
+  handleClickOnRow = id => {
+    this.props.clickOnRow(id);
+    this.setState({ clickedRow: id });
+  };
 
   handleClose = () => {
     this.setState({ open: false });
@@ -551,7 +560,8 @@ class EnhancedTable extends Component {
       disableEdit,
       disableDelete,
       searchColumns,
-      children
+      children,
+      showChild
     } = this.props;
     const {
       data,
@@ -562,7 +572,8 @@ class EnhancedTable extends Component {
       page,
       open,
       list,
-      listUnfiltered
+      listUnfiltered,
+      clickedRow
     } = this.state;
     const emptyRows =
       // rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
@@ -588,88 +599,118 @@ class EnhancedTable extends Component {
           action={this.handleDelete}
           komunikat={"Czy na pewno chcesz usunąć tę pozycję kosztową?"}
         />
-        <Paper className={classes.root}>
-          <EnhancedTableToolbar
-            numSelected={selected.length}
-            deleteRows={this.handleConfirmation}
-            search={this.handleSearch}
-            data={listUnfiltered}
-            labelList={labelList}
-            searchColumns={searchColumns}
-          />
-          <div className={classes.tableWrapper}>
-            <Table className={classes.table} aria-labelledby="tableTitle">
-              <EnhancedTableHead
-                disableDelete={disableDelete}
-                headCols={headCols}
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={this.handleSelectAllClick}
-                onRequestSort={this.handleRequestSort}
-                // rowCount={data.length}
-                rowCount={transactions.length}
-                classes={classes}
-                headRow={headRow}
-                rowType={rowType}
-              />
-              <TableBody>
-                {/* {stableSort(transactions, getSorting(order, orderBy)) */}
-                {list
-                  // {stableSort(data, getSorting(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((item, i) => {
-                    const isSelected = this.isSelected(item.id);
-                    return (
-                      <Row
-                        disableEdit={disableEdit}
-                        disableDelete={disableDelete}
-                        key={item.id}
-                        isSelected={isSelected}
-                        item={item}
-                        editedId={editedId}
-                        values={values}
-                        change={change}
-                        headCols={headCols}
-                        iconProps={iconProps}
-                        iconPropsOpacity={iconPropsOpacity}
-                        i={i}
-                        edit={edit}
-                        handleClick={this.handleClick}
-                        rowClick={clickOnRow}
-                        handleClickChannel={this.handleClickChannel}
-                        disableSubmit={disableSubmit}
-                        submit={onSubmit}
-                        rowType={rowType}
-                      />
-                    );
-                  })}
-                {/* {emptyRows > 0 && (
-                  <TableRow style={{ height: 49 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )} */}
-              </TableBody>
-            </Table>
-          </div>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            // count={data.length}
-            count={transactions.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            backIconButtonProps={{
-              "aria-label": "Poprzednia"
-            }}
-            nextIconButtonProps={{
-              "aria-label": "Następna"
-            }}
-            labelRowsPerPage="Elementów na stronie"
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          />
-        </Paper>
+
+        <Slide
+          direction="left"
+          in={!showChild}
+          mountOnEnter
+          unmountOnExit
+          timeout={300}
+          style={{
+            // gridRow: "2 / 4",
+            // gridColumn: "2 /4",
+            // backgroundColor: "yellow",
+            // opacity: 0.5,
+            // height: 200,
+            // width: 222,
+            // right: 23,
+            // position: "absolute"
+            // backgroundColor: "green",
+            // opacity: 1,
+            // height: "100%",
+            // width: "100%",
+            // position: "absolute",
+            top: 0,
+            right: 0,
+            zIndex: 23
+          }}
+        >
+          <Paper className={classes.root}>
+            <EnhancedTableToolbar
+              numSelected={selected.length}
+              deleteRows={this.handleConfirmation}
+              search={this.handleSearch}
+              data={listUnfiltered}
+              labelList={labelList}
+              searchColumns={searchColumns}
+            />
+            <div className={classes.tableWrapper}>
+              <Table className={classes.table} aria-labelledby="tableTitle">
+                <EnhancedTableHead
+                  disableDelete={disableDelete}
+                  headCols={headCols}
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={this.handleSelectAllClick}
+                  onRequestSort={this.handleRequestSort}
+                  // rowCount={data.length}
+                  rowCount={transactions.length}
+                  classes={classes}
+                  headRow={headRow}
+                  rowType={rowType}
+                />
+                <TableBody>
+                  {/* {stableSort(transactions, getSorting(order, orderBy)) */}
+                  {list
+                    // {stableSort(data, getSorting(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((item, i) => {
+                      const isSelected = this.isSelected(item.id);
+                      return (
+                        <Row
+                          isClicked={clickedRow === item.id}
+                          // itemId={item.id}
+                          // clickedRow={clickedRow}
+                          disableEdit={disableEdit}
+                          disableDelete={disableDelete}
+                          key={item.id}
+                          isSelected={isSelected}
+                          item={item}
+                          editedId={editedId}
+                          values={values}
+                          change={change}
+                          headCols={headCols}
+                          iconProps={iconProps}
+                          iconPropsOpacity={iconPropsOpacity}
+                          i={i}
+                          edit={edit}
+                          handleClick={this.handleClick}
+                          rowClick={this.handleClickOnRow}
+                          handleClickChannel={this.handleClickChannel}
+                          disableSubmit={disableSubmit}
+                          submit={onSubmit}
+                          rowType={rowType}
+                        />
+                      );
+                    })}
+                  {/* {emptyRows > 0 && (
+                    <TableRow style={{ height: 49 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )} */}
+                </TableBody>
+              </Table>
+            </div>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              // count={data.length}
+              count={transactions.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              backIconButtonProps={{
+                "aria-label": "Poprzednia"
+              }}
+              nextIconButtonProps={{
+                "aria-label": "Następna"
+              }}
+              labelRowsPerPage="Elementów na stronie"
+              onChangePage={this.handleChangePage}
+              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            />
+          </Paper>
+        </Slide>
       </React.Fragment>
     );
   }

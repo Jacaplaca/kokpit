@@ -16,14 +16,23 @@ class Row extends Component {
   // componentWillReceiveProps(nextProps) {
   //   // console.log("row", this.shallowEqual(this.props.item, nextProps.item));
   // }
+  state = {
+    clickedRow: 0
+  };
+
+  handleClickOnRow = id => {
+    this.props.rowClick(id);
+    this.setState({ clickedRow: id });
+  };
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { item, editedId, values, isSelected } = this.props;
+    const { item, editedId, values, isSelected, isClicked } = this.props;
     if (
       shallowEqual(item, nextProps.item) &&
       editedId === nextProps.editedId &&
       values === nextProps.values &&
       isSelected === nextProps.isSelected &&
+      isClicked === nextProps.isClicked &&
       item.id !== nextProps.editedId
     ) {
       return false;
@@ -32,6 +41,7 @@ class Row extends Component {
       values !== nextProps.values &&
       editedId === nextProps.editedId &&
       isSelected === nextProps.isSelected &&
+      isClicked === nextProps.isClicked &&
       item.id !== nextProps.editedId
     ) {
       return false;
@@ -41,6 +51,7 @@ class Row extends Component {
       item.id !== nextProps.editedId &&
       editedId !== nextProps.editedId &&
       isSelected === nextProps.isSelected &&
+      isClicked === nextProps.isClicked &&
       item.id !== editedId
     ) {
       return false;
@@ -68,18 +79,24 @@ class Row extends Component {
       submit,
       rowType,
       disableEdit,
-      disableDelete
+      disableDelete,
+      clickedRow,
+      isClicked
     } = this.props;
+    // const { clickedRow } = this.state;
     return (
       <TableRow
         hover
         onClick={() => rowClick(item.id)}
-        style={{ cursor: "pointer" }}
+        style={{
+          cursor: "pointer"
+          // backgroundColor: clickedRow === item.id ? "red" : null
+        }}
         role="checkbox"
-        aria-checked={isSelected}
+        aria-checked={isClicked}
         tabIndex={-1}
         key={item.id}
-        selected={isSelected}
+        selected={isClicked}
       >
         <TableCell padding="checkbox" style={{ maxWidth: 35, width: 35 }}>
           {disableDelete || (
