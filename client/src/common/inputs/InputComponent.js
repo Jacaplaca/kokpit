@@ -86,8 +86,8 @@ class InputComponent extends React.Component {
           this.setState({ width: 10 + values.value.length * 8 });
           onChange({
             target: {
-              value: values.value
-              // value: values.formattedValue.replace(/ /g, "")
+              // value: values.value
+              value: values.formattedValue.replace(/ /g, "")
             }
           });
         }}
@@ -210,6 +210,9 @@ class InputComponent extends React.Component {
             onChange={event => edytuj(event.target.value)}
             type={this.state.showPassword ? "text" : "password"}
             InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">{prefix}</InputAdornment>
+              ),
               inputComponent: this.state.format,
               // inputComponent: this.format,
               endAdornment: password ? (

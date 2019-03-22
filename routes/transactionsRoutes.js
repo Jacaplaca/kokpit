@@ -55,23 +55,23 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/channel_config/destroy/:id", (req, res, next) => {
-    const id = req.params.id;
-    // if (!req.user) {
-    //   console.log("przekierowanie");
-    //   return res.redirect("/");
-    // }
-    // const { user_id, clientId } = req.user;
-    console.log("trans remove id", id.split(","));
-    ChannelsConfig.destroy({ where: { clientId: 2, id: id.split(",") } })
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
+  // app.post("/api/channel_config/destroy/:id", (req, res, next) => {
+  //   const id = req.params.id;
+  //   // if (!req.user) {
+  //   //   console.log("przekierowanie");
+  //   //   return res.redirect("/");
+  //   // }
+  //   // const { user_id, clientId } = req.user;
+  //   console.log("trans remove id", id.split(","));
+  //   ChannelsConfig.destroy({ where: { clientId: 2, id: id.split(",") } })
+  //     .then(result => {
+  //       res.json(result);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.sendStatus(500);
+  //     });
+  // });
 
   //remove item
   app.post("/api/item/destroy/:id", (req, res, next) => {

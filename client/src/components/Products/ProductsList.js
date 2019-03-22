@@ -625,7 +625,7 @@ class EnhancedTable extends Component {
             zIndex: 23
           }}
         >
-          <Paper className={classes.root}>
+          <div className={classes.root}>
             <EnhancedTableToolbar
               numSelected={selected.length}
               deleteRows={this.handleConfirmation}
@@ -709,7 +709,7 @@ class EnhancedTable extends Component {
               onChangePage={this.handleChangePage}
               onChangeRowsPerPage={this.handleChangeRowsPerPage}
             />
-          </Paper>
+          </div>
         </Slide>
       </React.Fragment>
     );

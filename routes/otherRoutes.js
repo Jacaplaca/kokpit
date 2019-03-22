@@ -586,50 +586,6 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/channels_config/", async (req, res, next) => {
-    console.log("api/channels_config/", req.body);
-    console.log(req.body);
-    const { month, clickedRow, bonusType, bonus } = req.body;
-    const { clientId, user_id } = req.user;
-    if (!req.user) {
-      return res.redirect("/");
-    }
-    const item = await Item.find({
-      where: { clientId: 2, id: clickedRow },
-      raw: true
-    });
-
-    const bonus_type = await BonusType.find({
-      where: { name: bonusType },
-      raw: true
-    });
-
-    const monthConverted = month ? month : dateToYM(new Date());
-
-    const { name, unit, channelId } = item;
-    const form = Object.assign(req.body, {
-      name,
-      unit,
-      channelId,
-      bonus: bonus_type.suffix === "%" ? bonus / 100 : bonus,
-      itemId: clickedRow,
-      key: `${monthConverted}${name}`,
-      month: monthConverted,
-      clientId,
-      userId: user_id,
-      suffix: bonus_type.suffix
-    });
-
-    ChannelsConfig.create(form)
-      .then(results => {
-        return res.json(results);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   app.post("/api/transaction/", (req, res, next) => {
     console.log("api/transaction/");
     console.log(req.body);

@@ -30,7 +30,9 @@ class Channels extends Component {
     items: null,
     itemsUnfilter: null,
     channel: " we wszystkich systemach",
-    itemsConfig: false
+    itemsConfig: false,
+    itemName: "",
+    channelName: ""
   };
 
   componentWillMount = async () => {
@@ -74,8 +76,8 @@ class Channels extends Component {
   handleClickOnRow = (comp, id) => {
     console.log("handleClickOnRow", comp, id);
     this.setState({ [comp]: id });
+    const { itemsUnfilter } = this.state;
     if (comp === "clickedChannel") {
-      const { itemsUnfilter } = this.state;
       let filteredItems = [];
       let name;
       for (let item of itemsUnfilter) {
@@ -89,7 +91,8 @@ class Channels extends Component {
       }
       this.setState({
         items: filteredItems,
-        channel: ` w ${name}`
+        channel: ` w ${name}`,
+        channelName: name
       });
 
       this.hideItemsConfig();
@@ -99,6 +102,8 @@ class Channels extends Component {
       } else {
         this.showItemsConfig();
       }
+      const itemName = itemsUnfilter.filter(item => item.id === id)[0].name;
+      this.setState({ itemName });
     }
   };
 
@@ -107,7 +112,15 @@ class Channels extends Component {
   // };
 
   render() {
-    const { items, channel, itemsConfig } = this.state;
+    const {
+      items,
+      channel,
+      itemsConfig,
+      clickedChannel,
+      clickedItem,
+      itemName,
+      channelName
+    } = this.state;
     return (
       <div
         style={{
@@ -116,7 +129,7 @@ class Channels extends Component {
           gridGap: "1rem"
         }}
       >
-        <div>
+        <Paper>
           <FormWithListClicks
             rowClick={id => this.handleClickOnRow("clickedChannel", id)}
             postUrl="/api/channel/"
@@ -146,15 +159,19 @@ class Channels extends Component {
           >
             <ChannelForm addLabel={"Dodaj"} />
           </FormWithListClicks>
-        </div>
+        </Paper>
         <div>
-          {items && items.length > 0 && (
+          {clickedChannel && items && items.length > 0 && (
             <Config
               data={items}
               rowClick={id => this.handleClickOnRow("clickedItem", id)}
               label={channel}
               showChild={itemsConfig}
               hideChild={this.hideItemsConfig}
+              channelId={clickedChannel}
+              itemId={clickedItem}
+              channelName={channelName}
+              itemName={itemName}
             />
           )}
         </div>

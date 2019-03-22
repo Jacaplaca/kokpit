@@ -273,6 +273,17 @@ const Field1 = ({
           {row.nr_pelny}
         </TableCell>
       );
+    case "channelConfig":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ width: 80 }}
+        >
+          {row.from}
+        </TableCell>
+      );
     default:
       return null;
   }
@@ -338,6 +349,18 @@ const Field2 = ({
           {row.termin_platnosci}
         </TableCell>
       );
+    case "channelConfig":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 80 }}
+        >
+          {row.to}
+        </TableCell>
+      );
     default:
       return null;
   }
@@ -369,6 +392,18 @@ const Field3 = ({ rowType, row }) => {
           }).format()} zł`}
         </TableCell>
       );
+    case "channelConfig":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 60 }}
+        >
+          {row.bonusType}
+        </TableCell>
+      );
     default:
       return null;
   }
@@ -388,9 +423,47 @@ const Field4 = ({ rowType, row }) => {
           {row.klient}
         </TableCell>
       );
+    case "channelConfig":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          // style={{ width: 100 }}
+        >
+          {formatBonus(row)}
+        </TableCell>
+      );
     default:
       return null;
   }
+};
+
+const formatBonus = row => {
+  const { bonusType, bonus, suffix } = row;
+  if (bonusType === "% marży") {
+    let result;
+    const bonus100 = bonus * 100;
+    console.log(bonus100.toFixed(2), parseFloat(bonus100.toFixed(2)));
+    if (parseFloat(bonus100.toFixed(2)) % 1 !== 0) {
+      result = `${parseFloat(bonus100)
+        .toFixed(2)
+        .toString()
+        .replace(".", ",")} ${suffix}`;
+    } else {
+      result = `${parseFloat(bonus100.toFixed(2))
+        .toString()
+        .replace(".", ",")} ${suffix}`;
+    }
+    return result;
+  } else if (bonusType === "stawka") {
+    return `${parseFloat(bonus)
+      .toFixed(parseFloat(bonus) % 1 !== 0 ? 2 : 0)
+      .toString()
+      .replace(".", ",")} ${suffix}`;
+  }
+  // return 33;
 };
 
 export default Row;

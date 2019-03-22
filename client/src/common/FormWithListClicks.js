@@ -64,7 +64,7 @@ class FormWithListClicks extends Component {
     });
   };
 
-  handleChange = (dbField, value, inState) => {
+  handleChange = async (dbField, value, inState) => {
     console.log("handlechange", dbField, value, inState);
     const modyfied = _.clone(this.state[inState]);
     const disableSubmitState = _.clone(this.state.disableSubmit);
@@ -74,11 +74,15 @@ class FormWithListClicks extends Component {
     const disableSubmit = Object.assign(disableSubmitState, {
       [inState]: this.validate(values)
     });
-    this.setState({
-      [inState]: values,
-      disableSubmit
-    });
+    // this.setState({
+    //   [inState]: values,
+    //   disableSubmit
+    // });
+    await this.setAsyncState({ [inState]: values, disableSubmit });
   };
+
+  setAsyncState = newState =>
+    new Promise(resolve => this.setState(newState, () => resolve()));
 
   validate = values => {
     let valids = [];
@@ -206,14 +210,19 @@ class FormWithListClicks extends Component {
     );
     // console.log("handlepost", id);
     this.itemsToState(this.props.fetchItemsUrl, "items");
-    this.setState({
-      isLoading: false,
-      addedId: { id: justAdded.id },
-      // justAdded,
-      adding: { name: "", unit: "" },
-      editedId: 0,
-      editing: { name: "", unit: "" }
-    });
+    this.setState(
+      {
+        isLoading: false,
+        addedId: { id: justAdded.id },
+        // justAdded,
+        // adding: { name: "", unit: "" },
+        // editing: { name: "", unit: "" }
+        editedId: 0
+      },
+      () => {
+        this.createEmptyFields();
+      }
+    );
 
     return justAdded;
   };
@@ -277,7 +286,7 @@ class FormWithListClicks extends Component {
   };
   // this.handleCloseConfirmation();
   render() {
-    const { headRow, rowType, children, rowClick } = this.props;
+    const { headRow, rowType, children, rowClick, leftBar } = this.props;
     const {
       clickedChannel,
       clickedItem,
@@ -294,7 +303,7 @@ class FormWithListClicks extends Component {
       // console.log("child", child, i);
       if (i !== 1) {
         return (
-          <Paper>
+          <div>
             {React.cloneElement(child, {
               values: adding,
               change: this.handleChange,
@@ -303,7 +312,7 @@ class FormWithListClicks extends Component {
               cancel: this.handleCancel
               // justAdded
             })}
-          </Paper>
+          </div>
         );
       } else {
         return (
@@ -341,6 +350,7 @@ class FormWithListClicks extends Component {
         >
           {this.state.items.length > 0 && (
             <ProductsList
+              leftBar={leftBar}
               clickOnChannel={this.handleClickOnChannel}
               delete={this.handleDelete}
               transactions={this.state.items}
