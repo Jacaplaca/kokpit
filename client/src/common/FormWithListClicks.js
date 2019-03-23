@@ -58,7 +58,7 @@ class FormWithListClicks extends Component {
     console.log("itemsToState()", url, name);
     const result = await this.fetch(url);
     // console.log("itemsToState", this.addChannelsToItems(result));
-
+    this.props.itemsToState && this.props.itemsToState(result);
     this.setState({
       [name]: this.addChannelsToItems(result).reverse()
     });

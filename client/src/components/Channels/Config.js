@@ -10,9 +10,12 @@ import ConfigForm from "./Config/ConfigForm";
 
 class Config extends Component {
   // state = { itemsConfig: true };
+  state = { items: null };
+
+  itemsToState = items => this.setState({ items });
 
   render() {
-    // const { itemsConfig } = this.state;
+    const { items } = this.state;
     const {
       data,
       rowClick,
@@ -102,6 +105,7 @@ class Config extends Component {
               </Button>
               <div>
                 <FormWithListClicks
+                  itemsToState={this.itemsToState}
                   rowClick={id => console.log(id)}
                   postUrl="/api/channels_config/"
                   fetchItemsUrl={`/api/channel_config_new/item/id/${itemId}/`}
@@ -161,6 +165,7 @@ class Config extends Component {
                     activity="adding"
                     channelId={channelId}
                     itemId={itemId}
+                    items={items}
                   />
                 </FormWithListClicks>
               </div>

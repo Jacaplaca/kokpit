@@ -84,7 +84,21 @@ class ConfigForm extends React.Component {
   };
 
   validate = async ({ from, to, bonusType, bonus }) => {
-    console.log("ftbb", from, to, bonusType, bonus);
+    const { items } = this.props;
+    console.log("ftbb", from, to, bonusType, bonus, items);
+    const fromTimeQ = new Date(from).getTime();
+    const toTimeQ = new Date(to).getTime();
+
+    let overlap = [];
+    for (let item of items) {
+      const fromTime = new Date(item.from).getTime();
+      const toTime = new Date(item.to).getTime();
+      if (fromTimeQ < fromTime && fromTimeQ > toTime) {
+        overlap.push(item);
+      }
+    }
+    console.log("over", overlap);
+
     if (bonus === "" || bonusType === "" || from === "") {
       this.setState({
         disableSubmit: true
