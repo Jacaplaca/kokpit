@@ -1031,40 +1031,6 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/channel_config/edit/id/:id", async (req, res, next) => {
-    console.log("/api/channel_config/edit/:id");
-    const id = req.params.id;
-    console.log("edytuje channel item api,", id, req.body);
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { bonusType, bonus } = req.body;
-
-    const { user_id, clientId } = req.user;
-
-    const bonus_type = await BonusType.find({
-      where: { name: bonusType },
-      raw: true
-    });
-
-    const form = Object.assign(req.body, {
-      clientId,
-      userId: user_id,
-      bonus: bonus_type.suffix === "%" ? bonus / 100 : bonus,
-      suffix: bonus_type.suffix
-    });
-    // console.log(req.body);
-    ChannelsConfig.update(form, {
-      where: { clientId, id }
-    })
-      .then(result => res.json(result))
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   // helper route to assign id for config according item Id
   // app.get("/api/modyfikuj/konfiguracje/po/itemsach", async (req, res, next) => {
   //   console.log("po itemsach");

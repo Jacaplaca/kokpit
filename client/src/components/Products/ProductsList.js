@@ -561,7 +561,8 @@ class EnhancedTable extends Component {
       disableDelete,
       searchColumns,
       children,
-      showChild
+      showChild,
+      overlaps
     } = this.props;
     const {
       data,
@@ -660,6 +661,7 @@ class EnhancedTable extends Component {
                       return (
                         <Row
                           isClicked={clickedRow === item.id}
+                          overlaps={overlaps && overlaps.includes(item.id)}
                           // itemId={item.id}
                           // clickedRow={clickedRow}
                           disableEdit={disableEdit}

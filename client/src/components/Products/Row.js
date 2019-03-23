@@ -26,13 +26,21 @@ class Row extends Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { item, editedId, values, isSelected, isClicked } = this.props;
+    const {
+      item,
+      editedId,
+      values,
+      isSelected,
+      isClicked,
+      overlaps
+    } = this.props;
     if (
       shallowEqual(item, nextProps.item) &&
       editedId === nextProps.editedId &&
       values === nextProps.values &&
       isSelected === nextProps.isSelected &&
       isClicked === nextProps.isClicked &&
+      overlaps === nextProps.overlaps &&
       item.id !== nextProps.editedId
     ) {
       return false;
@@ -42,6 +50,7 @@ class Row extends Component {
       editedId === nextProps.editedId &&
       isSelected === nextProps.isSelected &&
       isClicked === nextProps.isClicked &&
+      overlaps === nextProps.overlaps &&
       item.id !== nextProps.editedId
     ) {
       return false;
@@ -52,6 +61,7 @@ class Row extends Component {
       editedId !== nextProps.editedId &&
       isSelected === nextProps.isSelected &&
       isClicked === nextProps.isClicked &&
+      overlaps === nextProps.overlaps &&
       item.id !== editedId
     ) {
       return false;
@@ -81,7 +91,8 @@ class Row extends Component {
       disableEdit,
       disableDelete,
       clickedRow,
-      isClicked
+      isClicked,
+      overlaps
     } = this.props;
     // const { clickedRow } = this.state;
     return (
@@ -89,8 +100,8 @@ class Row extends Component {
         hover
         onClick={() => rowClick(item.id)}
         style={{
-          cursor: "pointer"
-          // backgroundColor: clickedRow === item.id ? "red" : null
+          cursor: "pointer",
+          backgroundColor: overlaps ? "rgba(255, 0, 0, 0.3)" : null
         }}
         role="checkbox"
         aria-checked={isClicked}
@@ -432,7 +443,7 @@ const Field4 = ({ rowType, row }) => {
           // style={{ width: 200 }}
           // style={{ width: 100 }}
         >
-          {formatBonus(row)}
+          {`${formatBonus(row.bonus)} ${row.suffix}`}
         </TableCell>
       );
     default:
@@ -440,30 +451,38 @@ const Field4 = ({ rowType, row }) => {
   }
 };
 
-const formatBonus = row => {
-  const { bonusType, bonus, suffix } = row;
-  if (bonusType === "% marży") {
-    let result;
-    const bonus100 = bonus * 100;
-    console.log(bonus100.toFixed(2), parseFloat(bonus100.toFixed(2)));
-    if (parseFloat(bonus100.toFixed(2)) % 1 !== 0) {
-      result = `${parseFloat(bonus100)
-        .toFixed(2)
-        .toString()
-        .replace(".", ",")} ${suffix}`;
-    } else {
-      result = `${parseFloat(bonus100.toFixed(2))
-        .toString()
-        .replace(".", ",")} ${suffix}`;
-    }
-    return result;
-  } else if (bonusType === "stawka") {
-    return `${parseFloat(bonus)
-      .toFixed(parseFloat(bonus) % 1 !== 0 ? 2 : 0)
-      .toString()
-      .replace(".", ",")} ${suffix}`;
-  }
-  // return 33;
+const formatBonus = bonus => {
+  // console.log(bonus, parseFloat(bonus), parseFloat(bonus.replace(",", ".")));
+  return parseFloat(bonus.replace(",", "."))
+    .toFixed(parseFloat(bonus.replace(",", ".")) % 1 !== 0 ? 2 : 0)
+    .toString()
+    .replace(".", ",");
 };
+
+// const formatBonus = row => {
+//   const { bonusType, bonus, suffix } = row;
+//   if (bonusType === "% marży") {
+//     let result;
+//     const bonus100 = bonus * 100;
+//     console.log(bonus100.toFixed(2), parseFloat(bonus100.toFixed(2)));
+//     if (parseFloat(bonus100.toFixed(2)) % 1 !== 0) {
+//       result = `${parseFloat(bonus100)
+//         .toFixed(2)
+//         .toString()
+//         .replace(".", ",")} ${suffix}`;
+//     } else {
+//       result = `${parseFloat(bonus100.toFixed(2))
+//         .toString()
+//         .replace(".", ",")} ${suffix}`;
+//     }
+//     return result;
+//   } else if (bonusType === "stawka") {
+//     return `${parseFloat(bonus)
+//       .toFixed(parseFloat(bonus) % 1 !== 0 ? 2 : 0)
+//       .toString()
+//       .replace(".", ",")} ${suffix}`;
+//   }
+//   // return 33;
+// };
 
 export default Row;

@@ -25,23 +25,30 @@ module.exports = app => {
     const { clientId, user_id } = req.user;
     console.log("config views", itemId, clientId);
     const [err, result] = await to(
-      ChannelsConfig.findAll({ where: { clientId, itemId } })
+      ChannelsConfig.findAll({
+        where: { clientId, itemId }
+        // raw: true
+      })
     );
-    console.log("result", result);
+    // console.log("result", result);
     if (!result) {
       res.sendStatus(500);
     } else {
       // res.json(result);
       res.json(
-        // result.map(x => {
-        //   const suffix = x.get().suffix;
-        //   const bonus = x.get().bonus;
-        //   return Object.assign(x.get(), {
-        //     bonus: suffix === "%" ? `${bonus * 100}` : `${bonus}`
-        //   });
-        //   // console.log(x);
-        // })
-        result
+        result.map(x => {
+          const suffix = x.get().suffix;
+          const bonus = x.get().bonus;
+          // const bonusType = x.get().bonus
+          return Object.assign(x.get(), {
+            bonus:
+              suffix === "%"
+                ? `${parseFloat(bonus) * 100}`.replace(".", ",")
+                : `${parseFloat(bonus)}`.replace(".", ",")
+          });
+          // console.log(x);
+        })
+        // result
       );
     }
   });
@@ -50,10 +57,11 @@ module.exports = app => {
 
   app.post("/api/channels_config/", async (req, res, next) => {
     console.log("api/channels_config/", req.body);
-    console.log(req.body);
+    // console.log(req.body);
     const { from, to, channelId, itemId, bonusType, bonus } = req.body;
+    // res.json(bonus);
     const { clientId, user_id } = req.user;
-    console.log("req.user", req.user);
+    // console.log("req.user", req.user);
     if (!req.user) {
       return res.redirect("/");
     }
@@ -70,12 +78,21 @@ module.exports = app => {
     // const monthConverted = month ? month : dateToYM(new Date());
     //
     // const { name, unit, channelId } = item;
+    console.log(
+      "bonus",
+      bonus,
+      parseFloat(bonus),
+      bonus.replace(",", "."),
+      parseFloat(bonus.replace(",", "."))
+    );
     const form = Object.assign(req.body, {
       // name,
       // unit,
       // channelId,
       bonus:
-        suffix(bonusType) === "%" ? parseFloat(bonus) / 100 : parseFloat(bonus),
+        suffix(bonusType) === "%"
+          ? parseFloat(bonus.replace(",", ".")) / 100
+          : parseFloat(bonus.replace(",", ".")),
       // itemId,
       // key: `${monthConverted}${name}`,
       // month: monthConverted,
@@ -95,14 +112,15 @@ module.exports = app => {
   });
 
   app.post("/api/channel_config/destroy/:id", (req, res, next) => {
+    console.log("channel config destroy");
     const id = req.params.id;
-    // if (!req.user) {
-    //   console.log("przekierowanie");
-    //   return res.redirect("/");
-    // }
-    // const { user_id, clientId } = req.user;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
     console.log("trans remove id", id.split(","));
-    ChannelsConfig.destroy({ where: { clientId: 2, id: id.split(",") } })
+    ChannelsConfig.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {
         res.json(result);
       })
@@ -113,4 +131,45 @@ module.exports = app => {
   });
 
   //adding items to channel
+
+  app.post("/api/channel_config/edit/id/:id", async (req, res, next) => {
+    console.log("/api/channel_config/edit/:id");
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { bonusType, bonus } = req.body;
+
+    const { user_id, clientId } = req.user;
+
+    // const bonus_type = await BonusType.find({
+    //   where: { name: bonusType },
+    //   raw: true
+    // });
+
+    const form = Object.assign(req.body, {
+      // bonus: bonusType.suffix === "%" ? bonus / 100 : bonus,
+      // suffix: bonusType.suffix
+      bonus:
+        suffix(bonusType) === "%"
+          ? parseFloat(bonus.replace(",", ".")) / 100
+          : parseFloat(bonus.replace(",", ".")),
+      // itemId,
+      // key: `${monthConverted}${name}`,
+      // month: monthConverted,
+      clientId,
+      // userId: user_id,
+      suffix: suffix(bonusType)
+    });
+    // console.log(req.body);
+    ChannelsConfig.update(form, {
+      where: { clientId, id }
+    })
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
 };

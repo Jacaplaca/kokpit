@@ -84,6 +84,7 @@ class InputComponent extends React.Component {
         onValueChange={values => {
           // console.log("simpleNumberFormat", values);
           this.setState({ width: 10 + values.value.length * 8 });
+          console.log("values in input", values);
           onChange({
             target: {
               // value: values.value

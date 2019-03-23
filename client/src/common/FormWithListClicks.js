@@ -247,7 +247,7 @@ class FormWithListClicks extends Component {
 
   handleEdit = id => {
     const { items, editedId } = this.state;
-    const { editFields } = this.props;
+    const { editFields, editedIdSend } = this.props;
     const editedItem = items.filter(item => item.id === id);
     console.log("editedItem", editedItem);
     let editing = {};
@@ -263,6 +263,7 @@ class FormWithListClicks extends Component {
         Object.assign(editing, { [field]: editedItem[0][field] });
       }
     }
+    editedIdSend && editedIdSend(id);
     this.setState({
       editedId: editedId !== 0 ? (editedId === id ? 0 : id) : id,
       openModal: true,
@@ -286,7 +287,14 @@ class FormWithListClicks extends Component {
   };
   // this.handleCloseConfirmation();
   render() {
-    const { headRow, rowType, children, rowClick, leftBar } = this.props;
+    const {
+      headRow,
+      rowType,
+      children,
+      rowClick,
+      leftBar,
+      overlaps
+    } = this.props;
     const {
       clickedChannel,
       clickedItem,
@@ -350,6 +358,7 @@ class FormWithListClicks extends Component {
         >
           {this.state.items.length > 0 && (
             <ProductsList
+              overlaps={overlaps}
               leftBar={leftBar}
               clickOnChannel={this.handleClickOnChannel}
               delete={this.handleDelete}

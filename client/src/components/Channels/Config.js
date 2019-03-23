@@ -10,12 +10,14 @@ import ConfigForm from "./Config/ConfigForm";
 
 class Config extends Component {
   // state = { itemsConfig: true };
-  state = { items: null };
+  state = { items: null, overlaps: [], editedId: 0 };
 
   itemsToState = items => this.setState({ items });
+  handleOverlapsing = overlaps => this.setState({ overlaps });
+  editedIdSend = editedId => this.setState({ editedId });
 
   render() {
-    const { items } = this.state;
+    const { items, overlaps, editedId } = this.state;
     const {
       data,
       rowClick,
@@ -105,13 +107,15 @@ class Config extends Component {
               </Button>
               <div>
                 <FormWithListClicks
+                  editedIdSend={this.editedIdSend}
+                  overlaps={overlaps}
                   itemsToState={this.itemsToState}
                   rowClick={id => console.log(id)}
                   postUrl="/api/channels_config/"
                   fetchItemsUrl={`/api/channel_config_new/item/id/${itemId}/`}
                   // fetchChannels="/api/channels"
-                  editUrl="/auth/user/edit/id/"
-                  deleteUrl="/api/user/destroy/"
+                  editUrl="/api/channel_config/edit/id/"
+                  deleteUrl="/api/channel_config/destroy/"
                   manyOne="channel"
                   manyTwo="user"
                   formFields={[
@@ -166,6 +170,16 @@ class Config extends Component {
                     channelId={channelId}
                     itemId={itemId}
                     items={items}
+                    overlapsing={this.handleOverlapsing}
+                  />
+                  <ConfigForm
+                    label={`Edytuj prowizje dla ${itemName} w ${channelName}`}
+                    activity="editing"
+                    channelId={channelId}
+                    itemId={itemId}
+                    items={items}
+                    overlapsing={this.handleOverlapsing}
+                    editedId={editedId}
                   />
                 </FormWithListClicks>
               </div>

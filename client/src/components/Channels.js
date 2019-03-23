@@ -32,7 +32,9 @@ class Channels extends Component {
     channel: " we wszystkich systemach",
     itemsConfig: false,
     itemName: "",
-    channelName: ""
+    channelName: "",
+    clickedChannel: 109,
+    clickedItem: 59
   };
 
   componentWillMount = async () => {
