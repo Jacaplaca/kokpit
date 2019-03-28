@@ -22,6 +22,7 @@ import Users from "./Users";
 import Channels from "./Channels";
 import ChannelsConfig from "./ChannelsConfig";
 import Invoices from "./Invoices";
+import CustomerDetails from "./CustomerDetails";
 
 let drawerWidth = 240;
 
@@ -151,6 +152,14 @@ class MiniDrawer extends React.Component {
         component: Invoices,
         title: "Zaległe faktury"
         //channel: auth ? auth.channel_first : 0
+      },
+      {
+        // comp: "customerDetails",
+        path: "/customerdetails",
+        component: CustomerDetails,
+        title: "Informacje o klientach",
+        open: true
+        //channel: auth ? auth.channel_first : 0
       }
     ];
     return (
@@ -176,8 +185,8 @@ class MiniDrawer extends React.Component {
               />
             )}
             {routes.map((route, i) => {
-              const { comp, path, component, title, channel } = route;
-              return auth && auth[comp] ? (
+              const { comp, path, component, title, channel, open } = route;
+              return (auth && auth[comp]) || open ? (
                 <Route
                   key={i}
                   path={path}

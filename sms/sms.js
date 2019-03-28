@@ -347,15 +347,15 @@ function send(invoices, sms) {
   //   .then(displayResult)
   //   .catch(displayError);
   //
-  // function sendMessage() {
-  //   return smsapi.message
-  //     .sms()
-  //     .from("ECO")
-  //     .to(sms.tel)
-  //     .message(sms.sms)
-  //     .normalize()
-  //     .execute(); // return Promise
-  // }
+  function sendMessage() {
+    return smsapi.message
+      .sms()
+      .from("ECO")
+      .to(sms.tel)
+      .message(sms.sms)
+      .normalize()
+      .execute(); // return Promise
+  }
   // updateToSent(invoices.filter(invoice => invoice.phone === sms.tel));
   //
   function displayResult(result) {
