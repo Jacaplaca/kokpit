@@ -32,14 +32,27 @@ class DetailsForm extends React.Component {
     tractors: [{}]
     // tractorType: "",
     // tractorBran
+    // field: 0,
+    // meadow: 0
   };
 
-  // this.handleChange = (field, value) => {
-  //
-  // }
+  handleChange = (field, value) => {
+    this.setState({ [field]: value }, () => {
+      // this.checkIfCompleted();
+    });
+  };
 
   render() {
-    const { change, name, surname, address, phone, tractorBrand } = this.props;
+    const {
+      changeMachines,
+      data: { tractor, harvester, agro, cultivator },
+      addMachine,
+      removeMachine,
+      field,
+      meadow,
+      changeSimple
+    } = this.props;
+    // const { field, meadow } = this.state;
 
     return (
       <div
@@ -54,7 +67,7 @@ class DetailsForm extends React.Component {
           style={{
             display: "grid",
             gridGap: "1rem",
-            gridTemplateColumns: `1fr 1fr 1fr`
+            gridTemplateColumns: `150px 150px`
             // padding: "1.3rem"
           }}
         >
@@ -62,33 +75,26 @@ class DetailsForm extends React.Component {
             // disabled={disabled}
             // key={i}
             name="channel"
-            label="Imię"
+            label="Ile hektarów pola"
             type="text"
-            edytuj={value => change("name", value)}
+            edytuj={value => changeSimple("field", value)}
             // edytuj={value => change("name", value, "adding")}
-            value={name || ""}
+            value={field || ""}
+            format="number"
+            suffix={"ha"}
             // disabled={field2disabled}
           />
           <InputComponent
             // disabled={disabled}
             // key={i}
             name="channel"
-            label="Imię"
+            label="Ile hektarów łąk"
             type="text"
-            edytuj={value => change("name", value)}
+            edytuj={value => changeSimple("meadow", value)}
             // edytuj={value => change("name", value, "adding")}
-            value={name || ""}
-            // disabled={field2disabled}
-          />
-          <InputComponent
-            // disabled={disabled}
-            // key={i}
-            name="channel"
-            label="Imię"
-            type="text"
-            edytuj={value => change("name", value)}
-            // edytuj={value => change("name", value, "adding")}
-            value={name || ""}
+            value={meadow || ""}
+            format="number"
+            suffix={"ha"}
             // disabled={field2disabled}
           />
         </div>
@@ -101,9 +107,53 @@ class DetailsForm extends React.Component {
           }}
         >
           <Machines
+            showBrand
+            showType
+            label={"Traktory"}
             brands={tractorBrands}
             addLabel={"Dodaj traktor"}
             removeLabel={"Usuń traktor"}
+            group="tractor"
+            change={changeMachines}
+            value={tractor}
+            addMachine={addMachine}
+            removeMachine={removeMachine}
+          />
+          <Machines
+            showBrand
+            showType
+            label={"Kombajny"}
+            brands={tractorBrands}
+            addLabel={"Dodaj kombajn"}
+            removeLabel={"Usuń kombajn"}
+            group="harvester"
+            change={changeMachines}
+            value={harvester}
+            addMachine={addMachine}
+            removeMachine={removeMachine}
+          />
+          <Machines
+            showType
+            label={"Maszyny uprawowe"}
+            brands={tractorBrands}
+            addLabel={"Dodaj maszynę uprawową"}
+            removeLabel={"Usuń maszynę uprawową"}
+            group="cultivator"
+            change={changeMachines}
+            value={cultivator}
+            addMachine={addMachine}
+            removeMachine={removeMachine}
+          />
+          <Machines
+            label={"Inne maszyny rolnicze"}
+            brands={tractorBrands}
+            addLabel={"Dodaj inną maszynę rolniczą"}
+            removeLabel={"Usuń inną maszynę rolniczą"}
+            group="agro"
+            change={changeMachines}
+            value={agro}
+            addMachine={addMachine}
+            removeMachine={removeMachine}
           />
         </div>
       </div>

@@ -12,6 +12,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import AddressForm from "./AddressForm";
 import DetailsForm from "./DetailsForm";
+import Summary from "./Summary";
 
 const styles = theme => ({
   root: {
@@ -33,17 +34,17 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ["Select campaign settings", "Create an ad group", "Create an ad"];
+  return ["Dane konktakowe klienta", "Dane szczegółowe", "Podsumowanie"];
 }
 
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return "Step 1: Select campaign settings...";
+      return "1: Dane kontaktowe klienta";
     case 1:
-      return "Step 2: What is an ad group anyways?";
+      return "2: Dane szczegółowe";
     case 2:
-      return "Step 3: This is the bit I really care about!";
+      return "3: Podsumowanie";
     default:
       return "Unknown step";
   }
@@ -54,11 +55,18 @@ class CustomerForm extends React.Component {
     activeStep: 0,
     completed: new Set(),
     skipped: new Set(),
-    name: "",
-    surname: "",
-    address: "",
-    phone: "",
-    tractorBrand: ""
+    name: "Antoni",
+    surname: "Tracz",
+    address: "Wólka Brzostowiecka Stara",
+    phone: "855 555 555",
+    tractorBrand: "",
+    field: "",
+    meadow: "",
+    // machines: {}
+    tractor: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
+    harvester: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
+    cultivator: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
+    agro: [{ type: "", brand: "", otherBrand: "", howMany: 1 }]
   };
 
   totalSteps = () => getSteps().length;
@@ -94,9 +102,12 @@ class CustomerForm extends React.Component {
     } else {
       activeStep = this.state.activeStep + 1;
     }
-    this.setState({
-      activeStep
-    });
+    this.setState(
+      {
+        activeStep
+      },
+      () => this.handleComplete()
+    );
   };
 
   handleBack = () => {
@@ -123,6 +134,7 @@ class CustomerForm extends React.Component {
   };
 
   handleComplete = () => {
+    // console.log("im in handle complete");
     // eslint-disable-next-line react/no-access-state-in-setstate
     const completed = new Set(this.state.completed);
     completed.add(this.state.activeStep);
@@ -178,6 +190,40 @@ class CustomerForm extends React.Component {
     });
   };
 
+  handleChangeMachines = (machine, field, value, i) => {
+    // const { tractor, harvester, cultivator, agro } = this.state;
+    const machines = _.clone(this.state[machine]);
+    // console.log("mfvi", machine, field, value, i);
+    // const editedMachine = machines[i]
+    machines[i][field] = value;
+
+    this.setState({ [machine]: machines });
+  };
+
+  addMachine = machine => {
+    // console.log("add machine");
+    // const { machines: machinesState } = this.state;
+    const machines = _.clone(this.state[machine]);
+    const newMachine = { type: "", brand: "", otherBrand: "", howMany: 1 };
+    machines.push(newMachine);
+    // console.log("machines", machines);
+    this.setState({ [machine]: machines, addAllowed: false });
+  };
+
+  removeMachine = (machine, i) => {
+    // console.log("remove machine", i);
+    // const { machines: machinesState } = this.state;
+    let machines = _.clone(this.state[machine]);
+    // console.log("machines", machines);
+    machines.splice(i, 1);
+    // console.log("machines", machines);
+
+    // var index = machines.indexOf(i);
+    // const newMachine = { type: "", brand: "", otherBrand: "", howMany: 1 };
+    // machines.push(newMachine);
+    this.setState({ [machine]: machines });
+  };
+
   checkIfCompleted = () => {
     const { activeStep } = this.state;
     if (activeStep === 0) {
@@ -186,16 +232,17 @@ class CustomerForm extends React.Component {
   };
 
   validateAddressForm = () => {
-    console.log("validate AddressForm");
+    // console.log("validate AddressForm");
     const { activeStep, name, surname, address, phone } = this.state;
     if (name !== "" && surname !== "" && address !== "" && phone !== "") {
-      console.log("full");
+      // console.log("full");
       // this.setState({acti})
       this.handleComplete();
     } else {
-      console.log("not full");
+      // console.log("not full");
       const completed = new Set(this.state.completed);
       completed.delete(activeStep);
+      // completed.add("asdfsadfsadf");
       this.setState({
         completed
       });
@@ -211,7 +258,13 @@ class CustomerForm extends React.Component {
       surname,
       address,
       phone,
-      tractorBrand
+      tractorBrand,
+      tractor,
+      harvester,
+      cultivator,
+      agro,
+      field,
+      meadow
     } = this.state;
 
     return (
@@ -255,7 +308,7 @@ class CustomerForm extends React.Component {
               phone={phone}
             />
           )}
-          {activeStep === 0 && (
+          {activeStep === 1 && (
             <DetailsForm
               change={this.handleChange}
               name={name}
@@ -263,6 +316,30 @@ class CustomerForm extends React.Component {
               address={address}
               phone={phone}
               tractorBrand={tractorBrand}
+              changeMachines={this.handleChangeMachines}
+              data={{ tractor, harvester, agro, cultivator }}
+              addMachine={this.addMachine}
+              removeMachine={this.removeMachine}
+              field={field}
+              meadow={meadow}
+              changeSimple={this.handleChange}
+            />
+          )}
+          {activeStep === 0 && (
+            <Summary
+              data={{
+                name,
+                surname,
+                address,
+                phone,
+                tractorBrand,
+                field,
+                meadow,
+                tractor,
+                harvester,
+                cultivator,
+                agro
+              }}
             />
           )}
           <div>
@@ -271,12 +348,12 @@ class CustomerForm extends React.Component {
                 <Typography className={classes.instructions}>
                   All steps completed - you&apos;re finished
                 </Typography>
-                <Button onClick={this.handleReset}>Reset</Button>
+                <Button onClick={this.handleReset}>Resetuj formularz</Button>
               </div>
             ) : (
               <div>
                 <Typography className={classes.instructions}>
-                  {getStepContent(activeStep)}
+                  {/* {getStepContent(activeStep)} */}
                 </Typography>
                 <div>
                   <Button
@@ -284,15 +361,16 @@ class CustomerForm extends React.Component {
                     onClick={this.handleBack}
                     className={classes.button}
                   >
-                    Back
+                    Wróć
                   </Button>
                   <Button
+                    disabled={!this.isStepComplete(activeStep)}
                     variant="contained"
                     color="primary"
                     onClick={this.handleNext}
                     className={classes.button}
                   >
-                    Next
+                    Następny krok
                   </Button>
                   {this.isStepOptional(activeStep) &&
                     !this.state.completed.has(this.state.activeStep) && (
@@ -305,7 +383,7 @@ class CustomerForm extends React.Component {
                         Skip
                       </Button>
                     )}
-                  {activeStep !== steps.length &&
+                  {/* {activeStep !== steps.length &&
                     (this.state.completed.has(this.state.activeStep) ? (
                       <Typography
                         variant="caption"
@@ -323,7 +401,7 @@ class CustomerForm extends React.Component {
                           ? "Finish"
                           : "Complete Step"}
                       </Button>
-                    ))}
+                    ))} */}
                 </div>
               </div>
             )}

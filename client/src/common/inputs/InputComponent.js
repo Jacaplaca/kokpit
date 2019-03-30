@@ -75,16 +75,16 @@ class InputComponent extends React.Component {
     return <span>sadf</span>;
   };
   simpleNumberFormat = props => {
-    const { inputRef, onChange, ...other } = props;
+    const { decimals, inputRef, onChange, ...other } = props;
 
     return (
       <NumberFormat
         {...other}
         getInputRef={inputRef}
         onValueChange={values => {
-          // console.log("simpleNumberFormat", values);
+          // console.log("simpleNumberFormat", values, props, this.props.decima);
           this.setState({ width: 10 + values.value.length * 8 });
-          console.log("values in input", values);
+          // console.log("values in input", values);
           onChange({
             target: {
               // value: values.value
@@ -94,7 +94,7 @@ class InputComponent extends React.Component {
         }}
         decimalSeparator=","
         thousandSeparator=" "
-        decimalScale={2}
+        decimalScale={this.props.decimals}
         // suffix={this.props.suffix ? ` ${this.props.suffix}` : null}
       />
     );
@@ -161,11 +161,18 @@ class InputComponent extends React.Component {
       simpleInput,
       autoFocus,
       short,
-      prefix
+      prefix,
+      decimals
     } = this.props;
 
     const { width } = this.state;
-    // console.log("inputComponent value label, state", value, label, this.state);
+    // console.log(
+    //   "inputComponent value label, state decimals",
+    //   value,
+    //   label,
+    //   this.state,
+    //   decimals
+    // );
     return (
       <FormControl
         className={classes.formControl}
@@ -197,10 +204,12 @@ class InputComponent extends React.Component {
             inputProps={{
               style: { textAlign: "end", width }
             }}
+            decimals={decimals}
           />
         ) : (
           <TextField
             // disableUnderline={true}
+            decimals={decimals}
             disabled={disabled}
             helperText={helperText}
             error={error}
@@ -247,7 +256,8 @@ InputComponent.defaultProps = {
   format: "standard",
   disabled: false,
   prefix: "",
-  suffix: ""
+  suffix: "",
+  decimals: 2
 };
 
 InputComponent.propTypes = {

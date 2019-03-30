@@ -146,11 +146,11 @@ class InputSelectBaza extends React.Component {
   }
 
   onChange = (event, { newValue, method }) => {
-    console.log("newValue", newValue, this.state.fetchowane);
+    // console.log("newValue", newValue, this.state.fetchowane);
     const wybrano = this.state.fetchowane.filter(
       x => x.name.toLowerCase() === newValue.toLowerCase()
     )[0];
-    console.log("wybrano", wybrano);
+    // console.log("wybrano", wybrano);
     this.setState({
       value: newValue
     });
