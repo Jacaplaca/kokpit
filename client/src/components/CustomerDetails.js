@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
@@ -10,9 +11,32 @@ import MainFrameHOC from "../common/MainFrameHOC";
 
 import CustomerForm from "./CustomerDetails/CustomerForm";
 
-const CustomerDetails = () => {
-  return <CustomerForm />;
-};
+class CustomerDetails extends Component {
+  state = {
+    details: null
+  };
+
+  componentWillMount() {
+    this.fetching();
+  }
+
+  fetching = async () => {
+    const data = await axios.get("/api/customerdetail/");
+    const details = data.data;
+    await this.setAsyncState({ details });
+  };
+
+  setAsyncState = newState =>
+    new Promise(resolve => this.setState(newState, () => resolve()));
+
+  render() {
+    return (
+      <div>
+        <CustomerForm />;
+      </div>
+    );
+  }
+}
 
 const styles = theme => ({
   input: {

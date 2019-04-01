@@ -6,6 +6,7 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import ButtonMy from "../../common/ButtonMy";
 import InputComponent from "../../common/inputs/InputComponent";
 import InputSelectBaza from "../../common/inputs/InputSelectBaza";
+import { shallowEqual } from "../../common/functions";
 
 class MachinesForm extends React.Component {
   state = {
@@ -16,7 +17,7 @@ class MachinesForm extends React.Component {
     //   { type: "4", brand: "4", otherBrand: "4", howMany: 4 },
     //   { type: "5", brand: "5", otherBrand: "5", howMany: 5 }
     // ],
-    machines: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
+    // machines: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
 
     addAllowed: false
     // tractorType: "",
@@ -36,20 +37,28 @@ class MachinesForm extends React.Component {
   //
   // }
 
+  componentDidMount() {
+    this.validate(this.props);
+  }
+
+  shouldComponentUpdate = (nextProps, nextState) =>
+    !shallowEqual(nextProps.values, this.props.values);
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps !== this.props) {
+    if (nextProps.values !== this.props.values) {
       this.validate(nextProps);
     }
   }
 
   validate = nextProps => {
-    const { machines } = this.state;
-    const { showBrand, showType, value, group } = nextProps;
+    // const { machines } = this.state;
+    const { showBrand, showType, values, group } = nextProps;
     let validates = [];
+    let machines = _.clone(values);
     // console.log("validate", group, value, validates);
-    // let index
-    for (let machine of value) {
-      // index ++
+    let i = -1;
+    for (let machine of values) {
+      i++;
       if (showBrand || showType) {
         if (
           machine.type !== "" &&
@@ -57,36 +66,31 @@ class MachinesForm extends React.Component {
           (machine.howMany && machine.howMany > 0)
         ) {
           validates.push(true);
+          machines[i] = Object.assign(machine, { isOK: true });
         } else {
           validates.push(false);
+          machines[i] = Object.assign(machine, { isOK: false });
         }
       } else {
         if (machine.howMany > 0 && machine.otherBrand !== "") {
           validates.push(true);
+          machines[i] = Object.assign(machine, { isOK: true });
         } else {
           validates.push(false);
+          machines[i] = Object.assign(machine, { isOK: false });
         }
       }
     }
+    // this.props.filledMachines(`${group}Filled`, machines);
 
     this.setState({ addAllowed: !validates.includes(false) });
-
-    // if (
-    //   machines[i].type !== "" &&
-    //   (machines[i].brand !== "" || machines[i].otherBrand !== "") &&
-    //   (machines[i].howMany && machines[i].howMany > 0)
-    // ) {
-    //   this.setState({ addAllowed: true });
-    // } else {
-    //   this.setState({ addAllowed: false });
-    // }
   };
 
   isOtherBrandDisabled = i => {
-    return this.props.value[i].brand !== "";
+    return this.props.values[i].brand !== "";
   };
   isBrandDisabled = i => {
-    return this.props.value[i].otherBrand !== "";
+    return this.props.values[i].otherBrand !== "";
   };
 
   render() {
@@ -97,7 +101,7 @@ class MachinesForm extends React.Component {
       label,
       showBrand,
       showType,
-      value,
+      values,
       change,
       group,
       addMachine,
@@ -111,7 +115,7 @@ class MachinesForm extends React.Component {
       otherBrand,
       addAllowed
     } = this.state;
-    // console.log("machine", typeof machine);
+    console.log("machine", group);
     return (
       <div
         style={{
@@ -121,92 +125,107 @@ class MachinesForm extends React.Component {
       >
         <h6 style={{ fontWeight: 700 }}>{label.toUpperCase()}</h6>
         <div>
-          {value.map((machine, i) => {
+          {values.map((machine, i) => {
             return (
               <div
                 key={i}
                 style={{
-                  display: "grid",
-                  gridGap: "1rem",
-                  gridTemplateColumns: `1fr 1fr 1fr 1fr 1fr`
+                  // display: "grid"
+                  display: "flex"
+                  // gridGap: "1rem",
+                  // gridTemplateColumns: `1fr 1fr 1fr 1fr 1fr`
                   // padding: "1.3rem"
                 }}
               >
                 {showBrand && (
-                  <InputSelectBaza
-                    daty={datyDoRaportu => this.setState({ datyDoRaportu })}
-                    wybrano={e => {
-                      e && change(group, "brand", e.name, i);
-                    }}
-                    edytuj={value => change(group, "brand", value, i)}
-                    czysc={() => change(group, "brand", "", i)}
-                    value={value[i].brand}
-                    // wybrano={e => {
-                    //   e && this.handleChange("brand", e.name, i);
-                    // }}
-                    // edytuj={value => this.handleChange("brand", value, i)}
-                    // czysc={() => this.handleChange("brand", "", i)}
-                    // value={machines[i].brand}
-                    label="Marka"
-                    placeholder="Marka"
-                    przeszukuje={brands}
-                    disabled={this.isBrandDisabled(i)}
-                  />
+                  <span style={{ width: 200, marginRight: 10 }}>
+                    <InputSelectBaza
+                      daty={datyDoRaportu => this.setState({ datyDoRaportu })}
+                      wybrano={e => {
+                        e && change(group, "brand", e.name, i);
+                      }}
+                      edytuj={v => change(group, "brand", v, i)}
+                      czysc={() => change(group, "brand", "", i)}
+                      value={values[i].brand}
+                      // wybrano={e => {
+                      //   e && this.handleChange("brand", e.name, i);
+                      // }}
+                      // edytuj={value => this.handleChange("brand", value, i)}
+                      // czysc={() => this.handleChange("brand", "", i)}
+                      // value={machines[i].brand}
+                      label="Marka"
+                      placeholder="Marka"
+                      przeszukuje={brands}
+                      disabled={this.isBrandDisabled(i)}
+                    />
+                  </span>
                 )}
                 {showType && (
+                  <span style={{ maxWidth: 200, marginRight: 10 }}>
+                    <InputComponent
+                      // key={i}
+                      name="channel"
+                      label="Typ"
+                      type="text"
+                      edytuj={v => change(group, "type", v, i)}
+                      // edytuj={value => change("name", value, "adding")}
+                      value={values[i].type || ""}
+                      // disabled={field2disabled}
+                    />
+                  </span>
+                )}
+                <span
+                  style={{
+                    width:
+                      !showBrand && !showType ? 300 : !showBrand ? 200 : 200,
+                    marginRight: 10
+                  }}
+                >
+                  <InputComponent
+                    disabled={this.isOtherBrandDisabled(i)}
+                    // key={i}
+                    name="channel"
+                    label={
+                      !showBrand && !showType
+                        ? "Maszyna"
+                        : !showBrand
+                        ? "Marka"
+                        : "Inna marka"
+                    }
+                    type="text"
+                    edytuj={v => change(group, "otherBrand", v, i)}
+                    // edytuj={value => change("name", value, "adding")}
+                    value={values[i].otherBrand || ""}
+                    // disabled={field2disabled}
+                  />
+                </span>
+                <span style={{ maxWidth: 120, marginRight: 10 }}>
                   <InputComponent
                     // key={i}
                     name="channel"
-                    label="Typ"
+                    label="Ilość"
                     type="text"
-                    edytuj={value => change(group, "type", value, i)}
+                    edytuj={v => change(group, "howMany", v, i)}
                     // edytuj={value => change("name", value, "adding")}
-                    value={value[i].type || ""}
+                    value={values[i].howMany || ""}
+                    format="number"
+                    suffix={"szt."}
+                    decimals={0}
                     // disabled={field2disabled}
                   />
-                )}
-
-                <InputComponent
-                  disabled={this.isOtherBrandDisabled(i)}
-                  // key={i}
-                  name="channel"
-                  label={
-                    !showBrand && !showType
-                      ? "Maszyna"
-                      : !showBrand
-                      ? "Marka"
-                      : "Inna marka"
-                  }
-                  type="text"
-                  edytuj={value => change(group, "otherBrand", value, i)}
-                  // edytuj={value => change("name", value, "adding")}
-                  value={value[i].otherBrand || ""}
-                  // disabled={field2disabled}
-                />
-
-                <InputComponent
-                  // key={i}
-                  name="channel"
-                  label="Ilość"
-                  type="text"
-                  edytuj={value => change(group, "howMany", value, i)}
-                  // edytuj={value => change("name", value, "adding")}
-                  value={value[i].howMany || ""}
-                  format="number"
-                  suffix={"szt."}
-                  decimals={0}
-                  // disabled={field2disabled}
-                />
-                <AddButton
-                  removeLabel={removeLabel}
-                  addLabel={addLabel}
-                  add={addMachine}
-                  remove={removeMachine}
-                  i={i}
-                  addAllowed={addAllowed}
-                  allElements={value}
-                  group={group}
-                />
+                </span>
+                <span style={{ minWidth: 80 }}>
+                  <AddButton
+                    removeLabel={removeLabel}
+                    addLabel={addLabel}
+                    add={addMachine}
+                    remove={removeMachine}
+                    i={i}
+                    addAllowed={addAllowed}
+                    allElements={values}
+                    group={group}
+                  />
+                </span>
               </div>
             );
           })}
@@ -238,7 +257,7 @@ const AddButton = ({
         onClick={() => add(group)}
         // className={classes.fab}
       >
-        {addLabel}
+        {/* {addLabel} */}
         <AddIcon />
       </ButtonMy>
     );
@@ -253,7 +272,7 @@ const AddButton = ({
         onClick={() => remove(group, i)}
         // className={classes.fab}
       >
-        {removeLabel}
+        {/* {removeLabel} */}
         <RemoveIcon />
       </ButtonMy>
     );

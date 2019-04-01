@@ -165,6 +165,28 @@ db.overdue_payments.belongsTo(db.planer_klienci, {
   targetKey: "id"
 });
 
+// db.tractors.belongsTo(db.customer_details, {
+//   foreignKey: "customerDetailsId",
+//   targetKey: "id"
+// });
+
+db.customer_details.hasMany(db.tractors, {
+  as: "Tractors",
+  foreignKey: "customerDetailsId"
+});
+db.customer_details.hasMany(db.harvesters, {
+  as: "Harvesters",
+  foreignKey: "customerDetailsId"
+});
+db.customer_details.hasMany(db.cultivators, {
+  as: "Cultivators",
+  foreignKey: "customerDetailsId"
+});
+db.customer_details.hasMany(db.agros, {
+  as: "Agros",
+  foreignKey: "customerDetailsId"
+});
+
 Channel.belongsToMany(Item, {
   as: "SalesItems",
   through: db.channel_items, //this can be string or a model,

@@ -66,7 +66,11 @@ class CustomerForm extends React.Component {
     tractor: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
     harvester: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
     cultivator: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
-    agro: [{ type: "", brand: "", otherBrand: "", howMany: 1 }]
+    agro: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
+    tractorFilled: null,
+    harvesterFilled: null,
+    cultivatorFilled: null,
+    agroFilled: null
   };
 
   totalSteps = () => getSteps().length;
@@ -122,6 +126,53 @@ class CustomerForm extends React.Component {
         activeStep: step
       });
     }
+  };
+
+  handleSubmit = async () => {
+    console.log("handleSubmit()");
+
+    const {
+      name,
+      surname,
+      address,
+      phone,
+      field,
+      meadow,
+      tractorFilled,
+      harvesterFilled,
+      cultivatorFilled,
+      agroFilled,
+      tractor,
+      harvester,
+      cultivator,
+      agro
+    } = this.state;
+    const url = `/api/customerdetail/`;
+
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        name,
+        surname,
+        address,
+        phone,
+        field,
+        meadow,
+        tractor,
+        harvester,
+        cultivator,
+        agro
+        // tractor: tractorFilled,
+        // harvester: harvesterFilled,
+        // cultivator: cultivatorFilled,
+        // agro: agroFilled
+      })
+    });
+    // await this.props.fetchuj();
+    // await this.clearForm();
+    // await this.props.submit(false);
   };
 
   checkIfPrevComplete = step => {
@@ -185,6 +236,7 @@ class CustomerForm extends React.Component {
   }
 
   handleChange = (field, value) => {
+    console.log("handleChange()", field, value);
     this.setState({ [field]: value }, () => {
       this.checkIfCompleted();
     });
@@ -192,16 +244,25 @@ class CustomerForm extends React.Component {
 
   handleChangeMachines = (machine, field, value, i) => {
     // const { tractor, harvester, cultivator, agro } = this.state;
-    const machines = _.clone(this.state[machine]);
+    // console.log("this.state", this.state);
+    const stateString = JSON.stringify(this.state);
+    const stateParse = JSON.parse(stateString);
+    // const stateClone = _.clone(this.state);
+    const machineState = stateParse[machine];
+    const tools = machineState;
+    // console.log("machines clone from state", tools[0]);
     // console.log("mfvi", machine, field, value, i);
     // const editedMachine = machines[i]
-    machines[i][field] = value;
+    tools[i][field] = value;
+    // console.log("machines after change", tools[0]);
+    // console.log("machines after change state", this.state[machine][0]);
+    // console.log("handleChangeMachines()", machine, field, value, i, machines);
 
-    this.setState({ [machine]: machines });
+    this.setState({ [machine]: tools });
   };
 
   addMachine = machine => {
-    // console.log("add machine");
+    console.log("add machine");
     // const { machines: machinesState } = this.state;
     const machines = _.clone(this.state[machine]);
     const newMachine = { type: "", brand: "", otherBrand: "", howMany: 1 };
@@ -209,6 +270,16 @@ class CustomerForm extends React.Component {
     // console.log("machines", machines);
     this.setState({ [machine]: machines, addAllowed: false });
   };
+
+  // filledMachines = (group, machines) => {
+  //   console.log("filledMachines", group, machines);
+  //   const machinesClean = _.clone(machines).map(x =>
+  //     Object.assign(x, {
+  //       otherBrand: x.otherBrand === "" ? x.brand : x.otherBrand
+  //     })
+  //   );
+  //   this.setState({ [group]: machinesClean });
+  // };
 
   removeMachine = (machine, i) => {
     // console.log("remove machine", i);
@@ -264,7 +335,11 @@ class CustomerForm extends React.Component {
       cultivator,
       agro,
       field,
-      meadow
+      meadow,
+      tractorFilled,
+      harvesterFilled,
+      agroFilled,
+      cultivatorFilled
     } = this.state;
 
     return (
@@ -323,9 +398,10 @@ class CustomerForm extends React.Component {
               field={field}
               meadow={meadow}
               changeSimple={this.handleChange}
+              filledMachines={this.filledMachines}
             />
           )}
-          {activeStep === 0 && (
+          {activeStep === 2 && (
             <Summary
               data={{
                 name,
@@ -335,6 +411,10 @@ class CustomerForm extends React.Component {
                 tractorBrand,
                 field,
                 meadow,
+                // tractor: tractorFilled,
+                // harvester: harvesterFilled,
+                // cultivator: cultivatorFilled,
+                // agro: agroFilled,
                 tractor,
                 harvester,
                 cultivator,
@@ -383,6 +463,7 @@ class CustomerForm extends React.Component {
                         Skip
                       </Button>
                     )}
+
                   {/* {activeStep !== steps.length &&
                     (this.state.completed.has(this.state.activeStep) ? (
                       <Typography
@@ -404,6 +485,16 @@ class CustomerForm extends React.Component {
                     ))} */}
                 </div>
               </div>
+            )}
+            {activeStep === 0 && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleSubmit}
+                className={classes.button}
+              >
+                Zapisz dane klienta
+              </Button>
             )}
           </div>
         </Paper>

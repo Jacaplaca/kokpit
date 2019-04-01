@@ -9,21 +9,57 @@ const dataMock = {
   field: "13",
   meadow: "43",
   tractor: [
-    // { type: "Spt34", brand: "New Holland", otherBrand: "", howMany: "2" },
-    // { type: "Fiko55", brand: "", otherBrand: "Other", howMany: 1 }
-    { type: "", brand: "", otherBrand: "", howMany: 1 }
+    {
+      type: "Spt34",
+      brand: "New Holland",
+      otherBrand: "",
+      howMany: "2",
+      isOK: true
+    },
+    { type: "Fiko55", brand: "", otherBrand: "Other", howMany: 1, isOK: true },
+    { type: "", brand: "", otherBrand: "", howMany: 1, isOK: false }
   ],
   harvester: [
-    { type: "FarmerMax", brand: "Ursus", otherBrand: "", howMany: "1" }
+    {
+      type: "FarmerMax",
+      brand: "Ursus",
+      otherBrand: "",
+      howMany: "1",
+      isOK: true
+    }
   ],
   cultivator: [
-    { type: "Siewnik", brand: "", otherBrand: "Noname", howMany: 1 },
-    { type: "Kosiarka", brand: "", otherBrand: "Bizon", howMany: "2" }
+    {
+      type: "Siewnik",
+      brand: "",
+      otherBrand: "Noname",
+      howMany: 1,
+      isOK: true
+    },
+    {
+      type: "Kosiarka",
+      brand: "",
+      otherBrand: "",
+      howMany: "2",
+      isOK: false
+    }
   ],
   agro: [
-    { type: "", brand: "", otherBrand: "Pług", howMany: "2" },
-    { type: "", brand: "", otherBrand: "Snopowiązałka", howMany: "3" },
-    { type: "", brand: "", otherBrand: "Wóz drabiniasty", howMany: 1 }
+    { type: "", brand: "", otherBrand: "Pług", howMany: "2", isOK: true },
+    {
+      type: "",
+      brand: "",
+      otherBrand: "Snopowiązałka",
+      howMany: "3",
+      isOK: true
+    },
+    {
+      type: "",
+      brand: "",
+      otherBrand: "Wóz drabiniasty",
+      howMany: 0,
+      isOK: false
+    }
   ]
 };
 
@@ -59,17 +95,17 @@ const Summary = ({ data }) => {
         }}
       >
         <div style={{ ...style.label }}>Imię:</div>
-        <div style={{ ...style.content }}>{dataMock.name}</div>
+        <div style={{ ...style.content }}>{data.name}</div>
         <div style={{ ...style.label }}>Nazwisko:</div>
-        <div style={{ ...style.content }}>{dataMock.surname}</div>
+        <div style={{ ...style.content }}>{data.surname}</div>
         <div style={{ ...style.label }}>Adres:</div>
-        <div style={{ ...style.content }}>{dataMock.address}</div>
+        <div style={{ ...style.content }}>{data.address}</div>
         <div style={{ ...style.label }}>Nr tel.:</div>
-        <div style={{ ...style.content }}>{dataMock.phone}</div>
+        <div style={{ ...style.content }}>{data.phone}</div>
         <div style={{ ...style.label }}>Ile hektarów pola:</div>
-        <div style={{ ...style.content }}>{dataMock.field} ha</div>
+        <div style={{ ...style.content }}>{data.field} ha</div>
         <div style={{ ...style.label }}>Ile hektarów łąk:</div>
-        <div style={{ ...style.content }}>{dataMock.meadow} ha</div>
+        <div style={{ ...style.content }}>{data.meadow} ha</div>
       </div>
       <div
         style={{
@@ -80,12 +116,15 @@ const Summary = ({ data }) => {
       >
         <div style={{ ...style.label }}>Traktory:</div>
         <div>
-          {dataMock.tractor.map((x, i) => (
-            <div key={i} style={{ ...style.content }}>
-              {x.brand === "" ? x.otherBrand : x.brand} - {x.type} - {x.howMany}{" "}
-              szt.
-            </div>
-          ))}
+          {data.tractor &&
+            data.tractor
+              .filter(x => x.isOK)
+              .map((x, i) => (
+                <div key={i} style={{ ...style.content }}>
+                  {x.brand === "" ? x.otherBrand : x.brand} - {x.type} -{" "}
+                  {x.howMany} szt.
+                </div>
+              ))}
         </div>
       </div>
       <div
@@ -97,12 +136,15 @@ const Summary = ({ data }) => {
       >
         <div style={{ ...style.label }}>Kombajny:</div>
         <div>
-          {dataMock.harvester.map((x, i) => (
-            <div key={i} style={{ ...style.content }}>
-              {x.brand === "" ? x.otherBrand : x.brand} - {x.type} - {x.howMany}{" "}
-              szt.
-            </div>
-          ))}
+          {data.harvester &&
+            data.harvester
+              .filter(x => x.isOK)
+              .map((x, i) => (
+                <div key={i} style={{ ...style.content }}>
+                  {x.brand === "" ? x.otherBrand : x.brand} - {x.type} -{" "}
+                  {x.howMany} szt.
+                </div>
+              ))}
         </div>
       </div>
       <div
@@ -114,11 +156,14 @@ const Summary = ({ data }) => {
       >
         <div style={{ ...style.label }}>Maszyny siewne:</div>
         <div>
-          {dataMock.cultivator.map((x, i) => (
-            <div key={i} style={{ ...style.content }}>
-              {x.otherBrand} - {x.type} - {x.howMany} szt.
-            </div>
-          ))}
+          {data.cultivator &&
+            data.cultivator
+              .filter(x => x.isOK)
+              .map((x, i) => (
+                <div key={i} style={{ ...style.content }}>
+                  {x.otherBrand} - {x.type} - {x.howMany} szt.
+                </div>
+              ))}
         </div>
       </div>
       <div
@@ -130,11 +175,14 @@ const Summary = ({ data }) => {
       >
         <div style={{ ...style.label }}>Inne maszyny rolnicze:</div>
         <div>
-          {dataMock.agro.map((x, i) => (
-            <div key={i} style={{ ...style.content }}>
-              {x.otherBrand} - {x.howMany} szt.
-            </div>
-          ))}
+          {data.agro &&
+            data.agro
+              .filter(x => x.isOK)
+              .map((x, i) => (
+                <div key={i} style={{ ...style.content }}>
+                  {x.otherBrand} - {x.howMany} szt.
+                </div>
+              ))}
         </div>
       </div>
     </div>
