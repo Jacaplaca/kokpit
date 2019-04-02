@@ -140,6 +140,12 @@ class Row extends Component {
         />
         <Field3 rowType={rowType} row={item} />
         <Field4 rowType={rowType} row={item} />
+        <Field5 rowType={rowType} row={item} />
+        <Field6 rowType={rowType} row={item} />
+        <Field7 rowType={rowType} row={item} />
+        <Field8 rowType={rowType} row={item} />
+        <Field9 rowType={rowType} row={item} />
+        <Field10 rowType={rowType} row={item} />
         {headCols.map(channel => {
           return (
             <TableCell
@@ -174,6 +180,13 @@ class Row extends Component {
     );
   }
 }
+
+const styleField = {
+  content: {
+    paddingRight: 7,
+    paddingLeft: 7
+  }
+};
 
 const Field1 = ({
   rowType,
@@ -295,6 +308,17 @@ const Field1 = ({
           {row.from}
         </TableCell>
       );
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 80 }}
+        >
+          {row.name}
+        </TableCell>
+      );
     default:
       return null;
   }
@@ -372,6 +396,17 @@ const Field2 = ({
           {row.to}
         </TableCell>
       );
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 80 }}
+        >
+          {row.surname}
+        </TableCell>
+      );
     default:
       return null;
   }
@@ -415,6 +450,17 @@ const Field3 = ({ rowType, row }) => {
           {row.bonusType}
         </TableCell>
       );
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 220 }}
+        >
+          {row.address}
+        </TableCell>
+      );
     default:
       return null;
   }
@@ -444,6 +490,120 @@ const Field4 = ({ rowType, row }) => {
           // style={{ width: 100 }}
         >
           {`${formatBonus(row.bonus)} ${row.suffix}`}
+        </TableCell>
+      );
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 170 }}
+        >
+          {row.phone}
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+
+const Field5 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 100 }}
+        >
+          {row.field.replace(".", ",")} ha
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+const Field6 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 100 }}
+        >
+          {row.meadow.replace(".", ",")} ha
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+const Field7 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 100 }}
+        >
+          {row.qTractors} szt.
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+const Field8 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 100 }}
+        >
+          {row.qHarvesters} szt.
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+const Field9 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="default"
+          style={{ width: 100 }}
+        >
+          {row.qCultivators} szt.
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+const Field10 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ width: 100 }}
+        >
+          {row.qAgros} szt.
         </TableCell>
       );
     default:

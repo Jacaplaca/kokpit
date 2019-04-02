@@ -87,9 +87,21 @@ class MachinesForm extends React.Component {
   };
 
   isOtherBrandDisabled = i => {
+    console.log(
+      "isOtherBrandDisabled",
+      this.props.group,
+      this.props.values[i].brand,
+      this.props.values[i].brand !== ""
+    );
     return this.props.values[i].brand !== "";
   };
   isBrandDisabled = i => {
+    console.log(
+      "isBrandDisabled ",
+      this.props.group,
+      this.props.values[i].otherBrand,
+      this.props.values[i].otherBrand !== ""
+    );
     return this.props.values[i].otherBrand !== "";
   };
 

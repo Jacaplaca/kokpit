@@ -373,4 +373,45 @@ module.exports = app => {
       res.json(details);
     }
   });
+
+  app.get("/api/customerdetail/:id", async (req, res) => {
+    if (!req.user) res.redirect("/");
+    const id = req.params.id;
+    const { clientId, role, user_id } = req.user;
+    console.log("customer detail", clientId, user_id, id);
+
+    const [err, details] = await to(
+      CustomerDetail.findAll({
+        include: [
+          {
+            model: Tractor,
+            as: "Tractors",
+            where: {}
+          },
+          {
+            model: Harvester,
+            as: "Harvesters",
+            where: {}
+          },
+          {
+            model: Cultivator,
+            as: "Cultivators",
+            where: {}
+          },
+          {
+            model: Agro,
+            as: "Agros",
+            where: {}
+          }
+        ],
+        where: { clientId, userId: user_id, id }
+      })
+    );
+    console.log("de", details);
+    if (!details) {
+      res.sendStatus(500);
+    } else {
+      res.json(details);
+    }
+  });
 };

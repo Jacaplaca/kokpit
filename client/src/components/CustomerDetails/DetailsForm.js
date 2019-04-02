@@ -7,26 +7,6 @@ import InputComponent from "../../common/inputs/InputComponent";
 import InputSelectBaza from "../../common/inputs/InputSelectBaza";
 import Machines from "./Machines";
 
-const tractorBrands = [
-  // { id: 0, name: "Inna" },
-  { id: 1, name: "Case" },
-  { id: 2, name: "Deutz-Fahr" },
-  { id: 3, name: "New Holland" },
-  { id: 4, name: "Fendt" },
-  { id: 5, name: "Massey Ferguson" },
-  { id: 6, name: "Fiat" },
-  { id: 7, name: "Lamborghini" },
-  { id: 8, name: "Landini" },
-  { id: 9, name: "Renault" },
-  { id: 10, name: "SAME" },
-  { id: 11, name: "Zetor" },
-  { id: 12, name: "John Deere" },
-  { id: 13, name: "Kubota" },
-  { id: 14, name: "McCormick" },
-  { id: 15, name: "Ursus" },
-  { id: 16, name: "Valtra" }
-];
-
 const DetailsForm = ({
   changeMachines,
   data: { tractor, harvester, agro, cultivator },
@@ -35,7 +15,8 @@ const DetailsForm = ({
   field,
   meadow,
   changeSimple,
-  filledMachines
+  filledMachines,
+  brands
 }) => {
   return (
     <div
@@ -94,7 +75,7 @@ const DetailsForm = ({
           showBrand
           showType
           label={"Traktory"}
-          brands={tractorBrands}
+          brands={brands}
           addLabel={"Dodaj traktor"}
           removeLabel={"Usuń traktor"}
           group="tractor"
@@ -107,7 +88,7 @@ const DetailsForm = ({
         <Machines
           showType
           label={"Maszyny uprawowe"}
-          brands={tractorBrands}
+          brands={brands}
           addLabel={"Dodaj maszynę uprawową"}
           removeLabel={"Usuń maszynę uprawową"}
           group="cultivator"
@@ -121,7 +102,7 @@ const DetailsForm = ({
           showBrand
           showType
           label={"Kombajny"}
-          brands={tractorBrands}
+          brands={brands}
           addLabel={"Dodaj kombajn"}
           removeLabel={"Usuń kombajn"}
           group="harvester"
@@ -133,7 +114,7 @@ const DetailsForm = ({
         />
         <Machines
           label={"Inne maszyny rolnicze"}
-          brands={tractorBrands}
+          brands={brands}
           addLabel={"Dodaj inną maszynę rolniczą"}
           removeLabel={"Usuń inną maszynę rolniczą"}
           group="agro"

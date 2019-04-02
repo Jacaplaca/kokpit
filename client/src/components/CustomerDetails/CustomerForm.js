@@ -14,6 +14,26 @@ import AddressForm from "./AddressForm";
 import DetailsForm from "./DetailsForm";
 import Summary from "./Summary";
 
+const tractorBrands = [
+  // { id: 0, name: "Inna" },
+  { id: 1, name: "Case" },
+  { id: 2, name: "Deutz-Fahr" },
+  { id: 3, name: "New Holland" },
+  { id: 4, name: "Fendt" },
+  { id: 5, name: "Massey Ferguson" },
+  { id: 6, name: "Fiat" },
+  { id: 7, name: "Lamborghini" },
+  { id: 8, name: "Landini" },
+  { id: 9, name: "Renault" },
+  { id: 10, name: "SAME" },
+  { id: 11, name: "Zetor" },
+  { id: 12, name: "John Deere" },
+  { id: 13, name: "Kubota" },
+  { id: 14, name: "McCormick" },
+  { id: 15, name: "Ursus" },
+  { id: 16, name: "Valtra" }
+];
+
 const styles = theme => ({
   root: {
     width: "100%"
@@ -50,6 +70,8 @@ function getStepContent(step) {
   }
 }
 
+const scheme = [{ type: "", brand: "", otherBrand: "", howMany: 1 }];
+
 class CustomerForm extends React.Component {
   state = {
     activeStep: 0,
@@ -63,14 +85,68 @@ class CustomerForm extends React.Component {
     field: "",
     meadow: "",
     // machines: {}
-    tractor: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
-    harvester: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
-    cultivator: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
-    agro: [{ type: "", brand: "", otherBrand: "", howMany: 1 }],
+    tractor: scheme,
+    harvester: scheme,
+    cultivator: scheme,
+    agro: scheme,
     tractorFilled: null,
     harvesterFilled: null,
     cultivatorFilled: null,
     agroFilled: null
+  };
+
+  componentWillReceiveProps(nextProps) {
+    const { edited } = nextProps;
+    // console.log(edited && this.props.edited !== edited);
+    if (edited && this.props.edited !== edited) {
+      const brands = [];
+      console.log("nxp", edited);
+      // let tractor, harvester, cultivator, agro;
+      const {
+        name,
+        surname,
+        address,
+        phone,
+        field,
+        meadow,
+        Tractors,
+        Harvesters,
+        Cultivators,
+        Agros
+      } = edited[0];
+
+      const tractor = this.modifyMachine(Tractors);
+
+      const harvester = this.modifyMachine(Harvesters);
+      const cultivator = [];
+      const agroMod = Cultivators.map(x =>
+        Object.assign(x, { brand: "", otherBrand: x.model, type: "" })
+      );
+      const agro = [...agroMod, ...scheme];
+      this.setState({
+        name,
+        surname,
+        address,
+        phone,
+        field,
+        meadow,
+        tractor,
+        harvester,
+        cultivator,
+        agro
+      });
+    }
+  }
+
+  modifyMachine = machine => {
+    const brands = tractorBrands.map(x => x.name);
+    const mod = machine.map(x => {
+      return Object.assign(x, {
+        brand: brands.includes(x.brand) ? x.brand : "",
+        otherBrand: brands.includes(x.brand) ? "" : x.brand
+      });
+    });
+    return [...mod, ...scheme];
   };
 
   totalSteps = () => getSteps().length;
@@ -385,6 +461,7 @@ class CustomerForm extends React.Component {
           )}
           {activeStep === 1 && (
             <DetailsForm
+              brands={tractorBrands}
               change={this.handleChange}
               name={name}
               surname={surname}
