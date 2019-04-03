@@ -38,11 +38,13 @@ class MachinesForm extends React.Component {
   // }
 
   componentDidMount() {
+    console.log("machine did mount");
     this.validate(this.props);
   }
 
   shouldComponentUpdate = (nextProps, nextState) =>
-    !shallowEqual(nextProps.values, this.props.values);
+    !shallowEqual(nextProps.values, this.props.values) ||
+    this.state.addAllowed !== nextState.addAllowed;
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.values !== this.props.values) {
@@ -51,6 +53,7 @@ class MachinesForm extends React.Component {
   }
 
   validate = nextProps => {
+    console.log("validate in machines");
     // const { machines } = this.state;
     const { showBrand, showType, values, group } = nextProps;
     let validates = [];
@@ -86,24 +89,8 @@ class MachinesForm extends React.Component {
     this.setState({ addAllowed: !validates.includes(false) });
   };
 
-  isOtherBrandDisabled = i => {
-    console.log(
-      "isOtherBrandDisabled",
-      this.props.group,
-      this.props.values[i].brand,
-      this.props.values[i].brand !== ""
-    );
-    return this.props.values[i].brand !== "";
-  };
-  isBrandDisabled = i => {
-    console.log(
-      "isBrandDisabled ",
-      this.props.group,
-      this.props.values[i].otherBrand,
-      this.props.values[i].otherBrand !== ""
-    );
-    return this.props.values[i].otherBrand !== "";
-  };
+  isOtherBrandDisabled = i => this.props.values[i].brand !== "";
+  isBrandDisabled = i => this.props.values[i].otherBrand !== "";
 
   render() {
     const {
@@ -127,7 +114,7 @@ class MachinesForm extends React.Component {
       otherBrand,
       addAllowed
     } = this.state;
-    console.log("machine", group);
+    // console.log("machine", group);
     return (
       <div
         style={{
@@ -257,7 +244,7 @@ const AddButton = ({
   removeLabel,
   group
 }) => {
-  // console.log(group, allElements.length, addAllowed);
+  console.log("addButton", group, allElements.length, addAllowed);
   if (
     (allElements.length === 1 && i === 0 && addAllowed) ||
     (allElements.length > 1 && i === allElements.length - 1 && addAllowed)

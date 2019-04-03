@@ -1,3 +1,4 @@
+import _ from "lodash";
 const db = require("../models/index");
 const User = db.users;
 
@@ -95,13 +96,14 @@ module.exports = app => {
   //
   // //adding items to channel
   app.post("/api/customerdetail", async (req, res) => {
-    console.log("customer_details", req.body);
+    // console.log("customer_details", req.body);
     if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
     //
     // const { channel_id, item_id } = req.params;
     // console.log("channelId itemId", channel_id, item_id);
     const {
+      id,
       name,
       surname,
       address,
@@ -131,36 +133,75 @@ module.exports = app => {
     const harvesters = harvester ? harvester.filter(x => x.isOK) : [];
     const cultivators = cultivator ? cultivator.filter(x => x.isOK) : [];
     const agros = agro ? agro.filter(x => x.isOK) : [];
-    console.log("form THCA", form, tractors, harvesters, cultivators, agros);
+    // console.log("form THCA", form, tractors, harvesters, cultivators, agros);
+    let adding, updating, errAdding;
+    if (id === 0) {
+      [errAdding, adding] = await to(CustomerDetail.create(form));
+    } else {
+      [errAdding, updating] = await to(
+        CustomerDetail.update(form, { where: { id } })
+      );
+    }
 
-    const [errAdding, adding] = await to(CustomerDetail.create(form));
     // console.log("adding", adding);
-
-    if (!adding) {
+    let customerDetailsId;
+    if (!adding && !updating) {
       res.sendStatus(500);
     } else {
-      const customerDetailsId = adding.get().id;
+      if (id === 0) {
+        customerDetailsId = adding.get().id;
+      } else {
+        customerDetailsId = id;
+      }
 
-      if (tractors.length > 0) {
-        for (let trac of tractors) {
-          // const tracClean = Object.assign(trac, {
-          //   brand: trac.otherBrand === "" ? trac.brand : trac.otherBrand
-          // });
-          const tractorForm = Object.assign(trac, {
-            customerDetailsId,
-            brand: trac.otherBrand === "" ? trac.brand : trac.otherBrand
-          });
-          const [errAdding, addingTractor] = await to(
-            Tractor.create(tractorForm)
+      // console.log("tractor length", tractors);
+
+      const machines = [{ post: tractors, db: Tractor }];
+
+      for (let machine of machines) {
+        if (machine.post.length > 0) {
+          const [errIds, ids] = await to(
+            machine.db.findAll({
+              attributes: ["id"],
+              where: { customerDetailsId },
+              raw: true
+            })
+          );
+          let idsInPost = [];
+          for (let mach of machine.post) {
+            const id = mach.id;
+            idsInPost.push(id);
+
+            const machForm = Object.assign(mach, {
+              customerDetailsId,
+              brand: mach.otherBrand === "" ? mach.brand : mach.otherBrand
+            });
+
+            let addingMach, errAdding;
+            if (id === 0) {
+              [errAdding, addingMach] = await to(machine.db.create(machForm));
+            } else {
+              [errAdding, addingMach] = await to(
+                machine.db.update(machForm, { where: { id } })
+              );
+            }
+          }
+          const idsInDB = ids.map(x => x.id);
+          const toDistroy = _.differenceWith(idsInDB, idsInPost, _.isEqual);
+          for (let delId of toDistroy) {
+            const [errDels, delMachs] = await to(
+              machine.db.destroy({ where: { customerDetailsId, id: delId } })
+            );
+          }
+        } else if (id !== 0) {
+          const [errDel, delMach] = await to(
+            machine.db.destroy({ where: { customerDetailsId } })
           );
         }
       }
 
       if (harvesters.length > 0) {
         for (let harv of harvesters) {
-          // const harvClean = Object.assign(harv, {
-          //
-          // });
           const harvesterForm = Object.assign(harv, {
             customerDetailsId,
             brand: harv.otherBrand === "" ? harv.brand : harv.otherBrand
@@ -337,30 +378,26 @@ module.exports = app => {
   app.get("/api/customerdetail/", async (req, res) => {
     if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
-    console.log("customer detail", clientId, user_id);
+    // console.log("customer detail", clientId, user_id);
 
     const [err, details] = await to(
       CustomerDetail.findAll({
         include: [
           {
             model: Tractor,
-            as: "Tractors",
-            where: {}
+            as: "Tractors"
           },
           {
             model: Harvester,
-            as: "Harvesters",
-            where: {}
+            as: "Harvesters"
           },
           {
             model: Cultivator,
-            as: "Cultivators",
-            where: {}
+            as: "Cultivators"
           },
           {
             model: Agro,
-            as: "Agros",
-            where: {}
+            as: "Agros"
           }
         ],
         where: { clientId, userId: user_id }
@@ -385,23 +422,19 @@ module.exports = app => {
         include: [
           {
             model: Tractor,
-            as: "Tractors",
-            where: {}
+            as: "Tractors"
           },
           {
             model: Harvester,
-            as: "Harvesters",
-            where: {}
+            as: "Harvesters"
           },
           {
             model: Cultivator,
-            as: "Cultivators",
-            where: {}
+            as: "Cultivators"
           },
           {
             model: Agro,
-            as: "Agros",
-            where: {}
+            as: "Agros"
           }
         ],
         where: { clientId, userId: user_id, id }

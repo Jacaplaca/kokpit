@@ -83,7 +83,7 @@ const style = {
 };
 
 const Summary = ({ data }) => {
-  // console.log("data", JSON.stringify(data));
+  console.log("data", data.tractor);
   return (
     <div>
       <div>asdfsadfsadf</div>

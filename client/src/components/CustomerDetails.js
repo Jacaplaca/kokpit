@@ -31,6 +31,7 @@ class CustomerDetails extends Component {
 
   handleEdit = async id => {
     const data = await axios.get(`/api/customerdetail/${id}`);
+    console.log("handleedit", id, data);
     const edited = this.countMachines(data.data);
     console.log("edit", edited);
     // console.log(this.countMachines(details));
@@ -72,6 +73,7 @@ class CustomerDetails extends Component {
         qTractors: 0
       };
       const toIter = ["Tractors", "Harvesters", "Cultivators", "Agros"];
+      // console.log("x", x);
       for (let machine of toIter) {
         const nameOfMachine = machine;
         for (let mach of x[machine]) {
@@ -79,17 +81,23 @@ class CustomerDetails extends Component {
             machines[`q${nameOfMachine}`] + mach.howMany;
         }
       }
+      // const newOb = Object.assign(x, machines);
+      // console.log("newOb", newOb);
       return Object.assign(x, machines);
     });
 
   setAsyncState = newState =>
     new Promise(resolve => this.setState(newState, () => resolve()));
 
+  handleClean = () => {
+    this.setState({ edited: null });
+  };
+
   render() {
     const { details, edited } = this.state;
     return (
       <div>
-        <CustomerForm edited={edited} />
+        <CustomerForm edited={edited} cleanEdit={this.handleClean} />
         {details && (
           <CustomerDetailsList
             transactions={details}

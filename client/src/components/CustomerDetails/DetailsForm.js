@@ -30,37 +30,48 @@ const DetailsForm = ({
       <div
         style={{
           display: "grid",
-          gridGap: "1rem",
-          gridTemplateColumns: `150px 150px`
+          // gridGap: "1rem",
+          // gridTemplateColumns: `150px 150px`,
+          justifyContent: "center"
           // padding: "1.3rem"
         }}
       >
-        <InputComponent
-          // disabled={disabled}
-          // key={i}
-          name="channel"
-          label="Ile hektarów pola"
-          type="text"
-          edytuj={v => changeSimple("field", v)}
-          // edytuj={value => change("name", value, "adding")}
-          value={field || ""}
-          format="number"
-          suffix={"ha"}
-          // disabled={field2disabled}
-        />
-        <InputComponent
-          // disabled={disabled}
-          // key={i}
-          name="channel"
-          label="Ile hektarów łąk"
-          type="text"
-          edytuj={v => changeSimple("meadow", v)}
-          // edytuj={value => change("name", value, "adding")}
-          value={meadow || ""}
-          format="number"
-          suffix={"ha"}
-          // disabled={field2disabled}
-        />
+        <div
+          style={{
+            padding: 10,
+            backgroundColor: "rgba(232, 232, 232, 0.4)",
+            display: "grid",
+            gridGap: "1rem",
+            gridTemplateColumns: `150px 150px`
+          }}
+        >
+          <InputComponent
+            // disabled={disabled}
+            // key={i}
+            name="channel"
+            label="Ile hektarów pola"
+            type="text"
+            edytuj={v => changeSimple("field", v)}
+            // edytuj={value => change("name", value, "adding")}
+            value={field || ""}
+            format="number"
+            suffix={"ha"}
+            // disabled={field2disabled}
+          />
+          <InputComponent
+            // disabled={disabled}
+            // key={i}
+            name="channel"
+            label="Ile hektarów łąk"
+            type="text"
+            edytuj={v => changeSimple("meadow", v)}
+            // edytuj={value => change("name", value, "adding")}
+            value={meadow || ""}
+            format="number"
+            suffix={"ha"}
+            // disabled={field2disabled}
+          />
+        </div>
       </div>
       <div
         style={{

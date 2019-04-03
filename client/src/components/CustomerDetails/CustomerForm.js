@@ -70,10 +70,11 @@ function getStepContent(step) {
   }
 }
 
-const scheme = [{ type: "", brand: "", otherBrand: "", howMany: 1 }];
+const scheme = [{ type: "", brand: "", otherBrand: "", howMany: 1, id: 0 }];
 
 class CustomerForm extends React.Component {
   state = {
+    id: 0,
     activeStep: 0,
     completed: new Set(),
     skipped: new Set(),
@@ -103,6 +104,7 @@ class CustomerForm extends React.Component {
       console.log("nxp", edited);
       // let tractor, harvester, cultivator, agro;
       const {
+        id,
         name,
         surname,
         address,
@@ -118,18 +120,27 @@ class CustomerForm extends React.Component {
       const tractor = this.modifyMachine(Tractors);
 
       const harvester = this.modifyMachine(Harvesters);
-      const cultivator = [];
-      const agroMod = Cultivators.map(x =>
-        Object.assign(x, { brand: "", otherBrand: x.model, type: "" })
+      const cultMod = Cultivators.map(x =>
+        Object.assign(x, { brand: "", otherBrand: x.brand, isOK: true })
+      );
+      const cultivator = [...cultMod, ...scheme];
+      const agroMod = Agros.map(x =>
+        Object.assign(x, {
+          brand: "",
+          otherBrand: x.model,
+          type: "",
+          isOK: true
+        })
       );
       const agro = [...agroMod, ...scheme];
       this.setState({
+        id,
         name,
         surname,
         address,
         phone,
-        field,
-        meadow,
+        field: field.replace(".", ","),
+        meadow: meadow.replace(".", ","),
         tractor,
         harvester,
         cultivator,
@@ -143,7 +154,8 @@ class CustomerForm extends React.Component {
     const mod = machine.map(x => {
       return Object.assign(x, {
         brand: brands.includes(x.brand) ? x.brand : "",
-        otherBrand: brands.includes(x.brand) ? "" : x.brand
+        otherBrand: brands.includes(x.brand) ? "" : x.brand,
+        isOK: true
       });
     });
     return [...mod, ...scheme];
@@ -208,6 +220,7 @@ class CustomerForm extends React.Component {
     console.log("handleSubmit()");
 
     const {
+      id,
       name,
       surname,
       address,
@@ -230,6 +243,7 @@ class CustomerForm extends React.Component {
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({
+        id,
         name,
         surname,
         address,
@@ -280,10 +294,27 @@ class CustomerForm extends React.Component {
   };
 
   handleReset = () => {
+    this.props.cleanEdit();
     this.setState({
       activeStep: 0,
       completed: new Set(),
-      skipped: new Set()
+      skipped: new Set(),
+      id: 0,
+      name: "",
+      surname: "",
+      address: "",
+      phone: "",
+      tractorBrand: "",
+      field: "",
+      meadow: "",
+      tractor: scheme,
+      harvester: scheme,
+      cultivator: scheme,
+      agro: scheme,
+      tractorFilled: null,
+      harvesterFilled: null,
+      cultivatorFilled: null,
+      agroFilled: null
     });
   };
 
@@ -341,7 +372,7 @@ class CustomerForm extends React.Component {
     console.log("add machine");
     // const { machines: machinesState } = this.state;
     const machines = _.clone(this.state[machine]);
-    const newMachine = { type: "", brand: "", otherBrand: "", howMany: 1 };
+    const newMachine = scheme[0];
     machines.push(newMachine);
     // console.log("machines", machines);
     this.setState({ [machine]: machines, addAllowed: false });
@@ -397,7 +428,7 @@ class CustomerForm extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, edited } = this.props;
     const steps = getSteps();
     const {
       activeStep,
@@ -502,10 +533,42 @@ class CustomerForm extends React.Component {
           <div>
             {this.allStepsCompleted() ? (
               <div>
-                <Typography className={classes.instructions}>
+                {/* <Typography className={classes.instructions}>
                   All steps completed - you&apos;re finished
-                </Typography>
+                </Typography> */}
                 <Button onClick={this.handleReset}>Resetuj formularz</Button>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={this.handleBack}
+                  className={classes.button}
+                >
+                  Wróć
+                </Button>
+                {activeStep !== 2 && (
+                  <Button
+                    disabled={
+                      !this.isStepComplete(activeStep) || activeStep === 2
+                    }
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleNext}
+                    className={classes.button}
+                  >
+                    {activeStep === 1 && "Podsumowanie"}
+                    {activeStep === 0 && "Dane szczegółowe"}
+                    {activeStep === 2 && "Następny krok"}
+                  </Button>
+                )}
+                {activeStep === 2 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleSubmit}
+                    className={classes.button}
+                  >
+                    {edited ? "Edytuj dane klienta" : "Dodaj dane klienta"}
+                  </Button>
+                )}
               </div>
             ) : (
               <div>
@@ -527,7 +590,9 @@ class CustomerForm extends React.Component {
                     onClick={this.handleNext}
                     className={classes.button}
                   >
-                    Następny krok
+                    {activeStep === 1 && "Podsumowanie"}
+                    {activeStep === 0 && "Dane szczegółowe"}
+                    {activeStep === 2 && "Następny krok"}
                   </Button>
                   {this.isStepOptional(activeStep) &&
                     !this.state.completed.has(this.state.activeStep) && (
@@ -562,16 +627,6 @@ class CustomerForm extends React.Component {
                     ))} */}
                 </div>
               </div>
-            )}
-            {activeStep === 0 && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleSubmit}
-                className={classes.button}
-              >
-                Zapisz dane klienta
-              </Button>
             )}
           </div>
         </Paper>
