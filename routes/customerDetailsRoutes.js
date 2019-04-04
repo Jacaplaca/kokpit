@@ -57,23 +57,25 @@ module.exports = app => {
   //     });
   // });
   //
-  // // app.post("/api/channel_config/destroy/:id", (req, res, next) => {
-  // //   const id = req.params.id;
-  // //   // if (!req.user) {
-  // //   //   console.log("przekierowanie");
-  // //   //   return res.redirect("/");
-  // //   // }
-  // //   // const { user_id, clientId } = req.user;
-  // //   console.log("trans remove id", id.split(","));
-  // //   ChannelsConfig.destroy({ where: { clientId: 2, id: id.split(",") } })
-  // //     .then(result => {
-  // //       res.json(result);
-  // //     })
-  // //     .catch(err => {
-  // //       console.log(err);
-  // //       res.sendStatus(500);
-  // //     });
-  // // });
+  app.post("/api/customerdetail/destroy/:id", (req, res, next) => {
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    console.log("trans remove id", id.split(","));
+    CustomerDetail.destroy({
+      where: { clientId, userId: user_id, id: id.split(",") }
+    })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
   //
   // //remove item
   // app.post("/api/item/destroy/:id", (req, res, next) => {
@@ -156,7 +158,12 @@ module.exports = app => {
 
       // console.log("tractor length", tractors);
 
-      const machines = [{ post: tractors, db: Tractor }];
+      const machines = [
+        { name: "tractor", post: tractors, db: Tractor },
+        { name: "harvester", post: harvesters, db: Harvester },
+        { name: "cultivator", post: cultivators, db: Cultivator },
+        { name: "agro", post: agros, db: Agro }
+      ];
 
       for (let machine of machines) {
         if (machine.post.length > 0) {
@@ -169,13 +176,26 @@ module.exports = app => {
           );
           let idsInPost = [];
           for (let mach of machine.post) {
+            console.log("machine name", machine.name);
             const id = mach.id;
             idsInPost.push(id);
-
-            const machForm = Object.assign(mach, {
-              customerDetailsId,
-              brand: mach.otherBrand === "" ? mach.brand : mach.otherBrand
-            });
+            let machForm;
+            switch (machine.name) {
+              case "tractor":
+                machForm = tracHarvForm(mach, customerDetailsId);
+                break;
+              case "harvester":
+                machForm = tracHarvForm(mach, customerDetailsId);
+                break;
+              case "cultivator":
+                machForm = cultForm(mach, customerDetailsId);
+                break;
+              case "agro":
+                machForm = agroForm(mach, customerDetailsId);
+                break;
+              default:
+            }
+            console.log("machForm", machForm);
 
             let addingMach, errAdding;
             if (id === 0) {
@@ -200,39 +220,39 @@ module.exports = app => {
         }
       }
 
-      if (harvesters.length > 0) {
-        for (let harv of harvesters) {
-          const harvesterForm = Object.assign(harv, {
-            customerDetailsId,
-            brand: harv.otherBrand === "" ? harv.brand : harv.otherBrand
-          });
-          const [errAdding, addingHarvester] = await to(
-            Harvester.create(harvesterForm)
-          );
-        }
-      }
+      // if (harvesters.length > 0) {
+      //   for (let harv of harvesters) {
+      //     const harvesterForm = Object.assign(harv, {
+      //       customerDetailsId,
+      //       brand: harv.otherBrand === "" ? harv.brand : harv.otherBrand
+      //     });
+      //     const [errAdding, addingHarvester] = await to(
+      //       Harvester.create(harvesterForm)
+      //     );
+      //   }
+      // }
 
-      if (cultivators.length > 0) {
-        for (let cult of cultivators) {
-          const cultivatorForm = Object.assign(cult, {
-            brand: cult.otherBrand,
-            customerDetailsId
-          });
-          const [errAdding, addingCultivator] = await to(
-            Cultivator.create(cultivatorForm)
-          );
-        }
-      }
+      // if (cultivators.length > 0) {
+      //   for (let cult of cultivators) {
+      //     const cultivatorForm = Object.assign(cult, {
+      //       brand: cult.otherBrand,
+      //       customerDetailsId
+      //     });
+      //     const [errAdding, addingCultivator] = await to(
+      //       Cultivator.create(cultivatorForm)
+      //     );
+      //   }
+      // }
 
-      if (agros.length > 0) {
-        for (let ag of agros) {
-          const agroForm = Object.assign(ag, {
-            model: ag.otherBrand,
-            customerDetailsId
-          });
-          const [errAdding, addingCultivator] = await to(Agro.create(agroForm));
-        }
-      }
+      // if (agros.length > 0) {
+      //   for (let ag of agros) {
+      //     const agroForm = Object.assign(ag, {
+      //       model: ag.otherBrand,
+      //       customerDetailsId
+      //     });
+      //     const [errAdding, addingCultivator] = await to(Agro.create(agroForm));
+      //   }
+      // }
 
       res.json(adding);
     }
@@ -378,7 +398,7 @@ module.exports = app => {
   app.get("/api/customerdetail/", async (req, res) => {
     if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
-    // console.log("customer detail", clientId, user_id);
+    console.log("customer detail", clientId, user_id);
 
     const [err, details] = await to(
       CustomerDetail.findAll({
@@ -398,12 +418,17 @@ module.exports = app => {
           {
             model: Agro,
             as: "Agros"
+          },
+          {
+            model: User,
+            as: "User",
+            attributes: ["name", "surname"]
           }
         ],
-        where: { clientId, userId: user_id }
+        where: role === "master" ? { clientId } : { clientId, userId: user_id }
       })
     );
-
+    console.log("details", details, err);
     if (!details) {
       res.sendStatus(500);
     } else {
@@ -415,7 +440,7 @@ module.exports = app => {
     if (!req.user) res.redirect("/");
     const id = req.params.id;
     const { clientId, role, user_id } = req.user;
-    console.log("customer detail", clientId, user_id, id);
+    // console.log("customer detail", clientId, user_id, id);
 
     const [err, details] = await to(
       CustomerDetail.findAll({
@@ -440,7 +465,7 @@ module.exports = app => {
         where: { clientId, userId: user_id, id }
       })
     );
-    console.log("de", details);
+    // console.log("de", details);
     if (!details) {
       res.sendStatus(500);
     } else {
@@ -448,3 +473,22 @@ module.exports = app => {
     }
   });
 };
+
+const tracHarvForm = (mach, customerDetailsId) => {
+  console.log("tracHarvForm ach, mach");
+  return Object.assign(mach, {
+    customerDetailsId,
+    brand: mach.otherBrand === "" ? mach.brand : mach.otherBrand
+  });
+};
+
+const cultForm = (mach, customerDetailsId) =>
+  Object.assign(mach, {
+    brand: mach.otherBrand,
+    customerDetailsId
+  });
+const agroForm = (mach, customerDetailsId) =>
+  Object.assign(mach, {
+    model: mach.otherBrand,
+    customerDetailsId
+  });

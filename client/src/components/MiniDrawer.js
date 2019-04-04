@@ -154,7 +154,7 @@ class MiniDrawer extends React.Component {
         //channel: auth ? auth.channel_first : 0
       },
       {
-        // comp: "customerDetails",
+        comp: "customer_details",
         path: "/customerdetails",
         component: CustomerDetails,
         title: "Informacje o klientach",
@@ -181,7 +181,7 @@ class MiniDrawer extends React.Component {
               <Route
                 path="/"
                 exact
-                render={() => <PromowaneProdukty title="Produkty promowane" />}
+                render={() => <Invoices title="Zaległe faktury" />}
               />
             )}
             {routes.map((route, i) => {

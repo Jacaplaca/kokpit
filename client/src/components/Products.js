@@ -24,35 +24,37 @@ const styles = theme => ({
 });
 
 const Products = () => (
-  <FormWithListClicks
-    rowClick={id => console.log(id)}
-    postUrl="/api/item/"
-    fetchItemsUrl="api/allitem/channel"
-    fetchChannels="/api/channels"
-    editUrl="/api/item/edit/id/"
-    deleteUrl="/api/item/destroy/"
-    manyOne="channel"
-    manyTwo="item"
-    formFields={["name", "unit"]}
-    editFields={["name", "unit"]}
-    headRow={[
-      {
-        id: "name",
-        numeric: false,
-        disablePadding: true,
-        label: "Towar/Usługa"
-      },
-      {
-        id: "unit",
-        numeric: false,
-        disablePadding: true,
-        label: "Jednostka"
-      }
-    ]}
-    rowType="product"
-  >
-    <ProductForm addLabel={"Dodaj"} />
-  </FormWithListClicks>
+  <Paper>
+    <FormWithListClicks
+      rowClick={id => console.log(id)}
+      postUrl="/api/item/"
+      fetchItemsUrl="api/allitem/channel"
+      fetchChannels="/api/channels"
+      editUrl="/api/item/edit/id/"
+      deleteUrl="/api/item/destroy/"
+      manyOne="channel"
+      manyTwo="item"
+      formFields={["name", "unit"]}
+      editFields={["name", "unit"]}
+      headRow={[
+        {
+          id: "name",
+          numeric: false,
+          disablePadding: true,
+          label: "Towar/Usługa"
+        },
+        {
+          id: "unit",
+          numeric: false,
+          disablePadding: true,
+          label: "Jednostka"
+        }
+      ]}
+      rowType="product"
+    >
+      <ProductForm addLabel={"Dodaj"} />
+    </FormWithListClicks>
+  </Paper>
 );
 
 function mapStateToProps({ auth }) {

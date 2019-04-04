@@ -78,10 +78,10 @@ class CustomerForm extends React.Component {
     activeStep: 0,
     completed: new Set(),
     skipped: new Set(),
-    name: "Antoni",
-    surname: "Tracz",
-    address: "Wólka Brzostowiecka Stara",
-    phone: "855 555 555",
+    name: "",
+    surname: "",
+    address: "",
+    phone: "",
     tractorBrand: "",
     field: "",
     meadow: "",
@@ -102,6 +102,8 @@ class CustomerForm extends React.Component {
     if (edited && this.props.edited !== edited) {
       const brands = [];
       console.log("nxp", edited);
+      this.handleComplete();
+      // this.allStepsCompleted();
       // let tractor, harvester, cultivator, agro;
       const {
         id,
@@ -260,6 +262,8 @@ class CustomerForm extends React.Component {
         // agro: agroFilled
       })
     });
+    this.handleReset();
+    this.props.fetching();
     // await this.props.fetchuj();
     // await this.clearForm();
     // await this.props.submit(false);
@@ -530,7 +534,7 @@ class CustomerForm extends React.Component {
               }}
             />
           )}
-          <div>
+          <div style={{ marginTop: 10 }}>
             {this.allStepsCompleted() ? (
               <div>
                 {/* <Typography className={classes.instructions}>

@@ -96,6 +96,7 @@ class EnhancedTableHead extends Component {
   };
 
   componentWillMount() {
+    console.log("this.props.headRow", this.props.headRow);
     this.setState({ headCols: this.createHead(this.props.headCols) });
   }
 
@@ -146,76 +147,77 @@ class EnhancedTableHead extends Component {
               />
             )}
           </TableCell>
-          {headRow.map(
-            row => (
-              <TableCell
-                key={row.id}
-                align={row.numeric ? "right" : "left"}
-                padding={row.disablePadding ? "none" : "default"}
-                sortDirection={orderBy === row.id ? order : false}
-              >
-                <Tooltip
-                  title="Sortuj"
-                  placement={row.numeric ? "bottom-end" : "bottom-start"}
-                  enterDelay={300}
+          {headRow.map(row => {
+            return (
+              row.hide || (
+                <TableCell
+                  key={row.id}
+                  align={row.numeric ? "right" : "left"}
+                  padding={row.disablePadding ? "none" : "default"}
+                  sortDirection={orderBy === row.id ? order : false}
                 >
-                  <TableSortLabel
-                    active={orderBy === row.id}
-                    direction={order}
-                    onClick={this.createSortHandler(row.id)}
-                    hideSortIcon
-                    classes={{
-                      // Override with the active class if this is the selected column or inactive otherwise
-                      icon:
-                        orderBy === row.id
-                          ? classes.activeSortIcon
-                          : classes.inactiveSortIcon,
-                      root:
-                        orderBy === row.id
-                          ? classes.activeTableSort
-                          : classes.inactiveTableSort
-                    }}
+                  <Tooltip
+                    title="Sortuj"
+                    placement={row.numeric ? "bottom-end" : "bottom-start"}
+                    enterDelay={300}
                   >
-                    {row.label}
-                  </TableSortLabel>
-                </Tooltip>
-              </TableCell>
-            ),
-            this
-          )}
+                    <TableSortLabel
+                      active={orderBy === row.id}
+                      direction={order}
+                      onClick={this.createSortHandler(row.id)}
+                      hideSortIcon
+                      classes={{
+                        // Override with the active class if this is the selected column or inactive otherwise
+                        icon:
+                          orderBy === row.id
+                            ? classes.activeSortIcon
+                            : classes.inactiveSortIcon,
+                        root:
+                          orderBy === row.id
+                            ? classes.activeTableSort
+                            : classes.inactiveTableSort
+                      }}
+                    >
+                      {row.label}
+                    </TableSortLabel>
+                  </Tooltip>
+                </TableCell>
+              )
+            );
+          }, this)}
           {headCols.map(
-            channel => (
+            col => (
               <TableCell
-                key={channel.id}
+                key={col.id}
                 align="center"
-                padding={channel.disablePadding ? "none" : "default"}
-                sortDirection={orderBy === channel.id ? order : false}
+                padding={col.disablePadding ? "none" : "default"}
+                sortDirection={orderBy === col.id ? order : false}
                 style={{ textAlign: "center" }}
               >
-                {/* {channel.label} */}
+                {/* {col.label} */}
                 <Tooltip
                   title="Sortuj"
-                  placement={channel.numeric ? "bottom-end" : "bottom-start"}
+                  placement={col.numeric ? "bottom-end" : "bottom-start"}
                   enterDelay={300}
                 >
                   <TableSortLabel
-                    active={orderBy === channel.id}
+                    active={orderBy === col.id}
                     direction={order}
-                    onClick={this.createSortHandler(channel.id)}
+                    onClick={this.createSortHandler(col.id)}
                     hideSortIcon
                     classes={{
                       // Override with the active class if this is the selected column or inactive otherwise
                       icon:
-                        orderBy === channel.id
+                        orderBy === col.id
                           ? classes.activeSortIcon
                           : classes.inactiveSortIcon,
                       root:
-                        orderBy === channel.id
+                        orderBy === col.id
                           ? classes.activeTableSort
                           : classes.inactiveTableSort
                     }}
                   >
-                    {channel.label}
+                    {col.label}
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
@@ -598,7 +600,7 @@ class EnhancedTable extends Component {
           open={open}
           close={this.handleClose}
           action={this.handleDelete}
-          komunikat={"Czy na pewno chcesz usunąć tę pozycję kosztową?"}
+          komunikat={"Czy na pewno?"}
         />
 
         <Slide

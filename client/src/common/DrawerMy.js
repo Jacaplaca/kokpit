@@ -141,6 +141,12 @@ class DrawerMy extends React.Component {
         text: "Faktury",
         link: "/invoices",
         icon: "InsertChartOutlined"
+      },
+      {
+        comp: "customer_details",
+        text: "Informacje o klientach",
+        link: "/customerdetails",
+        icon: "InsertChartOutlined"
       }
       // {
       //   comp: "channels_config",

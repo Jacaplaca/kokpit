@@ -187,6 +187,17 @@ db.customer_details.hasMany(db.agros, {
   foreignKey: "customerDetailsId"
 });
 
+// db.customer_details.hasOne(db.users, {
+//   as: "User",
+//   foreignKey: "userId"
+// });
+
+db.customer_details.belongsTo(db.users, {
+  foreignKey: "userId",
+  targetKey: "id",
+  as: "User"
+});
+
 Channel.belongsToMany(Item, {
   as: "SalesItems",
   through: db.channel_items, //this can be string or a model,

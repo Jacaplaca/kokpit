@@ -1,4 +1,5 @@
 import React, { Component, PureComponent } from "react";
+import { connect } from "react-redux";
 import currency from "currency.js";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
@@ -92,7 +93,8 @@ class Row extends Component {
       disableDelete,
       clickedRow,
       isClicked,
-      overlaps
+      overlaps,
+      auth: { role }
     } = this.props;
     // const { clickedRow } = this.state;
     return (
@@ -146,6 +148,7 @@ class Row extends Component {
         <Field8 rowType={rowType} row={item} />
         <Field9 rowType={rowType} row={item} />
         <Field10 rowType={rowType} row={item} />
+        {role === "master" && <Field11 rowType={rowType} row={item} />}
         {headCols.map(channel => {
           return (
             <TableCell
@@ -185,7 +188,8 @@ const styleField = {
   content: {
     paddingRight: 7,
     paddingLeft: 7
-  }
+  },
+  suffix: { paddingLeft: 2, fontSize: 11 }
 };
 
 const Field1 = ({
@@ -468,6 +472,12 @@ const Field3 = ({ rowType, row }) => {
 
 const Field4 = ({ rowType, row }) => {
   switch (rowType) {
+    case "user":
+      return (
+        <TableCell component="th" scope="row" padding="none">
+          {row.email}
+        </TableCell>
+      );
     case "invoices":
       return (
         <TableCell
@@ -518,7 +528,8 @@ const Field5 = ({ rowType, row }) => {
           padding="default"
           style={{ width: 100 }}
         >
-          {row.field.replace(".", ",")} ha
+          {row.field.replace(".", ",")}
+          <span style={{ ...styleField.suffix }}>ha</span>
         </TableCell>
       );
     default:
@@ -535,7 +546,8 @@ const Field6 = ({ rowType, row }) => {
           padding="default"
           style={{ width: 100 }}
         >
-          {row.meadow.replace(".", ",")} ha
+          {row.meadow.replace(".", ",")}
+          <span style={{ ...styleField.suffix }}>ha</span>
         </TableCell>
       );
     default:
@@ -552,7 +564,8 @@ const Field7 = ({ rowType, row }) => {
           padding="default"
           style={{ width: 100 }}
         >
-          {row.qTractors} szt.
+          {row.qTractors}
+          <span style={{ ...styleField.suffix }}>szt.</span>
         </TableCell>
       );
     default:
@@ -569,7 +582,8 @@ const Field8 = ({ rowType, row }) => {
           padding="default"
           style={{ width: 100 }}
         >
-          {row.qHarvesters} szt.
+          {row.qHarvesters}
+          <span style={{ ...styleField.suffix }}>szt.</span>
         </TableCell>
       );
     default:
@@ -586,7 +600,8 @@ const Field9 = ({ rowType, row }) => {
           padding="default"
           style={{ width: 100 }}
         >
-          {row.qCultivators} szt.
+          {row.qCultivators}
+          <span style={{ ...styleField.suffix }}>szt.</span>
         </TableCell>
       );
     default:
@@ -603,7 +618,26 @@ const Field10 = ({ rowType, row }) => {
           padding="none"
           style={{ width: 100 }}
         >
-          {row.qAgros} szt.
+          {row.qAgros}
+          <span style={{ ...styleField.suffix }}>szt.</span>
+        </TableCell>
+      );
+    default:
+      return null;
+  }
+};
+
+const Field11 = ({ rowType, row }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ width: 140 }}
+        >
+          {row.employee}
         </TableCell>
       );
     default:
@@ -644,5 +678,11 @@ const formatBonus = bonus => {
 //   }
 //   // return 33;
 // };
+function mapStateToProps({ auth }) {
+  return { auth };
+}
 
-export default Row;
+export default connect(
+  mapStateToProps,
+  null
+)(Row);

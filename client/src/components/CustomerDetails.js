@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
@@ -24,17 +25,17 @@ class CustomerDetails extends Component {
 
   fetching = async () => {
     const data = await axios.get("/api/customerdetail/");
-    const details = this.countMachines(data.data);
-    // console.log(this.countMachines(details));
+    const details = this.improveData(data.data);
+    // console.log(this.improveData(details));
     await this.setAsyncState({ details });
   };
 
   handleEdit = async id => {
     const data = await axios.get(`/api/customerdetail/${id}`);
     console.log("handleedit", id, data);
-    const edited = this.countMachines(data.data);
+    const edited = this.improveData(data.data);
     console.log("edit", edited);
-    // console.log(this.countMachines(details));
+    // console.log(this.improveData(details));
     await this.setAsyncState({ edited });
 
     // const { items, editedId } = this.state;
@@ -64,13 +65,14 @@ class CustomerDetails extends Component {
     // });
   };
 
-  countMachines = data =>
+  improveData = data =>
     data.map(x => {
       let machines = {
         qAgros: 0,
         qCultivators: 0,
         qHarvesters: 0,
-        qTractors: 0
+        qTractors: 0,
+        employee: `${x.User.name} ${x.User.surname}`
       };
       const toIter = ["Tractors", "Harvesters", "Cultivators", "Agros"];
       // console.log("x", x);
@@ -93,99 +95,123 @@ class CustomerDetails extends Component {
     this.setState({ edited: null });
   };
 
+  delete = async ids => {
+    const deleteUrl = "/api/customerdetail/destroy/";
+    await axios.post(`${deleteUrl}${ids}`);
+    this.fetching();
+    // this.handleOpenConfirmation();
+    // this.setState({ confirmationAction: this.remove });
+  };
+
   render() {
     const { details, edited } = this.state;
+    const { auth } = this.props;
     return (
       <div>
-        <CustomerForm edited={edited} cleanEdit={this.handleClean} />
+        <CustomerForm
+          edited={edited}
+          cleanEdit={this.handleClean}
+          fetching={this.fetching}
+        />
         {details && (
-          <CustomerDetailsList
-            transactions={details}
-            headCols={[]}
-            rowType="customerDetails"
-            edit={this.handleEdit}
-            clickOnRow={row => console.log("clickOnRow", row)}
-            headRow={[
-              {
-                id: "name",
-                numeric: false,
-                disablePadding: false,
-                label: "Imię"
-              },
-              {
-                id: "surname",
-                numeric: false,
-                disablePadding: false,
-                label: "Nazwisko"
-              },
-              {
-                id: "address",
-                numeric: false,
-                disablePadding: false,
-                label: "Adres"
-              },
-              {
-                id: "phone",
-                numeric: true,
-                disablePadding: false,
-                label: "Nr tel."
-              },
-              {
-                id: "field",
-                numeric: true,
-                disablePadding: false,
-                label: "Pola."
-              },
-              {
-                id: "meadow",
-                numeric: true,
-                disablePadding: false,
-                label: "Łąki"
-              },
-              {
-                id: "qTractors",
-                numeric: true,
-                disablePadding: false,
-                label: "Traktory"
-              },
-              {
-                id: "qHarvesters",
-                numeric: true,
-                disablePadding: false,
-                label: "Kombajny"
-              },
-              {
-                id: "qCultivators",
-                numeric: true,
-                disablePadding: false,
-                label: "Siewniki"
-              },
-              {
-                id: "qAgros",
-                numeric: true,
-                disablePadding: true,
-                label: "Inne"
-              }
-              // {
-              //   id: "to",
-              //   numeric: false,
-              //   disablePadding: true,
-              //   label: "Do"
-              // },
-              // {
-              //   id: "bonusType",
-              //   numeric: false,
-              //   disablePadding: true,
-              //   label: "Typ"
-              // },
-              // {
-              //   id: "bonus",
-              //   numeric: true,
-              //   disablePadding: true,
-              //   label: "Prowizja"
-              // }
-            ]}
-          />
+          <Paper style={{ padding: 20, marginTop: "1.3rem" }}>
+            <CustomerDetailsList
+              searchColumns={["name", "surname", "address"]}
+              delete={this.delete}
+              transactions={details}
+              headCols={[]}
+              rowType="customerDetails"
+              edit={this.handleEdit}
+              clickOnRow={row => console.log("clickOnRow", row)}
+              headRow={[
+                {
+                  id: "name",
+                  numeric: false,
+                  disablePadding: false,
+                  label: "Imię"
+                },
+                {
+                  id: "surname",
+                  numeric: false,
+                  disablePadding: false,
+                  label: "Nazwisko"
+                },
+                {
+                  id: "address",
+                  numeric: false,
+                  disablePadding: false,
+                  label: "Adres"
+                },
+                {
+                  id: "phone",
+                  numeric: true,
+                  disablePadding: false,
+                  label: "Nr tel."
+                },
+                {
+                  id: "field",
+                  numeric: true,
+                  disablePadding: false,
+                  label: "Pola."
+                },
+                {
+                  id: "meadow",
+                  numeric: true,
+                  disablePadding: false,
+                  label: "Łąki"
+                },
+                {
+                  id: "qTractors",
+                  numeric: true,
+                  disablePadding: false,
+                  label: "Traktory"
+                },
+                {
+                  id: "qHarvesters",
+                  numeric: true,
+                  disablePadding: false,
+                  label: "Kombajny"
+                },
+                {
+                  id: "qCultivators",
+                  numeric: true,
+                  disablePadding: false,
+                  label: "Siewniki"
+                },
+                {
+                  id: "qAgros",
+                  numeric: true,
+                  disablePadding: true,
+                  label: "Inne"
+                },
+                {
+                  id: "employee",
+                  numeric: true,
+                  disablePadding: true,
+                  label: "Pracownik",
+                  hide: auth.role !== "master"
+                }
+                // {
+                //   id: "to",
+                //   numeric: false,
+                //   disablePadding: true,
+                //   label: "Do"
+                // },
+                // {
+                //   id: "bonusType",
+                //   numeric: false,
+                //   disablePadding: true,
+                //   label: "Typ"
+                // },
+                // {
+                //   id: "bonus",
+                //   numeric: true,
+                //   disablePadding: true,
+                //   label: "Prowizja"
+                // }
+              ]}
+            />
+          </Paper>
         )}
       </div>
     );
@@ -204,11 +230,15 @@ const styles = theme => ({
   }
 });
 
+function mapStateToProps({ auth }) {
+  return { auth };
+}
+
 export default compose(
   withStyles(styles, { withTheme: true }),
-  // connect(
-  //   mapStateToProps,
-  //   actions
-  // ),
+  connect(
+    mapStateToProps,
+    null
+  ),
   MainFrameHOC
 )(CustomerDetails);

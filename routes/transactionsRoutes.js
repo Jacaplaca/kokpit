@@ -230,6 +230,7 @@ module.exports = app => {
         where: { clientId }
       })
     );
+    console.log("channels", users);
 
     if (!users) {
       res.sendStatus(500);

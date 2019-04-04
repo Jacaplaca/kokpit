@@ -26,6 +26,9 @@ const styles = theme => ({
   labelButton: {
     borderColor: "gray",
     textAlign: "left"
+  },
+  listItemText: {
+    fontSize: "0.9em" //Insert your required size
   }
 });
 
@@ -47,7 +50,10 @@ class DrawerLink extends React.Component {
       <Link to={link}>
         <ListItem button>
           <ListItemIcon>{this.ktoraIkona(icon)}</ListItemIcon>
-          <ListItemText primary={text} />
+          <ListItemText
+            classes={{ primary: classes.listItemText }}
+            primary={text}
+          />
         </ListItem>
       </Link>
     );

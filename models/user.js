@@ -96,6 +96,10 @@ module.exports = (sequelize, Sequelize) => {
       channel_first: {
         type: Sequelize.INTEGER,
         defaultValue: 1
+      },
+      customer_details: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1
       }
     },
     {

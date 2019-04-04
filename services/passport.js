@@ -40,7 +40,8 @@ passport.deserializeUser((user_id, done) => {
         users,
         channels,
         channels_config,
-        invoices
+        invoices,
+        customer_details
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -63,7 +64,8 @@ passport.deserializeUser((user_id, done) => {
             users,
             channels,
             channels_config,
-            invoices
+            invoices,
+            customer_details
           })
         );
       } else {
