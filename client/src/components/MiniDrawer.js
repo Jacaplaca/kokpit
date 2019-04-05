@@ -15,7 +15,7 @@ import PlanerRaport from "./PlanerRaporty";
 import Login from "./Login";
 import PromowaneProdukty from "./PromowaneProdukty";
 import NextReports from "./NextReports";
-import Serwis from "./Serwis";
+// import Serwis from "./Serwis";
 import ChanProdConf from "./ChanProdConf";
 import Products from "./Products";
 import Users from "./Users";
@@ -23,6 +23,7 @@ import Channels from "./Channels";
 import ChannelsConfig from "./ChannelsConfig";
 import Invoices from "./Invoices";
 import CustomerDetails from "./CustomerDetails";
+import Calculators from "./Calculators";
 
 let drawerWidth = 240;
 
@@ -104,13 +105,13 @@ class MiniDrawer extends React.Component {
         component: NextReports,
         title: ""
       },
-      {
-        comp: "serwis",
-        path: "/serwis",
-        component: Serwis,
-        title: "Dodaj transakcję dla serwisu",
-        channel: auth ? auth.channel_first : 0
-      },
+      // {
+      //   comp: "serwis",
+      //   path: "/serwis",
+      //   component: Serwis,
+      //   title: "Dodaj transakcję dla serwisu",
+      //   channel: auth ? auth.channel_first : 0
+      // },
       {
         comp: "chanprodconf",
         path: "/channelconfiguration",
@@ -159,6 +160,14 @@ class MiniDrawer extends React.Component {
         component: CustomerDetails,
         title: "Informacje o klientach",
         open: true
+        //channel: auth ? auth.channel_first : 0
+      },
+      {
+        comp: "calculators",
+        path: "/calculators",
+        component: Calculators,
+        title: "Kalkulatory"
+        // open: true
         //channel: auth ? auth.channel_first : 0
       }
     ];

@@ -100,6 +100,10 @@ module.exports = (sequelize, Sequelize) => {
       customer_details: {
         type: Sequelize.INTEGER,
         defaultValue: 1
+      },
+      calculators: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1
       }
     },
     {

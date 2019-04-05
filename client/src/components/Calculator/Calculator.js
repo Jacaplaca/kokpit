@@ -5,12 +5,12 @@ import { compose } from "redux";
 import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 
-import * as actions from "../actions";
-import { defineds } from "../common/functions";
-import MainFrameHOC from "../common/MainFrameHOC";
+import * as actions from "../../actions";
+import { defineds } from "../../common/functions";
+import MainFrameHOC from "../../common/MainFrameHOC";
 //import SiteHeader from "../common/SiteHeader";
-import ModalWindow from "./ModalWindow";
-import DateRangePickerMy from "../common/DateRangePickerMy";
+import ModalWindow from "../ModalWindow";
+import DateRangePickerMy from "../../common/DateRangePickerMy";
 import SerwisForm from "./SerwisForm";
 import TransactionList from "./TransactionList";
 
@@ -26,8 +26,9 @@ const styles = theme => ({
   }
 });
 
-class Serwis extends Component {
+class Calculator extends Component {
   state = {
+    channels: null,
     transactions: [],
     transactionsUnfiltered: [],
     openModal: false,
@@ -43,21 +44,7 @@ class Serwis extends Component {
   componentWillMount = async () => {
     // const dates = []
     await this.fetchTransactions();
-    // const dates = range
-    //   .map(x => x.date)
-    //   .sort((a, b) => new Date(b) - new Date(a));
-    // const min = dates[dates.length - 1];
-    // const max = dates[0];
-    // console.log("fetchuje w cwm", min, max);
-    // console.log(
-    //   `${defineds.startOfMonth} ${defineds.endOfMonth} last: ${
-    //     defineds.startOfLastMonth
-    //   } ${defineds.endOfLastMonth} `
-    // // );
-    // const startDate = defineds.startOfMonth
-    // const endDate = defineds.endOfLastMonth
-    // const rangeselection = { endDate, startDate, key: "rangeselection" };
-    // this.setState({ rangeselection });
+    // await this.fetchChannels();
   };
 
   handleClose = () => {
@@ -89,18 +76,24 @@ class Serwis extends Component {
     return arrayFiltered;
   };
 
+  // fetchChannels = async () => {
+  //   const channels = await axios.get(`/api/channelusers`);
+  //   this.setState({ channels: channels.data });
+  // };
+
   fetchTransactions = async range => {
-    this.props.loading(true);
+    const { channelId, loading } = this.props;
+    loading(true);
     const { startDate, endDate } = this.state.rangeselection;
 
-    const fetched = await axios.get(`/api/table/transactions`);
+    const fetched = await axios.get(`/api/transactions/${channelId}`);
     const transactions = this.handleDateFilter(
       fetched.data,
       startDate,
       endDate
     );
     this.setState({ transactions, transactionsUnfiltered: fetched.data });
-    await this.props.loading(false);
+    await loading(false);
   };
 
   handleEdit = async id => {
@@ -118,6 +111,7 @@ class Serwis extends Component {
   };
 
   render() {
+    const { channelId } = this.props;
     return (
       <React.Fragment>
         <ModalWindow
@@ -126,6 +120,7 @@ class Serwis extends Component {
           maxWidth={900}
         >
           <SerwisForm
+            channelId={channelId}
             fetch={this.fetchTransactions}
             edit={this.state.edit}
             editClean={() => this.setState({ edit: null })}
@@ -139,6 +134,7 @@ class Serwis extends Component {
           />
         </ModalWindow>
         <SerwisForm
+          channelId={channelId}
           fetch={this.fetchTransactions}
           // edit={this.state.edit}
         />
@@ -174,6 +170,6 @@ export default compose(
   connect(
     mapStateToProps,
     actions
-  ),
-  MainFrameHOC
-)(Serwis);
+  )
+  // MainFrameHOC
+)(Calculator);

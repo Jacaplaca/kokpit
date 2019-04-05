@@ -15,7 +15,7 @@ const Category = db.categories;
 
 const Channel = db.sales_channels;
 const Item = db.items;
-const ChannelsConfig = db.channels_config;
+const ChannelsConfig = db.channels_config_new;
 const Transaction = db.transactions;
 const BonusType = db.bonus_type;
 
@@ -821,16 +821,48 @@ module.exports = app => {
       });
   });
 
-  app.get("/api/config/month_channel/:month/", (req, res) => {
-    const month = req.params.month;
-    console.log(`/api/config/month_channel/${month}/`);
+  app.get("/api/config/month_channel/:day/:channelId", (req, res) => {
+    const { day, channelId } = req.params;
+    console.log(`/api/config/day_channel/${day}/${channelId}`);
     if (!req.user) {
       return res.redirect("/");
     }
     // const clientId = 2;
     const { clientId, role, user_id } = req.user;
-    ChannelsConfig.find({ where: { clientId, month } })
-      .then(result => res.json(result))
+    ChannelsConfig.findAll({
+      attributes: ["id", "bonusType", "bonus", "suffix", "from", "to"],
+      where: {
+        clientId,
+        channelId,
+        [Op.or]: [
+          {
+            from: {
+              [Op.lte]: new Date(day)
+            },
+            to: {
+              [Op.gte]: new Date(day)
+            }
+          }
+        ]
+      },
+      include: [
+        {
+          model: Item,
+          as: "Item",
+          attributes: ["name", "id", "unit"]
+        },
+        {
+          model: Channel,
+          as: "Channel",
+          attributes: ["name", "id"]
+        }
+      ],
+      raw: true
+    })
+      .then(result => {
+        console.log("config", result);
+        return res.json(result);
+      })
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
@@ -859,16 +891,35 @@ module.exports = app => {
       });
   });
 
-  app.get("/api/promoitems/month/:month/", (req, res) => {
-    const month = req.params.month;
-    // console.log(`/api/config/month_channel/${month}/`);
+  app.get("/api/promoitems/month/:day/", (req, res) => {
+    const day = req.params.day;
+    console.log(`/api/config/month_channel/${day}/`);
     if (!req.user) {
       return res.redirect("/");
     }
     // const clientId = 2;
     const { clientId, role, user_id } = req.user;
-    ChannelsConfig.findAll({ where: { clientId, month } })
-      .then(result => res.json(result))
+    ChannelsConfig.findAll({
+      where: {
+        clientId,
+        [Op.or]: [
+          {
+            from: {
+              // [Op.lt]: new Date(day),
+              [Op.gt]: new Date(day)
+            },
+            to: {
+              [Op.lt]: new Date(day)
+              // [Op.gt]: new Date(new Date() - 30 * 24 * 60 * 60 * 1000)
+            }
+          }
+        ]
+      }
+    })
+      .then(result => {
+        console.log("result", result);
+        return res.json(result);
+      })
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
@@ -915,14 +966,14 @@ module.exports = app => {
       //       res.sendStatus(500);
       //     });
       //   break;
-      case "transactions":
-        Transaction.findAll({ where: { clientId, userId: user_id } })
-          .then(result => res.json(result))
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-        break;
+      // case "transactions":
+      //   Transaction.findAll({ where: { clientId, userId: user_id } })
+      //     .then(result => res.json(result))
+      //     .catch(err => {
+      //       console.log(err);
+      //       res.sendStatus(500);
+      //     });
+      //   break;
       case "items":
         Item.findAll({ where: { clientId } })
           .then(result => res.json(result))

@@ -20,6 +20,14 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         defaultValue: 1
       },
+      channelId: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1
+      },
+      itemId: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1
+      },
       item: {
         type: Sequelize.INTEGER,
         defaultValue: 1

@@ -4,7 +4,6 @@ const User = db.users;
 const Channel = db.sales_channels;
 const Item = db.items;
 const ChannelItems = db.channel_items;
-const ChannelUsers = db.channel_users;
 const ChannelsConfig = db.channels_config_new;
 const to = require("await-to-js").default;
 

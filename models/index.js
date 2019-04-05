@@ -222,6 +222,26 @@ User.belongsToMany(Channel, {
   foreignKey: "user_id"
 });
 
+db.channels_config_new.belongsTo(Item, {
+  as: "Item",
+  targetKey: "id",
+  foreignKey: "itemId"
+});
+
+db.channels_config_new.belongsTo(Channel, {
+  as: "Channel",
+  targetKey: "id",
+  foreignKey: "channelId"
+});
+
+// db.overdue_payments.belongsTo(db.users, {
+//   foreignKey: "id_user",
+//   targetKey: "id"
+// });
+
+// Team.hasOne(Game, {as: 'HomeTeam', foreignKey : 'homeTeamId'});
+// Team.hasOne(Game, {as: 'AwayTeam', foreignKey : 'awayTeamId'});
+
 // db.channels_items.belongsTo(db.sales_channels, {
 //   foreignKey: "channelId",
 //   targetKey: "id"

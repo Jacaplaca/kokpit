@@ -1,19 +1,20 @@
 import React, { useState, Component } from "react";
 import { Formik } from "formik";
+import _ from "lodash";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import InputComponent from "../common/inputs/InputComponent";
-import InputSelectBaza from "../common/inputs/InputSelectBaza";
-import InputData from "../common/inputs/InputData";
+import InputComponent from "../../common/inputs/InputComponent";
+import InputSelectBaza from "../../common/inputs/InputSelectBaza";
+import InputData from "../../common/inputs/InputData";
 import axios from "axios";
 import * as Yup from "yup";
-import ButtonMy from "../common/ButtonMy";
-import CitySearch from "./CitiesSearch";
+import ButtonMy from "../../common/ButtonMy";
+import CitySearch from "../CitiesSearch";
 import NumberFormat from "react-number-format";
-import { formatNumber, cleanNumber, dynamicSort } from "../common/functions";
-import FormButtons from "../common/FormButtons";
+import { formatNumber, cleanNumber, dynamicSort } from "../../common/functions";
+import FormButtons from "../../common/FormButtons";
 import Send from "@material-ui/icons/Send";
-import SerwisSummary from "./SerwisSummary";
+import SerwisSummary from "../SerwisSummary";
 
 class SerwisForm extends Component {
   state = {
@@ -26,10 +27,12 @@ class SerwisForm extends Component {
 
     customer: null,
     date: null,
+    dateWithConfig: true,
     gross: null,
     grossMargin: null,
 
     item: null,
+    itemId: null,
 
     marginUnit: null,
     month: null,
@@ -42,7 +45,8 @@ class SerwisForm extends Component {
     submitIsDisable: true
   };
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps = async nextProps => {
+    const { channelId } = this.props;
     if (nextProps.edit && nextProps.edit !== this.props.edit) {
       //Perform some operation
       // this.setState({ customer: nextProps.edit.customer });
@@ -67,8 +71,8 @@ class SerwisForm extends Component {
         cityName
       } = nextProps.edit;
 
-      this.fetchItems(date);
-      this.askForConfig(date, name);
+      // this.fetchItems(date);
+      // this.askForConfig(date, name);
 
       this.setState(
         {
@@ -90,12 +94,15 @@ class SerwisForm extends Component {
           unit,
           month,
           customer,
-          cityName
+          cityName,
+          items: this.itemsFromConfig(
+            await this.fetchConfigFromDB(date, channelId)
+          )
         },
         () => this.count()
       );
     }
-  }
+  };
 
   componentDidUpdate(prevProps, prevState) {
     const {
@@ -189,38 +196,66 @@ class SerwisForm extends Component {
     }
   };
 
-  askForConfig = async (date, name) => {
+  // askForConfig = async (date, name) => {
+  //   this.clearSummary();
+  //   this.setState({ buy: "0", sell: null });
+  //
+  //   const oldType = this.state.bonusType;
+  //   const result = await axios.get(
+  //     // `/api/config/channels/${this.monthKey(date)}/${name}`
+  //     `/api/config/channels/${date}/${name}`
+  //   );
+  //   const unitFetch = await axios.get(`/api/item/channels/${name}`);
+  //
+  //   const { bonus, bonusType } = result.data;
+  //   const bonusUnit = cleanNumber(bonus);
+  //   this.setState({
+  //     bonusUnit,
+  //     bonusType,
+  //     month: this.monthKey(date),
+  //     unit: unitFetch.data.unit
+  //   });
+  //   this.count();
+  // };
+
+  getConfig = async (date, id) => {
+    const { items } = this.state;
+    const configs = _.clone(items);
     this.clearSummary();
     this.setState({ buy: "0", sell: null });
+    const config = configs.filter(x => x.id === id);
 
-    const oldType = this.state.bonusType;
-    const result = await axios.get(
-      `/api/config/channels/${this.monthKey(date)}/${name}`
-    );
-    const unitFetch = await axios.get(`/api/item/channels/${name}`);
+    // const oldType = this.state.bonusType;
+    // const result = await axios.get(
+    //   // `/api/config/channels/${this.monthKey(date)}/${name}`
+    //   `/api/config/channels/${date}/${name}`
+    // );
+    // const unitFetch = await axios.get(`/api/item/channels/${name}`);
 
-    const { bonus, bonusType } = result.data;
+    const { bonus, bonusType, unit } = config[0];
     const bonusUnit = cleanNumber(bonus);
-    this.setState({
-      bonusUnit,
-      bonusType,
-      month: this.monthKey(date),
-      unit: unitFetch.data.unit
-    });
-    this.count();
+    this.setState(
+      {
+        bonusUnit,
+        bonusType,
+        month: date,
+        unit,
+        itemId: id
+      },
+      () => this.count()
+    );
+    // this.count();
   };
 
-  fetchItems = async date => {
-    // return
-    console.log("fetchItems()", this.monthKey(date));
-    const result = await axios.get(
-      `/api/promoitems/month/${this.monthKey(date)}`
-    );
-    console.log("fetchItems()", result);
-    const items = result.data.sort(dynamicSort("name"));
-    this.setState({ items, isLoading: false });
-    // this.props.daty(items);
-  };
+  // fetchItems = async date => {
+  //   // return
+  //   // console.log("fetchItems()", this.monthKey(date));
+  //   const result = await axios.get(`/api/promoitems/month/${date}`);
+  //   console.log("fetchItems()", result);
+  //   const items = result.data.sort(dynamicSort("name"));
+  //   this.setState({ items, isLoading: false });
+  //   // this.props.daty(items);
+  // };
 
   monthKey = date => {
     const dateObj = new Date(date);
@@ -231,6 +266,7 @@ class SerwisForm extends Component {
   };
 
   handleSubmit = async e => {
+    const { channelId } = this.props;
     let url;
 
     if (this.props.edit) {
@@ -242,6 +278,7 @@ class SerwisForm extends Component {
     // this.props.submit(true);
     e.preventDefault();
     const {
+      itemId,
       bonus,
       bonusType,
       bonusUnit,
@@ -268,6 +305,8 @@ class SerwisForm extends Component {
         bonusType,
         bonusUnit: cleanNumber(bonusUnit),
         buy: cleanNumber(buy),
+        channelId,
+        itemId,
         cityId,
         date,
         gross: cleanNumber(gross),
@@ -289,8 +328,8 @@ class SerwisForm extends Component {
     // await this.props.submit(false);
   };
 
-  handleChange = (field, value) => {
-    // console.log("handleChange", field, value);
+  handleChange = (field, value, props) => {
+    console.log("handleChange", field, value, props);
 
     const {
       date,
@@ -317,8 +356,14 @@ class SerwisForm extends Component {
     if (field === "items") {
       this.setState(
         { name: value.name, item: value.id, unit: value.unit },
-        () => this.handleUpdate(prevState)
+        () => {
+          this.getConfig(date, value.id);
+          this.handleUpdate(prevState);
+        }
       );
+    } else if (field === "date") {
+      this.fetchConfig(value, props);
+      return;
     } else {
       this.setState({ [field]: value }, () => this.handleUpdate(prevState));
     }
@@ -350,7 +395,7 @@ class SerwisForm extends Component {
       // console.log("name", name);
       if (prevDateState !== date || prevNameState !== name) {
         // console.log("asking for cnfig");
-        this.askForConfig(date, name);
+        // this.askForConfig(date, name);
       }
     }
     console.log(
@@ -388,20 +433,57 @@ class SerwisForm extends Component {
     }
   };
 
+  itemsFromConfig = data =>
+    data.map(x =>
+      Object.assign(x, {
+        id: x["Item.id"],
+        name: x["Item.name"],
+        unit: x["Item.unit"]
+      })
+    );
+
+  fetchConfig = async (value, props) => {
+    // props.setFieldValue("date", value);
+    const { date } = this.state;
+    const { channelId } = this.props;
+    console.log("fetchConfig()", channelId, date, value, date !== value);
+    if (date !== value) {
+      const response = await this.fetchConfigFromDB(value, channelId);
+
+      console.log("fetchConfig response", response, props);
+      this.setState(
+        {
+          date: value,
+          items: this.itemsFromConfig(response)
+          // dateWithConfig: true
+        },
+        () => {
+          props.setFieldValue("date", value);
+        }
+      );
+      // : this.setState({ dateWithConfig: false });
+      return !!response.data;
+    }
+  };
+
+  fetchConfigFromDB = async (value, channelId) => {
+    const result = await axios.get(
+      `/api/config/month_channel/${value}/${channelId}`
+    );
+    return result.data;
+  };
+
   render() {
-    const { edit, modal } = this.props;
+    const { edit, modal, channelId } = this.props;
+    const { dateWithConfig, items } = this.state;
 
     const validationSchemaFlat = props => {
       return {
         // date: Yup.string().required("Podaj prawidłową datę"),
         date: Yup.mixed().test("a", "Podaj prawidłową datę", value => {
-          return axios
-            .get(`/api/config/month_channel/${this.monthKey(value)}/`)
-            .then(response => {
-              // console.log(response);
-              // console.log(response.data);
-              return !!response.data;
-            });
+          console.log("date validate", items, items.length, items.length > 0);
+          // return this.fetchConfig(value);
+          return items.length > 0;
         }),
         items: Yup.mixed().test(
           "a",
@@ -480,7 +562,7 @@ class SerwisForm extends Component {
               }, 1000);
             }}
             render={props => {
-              console.log("propsy w SerwisForm()", props.values);
+              // console.log("propsy w SerwisForm()", props.values);
               // console.log("touched", props.touched);
               return (
                 <form
@@ -501,9 +583,9 @@ class SerwisForm extends Component {
                         type="date"
                         value={props.values.date}
                         edytuj={value => {
-                          props.setFieldValue("date", value);
-                          this.handleChange("date", value);
-                          this.fetchItems(value);
+                          // props.setFieldValue("date", value);
+                          this.handleChange("date", value, props);
+                          // this.fetchItems(value);
                           props.setFieldTouched("date", true);
                         }}
                         error={props.touched.date && Boolean(props.errors.date)}

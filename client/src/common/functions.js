@@ -243,7 +243,7 @@ export const formatNumber = (n, suffix) => {
   } else if (n === "") {
     return "";
   } else {
-    console.log("formatNumber()", n, number, "second");
+    // console.log("formatNumber()", n, number, "second");
     return number.toString().replace(".", ",");
   }
 };

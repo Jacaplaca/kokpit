@@ -46,12 +46,6 @@ class Users extends Component {
           editFields={["name", "surname", "email", "password", "password2"]}
           headRow={[
             {
-              id: "email",
-              numeric: false,
-              disablePadding: true,
-              label: "Email"
-            },
-            {
               id: "name",
               numeric: false,
               disablePadding: true,
@@ -68,6 +62,12 @@ class Users extends Component {
               numeric: false,
               disablePadding: true,
               label: "Rola"
+            },
+            {
+              id: "email",
+              numeric: false,
+              disablePadding: true,
+              label: "Email"
             }
           ]}
           rowType="user"

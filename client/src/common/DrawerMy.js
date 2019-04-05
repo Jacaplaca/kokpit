@@ -106,12 +106,12 @@ class DrawerMy extends React.Component {
         link: "/nextreports",
         icon: "InsertChartOutlined"
       },
-      {
-        comp: "serwis",
-        text: "Serwis",
-        link: "/serwis",
-        icon: "InsertChartOutlined"
-      },
+      // {
+      //   comp: "serwis",
+      //   text: "Serwis",
+      //   link: "/serwis",
+      //   icon: "InsertChartOutlined"
+      // },
       // {
       //   comp: "chanprodconf",
       //   text: "Konfiguracja",
@@ -146,6 +146,12 @@ class DrawerMy extends React.Component {
         comp: "customer_details",
         text: "Informacje o klientach",
         link: "/customerdetails",
+        icon: "InsertChartOutlined"
+      },
+      {
+        comp: "calculators",
+        text: "Kalkulatory",
+        link: "/calculators",
         icon: "InsertChartOutlined"
       }
       // {

@@ -91,6 +91,7 @@ class Channels extends Component {
           }
         }
       }
+      console.log("items", filteredItems);
       this.setState({
         items: filteredItems,
         channel: ` w ${name}`,
@@ -163,19 +164,17 @@ class Channels extends Component {
           </FormWithListClicks>
         </Paper>
         <div>
-          {clickedChannel && items && items.length > 0 && (
-            <Config
-              data={items}
-              rowClick={id => this.handleClickOnRow("clickedItem", id)}
-              label={channel}
-              showChild={itemsConfig}
-              hideChild={this.hideItemsConfig}
-              channelId={clickedChannel}
-              itemId={clickedItem}
-              channelName={channelName}
-              itemName={itemName}
-            />
-          )}
+          <Config
+            data={items}
+            rowClick={id => this.handleClickOnRow("clickedItem", id)}
+            label={channel}
+            showChild={itemsConfig}
+            hideChild={this.hideItemsConfig}
+            channelId={clickedChannel}
+            itemId={clickedItem}
+            channelName={channelName}
+            itemName={itemName}
+          />
         </div>
       </div>
     );

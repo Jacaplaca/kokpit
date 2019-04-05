@@ -21,16 +21,16 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 
-import ButtonIconCircle from "../common/ButtonIconCircle";
 import EditIcon from "@material-ui/icons/Edit";
 
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-import Confirmation from "./Confirmation";
-import * as actions from "../actions";
-import { formatNumber, shorting } from "../common/functions";
-import MainFrameHOC from "../common/MainFrameHOC";
+import ButtonIconCircle from "../../common/ButtonIconCircle";
+import Confirmation from "../Confirmation";
+import * as actions from "../../actions";
+import { formatNumber, shorting } from "../../common/functions";
+import MainFrameHOC from "../../common/MainFrameHOC";
 
 let counter = 0;
 function createData(name, calories, fat, carbs, protein) {

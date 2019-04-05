@@ -1,6 +1,6 @@
 const db = require("../models/index");
 const User = db.users;
-
+const Transaction = db.transactions;
 const Channel = db.sales_channels;
 const Item = db.items;
 const ChannelItems = db.channel_items;
@@ -127,41 +127,6 @@ module.exports = app => {
     }
   });
 
-  //adding user to channel
-  app.post("/api/channel/:channel_id/user/:user_id", async (req, res) => {
-    if (!req.user) res.redirect("/");
-    const { clientId, role } = req.user;
-
-    const { channel_id, user_id } = req.params;
-    console.log("channel_id user_id", channel_id, user_id);
-
-    const [errItem, items] = await to(
-      ChannelUsers.findAll({ where: { user_id, channel_id } })
-    );
-
-    if (items.length === 0) {
-      const [errAdding, adding] = await to(
-        ChannelUsers.create({ user_id, channel_id })
-      );
-
-      if (!adding) {
-        res.sendStatus(500);
-      } else {
-        res.json(adding);
-      }
-    } else {
-      const [errAdding, adding] = await to(
-        ChannelUsers.destroy({ where: { user_id, channel_id } })
-      );
-
-      if (!items) {
-        res.sendStatus(500);
-      } else {
-        res.json(items);
-      }
-    }
-  });
-
   //itemsy in particular channel
   app.get("/api/item/channel/:id", async (req, res) => {
     //   // if (!req.user) res.redirect("/");
@@ -253,6 +218,31 @@ module.exports = app => {
       res.sendStatus(500);
     } else {
       res.json(items);
+    }
+  });
+
+  // case "transactions":
+  //   Transaction.findAll({ where: { clientId, userId: user_id } })
+  //     .then(result => res.json(result))
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.sendStatus(500);
+  //     });
+  //   break;
+
+  app.get("/api/transactions/:channelId", async (req, res) => {
+    const { channelId } = req.params;
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
+
+    const [err, transactions] = await to(
+      Transaction.findAll({ where: { clientId, userId: user_id, channelId } })
+    );
+
+    if (!transactions) {
+      res.sendStatus(500);
+    } else {
+      res.json(transactions);
     }
   });
 };
