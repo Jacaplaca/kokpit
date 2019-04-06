@@ -18,39 +18,42 @@ const suffix = bonusType => {
 };
 
 module.exports = app => {
-  app.get("/api/channel_config_new/item/id/:id/", async (req, res) => {
-    const itemId = req.params.id;
-    // if (!req.user) res.redirect("/");
-    const { clientId, user_id } = req.user;
-    console.log("config views", itemId, clientId);
-    const [err, result] = await to(
-      ChannelsConfig.findAll({
-        where: { clientId, itemId }
-        // raw: true
-      })
-    );
-    // console.log("result", result);
-    if (!result) {
-      res.sendStatus(500);
-    } else {
-      // res.json(result);
-      res.json(
-        result.map(x => {
-          const suffix = x.get().suffix;
-          const bonus = x.get().bonus;
-          // const bonusType = x.get().bonus
-          return Object.assign(x.get(), {
-            bonus:
-              suffix === "%"
-                ? `${parseFloat(bonus) * 100}`.replace(".", ",")
-                : `${parseFloat(bonus)}`.replace(".", ",")
-          });
-          // console.log(x);
+  app.get(
+    "/api/channel_config_new/itemchannel/id/:itemId/:channelId/",
+    async (req, res) => {
+      const { itemId, channelId } = req.params;
+      // if (!req.user) res.redirect("/");
+      const { clientId, user_id } = req.user;
+      console.log("config views", clientId, channelId, itemId);
+      const [err, result] = await to(
+        ChannelsConfig.findAll({
+          where: { clientId, itemId, channelId }
+          // raw: true
         })
-        // result
       );
+      // console.log("result", result);
+      if (!result) {
+        res.sendStatus(500);
+      } else {
+        // res.json(result);
+        res.json(
+          result.map(x => {
+            const suffix = x.get().suffix;
+            const bonus = x.get().bonus;
+            // const bonusType = x.get().bonus
+            return Object.assign(x.get(), {
+              bonus:
+                suffix === "%"
+                  ? `${parseFloat(bonus) * 100}`.replace(".", ",")
+                  : `${parseFloat(bonus)}`.replace(".", ",")
+            });
+            // console.log(x);
+          })
+          // result
+        );
+      }
     }
-  });
+  );
 
   //remove configs
 

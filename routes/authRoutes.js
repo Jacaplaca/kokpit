@@ -9,11 +9,13 @@ const saltRounds = 10;
 // const db = require('../db');
 const db = require("../models/index");
 const User = db.users;
+const Client = db.clients;
 // const User = require('../models/user');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 // let email = '';
 // let errorsy = [];
+const to = require("await-to-js").default;
 const validatorsRegister = [
   // username must be an email
   check(
@@ -31,6 +33,15 @@ const findMaxClientId = async () => {
   const result = await User.findAll({});
   const clientIds = result.map(x => x.get().clientId);
   return Math.max(...clientIds);
+};
+
+const createClient = async () => {
+  const [errClient, client] = await to(Client.create({ name: "Nazwa Firmy" }));
+  if (!client) {
+    return errClient;
+  } else {
+    return client.id;
+  }
 };
 
 module.exports = app => {
@@ -161,10 +172,14 @@ module.exports = app => {
     let channels = 0;
     let channels_config = 0;
     let role = "pracownik";
+    let calculators = 0;
+    let customer_details = 0;
     if (req.user) {
       clientId = req.user.clientId;
+      calculators = 1;
     } else {
-      clientId = (await findMaxClientId()) + 1;
+      // clientId = (await findMaxClientId()) + 1;
+      clientId = await createClient();
       role = "master";
       users = 1;
       products = 1;
@@ -197,13 +212,16 @@ module.exports = app => {
           } else {
             console.log("zakladamkonto");
             console.log(email);
-            bcrypt.hash(password, saltRounds, function(err, hash) {
+            bcrypt.hash(password, saltRounds, async (err, hash) => {
               User.create({
                 email: email,
                 password: hash,
                 role: role,
                 clientId,
                 products,
+                channels,
+                channels_config,
+                customer_details,
                 users,
                 name: name || "Nie podano",
                 surname: surname || "Nie podano",

@@ -130,7 +130,7 @@ class Config extends Component {
                     itemsToState={this.itemsToState}
                     rowClick={id => console.log(id)}
                     postUrl="/api/channels_config/"
-                    fetchItemsUrl={`/api/channel_config_new/item/id/${itemId}/`}
+                    fetchItemsUrl={`/api/channel_config_new/itemchannel/id/${itemId}/${channelId}`}
                     // fetchChannels="/api/channels"
                     editUrl="/api/channel_config/edit/id/"
                     deleteUrl="/api/channel_config/destroy/"
