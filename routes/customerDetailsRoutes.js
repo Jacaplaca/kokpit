@@ -1,5 +1,5 @@
-import _ from "lodash";
 const db = require("../models/index");
+const _ = require("lodash");
 const User = db.users;
 
 const CustomerDetail = db.customer_details;
