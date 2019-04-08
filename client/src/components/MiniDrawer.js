@@ -9,21 +9,9 @@ import * as actions from "../actions";
 import TopNavBar from "../common/TopNavBar";
 import DrawerMy from "../common/DrawerMy";
 
-import Costs from "./Costs";
-import Planer from "./Planer";
-import PlanerRaport from "./PlanerRaporty";
 import Login from "./Login";
-import PromowaneProdukty from "./PromowaneProdukty";
-import NextReports from "./NextReports";
-// import Serwis from "./Serwis";
-import ChanProdConf from "./ChanProdConf";
-import Products from "./Products";
-import Users from "./Users";
-import Channels from "./Channels";
-import ChannelsConfig from "./ChannelsConfig";
-import Invoices from "./Invoices";
-import CustomerDetails from "./CustomerDetails";
-import Calculators from "./Calculators";
+import MyComponent from "./Routes/MyComponent";
+import routes from "./Routes/routes";
 
 let drawerWidth = 240;
 
@@ -50,16 +38,36 @@ const styles = theme => ({
   }
 });
 
-class MyComponent extends Component {
-  render() {
-    const TagName = this.props.component;
-    return <TagName title={this.props.title} channel={this.props.channel} />;
-  }
-}
+// class MyComponent extends Component {
+//   render() {
+//     const TagName = this.props.component;
+//     return <TagName title={this.props.title} channel={this.props.channel} />;
+//   }
+// }
 
 class MiniDrawer extends React.Component {
   state = {
-    open: true
+    open: true,
+    startModule: {}
+  };
+
+  checkStartComp = ({ start_comp, UserModule }) => {
+    console.log("startComp", start_comp, UserModule);
+    let startModule;
+    let routeStart;
+    if (UserModule.length === 0) {
+      startModule = { name: "Start" };
+      routeStart = routes[0];
+    } else {
+      const startComp = UserModule.filter(x => x.id === start_comp);
+      startModule = startComp.length > 0 ? startComp[0] : UserModule[0];
+      const route = routes.filter(x => x.comp === startModule.comp);
+      routeStart = route.length > 0 ? route[0] : routes[0];
+    }
+
+    return (
+      <MyComponent title={startModule.name} component={routeStart.component} />
+    );
   };
 
   componentDidMount = () => {
@@ -78,99 +86,11 @@ class MiniDrawer extends React.Component {
     this.props.clicked(where);
   };
 
+  compAllowed = (comps, comp) => comps.filter(x => x.comp === comp).length > 0;
+
   render() {
     const { classes, theme, auth } = this.props;
-    const routes = [
-      {
-        comp: "costs",
-        path: "/costs",
-        component: Costs,
-        title: "Dodaj koszty"
-      },
-      {
-        comp: "planer",
-        path: "/planer",
-        component: Planer,
-        title: "Zaplanuj aktywności"
-      },
-      {
-        comp: "raporty",
-        path: "/raporty",
-        component: PlanerRaport,
-        title: "Dodaj raport z aktywności"
-      },
-      {
-        comp: "nextReports",
-        path: "/nextreports",
-        component: NextReports,
-        title: ""
-      },
-      // {
-      //   comp: "serwis",
-      //   path: "/serwis",
-      //   component: Serwis,
-      //   title: "Dodaj transakcję dla serwisu",
-      //   channel: auth ? auth.channel_first : 0
-      // },
-      {
-        comp: "chanprodconf",
-        path: "/channelconfiguration",
-        component: ChanProdConf,
-        title: "Skonfiguruj kanały sprzedaży"
-        //channel: auth ? auth.channel_first : 0
-      },
-      {
-        comp: "products",
-        path: "/products",
-        component: Products,
-        title: "Produkty"
-        //channel: auth ? auth.channel_first : 0
-      },
-      {
-        comp: "users",
-        path: "/users",
-        component: Users,
-        title: "Użytkownicy"
-        //channel: auth ? auth.channel_first : 0
-      },
-      {
-        comp: "channels",
-        path: "/systems",
-        component: Channels,
-        title: "Systemy prowizyjne"
-        //channel: auth ? auth.channel_first : 0
-      },
-      // {
-      //   comp: "channels_config",
-      //   path: "/configs",
-      //   component: ChannelsConfig,
-      //   title: "Konfiguracja systemów"
-      //   //channel: auth ? auth.channel_first : 0
-      // }
-      {
-        comp: "invoices",
-        path: "/invoices",
-        component: Invoices,
-        title: "Zaległe faktury"
-        //channel: auth ? auth.channel_first : 0
-      },
-      {
-        comp: "customer_details",
-        path: "/customerdetails",
-        component: CustomerDetails,
-        title: "Informacje o klientach",
-        open: true
-        //channel: auth ? auth.channel_first : 0
-      },
-      {
-        comp: "calculators",
-        path: "/calculators",
-        component: Calculators,
-        title: "Kalkulatory"
-        // open: true
-        //channel: auth ? auth.channel_first : 0
-      }
-    ];
+
     return (
       <BrowserRouter>
         <div className={classes.root} id="classesRoot">
@@ -190,12 +110,14 @@ class MiniDrawer extends React.Component {
               <Route
                 path="/"
                 exact
-                render={() => <Invoices title="Zaległe faktury" />}
+                // render={() => <Invoices title="Zaległe faktury" />}
+                render={() => this.checkStartComp(auth)}
               />
             )}
             {routes.map((route, i) => {
               const { comp, path, component, title, channel, open } = route;
-              return (auth && auth[comp]) || open ? (
+              return (auth && this.compAllowed(auth.UserModule, comp)) ||
+                open ? (
                 <Route
                   key={i}
                   path={path}

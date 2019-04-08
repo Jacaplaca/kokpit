@@ -61,6 +61,8 @@ db.Sequelize = Sequelize;
 
 const ChannelItems = db.channel_items;
 const Channel = db.sales_channels;
+const Client = db.clients;
+const Module = db.modules;
 const Item = db.items;
 const User = db.users;
 
@@ -232,6 +234,30 @@ db.channels_config_new.belongsTo(Channel, {
   as: "Channel",
   targetKey: "id",
   foreignKey: "channelId"
+});
+
+Module.belongsToMany(Client, {
+  as: "ModuleClient",
+  through: db.modules_clients, //this can be string or a model,
+  foreignKey: "module_id"
+});
+
+Client.belongsToMany(Module, {
+  as: "ClientModule",
+  through: db.modules_clients,
+  foreignKey: "client_id"
+});
+
+Module.belongsToMany(User, {
+  as: "ModuleUser",
+  through: db.modules_users, //this can be string or a model,
+  foreignKey: "module_id"
+});
+
+User.belongsToMany(Module, {
+  as: "UserModule",
+  through: db.modules_users,
+  foreignKey: "user_id"
 });
 
 // db.overdue_payments.belongsTo(db.users, {

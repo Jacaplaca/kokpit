@@ -157,6 +157,7 @@ class Row extends Component {
               key={channel.id}
             >
               <Checkbox
+                disabled={channel.id === 1 && item.role === "master"}
                 checked={item[channel.id] === 1}
                 icon={<CheckBoxOutlineBlankIcon {...iconPropsOpacity} />}
                 checkedIcon={<CheckBoxIcon {...iconProps} />}

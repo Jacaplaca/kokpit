@@ -36,16 +36,11 @@ class Users extends Component {
         <FormWithListClicks
           rowClick={id => console.log(id)}
           postUrl="/auth/register"
-          // fetchItemsUrl="api/allusers/channel"
-          fetchItemsUrl="api/modulesclients"
-          // includeAs="SalesChannels"
-          includeAs="UserModule"
-          // fetchChannels="/api/channels"
-          fetchChannels="/api/modules"
+          fetchItemsUrl="api/allusers/channel"
+          fetchChannels="/api/channels"
           editUrl="/auth/user/edit/id/"
           deleteUrl="/api/user/destroy/"
-          // manyOne="channel"
-          manyOne="module"
+          manyOne="channel"
           manyTwo="user"
           formFields={["name", "surname", "email", "password", "password2"]}
           editFields={["name", "surname", "email", "password", "password2"]}

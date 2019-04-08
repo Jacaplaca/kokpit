@@ -99,7 +99,7 @@ class FormWithListClicks extends Component {
   };
 
   addChannelsToItems = result => {
-    const { headRow } = this.props;
+    const { headRow, includeAs } = this.props;
     let keysValue = [];
     let fieldLength = {};
     for (var property in headRow) {
@@ -122,7 +122,7 @@ class FormWithListClicks extends Component {
         }
         let modItem = {};
         for (let channel of channels) {
-          const channInItem = item.SalesChannels.filter(
+          const channInItem = item[includeAs].filter(
             sch => sch.id === channel.id
           );
           modItem = Object.assign(item, {
@@ -137,7 +137,7 @@ class FormWithListClicks extends Component {
         }
 
         // console.log("addChannelsToItems()", keysValue, fieldLength, modItem);
-        delete modItem["SalesChannels"];
+        delete modItem[includeAs];
         items.push(modItem);
       }
 

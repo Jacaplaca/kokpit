@@ -145,6 +145,9 @@ require("./routes/invoicesRoutes")(app);
 require("./routes/channelConfigRoutes")(app);
 require("./routes/customerDetailsRoutes")(app);
 require("./routes/channelUsersRoutes")(app);
+require("./routes/moduleClientRoutes")(app);
+require("./routes/moduleUserRoutes")(app);
+require("./routes/moduleRoutes")(app);
 // require('./routes/surveyRoutes')(app);
 
 if (process.env.NODE_ENV === "online") {

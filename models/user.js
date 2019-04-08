@@ -104,6 +104,10 @@ module.exports = (sequelize, Sequelize) => {
       calculators: {
         type: Sequelize.INTEGER,
         defaultValue: 1
+      },
+      start_comp: {
+        type: Sequelize.INTEGER
+        // defaultValue: 1
       }
     },
     {

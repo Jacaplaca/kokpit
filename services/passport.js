@@ -3,6 +3,7 @@ const LocalStrategy = require("passport-local").Strategy;
 var bcrypt = require("bcrypt");
 const db = require("../models/index");
 const User = db.users;
+const Module = db.modules;
 // var User = require('../models/user');
 // const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // const mongoose = require('mongoose');
@@ -21,8 +22,18 @@ passport.deserializeUser((user_id, done) => {
   // console.log('deserializeUser');
   // console.log(user_id);
   const id = user_id.user_id;
-  User.findById(id)
+  User.findById(id, {
+    include: [
+      {
+        model: Module,
+        as: "UserModule"
+        // where: { id: clientId },
+        // attributes: []
+      }
+    ]
+  })
     .then(project => {
+      console.log("proj", project);
       const result = JSON.parse(JSON.stringify(project));
       const {
         clientId,
@@ -42,7 +53,9 @@ passport.deserializeUser((user_id, done) => {
         channels_config,
         invoices,
         customer_details,
-        calculators
+        calculators,
+        start_comp,
+        UserModule
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -67,7 +80,9 @@ passport.deserializeUser((user_id, done) => {
             channels_config,
             invoices,
             customer_details,
-            calculators
+            calculators,
+            start_comp,
+            UserModule
           })
         );
       } else {
