@@ -96,7 +96,7 @@ class EnhancedTableHead extends Component {
   };
 
   componentWillMount() {
-    console.log("this.props.headRow", this.props.headRow);
+    // console.log("this.props.headRow", this.props.headRow);
     this.setState({ headCols: this.createHead(this.props.headCols) });
   }
 

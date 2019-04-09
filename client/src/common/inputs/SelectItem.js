@@ -36,7 +36,7 @@ class SelectItem extends Component {
       format
     } = this.props;
     const { open } = this.state;
-    console.log("value", value);
+    // console.log("value", value);
     return (
       <React.Fragment>
         <div

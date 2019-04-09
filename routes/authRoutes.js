@@ -10,6 +10,8 @@ const saltRounds = 10;
 const db = require("../models/index");
 const User = db.users;
 const Client = db.clients;
+const ModuleClient = db.modules_clients;
+const ModuleUser = db.modules_users;
 // const User = require('../models/user');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
@@ -29,6 +31,8 @@ const validatorsRegister = [
   // })
 ];
 
+const startingPackage = [1, 7, 9, 13, 19, 11];
+
 const findMaxClientId = async () => {
   const result = await User.findAll({});
   const clientIds = result.map(x => x.get().clientId);
@@ -40,8 +44,28 @@ const createClient = async () => {
   if (!client) {
     return errClient;
   } else {
+    startingPackage.map(async x => {
+      const [errAdding, adding] = await to(
+        ModuleClient.create({ client_id: client.id, module_id: x })
+      );
+    });
+
     return client.id;
   }
+};
+
+const assignUserModuleToMaster = async user_id => {
+  startingPackage.map(async x => {
+    const [errMC, mu] = await to(ModuleUser.create({ user_id, module_id: x }));
+    return mu;
+  });
+};
+const assignUserModuleToPracownik = async user_id => {
+  const modulesForPracownik = [11];
+  modulesForPracownik.map(async x => {
+    const [errMC, mu] = await to(ModuleUser.create({ user_id, module_id: x }));
+    return mu;
+  });
 };
 
 module.exports = app => {
@@ -167,24 +191,26 @@ module.exports = app => {
     console.log("email pass", email, password);
     console.log("req.user", req.user);
     let clientId = 0;
-    let users = 0;
-    let products = 0;
-    let channels = 0;
-    let channels_config = 0;
+    // let users = 0;
+    // let products = 0;
+    // let channels = 0;
+    // let channels_config = 0;
     let role = "pracownik";
-    let calculators = 0;
-    let customer_details = 0;
+    // let calculators = 0;
+    // let customer_details = 0;
+    let start_comp = null;
     if (req.user) {
       clientId = req.user.clientId;
-      calculators = 1;
+      // calculators = 1;
     } else {
       // clientId = (await findMaxClientId()) + 1;
       clientId = await createClient();
       role = "master";
-      users = 1;
-      products = 1;
-      channels = 1;
-      channels_config = 1;
+      // users = 1;
+      // products = 1;
+      // channels = 1;
+      // channels_config = 1;
+      start_comp = 1;
     }
 
     const message = { email };
@@ -218,27 +244,68 @@ module.exports = app => {
                 password: hash,
                 role: role,
                 clientId,
-                products,
-                channels,
-                channels_config,
-                customer_details,
-                users,
+                // products,
+                // channels,
+                // channels_config,
+                // customer_details,
+                // users,
+                start_comp,
                 name: name || "Nie podano",
                 surname: surname || "Nie podano",
                 status: "active"
               })
-                .then(results => {
+                .then(async results => {
+                  const { id } = results.get();
+                  console.log("id id id fresh register id id id", id);
+                  role === "master"
+                    ? await assignUserModuleToMaster(id)
+                    : await assignUserModuleToPracownik(id);
                   // console.log("after register", results.get().id);
                   // res.json({ accountCreated: true });
-                  return res.json({
-                    name: results.get().name,
-                    id: results.get().id,
-                    surname: results.get().surname,
-                    email: results.get().email
-                  });
+                  // return res.json({
+                  //   name: results.get().name,
+                  //   id,
+                  //   surname: results.get().surname,
+                  //   email: results.get().email
+                  // });
                   // const user_id = JSON.parse(JSON.stringify(results));
-                  // req.login({ user_id: user_id.id }, function(err) {
+                  // req.login({ user_id: id }, function(err) {
                   //   res.redirect("/");
+                  // });
+                  // passport.authenticate("local", {
+                  //   successRedirect: "/",
+                  //   failureRedirect: "/login",
+                  //   failureFlash: "Invalid username or password."
+                  // });
+                  // passport.authenticate("local")(req, res, function() {
+                  //   res.redirect("/account");
+                  // });
+                  if (role === "master") {
+                    req.login({ user_id: id }, function(err) {
+                      if (err) {
+                        console.log("login, err", err);
+                        return next(err);
+                      }
+                      console.log("ok or not login");
+                      return res.redirect("/");
+                    });
+                  } else {
+                    return res.json({
+                      name: results.get().name,
+                      id,
+                      surname: results.get().surname,
+                      email: results.get().email
+                    });
+                    // res.redirect("/");
+                  }
+
+                  // req.login({ user_id: id }, function(err) {
+                  //   if (err) {
+                  //     console.log("login, err", err);
+                  //     return next(err);
+                  //   }
+                  //   console.log("ok or not login");
+                  //   return res.redirect("/");
                   // });
                 })
                 .catch(err => {

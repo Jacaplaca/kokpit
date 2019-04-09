@@ -33,8 +33,8 @@ class Channels extends Component {
     itemsConfig: false,
     itemName: "",
     channelName: "",
-    clickedChannel: 109,
-    clickedItem: 59
+    clickedChannel: null,
+    clickedItem: null
   };
 
   componentWillMount = async () => {
@@ -76,7 +76,6 @@ class Channels extends Component {
   };
 
   handleClickOnRow = (comp, id) => {
-    console.log("handleClickOnRow", comp, id);
     this.setState({ [comp]: id });
     const { itemsUnfilter } = this.state;
     if (comp === "clickedChannel") {
@@ -128,7 +127,7 @@ class Channels extends Component {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(300px, 1fr) 2fr",
+          gridTemplateColumns: "minmax(200px, 1fr) 2fr",
           gridGap: "1rem"
         }}
       >
@@ -163,10 +162,12 @@ class Channels extends Component {
             <ChannelForm addLabel={"Dodaj"} />
           </FormWithListClicks>
         </Paper>
-        <div>
+        <div style={{ height: "100%" }}>
           <Config
             data={items}
-            rowClick={id => this.handleClickOnRow("clickedItem", id)}
+            rowClick={id =>
+              clickedChannel && this.handleClickOnRow("clickedItem", id)
+            }
             label={channel}
             showChild={itemsConfig}
             hideChild={this.hideItemsConfig}

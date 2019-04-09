@@ -14,37 +14,44 @@ import Invoices from "../Invoices";
 import CustomerDetails from "../CustomerDetails";
 import Calculators from "../Calculators";
 import Start from "../Start";
+import UsersChannels from "../UsersChannels";
 
 const routes = [
   {
     comp: "start",
     path: "/start",
-    component: Start,
-    title: "Start"
+    component: Start
+    // title: "Start"
+  },
+  {
+    comp: "users_channels",
+    path: "/users_channels",
+    component: UsersChannels
+    // title: "Dodaj koszty"
   },
   {
     comp: "costs",
     path: "/costs",
-    component: Costs,
-    title: "Dodaj koszty"
+    component: Costs
+    // title: "Dodaj koszty"
   },
   {
     comp: "planer",
     path: "/planer",
-    component: Planer,
-    title: "Zaplanuj aktywności"
+    component: Planer
+    // title: "Zaplanuj aktywności"
   },
   {
     comp: "raporty",
     path: "/raporty",
-    component: PlanerRaport,
-    title: "Dodaj raport z aktywności"
+    component: PlanerRaport
+    // title: "Dodaj raport z aktywności"
   },
   {
     comp: "nextReports",
     path: "/nextreports",
-    component: NextReports,
-    title: ""
+    component: NextReports
+    // title: ""
   },
   // {
   //   comp: "serwis",
@@ -70,15 +77,15 @@ const routes = [
   {
     comp: "users",
     path: "/users",
-    component: Users,
-    title: "Użytkownicy"
+    component: Users
+    // title: "Użytkownicy"
     //channel: auth ? auth.channel_first : 0
   },
   {
     comp: "channels",
     path: "/systems",
-    component: Channels,
-    title: "Systemy prowizyjne"
+    component: Channels
+    // title: "Systemy prowizyjne"
     //channel: auth ? auth.channel_first : 0
   },
   // {
@@ -91,23 +98,23 @@ const routes = [
   {
     comp: "invoices",
     path: "/invoices",
-    component: Invoices,
-    title: "Zaległe faktury"
+    component: Invoices
+    // title: "Zaległe faktury"
     //channel: auth ? auth.channel_first : 0
   },
   {
     comp: "customer_details",
     path: "/customerdetails",
     component: CustomerDetails,
-    title: "Informacje o klientach",
+    // title: "Informacje o klientach",
     open: true
     //channel: auth ? auth.channel_first : 0
   },
   {
     comp: "calculators",
     path: "/calculators",
-    component: Calculators,
-    title: "Kalkulatory"
+    component: Calculators
+    // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0
   }

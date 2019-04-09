@@ -85,6 +85,8 @@ class Register extends Component {
     });
     // const response = await resp.json();
     resp.ok && this.props.history.push("/");
+    window.location.reload();
+    // resp.ok && this.props.history.push("/");
     // console.log("result", resp);
   };
 

@@ -86,54 +86,66 @@ const styles = theme => ({
 class DrawerMy extends React.Component {
   render() {
     const { classes, theme, auth, open, handleDrawerClose } = this.props;
-    const links = [
-      { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
+
+    const expLinks = [
       {
-        comp: "planer",
-        text: "Aktywności",
-        link: "/planer",
-        icon: "EventIcon"
-      },
-      {
-        comp: "raporty",
-        text: "Raporty",
-        link: "/raporty",
-        icon: "EventAvailableIcon"
-      },
-      {
-        comp: "nextReports",
-        text: "Next Reports",
-        link: "/nextreports",
-        icon: "InsertChartOutlined"
-      },
-      // {
-      //   comp: "serwis",
-      //   text: "Serwis",
-      //   link: "/serwis",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "chanprodconf",
-      //   text: "Konfiguracja",
-      //   link: "/channelconfiguration",
-      //   icon: "InsertChartOutlined"
-      // },
-      {
+        text: "Prowizje",
+        icon: "MoneyIcon",
         comp: "products",
-        text: "Produkty",
-        link: "/products",
-        icon: "InsertChartOutlined"
+        // link: "/costs",
+        comps: [
+          {
+            comp: "products",
+            text: "Produkty",
+            link: "/products",
+            icon: "InsertChartOutlined"
+          },
+          {
+            comp: "channels",
+            text: "Systemy prowizyjne",
+            link: "/systems",
+            icon: "InsertChartOutlined"
+          },
+          {
+            comp: "users_channels",
+            text: "Pracownicy",
+            link: "/users_channels",
+            icon: "InsertChartOutlined"
+          }
+        ]
       },
+      {
+        text: "Planer",
+        icon: "EventIcon",
+        comp: "planer",
+        comps: [
+          {
+            comp: "planer",
+            text: "Aktywności",
+            link: "/planer",
+            icon: "EventIcon"
+          },
+          {
+            comp: "raporty",
+            text: "Raporty",
+            link: "/raporty",
+            icon: "EventAvailableIcon"
+          }
+        ]
+      },
+      { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
+
       {
         comp: "users",
         text: "Użytkownicy",
         link: "/users",
         icon: "InsertChartOutlined"
       },
+
       {
-        comp: "channels",
-        text: "Systemy prowizyjne",
-        link: "/systems",
+        comp: "nextReports",
+        text: "Next Reports",
+        link: "/nextreports",
         icon: "InsertChartOutlined"
       },
       {
@@ -154,6 +166,76 @@ class DrawerMy extends React.Component {
         link: "/calculators",
         icon: "InsertChartOutlined"
       }
+    ];
+
+    const links = [
+      // { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
+      // {
+      //   comp: "planer",
+      //   text: "Aktywności",
+      //   link: "/planer",
+      //   icon: "EventIcon"
+      // },
+      // {
+      //   comp: "raporty",
+      //   text: "Raporty",
+      //   link: "/raporty",
+      //   icon: "EventAvailableIcon"
+      // },
+      // {
+      //   comp: "nextReports",
+      //   text: "Next Reports",
+      //   link: "/nextreports",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "serwis",
+      //   text: "Serwis",
+      //   link: "/serwis",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "chanprodconf",
+      //   text: "Konfiguracja",
+      //   link: "/channelconfiguration",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "products",
+      //   text: "Produkty",
+      //   link: "/products",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "users",
+      //   text: "Użytkownicy",
+      //   link: "/users",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "channels",
+      //   text: "Systemy prowizyjne",
+      //   link: "/systems",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "invoices",
+      //   text: "Faktury",
+      //   link: "/invoices",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "customer_details",
+      //   text: "Informacje o klientach",
+      //   link: "/customerdetails",
+      //   icon: "InsertChartOutlined"
+      // },
+      // {
+      //   comp: "calculators",
+      //   text: "Kalkulatory",
+      //   link: "/calculators",
+      //   icon: "InsertChartOutlined"
+      // }
       // {
       //   comp: "channels_config",
       //   text: "Konfiguracja systemów",
@@ -185,14 +267,29 @@ class DrawerMy extends React.Component {
         </div>
 
         <div>
-          {links.map((el, i) => {
-            const { comp, text, link, icon } = el;
+          {expLinks.map((el, i) => {
+            console.log("el", el);
+            const { comp, text, link, icon, comps } = el;
             return (
               <ShowLinkToComp key={i} comp={comp}>
-                <DrawerLink text={text} link={link} icon={icon} />
+                <DrawerLink
+                  text={text}
+                  link={link}
+                  icon={icon}
+                  comps={comps}
+                  comp={comp}
+                />
               </ShowLinkToComp>
             );
           })}
+          {/* {links.map((el, i) => {
+            const { comp, text, link, icon } = el;
+            return (
+              <ShowLinkToComp key={i} comp={comp}>
+                <DrawerLink key={i} text={text} link={link} icon={icon} />
+              </ShowLinkToComp>
+            );
+          })} */}
         </div>
       </Drawer>
     );

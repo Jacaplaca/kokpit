@@ -6,18 +6,26 @@ import SelectItem from "../../../common/inputs/SelectItem";
 import { DatePicker } from "material-ui-pickers";
 import InputComponent from "../../../common/inputs/InputComponent";
 import InputData from "../../../common/inputs/InputData";
+import DateRangePickerMy from "../../../common/DateRangePickerMy";
 // import SelectItem from "../../../common/SelectItem";
 import {
   YMtoDate,
   dateToYM,
   validateEmail,
-  validateRegister
+  validateRegister,
+  defineds,
+  dataToString
 } from "../../../common/functions";
 // import SummaryAddingUser from "./SummaryAddingUser";
 
 class ConfigForm extends React.Component {
   // static contextType = MyContext;
   state = {
+    rangeselection: {
+      // startDate: defineds.startOfMonth,
+      // endDate: defineds.endOfMonth,
+      // key: "rangeselection"
+    },
     // from: "",
     // to: "",
     // bonusType: ""
@@ -77,6 +85,7 @@ class ConfigForm extends React.Component {
 
   componentDidMount = () => {
     this.addIdsToState();
+    this.defaultRange();
   };
 
   addIdsToState = async () => {
@@ -175,6 +184,39 @@ class ConfigForm extends React.Component {
     // this.nullingReport();
   };
 
+  defaultRange = async ranges => {
+    const { activity, change } = this.props;
+    let startDate;
+    let endDate;
+    if (ranges) {
+      startDate = ranges.rangeselection.startDate;
+      endDate = ranges.rangeselection.endDate;
+      console.log("ranges", startDate, endDate);
+    } else {
+      startDate = defineds.startOfNextMonth;
+      endDate = defineds.endOfNextMonth;
+    }
+
+    const rangeselection = { endDate, startDate, key: "rangeselection" };
+    await change("to", dataToString(endDate), activity);
+    await change("from", dataToString(startDate), activity);
+    this.setState({ rangeselection });
+  };
+
+  handleSelect = ranges => {
+    console.log("ranges", ranges);
+    const { startDate, endDate } = ranges.rangeselection;
+
+    const startDateString = dataToString(startDate);
+    const endDateString = dataToString(endDate);
+
+    console.log("ranges", startDateString, endDateString);
+    this.setState({
+      ...ranges
+    });
+    // this.fetchCosts(ranges);
+  };
+
   render() {
     const {
       disableSubmit,
@@ -225,15 +267,15 @@ class ConfigForm extends React.Component {
             gridGap: "1.5rem",
             gridTemplateRows: "auto",
             gridTemplateAreas:
-              "'from to bonusType bonus' 'buttons buttons buttons buttons'",
-            gridTemplateColumns: `minmax(60px, 1fr) minmax(60px, 1fr) minmax(150px, 2fr) minmax(60px, 1fr)`,
+              " 'bonusType bonus' 'from from ' ' buttons buttons'",
+            gridTemplateColumns: `minmax(120px, 1fr)   minmax(120px, 1fr)`,
             // paddingLeft: "1.3rem",
             paddingTop: "1.3rem"
             // paddingRight: "1.3rem"
           }}
         >
           <div style={{ gridArea: "from" }}>
-            <InputData
+            {/* <InputData
               id="date"
               name="from"
               //disabled={modal ? true : false}
@@ -244,9 +286,14 @@ class ConfigForm extends React.Component {
               type="date"
               edytuj={value => change("from", value, activity)}
               value={values.from}
+            /> */}
+            <DateRangePickerMy
+              onChange={this.defaultRange}
+              range={[this.state.rangeselection]}
+              nopaper
             />
           </div>
-          <div style={{ gridArea: "to" }}>
+          {/* <div style={{ gridArea: "to" }}>
             <InputData
               id="date"
               name="to"
@@ -259,7 +306,7 @@ class ConfigForm extends React.Component {
               edytuj={value => change("to", value, activity)}
               value={values.to}
             />
-          </div>
+          </div> */}
           <div style={{ gridArea: "bonusType" }}>
             <SelectItem
               // simpleInput

@@ -19,7 +19,7 @@ const styles = theme => ({
 class Confirmation extends Component {
   render() {
     const { children, action } = this.props;
-    console.log("confirmatrion, action", action);
+    // console.log("confirmatrion, action", action);
     return (
       <Dialog
         //disableBackdropClick

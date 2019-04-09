@@ -38,6 +38,7 @@ class Users extends Component {
           postUrl="/auth/register"
           fetchItemsUrl="api/allusers/channel"
           fetchChannels="/api/channels"
+          includeAs="SalesChannels"
           editUrl="/auth/user/edit/id/"
           deleteUrl="/api/user/destroy/"
           manyOne="channel"
@@ -79,8 +80,8 @@ class Users extends Component {
           maxWidth={900}
         >
         </ModalWindow> */}
-          <Form addLabel={"Dodaj"} activity="adding" />
-          <EditUserForm addLabel={"Dodaj"} activity="editing" />
+          {/* <Form addLabel={"Dodaj"} activity="adding" /> */}
+          {/* <EditUserForm addLabel={"Dodaj"} activity="editing" /> */}
         </FormWithListClicks>
       </Paper>
     );

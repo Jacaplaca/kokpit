@@ -8,9 +8,17 @@ import {
   startOfWeek,
   endOfWeek
 } from "date-fns";
+
 import axios from "axios";
 import moment from "moment";
 
+var {
+  startOfQuarter,
+  endOfQuarter,
+  addQuarters,
+  getYear,
+  startOfYear
+} = require("date-fns");
 export const validateRegister = async ({
   email,
   password,
@@ -368,7 +376,30 @@ export const defineds = {
   startOfMonth: startOfMonth(new Date()),
   endOfMonth: endOfMonth(new Date()),
   startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
-  endOfLastMonth: endOfMonth(addMonths(new Date(), -1))
+  endOfLastMonth: endOfMonth(addMonths(new Date(), -1)),
+  startOfNextMonth: startOfMonth(addMonths(new Date(), 1)),
+  endOfNextMonth: endOfMonth(addMonths(new Date(), 1)),
+  startFirstQuarter: startOfQuarter(new Date(startOfYear(new Date()))),
+  endFirstQuarter: endOfQuarter(new Date(startOfYear(new Date()))),
+  startSecondQuarter: startOfQuarter(
+    addQuarters(new Date(startOfYear(new Date())), 1)
+  ),
+  endSecondQuarter: endOfQuarter(
+    addQuarters(new Date(startOfYear(new Date())), 1)
+  ),
+  startThirdQuarter: startOfQuarter(
+    addQuarters(new Date(startOfYear(new Date())), 2)
+  ),
+  endThirdQuarter: endOfQuarter(
+    addQuarters(new Date(startOfYear(new Date())), 2)
+  ),
+  startFourthQuarter: startOfQuarter(
+    addQuarters(new Date(startOfYear(new Date())), 3)
+  ),
+  endFourthQuarter: endOfQuarter(
+    addQuarters(new Date(startOfYear(new Date())), 3)
+  ),
+  thisYear: getYear(new Date())
 };
 
 // function formatTimezone(date: Date): Date {

@@ -55,7 +55,6 @@ class FormWithListClicks extends Component {
   };
 
   itemsToState = async (url, name) => {
-    console.log("itemsToState()", url, name);
     const result = await this.fetch(url);
     // console.log("itemsToState", this.addChannelsToItems(result));
     this.props.itemsToState && this.props.itemsToState(result);
@@ -65,7 +64,6 @@ class FormWithListClicks extends Component {
   };
 
   handleChange = async (dbField, value, inState) => {
-    console.log("handlechange", dbField, value, inState);
     const modyfied = _.clone(this.state[inState]);
     const disableSubmitState = _.clone(this.state.disableSubmit);
     const values = Object.assign(modyfied, {

@@ -28,6 +28,7 @@ const Products = () => (
     <FormWithListClicks
       rowClick={id => console.log(id)}
       postUrl="/api/item/"
+      includeAs="SalesChannels"
       fetchItemsUrl="api/allitem/channel"
       fetchChannels="/api/channels"
       editUrl="/api/item/edit/id/"

@@ -8,6 +8,7 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
+import { getYear } from "date-fns";
 import { DateRangePicker, createStaticRanges } from "react-date-range";
 import { pl } from "react-date-range/src/locale/index";
 import { defineds } from "../common/functions";
@@ -61,10 +62,58 @@ const staticRanges = [
   ])
 ];
 
+const configRanges = [
+  // ...defaultStaticRanges,
+  ...createStaticRanges([
+    {
+      label: "Bieżący miesiąc",
+      range: () => ({
+        startDate: defineds.startOfMonth,
+        endDate: defineds.endOfMonth
+      })
+    },
+    {
+      label: "Następny miesiąc",
+      range: () => ({
+        startDate: defineds.startOfNextMonth,
+        endDate: defineds.endOfNextMonth
+      })
+    },
+    {
+      label: `Pierwszy kwartał ${getYear(new Date())}`,
+      range: () => ({
+        startDate: defineds.startFirstQuarter,
+        endDate: defineds.endFirstQuarter
+      })
+    },
+    {
+      label: `Drugi kwartał ${getYear(new Date())}`,
+      range: () => ({
+        startDate: defineds.startSecondQuarter,
+        endDate: defineds.endSecondQuarter
+      })
+    },
+    {
+      label: `Trzeci kwartał ${getYear(new Date())}`,
+      range: () => ({
+        startDate: defineds.startThirdQuarter,
+        endDate: defineds.endThirdQuarter
+      })
+    },
+    {
+      label: `Czwarty kwartał ${getYear(new Date())}`,
+      range: () => ({
+        startDate: defineds.startFourthQuarter,
+        endDate: defineds.endFourthQuarter
+      })
+    }
+  ])
+];
+
 const styles = {};
 
 function DateTimePickerMy(props) {
-  const { classes, range, onChange } = props;
+  const { classes, range, onChange, nopaper } = props;
 
   const { startDate, endDate } = range[0];
 
@@ -81,7 +130,20 @@ function DateTimePickerMy(props) {
 
   //const zakres = `Zakres: ${startDateString} - ${endDateString}`;
 
-  return (
+  return nopaper ? (
+    <DateRangePicker
+      locale={pl}
+      inputRanges={[]}
+      staticRanges={configRanges}
+      showSelectionPreview={true}
+      ranges={range}
+      onChange={onChange}
+      moveRangeOnFirstSelection={false}
+      months={2}
+      direction="horizontal"
+      rangeColors={["#303f9f"]}
+    />
+  ) : (
     <ExpansionPanel style={{ marginTop: 20, marginBottom: 20 }}>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>
