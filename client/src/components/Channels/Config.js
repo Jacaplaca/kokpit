@@ -43,7 +43,8 @@ class Config extends Component {
             <div
               style={{
                 padding: "1.3rem",
-                maxWidth: 700
+                maxWidth: 700,
+                display: "grid"
               }}
             >
               <h6 style={{ textTransform: "uppercase" }}>
@@ -190,7 +191,9 @@ class Config extends Component {
                       {/* <Form addLabel={"Dodaj"} activity="adding" />
                     <EditUserForm addLabel={"Dodaj"} activity="editing" /> */}
                       <ConfigForm
-                        label={`Skonfiguruj prowizje dla ${itemName} w ${channelName}`}
+                        // label={`Skonfiguruj prowizje dla ${itemName} w ${channelName}`}
+                        itemName={itemName}
+                        channelName={channelName}
                         activity="adding"
                         channelId={channelId}
                         itemId={itemId}

@@ -1,6 +1,8 @@
 import React from "react";
 import _ from "lodash";
+import MenuIcon from "@material-ui/icons/Menu";
 import FormButtons from "../../../common/FormButtons";
+import ButtonMy from "../../../common/ButtonMy";
 
 import SelectItem from "../../../common/inputs/SelectItem";
 import { DatePicker } from "material-ui-pickers";
@@ -34,8 +36,9 @@ class ConfigForm extends React.Component {
     // email: "",
     // password: "",
     disableSubmit: true,
-    fromHelper: "Data rozpoczęcia",
-    toHelper: "Data zakończenia"
+    fromHelper: "",
+    toHelper: "",
+    openRange: true
     // passwordHelper: "Hasło powinno mieć conajmniej 5 znaków",
     // passwordHelper2: "Hasła nie mogą się różnić",
     // report: null,
@@ -84,8 +87,26 @@ class ConfigForm extends React.Component {
   }
 
   componentDidMount = () => {
+    const { activity, values } = this.props;
+    console.log("didmount", activity, values);
     this.addIdsToState();
-    this.defaultRange();
+    let startDate;
+    let endDate;
+
+    if (activity === "adding") {
+      startDate = defineds.startOfNextMonth;
+      endDate = defineds.endOfNextMonth;
+      // console.log("adding", startDate, endDate);
+    } else {
+      this.setState({ openRange: false });
+      startDate = new Date(values.from);
+      endDate = new Date(values.to);
+    }
+    const ranges = {
+      rangeselection: { startDate, endDate, key: "rangeselection" }
+    };
+
+    this.defaultRange(ranges);
   };
 
   addIdsToState = async () => {
@@ -103,13 +124,13 @@ class ConfigForm extends React.Component {
     } else {
       itemsToIter = items;
     }
-    console.log("itemsToIter", itemsToIter);
+    // console.log("itemsToIter", itemsToIter);
 
     const fromTimeQ = new Date(from).getTime();
     const toTimeQ = new Date(to).getTime();
     let validates = [];
-    let fromHelper = "Data rozpoczęcia";
-    let toHelper = "Data zakończenia";
+    let fromHelper = "";
+    let toHelper = "";
     if (from !== "" && to !== "") {
       if (fromTimeQ < toTimeQ) {
         let overlaps = [];
@@ -122,7 +143,7 @@ class ConfigForm extends React.Component {
           if (fromOverlaping || toOverlaping || eatingWhole) {
             overlaps.push(item);
             fromHelper = "Zachodzi na już zapisany zakres";
-            toHelper = "Zachodzi na już zapisany zakres";
+            toHelper = "";
             validates.push(false);
           } else {
             validates.push(true);
@@ -185,13 +206,14 @@ class ConfigForm extends React.Component {
   };
 
   defaultRange = async ranges => {
+    console.log("ranges", ranges);
     const { activity, change } = this.props;
     let startDate;
     let endDate;
     if (ranges) {
       startDate = ranges.rangeselection.startDate;
       endDate = ranges.rangeselection.endDate;
-      console.log("ranges", startDate, endDate);
+      // console.log("ranges", startDate, endDate);
     } else {
       startDate = defineds.startOfNextMonth;
       endDate = defineds.endOfNextMonth;
@@ -204,17 +226,21 @@ class ConfigForm extends React.Component {
   };
 
   handleSelect = ranges => {
-    console.log("ranges", ranges);
+    // console.log("ranges", ranges);
     const { startDate, endDate } = ranges.rangeselection;
 
     const startDateString = dataToString(startDate);
     const endDateString = dataToString(endDate);
 
-    console.log("ranges", startDateString, endDateString);
+    // console.log("ranges", startDateString, endDateString);
     this.setState({
       ...ranges
     });
     // this.fetchCosts(ranges);
+  };
+
+  rangeClick = () => {
+    this.setState({ openRange: !this.state.openRange });
   };
 
   render() {
@@ -246,7 +272,9 @@ class ConfigForm extends React.Component {
       // bonusType
       channelId,
       itemId,
-      label
+      // label
+      channelName,
+      itemName
     } = this.props;
     const suffix = bonusType => {
       if (bonusType === "% marży") {
@@ -257,23 +285,96 @@ class ConfigForm extends React.Component {
         return "";
       }
     };
+
+    const { startDate, endDate } = [this.state.rangeselection][0];
+
+    const startDateString = new Intl.DateTimeFormat("pl-PL", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit"
+    }).format(startDate);
+    const endDateString = new Intl.DateTimeFormat("pl-PL", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit"
+    }).format(endDate);
+
     return (
-      <div style={{ padding: "1.3rem" }}>
-        <h6>{label}</h6>
+      <div
+        style={{
+          paddingTop: "1.3rem",
+          paddingRight: "1.3rem",
+          paddingLeft: "1.3rem"
+        }}
+      >
+        <h6>
+          {`Skonfiguruj prowizje dla `}
+          <span style={{ textTransform: "uppercase", fontWeight: 600 }}>
+            {itemName}
+          </span>
+          {" w "}
+          <span style={{ textTransform: "uppercase", fontWeight: 600 }}>
+            {channelName}
+          </span>
+        </h6>
+        <hr />
 
         <div
-          style={{
-            display: "grid",
-            gridGap: "1.5rem",
-            gridTemplateRows: "auto",
-            gridTemplateAreas:
-              " 'bonusType bonus' 'from from ' ' buttons buttons'",
-            gridTemplateColumns: `minmax(120px, 1fr)   minmax(120px, 1fr)`,
-            // paddingLeft: "1.3rem",
-            paddingTop: "1.3rem"
-            // paddingRight: "1.3rem"
-          }}
+          style={
+            {
+              // display: "grid",
+              // gridGap: "1.5rem",
+              // gridTemplateRows: "auto",
+              // gridTemplateAreas:
+              //   " 'bonusType bonus' 'from from ' ' buttons buttons'",
+              // gridTemplateColumns: `minmax(120px, 1fr)   minmax(120px, 1fr)`,
+              // // paddingLeft: "1.3rem",
+              // paddingTop: "1.3rem"
+              // // paddingRight: "1.3rem"
+            }
+          }
         >
+          <div style={{ display: "flex", marginTop: 40, marginBottom: 15 }}>
+            <div style={{ gridArea: "bonusType", marginRight: 15 }}>
+              <SelectItem
+                // simpleInput
+                // short
+                format={"select"}
+                // prefix={field.label}
+                // disabled={disabled}
+                // key={i}
+                label={values.bonusType || "Marża % / Stawka zł?"}
+                select={["% marży", "stawka"]}
+                value={values.bonusType || ""}
+                updateSelected={value => change("bonusType", value, activity)}
+              />
+            </div>
+            <div style={{ gridArea: "bonus", marginRight: 15 }}>
+              <InputComponent
+                // disabled={disabled}
+                // key={i}
+                name="bonus"
+                label="Premia"
+                // type=""
+                edytuj={value => change("bonus", value, activity)}
+                value={values.bonus || ""}
+                format="number"
+                suffix={suffix(values.bonusType)}
+                // prefix="ad"
+                // password
+                // helperText={passwordHelper}
+                // disabled={field2disabled}
+              />
+            </div>
+            <div>
+              <ButtonMy onClick={this.rangeClick}>
+                <MenuIcon
+                  style={{ fontSize: 17, opacity: 0.8, marginRight: 8 }}
+                />
+                Zakres: {startDateString} - {endDateString}
+              </ButtonMy>
+            </div>
+          </div>
           <div style={{ gridArea: "from" }}>
             {/* <InputData
               id="date"
@@ -290,8 +391,14 @@ class ConfigForm extends React.Component {
             <DateRangePickerMy
               onChange={this.defaultRange}
               range={[this.state.rangeselection]}
+              expand={this.state.openRange}
               nopaper
             />
+            {/* <div
+              style={{ width: 1000, display: "block", backgroundColor: "red" }}
+            >
+              asdf adf
+            </div> */}
           </div>
           {/* <div style={{ gridArea: "to" }}>
             <InputData
@@ -307,53 +414,33 @@ class ConfigForm extends React.Component {
               value={values.to}
             />
           </div> */}
-          <div style={{ gridArea: "bonusType" }}>
-            <SelectItem
-              // simpleInput
-              // short
-              format={"select"}
-              // prefix={field.label}
-              // disabled={disabled}
-              // key={i}
-              label={values.bonusType || "Marża % / Stawka zł?"}
-              select={["% marży", "stawka"]}
-              value={values.bonusType || ""}
-              updateSelected={value => change("bonusType", value, activity)}
-            />
-          </div>
-          <div style={{ gridArea: "bonus" }}>
-            <InputComponent
-              // disabled={disabled}
-              // key={i}
-              name="bonus"
-              label="Premia"
-              // type=""
-              edytuj={value => change("bonus", value, activity)}
-              value={values.bonus || ""}
-              format="number"
-              suffix={suffix(values.bonusType)}
-              // prefix="ad"
-              // password
-              // helperText={passwordHelper}
-              // disabled={field2disabled}
-            />
-          </div>
-          <div style={{ gridArea: "password2" }} />
-          <div style={{ gridArea: "buttons" }}>
-            <FormButtons
-              subDisable={disableSubmit}
-              subLabel={
-                "Dodaj prowizję"
-                //   modal && edit
-                //     ? "Potwierdź edycję"
-                //     : bonus > 0
-                //     ? `Dodaj premię ${formatNumber(bonus)} zł`
-                //     : "Potwierdź"
-              }
-              subAction={e => this.handleSubmit(e)}
-              cancelLabel={"Anuluj"}
-              cancelAction={this.handleCancel}
-            />
+          <div style={{ display: "flex", marginTop: 0, paddingBottom: 15 }}>
+            <div style={{ gridArea: "buttons" }}>
+              <FormButtons
+                subDisable={disableSubmit}
+                subLabel={
+                  "Dodaj prowizję"
+                  //   modal && edit
+                  //     ? "Potwierdź edycję"
+                  //     : bonus > 0
+                  //     ? `Dodaj premię ${formatNumber(bonus)} zł`
+                  //     : "Potwierdź"
+                }
+                subAction={e => this.handleSubmit(e)}
+                cancelLabel={"Anuluj"}
+                cancelAction={this.handleCancel}
+              />
+            </div>
+            <div
+              style={{
+                display: "grid",
+                alignContent: "center",
+                marginLeft: 15,
+                fontSize: "0.9rem"
+              }}
+            >
+              {fromHelper} {toHelper}
+            </div>
           </div>
         </div>
       </div>

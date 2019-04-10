@@ -246,7 +246,8 @@ const Field1 = ({
         >
           <Input
             inputProps={{
-              style: { fontSize: 13, width: 15 + values["name"].length * 6.25 }
+              // style: { fontSize: 13, width: 15 + values["name"].length * 6.25 }
+              style: { fontSize: 13, width: "100%" }
             }}
             name={"name"}
             type="text"

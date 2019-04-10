@@ -127,8 +127,10 @@ class Channels extends Component {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(200px, 1fr) 2fr",
-          gridGap: "1rem"
+          gridTemplateColumns: "400px minmax(max-content, auto)",
+          gridGap: "1rem",
+          gridTemplateRows: "1fr"
+          // minHeight: "70vh"
         }}
       >
         <Paper>
