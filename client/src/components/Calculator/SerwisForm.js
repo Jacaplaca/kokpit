@@ -11,7 +11,12 @@ import * as Yup from "yup";
 import ButtonMy from "../../common/ButtonMy";
 import CitySearch from "../CitiesSearch";
 import NumberFormat from "react-number-format";
-import { formatNumber, cleanNumber, dynamicSort } from "../../common/functions";
+import {
+  formatNumber,
+  cleanNumber,
+  dynamicSort,
+  dataToString
+} from "../../common/functions";
 import FormButtons from "../../common/FormButtons";
 import Send from "@material-ui/icons/Send";
 import SerwisSummary from "../SerwisSummary";
@@ -43,6 +48,18 @@ class SerwisForm extends Component {
 
     items: [],
     submitIsDisable: true
+  };
+
+  componentWillMount = async () => {
+    const { edit, channelId } = this.props;
+    const date = dataToString(new Date());
+    edit ||
+      this.setState({
+        date,
+        items: this.itemsFromConfig(
+          await this.fetchConfigFromDB(date, channelId)
+        )
+      });
   };
 
   componentWillReceiveProps = async nextProps => {
@@ -124,6 +141,7 @@ class SerwisForm extends Component {
       bonusUnit: prevBonusUnitState,
       bonusType: prevBonusTypeState
     } = prevState;
+    // console.log("SerwisForm() cdm", date);
 
     const { edit: editPrevProps } = prevProps;
   }
@@ -546,7 +564,7 @@ class SerwisForm extends Component {
             enableReinitialize={true}
             initialValues={{
               items: edit ? { name: `${edit.name}` } : { name: "" },
-              date: edit ? edit.date : "",
+              date: edit ? edit.date : dataToString(new Date()),
               customer: edit ? edit.customer : "",
               city: edit
                 ? { name: `${edit.cityName}`, id: `${edit.city}` }

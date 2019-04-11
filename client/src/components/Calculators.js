@@ -66,7 +66,17 @@ class Calculators extends Component {
   };
 
   componentWillMount = async () => {
-    await this.fetchChannels();
+    const {
+      auth: { role }
+    } = this.props;
+    role === "master"
+      ? await this.fetchAllChannels()
+      : await this.fetchChannels();
+  };
+
+  fetchAllChannels = async () => {
+    const channels = await axios.get(`/api/channels`);
+    this.setState({ channels: channels.data });
   };
 
   fetchChannels = async () => {

@@ -358,24 +358,6 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/transaction/remove/:id", (req, res, next) => {
-    const id = req.params.id;
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { user_id, clientId } = req.user;
-    console.log("trans remove id", id.split(","));
-    Transaction.destroy({ where: { clientId, id: id.split(",") } })
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   app.post("/api/:table/remove/:id", (req, res, next) => {
     const { id, table } = req.params;
     if (!req.user) {
@@ -453,19 +435,19 @@ module.exports = app => {
             res.sendStatus(500);
           });
         break;
-      case "transaction":
-        Transaction.find({
-          // include: [{ model: Category }, { model: Group }],
-          where: { clientId, id }
-        })
-          .then(result => {
-            res.json(result);
-          })
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-        break;
+      // case "transaction":
+      //   Transaction.find({
+      //     // include: [{ model: Category }, { model: Group }],
+      //     where: { clientId, id }
+      //   })
+      //     .then(result => {
+      //       res.json(result);
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       res.sendStatus(500);
+      //     });
+      //   break;
       case "cost":
         Cost.find({
           include: [{ model: Category }, { model: Group }],
@@ -577,24 +559,6 @@ module.exports = app => {
       clientId,
       userId: user_id
     })
-      .then(results => {
-        return res.json(results);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
-  app.post("/api/transaction/", (req, res, next) => {
-    console.log("api/transaction/");
-    console.log(req.body);
-    const { clientId, user_id } = req.user;
-    if (!req.user) {
-      return res.redirect("/");
-    }
-    const form = Object.assign(req.body, { clientId, userId: user_id });
-    Transaction.create(form)
       .then(results => {
         return res.json(results);
       })
@@ -807,7 +771,7 @@ module.exports = app => {
     // console.log("asdf", Item);
     const month = req.params.month;
     const name = req.params.name;
-    console.log(`/api/config/channels/${month}/${name}`);
+    // console.log(`/api/config/channels/${month}/${name}`);
     if (!req.user) {
       return res.redirect("/");
     }
@@ -1060,26 +1024,6 @@ module.exports = app => {
       default:
         res.redirect("/");
     }
-  });
-
-  app.post("/api/transaction/edit/id/:id", (req, res, next) => {
-    const id = req.params.id;
-    console.log("edytuje transaction api", id, req.body);
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { user_id, clientId } = req.user;
-    const form = Object.assign(req.body, { clientId, userId: user_id });
-    // console.log(req.body);
-    Transaction.update(form, {
-      where: { clientId, id }
-    })
-      .then(result => res.json(result))
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
   });
 
   // helper route to assign id for config according item Id

@@ -70,7 +70,7 @@ class SerwisSummary extends Component {
       }
     };
 
-    console.log("SerwisSummary()", this.props);
+    // console.log("SerwisSummary()", this.props);
     // const bonus = 85.2;
     // const bonusType = "% marży";
     // const marginUnit = 10;

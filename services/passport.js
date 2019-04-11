@@ -12,14 +12,14 @@ const Module = db.modules;
 // const User = mongoose.model('users');
 
 passport.serializeUser((user_id, done) => {
-  console.log("serializeUser", user_id);
+  // console.log("serializeUser", user_id);
   // console.log(user_id);
   // console.log(user_id);
   done(null, user_id);
 });
 
 passport.deserializeUser((user_id, done) => {
-  console.log("deserializeUser", user_id);
+  // console.log("deserializeUser", user_id);
   // console.log(user_id);
   const id = user_id.user_id;
   User.findById(id, {

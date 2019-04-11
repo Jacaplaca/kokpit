@@ -11,6 +11,42 @@ const to = require("await-to-js").default;
 module.exports = app => {
   //remove configs
 
+  app.post("/api/transaction/", (req, res, next) => {
+    console.log("api/transaction/");
+    console.log(req.body);
+    const { clientId, user_id } = req.user;
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    Transaction.create(form)
+      .then(results => {
+        return res.json(results);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/api/transaction/remove/:id", (req, res, next) => {
+    const id = req.params.id;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    console.log("trans remove id", id.split(","));
+    Transaction.destroy({ where: { clientId, id: id.split(",") } })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
   app.post("/api/item", (req, res, next) => {
     console.log("api/item/");
     console.log(req.body);
@@ -28,6 +64,26 @@ module.exports = app => {
       .then(results => {
         return res.json(results);
       })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/api/transaction/edit/id/:id", (req, res, next) => {
+    const id = req.params.id;
+    console.log("edytuje transaction api", id, req.body);
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    const { user_id, clientId } = req.user;
+    const form = Object.assign(req.body, { clientId, userId: user_id });
+    // console.log(req.body);
+    Transaction.update(form, {
+      where: { clientId, id }
+    })
+      .then(result => res.json(result))
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
@@ -221,6 +277,25 @@ module.exports = app => {
     }
   });
 
+  app.get("/api/transaction/:id", async (req, res) => {
+    const { id } = req.params;
+    //   // if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
+
+    const [err, items] = await to(
+      Transaction.find({
+        // include: [{ model: Category }, { model: Group }],
+        where: { clientId, id }
+      })
+    );
+
+    if (!items) {
+      res.sendStatus(500);
+    } else {
+      res.json(items);
+    }
+  });
+
   // case "transactions":
   //   Transaction.findAll({ where: { clientId, userId: user_id } })
   //     .then(result => res.json(result))
@@ -230,14 +305,42 @@ module.exports = app => {
   //     });
   //   break;
 
-  app.get("/api/transactions/:channelId", async (req, res) => {
-    const { channelId } = req.params;
+  app.get("/api/transactions/:channelId/:userIdParams", async (req, res) => {
+    const { channelId, userIdParams } = req.params;
     if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
 
-    const [err, transactions] = await to(
-      Transaction.findAll({ where: { clientId, userId: user_id, channelId } })
-    );
+    let user = user_id;
+    let query = {};
+
+    // if (role === "master" && userIdParams !== user_id && userIdParams !== "0") {
+    //   user = userIdParams;
+    //   query = { clientId, userId: user, channelId };
+    // } else if (role === "master" && userIdParams !== "0") {
+    //   query = { clientId, user: userIdParams };
+    // } else {
+    //   user = user_id;
+    //   query = { clientId };
+    // }
+
+    if (userIdParams === "0" && role === "master") {
+      //showing every transaction in channel
+      query = { channelId, clientId };
+    } else {
+      // showing transaction only for specyfic user
+      if (role !== "master" && userIdParams !== user_id) {
+        user = user_id;
+        // query = { clientId, userId: user, channelId };
+      } else {
+        user = userIdParams;
+      }
+      // user = user_id;
+      query = { clientId, userId: user, channelId };
+    }
+
+    console.log("query", query);
+
+    const [err, transactions] = await to(Transaction.findAll({ where: query }));
 
     if (!transactions) {
       res.sendStatus(500);
