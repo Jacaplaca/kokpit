@@ -33,14 +33,17 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/transaction/remove/:id", (req, res, next) => {
+  app.post("/api/transaction/delete/:id", (req, res, next) => {
+    console.log("transaction/delete/id");
     const id = req.params.id;
     if (!req.user) {
       console.log("przekierowanie");
       return res.redirect("/");
     }
+    // let ids;
+    // ids.push(id);
     const { user_id, clientId } = req.user;
-    console.log("trans remove id", id.split(","));
+    // console.log("trans remove id", ids.split(","));
     Transaction.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {
         res.json(result);
@@ -74,15 +77,18 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/transaction/edit/id/:id", (req, res, next) => {
-    const id = req.params.id;
+  app.post("/api/transaction/edit/id/:id/:userId", (req, res, next) => {
+    const { id, userId } = req.params;
     console.log("edytuje transaction api", id, req.body);
     if (!req.user) {
       console.log("przekierowanie");
       return res.redirect("/");
     }
     const { user_id, clientId } = req.user;
-    const form = Object.assign(req.body, { clientId, userId: user_id });
+    const form = Object.assign(req.body, {
+      clientId,
+      userId: userId === 0 ? user_id : userId
+    });
     // console.log(req.body);
     Transaction.update(form, {
       where: { clientId, id }
@@ -289,7 +295,16 @@ module.exports = app => {
     const [err, items] = await to(
       Transaction.find({
         // include: [{ model: Category }, { model: Group }],
-        where: { clientId, id }
+        where: { clientId, id },
+        include: [
+          {
+            model: User,
+            as: "User",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name", "surname"]
+          }
+        ]
       })
     );
 

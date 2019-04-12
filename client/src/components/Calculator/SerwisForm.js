@@ -21,6 +21,17 @@ import FormButtons from "../../common/FormButtons";
 import Send from "@material-ui/icons/Send";
 import SerwisSummary from "../SerwisSummary";
 
+const styles = {
+  toFill: {
+    backgroundColor: "rgb(254, 240, 245)",
+    borderRadius: 4
+  },
+  filled: {
+    backgroundColor: "white",
+    borderRadius: 4
+  }
+};
+
 class SerwisForm extends Component {
   state = {
     bonus: 0,
@@ -53,7 +64,7 @@ class SerwisForm extends Component {
   componentWillMount = async () => {
     const { edit, channelId, userId } = this.props;
     const date = dataToString(new Date());
-    // console.log("SerwisForm() componentWillMount()");
+    console.log("SerwisForm() componentWillMount(), date", date);
     edit ||
       this.setState({
         date,
@@ -131,10 +142,15 @@ class SerwisForm extends Component {
       );
     } else if (userId !== nextProps.userId) {
       const { date } = this.state;
+
       this.setState(
         {
           items: this.itemsFromConfig(
-            await this.fetchConfigFromDB(date, channelId, nextProps.userId)
+            await this.fetchConfigFromDB(
+              date || dataToString(new Date()),
+              channelId,
+              nextProps.userId
+            )
           )
         },
         () => this.count()
@@ -305,11 +321,11 @@ class SerwisForm extends Component {
   };
   //!!!!!!!!!!!
   handleSubmit = async e => {
-    const { channelId, userId } = this.props;
+    const { channelId, userId, edit } = this.props;
     let url;
 
-    if (this.props.edit) {
-      url = `/api/transaction/edit/id/${this.props.edit.id}`;
+    if (edit) {
+      url = `/api/transaction/edit/id/${edit.id}/${userId}`;
     } else {
       url = `/api/transaction/${userId}`;
     }
@@ -525,11 +541,12 @@ class SerwisForm extends Component {
       wybrano,
       edytuj,
       czysc,
-      userRole
+      loggedUser
     } = this.props;
     const { dateWithConfig, items } = this.state;
 
     const validationSchemaFlat = props => {
+      // console.log("validation in SerwisForm()", props.isValid, submitIsDisable);
       return {
         // date: Yup.string().required("Podaj prawidłową datę"),
         date: Yup.mixed().test("a", "Podaj prawidłową datę", value => {
@@ -566,7 +583,11 @@ class SerwisForm extends Component {
       gross,
       grossMargin,
       bonus,
-      submitIsDisable
+      submitIsDisable,
+      item,
+      quantity,
+      buy,
+      sell
     } = this.state;
     return (
       <div
@@ -623,9 +644,9 @@ class SerwisForm extends Component {
                   }}
                 >
                   <Grid container spacing={24}>
-                    <Grid item xs={3}>
+                    <Grid item xs={modal ? 12 : 3}>
                       <InputSelectBaza
-                        disabled={userRole !== "master"}
+                        disabled={loggedUser.role !== "master"}
                         daty={daty => {}}
                         wybrano={item => {
                           item.id && wybrano(item);
@@ -638,7 +659,7 @@ class SerwisForm extends Component {
                         }}
                         value={user.name}
                         label={
-                          userRole === "master"
+                          loggedUser.role === "master"
                             ? "Wybierz pracownika"
                             : "Pracownik"
                         }
@@ -666,7 +687,11 @@ class SerwisForm extends Component {
                         error={props.touched.date && Boolean(props.errors.date)}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid
+                      item
+                      xs={modal ? 6 : 4}
+                      style={item ? styles.filled : styles.toFill}
+                    >
                       <InputSelectBaza
                         error={
                           props.touched.items && Boolean(props.errors.items)
@@ -699,8 +724,13 @@ class SerwisForm extends Component {
                         name="items"
                       />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid
+                      item
+                      xs={2}
+                      style={quantity > 0 ? styles.filled : styles.toFill}
+                    >
                       <InputComponent
+                        disabled={!item}
                         format="number"
                         suffix={this.state.unit}
                         name="quantity"
@@ -770,7 +800,19 @@ class SerwisForm extends Component {
                       />
                     </Grid>
 
-                    <Grid item xs={6}>
+                    <Grid
+                      item
+                      xs={6}
+                      style={
+                        item
+                          ? bonusType === "stawka"
+                            ? styles.filled
+                            : Math.trunc(buy) > 0
+                            ? styles.filled
+                            : styles.toFill
+                          : styles.filled
+                      }
+                    >
                       <InputComponent
                         disabled={bonusType !== "% marży"}
                         format="number"
@@ -791,27 +833,20 @@ class SerwisForm extends Component {
                         }}
                         value={props.values.buy}
                       />
-                      {/* <InputComponent
-                        // disabled={bonusType !== "% marży"}
-                        format="number"
-                        suffix="zł"
-                        name="buy"
-                        error={props.touched.buy && Boolean(props.errors.buy)}
-                        label={
-                          props.touched.buy && props.errors.buy
-                            ? props.errors.buy
-                            : "Cena zakupu jedn. brutto"
-                        }
-                        type="text"
-                        edytuj={value => {
-                          props.setFieldValue("buy", value);
-                          props.setFieldTouched("buy", true);
-                          this.handleChange("buy", value);
-                        }}
-                        value={this.state.buy}
-                      /> */}
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid
+                      item
+                      xs={6}
+                      style={
+                        item
+                          ? bonusType === "stawka"
+                            ? styles.filled
+                            : Math.trunc(sell) > Math.trunc(buy)
+                            ? styles.filled
+                            : styles.toFill
+                          : styles.filled
+                      }
+                    >
                       <InputComponent
                         disabled={bonusType !== "% marży"}
                         format="sell"

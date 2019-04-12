@@ -64,33 +64,6 @@ function getSorting(order, orderBy) {
     : (a, b) => -desc(a, b, orderBy);
 }
 
-const rows = [
-  { id: "date", numeric: false, disablePadding: false, label: "Data" },
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: true,
-    label: "Towar/Usługa"
-  },
-  {
-    id: "cityName",
-    numeric: false,
-    disablePadding: false,
-    label: "Lokalizacja"
-  },
-  { id: "customer", numeric: false, disablePadding: false, label: "Klient" },
-  { id: "quantity", numeric: true, disablePadding: false, label: "Ilość" },
-  { id: "sell", numeric: true, disablePadding: false, label: "Cena jedn." },
-  {
-    id: "gross",
-    numeric: true,
-    disablePadding: false,
-    label: "Wartość brutto"
-  },
-  { id: "bonus", numeric: true, disablePadding: false, label: "Premia" },
-  { id: "User.name", numeric: false, disablePadding: false, label: "Pracownik" }
-];
-
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property);
@@ -102,8 +75,46 @@ class EnhancedTableHead extends React.Component {
       order,
       orderBy,
       numSelected,
-      rowCount
+      rowCount,
+      auth
     } = this.props;
+
+    const rows = [
+      { id: "date", numeric: false, disablePadding: false, label: "Data" },
+      {
+        id: "name",
+        numeric: false,
+        disablePadding: true,
+        label: "Towar/Usługa"
+      },
+      {
+        id: "cityName",
+        numeric: false,
+        disablePadding: false,
+        label: "Lokalizacja"
+      },
+      {
+        id: "customer",
+        numeric: false,
+        disablePadding: false,
+        label: "Klient"
+      },
+      { id: "quantity", numeric: true, disablePadding: false, label: "Ilość" },
+      { id: "sell", numeric: true, disablePadding: false, label: "Cena jedn." },
+      {
+        id: "gross",
+        numeric: true,
+        disablePadding: false,
+        label: "Wartość brutto"
+      },
+      { id: "bonus", numeric: true, disablePadding: false, label: "Premia" },
+      auth.role === "master" && {
+        id: "User.name",
+        numeric: false,
+        disablePadding: false,
+        label: "Pracownik"
+      }
+    ];
 
     return (
       <TableHead>
@@ -341,7 +352,7 @@ class EnhancedTable extends React.Component {
   };
 
   render() {
-    const { classes, transactions } = this.props;
+    const { classes, transactions, auth } = this.props;
     const {
       data,
       order,
@@ -367,7 +378,7 @@ class EnhancedTable extends React.Component {
           open={open}
           close={this.handleClose}
           action={this.handleDelete}
-          komunikat={"Czy na pewno chcesz usunąć tę pozycję kosztową?"}
+          komunikat={"Czy na pewno?"}
         />
         <Paper className={classes.root}>
           <EnhancedTableToolbar
@@ -377,6 +388,7 @@ class EnhancedTable extends React.Component {
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
               <EnhancedTableHead
+                auth={auth}
                 numSelected={selected.length}
                 order={order}
                 orderBy={orderBy}
@@ -458,9 +470,11 @@ class EnhancedTable extends React.Component {
                             suffix={" zł"}
                           />
                         </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
-                          {`${n.User.name} ${n.User.surname}`}
-                        </TableCell>
+                        {auth.role === "master" && (
+                          <TableCell component="th" scope="row" padding="none">
+                            {`${n.User.name} ${n.User.surname}`}
+                          </TableCell>
+                        )}
                         {/* <TableCell align="right">{n.calories}</TableCell>
                       <TableCell align="right">{n.fat}</TableCell>
                       <TableCell align="right">{n.carbs}</TableCell>

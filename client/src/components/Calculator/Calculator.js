@@ -44,14 +44,15 @@ class Calculator extends Component {
   };
 
   componentWillMount = async () => {
-    const { role, id, name, surname } = this.props.auth;
+    const { role, user_id, name, surname } = this.props.auth;
+    // const {users} = this.props
 
     if (role === "master") {
       await this.setAsyncState({ employee: { id: 0, name: "" } });
       await this.fetchChannelUsers();
     } else {
       await this.setAsyncState({
-        employee: { id, name: `${name} ${surname}` }
+        employee: { id: user_id, name: `${name} ${surname}` }
       });
     }
 
@@ -115,28 +116,47 @@ class Calculator extends Component {
   };
 
   fetchChannelUsers = async () => {
-    const { channelId, loading } = this.props;
+    const {
+      channelId,
+      loading,
+      auth: { user_id, name, surname }
+    } = this.props;
     loading(true);
     // const { startDate, endDate } = this.state.rangeselection;
 
     const fetched = await axios.get(`/api/channelusers/${channelId}`);
+    const employees = fetched.data.map(x =>
+      Object.assign(x, { name: `${x.surname}, ${x.name}` })
+    );
+    // console.log("calculator", employees);
 
-    this.setState({ employees: fetched.data });
+    const empIds = employees.map(x => x.id);
+    empIds.includes(user_id)
+      ? this.setState({
+          employees,
+          employee: { id: user_id, name: `${surname}, ${name}` }
+        })
+      : this.setState({ employees });
     await loading(false);
   };
 
   handleEdit = async id => {
     const result = await axios.get(`/api/transaction/${id}`);
+
     await this.addFetchToState(result);
   };
 
   handleDelete = async id => {
-    const result = await axios.post(`/api/transaction/remove/${id}`);
+    const result = await axios.post(`/api/transaction/delete/${id}`);
     this.fetchTransactions();
   };
 
   addFetchToState = result => {
-    this.setState({ edit: result.data });
+    const { id, name, surname } = result.data.User;
+    this.setState({
+      edit: result.data,
+      employee: { id, name: `${name} ${surname}` }
+    });
   };
 
   handleChooseEmployee = async employee => {
@@ -160,6 +180,14 @@ class Calculator extends Component {
           maxWidth={900}
         >
           <SerwisForm
+            loggedUser={auth}
+            wybrano={this.handleChooseEmployee}
+            edytuj={value =>
+              this.setState({ employee: { name: value, id: 0 } })
+            }
+            czysc={this.handleEmptyEmployee}
+            users={employees}
+            user={employee}
             userId={employee.id}
             channelId={channelId}
             fetch={this.fetchTransactions}
@@ -176,7 +204,7 @@ class Calculator extends Component {
         </ModalWindow>
 
         <SerwisForm
-          userRole={auth.role}
+          loggedUser={auth}
           wybrano={this.handleChooseEmployee}
           edytuj={value => this.setState({ employee: { name: value, id: 0 } })}
           czysc={this.handleEmptyEmployee}
