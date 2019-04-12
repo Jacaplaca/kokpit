@@ -1,6 +1,7 @@
 const db = require("../models/index");
 const User = db.users;
-
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 const Channel = db.sales_channels;
 const Item = db.items;
 const ChannelItems = db.channel_items;
@@ -18,6 +19,88 @@ const suffix = bonusType => {
 };
 
 module.exports = app => {
+  app.get(
+    "/api/config/month_channel/:day/:channelId/:userId",
+    async (req, res) => {
+      const { day, channelId, userId } = req.params;
+      // console.log(`/api/config/day_channel/${day}/${channelId}/${userId}`);
+      if (!req.user) {
+        return res.redirect("/");
+      }
+      // const clientId = 2;
+      const { clientId, role, user_id } = req.user;
+
+      // console.log("config", user_id, userId, userId === "0" ? user_id : userId);
+      const [errItem, channels] = await to(
+        Channel.findAll({
+          include: [
+            {
+              model: User,
+              as: "SalesUsers",
+              where: { id: userId === "0" ? user_id : userId },
+              // where: { id: user_id },
+              attributes: []
+            }
+          ],
+          where: { clientId },
+          raw: true
+        })
+      );
+      // console.log("channels", channels);
+      const channelsIds = channels.map(x => x.id);
+      // console.log(
+      //   "channelsIds",
+      //   channelsIds,
+      //   channelId,
+      //   channelsIds.includes(Math.trunc(channelId))
+      // );
+
+      if (channelsIds.includes(Math.trunc(channelId))) {
+        ChannelsConfig.findAll({
+          attributes: ["id", "bonusType", "bonus", "suffix", "from", "to"],
+          where: {
+            clientId,
+            channelId,
+            [Op.or]: [
+              {
+                from: {
+                  [Op.lte]: new Date(day)
+                },
+                to: {
+                  [Op.gte]: new Date(day)
+                }
+              }
+            ]
+          },
+          include: [
+            {
+              model: Item,
+              as: "Item",
+              attributes: ["name", "id", "unit"]
+            },
+            {
+              model: Channel,
+              as: "Channel",
+              attributes: ["name", "id"]
+              // include: [{ model: User, as: "SalesUsers" }]
+            }
+          ],
+          raw: true
+        })
+          .then(result => {
+            console.log("config", result);
+            return res.json(result);
+          })
+          .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+          });
+      } else {
+        return res.json([]);
+      }
+    }
+  );
+
   app.get(
     "/api/channel_config_new/itemchannel/id/:itemId/:channelId/",
     async (req, res) => {

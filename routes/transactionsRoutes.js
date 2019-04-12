@@ -11,14 +11,18 @@ const to = require("await-to-js").default;
 module.exports = app => {
   //remove configs
 
-  app.post("/api/transaction/", (req, res, next) => {
+  app.post("/api/transaction/:userId", (req, res, next) => {
     console.log("api/transaction/");
     console.log(req.body);
+    const { userId } = req.params;
     const { clientId, user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
-    const form = Object.assign(req.body, { clientId, userId: user_id });
+    const form = Object.assign(req.body, {
+      clientId,
+      userId: userId === "0" ? user_id : userId
+    });
     Transaction.create(form)
       .then(results => {
         return res.json(results);
@@ -340,7 +344,20 @@ module.exports = app => {
 
     console.log("query", query);
 
-    const [err, transactions] = await to(Transaction.findAll({ where: query }));
+    const [err, transactions] = await to(
+      Transaction.findAll({
+        where: query,
+        include: [
+          {
+            model: User,
+            as: "User",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name", "surname"]
+          }
+        ]
+      })
+    );
 
     if (!transactions) {
       res.sendStatus(500);

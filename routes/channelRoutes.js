@@ -10,7 +10,7 @@ module.exports = app => {
 
   app.get("/api/channels", (req, res) => {
     const table = req.params;
-    if (!req.user) {
+    if (!req.user || req.user.role !== "master") {
       return res.redirect("/");
     }
     const { clientId, role, user_id } = req.user;

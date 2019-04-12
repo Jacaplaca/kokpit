@@ -87,7 +87,8 @@ const rows = [
     disablePadding: false,
     label: "Wartość brutto"
   },
-  { id: "bonus", numeric: true, disablePadding: false, label: "Premia" }
+  { id: "bonus", numeric: true, disablePadding: false, label: "Premia" },
+  { id: "User.name", numeric: false, disablePadding: false, label: "Pracownik" }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -456,6 +457,9 @@ class EnhancedTable extends React.Component {
                             decimalSeparator={","}
                             suffix={" zł"}
                           />
+                        </TableCell>
+                        <TableCell component="th" scope="row" padding="none">
+                          {`${n.User.name} ${n.User.surname}`}
                         </TableCell>
                         {/* <TableCell align="right">{n.calories}</TableCell>
                       <TableCell align="right">{n.fat}</TableCell>

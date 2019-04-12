@@ -785,54 +785,6 @@ module.exports = app => {
       });
   });
 
-  app.get("/api/config/month_channel/:day/:channelId", (req, res) => {
-    const { day, channelId } = req.params;
-    console.log(`/api/config/day_channel/${day}/${channelId}`);
-    if (!req.user) {
-      return res.redirect("/");
-    }
-    // const clientId = 2;
-    const { clientId, role, user_id } = req.user;
-    ChannelsConfig.findAll({
-      attributes: ["id", "bonusType", "bonus", "suffix", "from", "to"],
-      where: {
-        clientId,
-        channelId,
-        [Op.or]: [
-          {
-            from: {
-              [Op.lte]: new Date(day)
-            },
-            to: {
-              [Op.gte]: new Date(day)
-            }
-          }
-        ]
-      },
-      include: [
-        {
-          model: Item,
-          as: "Item",
-          attributes: ["name", "id", "unit"]
-        },
-        {
-          model: Channel,
-          as: "Channel",
-          attributes: ["name", "id"]
-        }
-      ],
-      raw: true
-    })
-      .then(result => {
-        console.log("config", result);
-        return res.json(result);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   app.get("/api/channels/items/:channel", (req, res) => {
     const channelId = req.params.channel;
     console.log(

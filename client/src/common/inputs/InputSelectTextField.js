@@ -12,6 +12,7 @@ const InputSelectTextField = inputProps => {
     classes,
     inputRef = () => {},
     ref,
+    // disabled,
     helperText,
     ...other
   } = inputProps;
@@ -25,7 +26,7 @@ const InputSelectTextField = inputProps => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            {inputProps.value !== "" ? (
+            {inputProps.value !== "" && !inputProps.disabled ? (
               <IconButton onClick={() => clearValue()}>
                 <IconCancel />
               </IconButton>

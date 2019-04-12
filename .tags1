@@ -4,10 +4,26 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-class.channel	C:\work\kokpit\client\src\common\EditableList.js	/^    channel: "",$/;"	property	line:124
-class.addedId	C:\work\kokpit\client\src\common\EditableList.js	/^    addedId: 0,$/;"	property	line:125
-class.confirmation	C:\work\kokpit\client\src\common\EditableList.js	/^    confirmation: false,$/;"	property	line:126
-class.list	C:\work\kokpit\client\src\common\EditableList.js	/^    list: [],$/;"	property	line:127
-render	C:\work\kokpit\client\src\common\EditableList.js	/^  render() {$/;"	function	line:418
-mapStateToProps	C:\work\kokpit\client\src\common\EditableList.js	/^function mapStateToProps({ auth }) {$/;"	function	line:1003
-mapStateToProps	C:\work\kokpit\client\src\common\EditableList.js	/^function mapStateToProps({ auth }) {$/;"	function	line:1003
+class.bonus	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    bonus: 0,$/;"	property	line:26
+class.bonusType	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    bonusType: null,$/;"	property	line:27
+class.bonusUnit	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    bonusUnit: null,$/;"	property	line:28
+class.buy	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    buy: null,$/;"	property	line:29
+class.cityId	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    cityId: null,$/;"	property	line:30
+class.cityName	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    cityName: null,$/;"	property	line:31
+class.customer	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    customer: null,$/;"	property	line:33
+class.date	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    date: null,$/;"	property	line:34
+class.dateWithConfig	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    dateWithConfig: true,$/;"	property	line:35
+class.gross	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    gross: null,$/;"	property	line:36
+class.grossMargin	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    grossMargin: null,$/;"	property	line:37
+class.item	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    item: null,$/;"	property	line:39
+class.itemId	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    itemId: null,$/;"	property	line:40
+class.marginUnit	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    marginUnit: null,$/;"	property	line:42
+class.month	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    month: null,$/;"	property	line:43
+class.name	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    name: null,$/;"	property	line:44
+class.quantity	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    quantity: 1,$/;"	property	line:45
+class.sell	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    sell: null,$/;"	property	line:46
+class.unit	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    unit: null,$/;"	property	line:47
+class.items	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^    items: [],$/;"	property	line:49
+componentDidUpdate	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^  componentDidUpdate(prevProps, prevState) {$/;"	function	line:145
+render	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^  render() {$/;"	function	line:518
+InputComponent.defaultProps.modal	C:\work\kokpit\client\src\components\Calculator\SerwisForm.js	/^  modal: false$/;"	property	line:887

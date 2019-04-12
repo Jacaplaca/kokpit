@@ -65,6 +65,7 @@ const Client = db.clients;
 const Module = db.modules;
 const Item = db.items;
 const User = db.users;
+const Transaction = db.transactions;
 
 // console.log(db);
 ///
@@ -234,6 +235,12 @@ db.channels_config_new.belongsTo(Channel, {
   as: "Channel",
   targetKey: "id",
   foreignKey: "channelId"
+});
+
+Transaction.belongsTo(User, {
+  as: "User",
+  targetKey: "id",
+  foreignKey: "userId"
 });
 
 Module.belongsToMany(Client, {

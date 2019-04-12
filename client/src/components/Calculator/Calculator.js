@@ -44,9 +44,7 @@ class Calculator extends Component {
   };
 
   componentWillMount = async () => {
-    const {
-      auth: { role, id, name, surname }
-    } = this.props;
+    const { role, id, name, surname } = this.props.auth;
 
     if (role === "master") {
       await this.setAsyncState({ employee: { id: 0, name: "" } });
@@ -152,7 +150,7 @@ class Calculator extends Component {
   };
 
   render() {
-    const { channelId } = this.props;
+    const { channelId, auth } = this.props;
     const { employees, employee } = this.state;
     return (
       <React.Fragment>
@@ -162,6 +160,7 @@ class Calculator extends Component {
           maxWidth={900}
         >
           <SerwisForm
+            userId={employee.id}
             channelId={channelId}
             fetch={this.fetchTransactions}
             edit={this.state.edit}
@@ -175,33 +174,15 @@ class Calculator extends Component {
             }
           />
         </ModalWindow>
-        <InputSelectBaza
-          // error={
-          //   props.touched.items && Boolean(props.errors.items)
-          // }
-          daty={daty => {}}
-          wybrano={item => {
-            // item.id && props.setFieldValue("items", item);
-            // this.handleChange("items", item);
-            // props.setFieldTouched("items", true);
-            item.id && this.handleChooseEmployee(item);
-          }}
-          edytuj={edytuj => {
-            edytuj.id || this.setState({ employee: { name: edytuj, id: 0 } });
-            // props.setFieldTouched("items", true);
-          }}
-          czysc={() => {
-            // props.setFieldValue("items", { name: "", id: 0 });
-            // this.setState({ name: null, item: null });
-            // this.setState({ name: "", id: 0 });
-            this.handleEmptyEmployee();
-          }}
-          value={employee.name}
-          label={"Wybierz pracownika"}
-          przeszukuje={employees}
-          name="items"
-        />
+
         <SerwisForm
+          userRole={auth.role}
+          wybrano={this.handleChooseEmployee}
+          edytuj={value => this.setState({ employee: { name: value, id: 0 } })}
+          czysc={this.handleEmptyEmployee}
+          users={employees}
+          user={employee}
+          userId={employee.id}
           channelId={channelId}
           fetch={this.fetchTransactions}
           // edit={this.state.edit}

@@ -51,19 +51,25 @@ class SerwisForm extends Component {
   };
 
   componentWillMount = async () => {
-    const { edit, channelId } = this.props;
+    const { edit, channelId, userId } = this.props;
     const date = dataToString(new Date());
+    // console.log("SerwisForm() componentWillMount()");
     edit ||
       this.setState({
         date,
         items: this.itemsFromConfig(
-          await this.fetchConfigFromDB(date, channelId)
+          await this.fetchConfigFromDB(date, channelId, userId)
         )
       });
   };
 
   componentWillReceiveProps = async nextProps => {
-    const { channelId } = this.props;
+    const { channelId, userId } = this.props;
+    console.log(
+      "przed warunkiem userid in SerwisForm()",
+      nextProps.userId !== 0,
+      nextProps.userId
+    );
     if (nextProps.edit && nextProps.edit !== this.props.edit) {
       //Perform some operation
       // this.setState({ customer: nextProps.edit.customer });
@@ -88,6 +94,11 @@ class SerwisForm extends Component {
         cityName
       } = nextProps.edit;
 
+      console.log(
+        "po waruku userid in SerwisForm()",
+        nextProps.userId !== userId,
+        nextProps.userId
+      );
       // this.fetchItems(date);
       // this.askForConfig(date, name);
 
@@ -113,7 +124,17 @@ class SerwisForm extends Component {
           customer,
           cityName,
           items: this.itemsFromConfig(
-            await this.fetchConfigFromDB(date, channelId)
+            await this.fetchConfigFromDB(date, channelId, nextProps.userId)
+          )
+        },
+        () => this.count()
+      );
+    } else if (userId !== nextProps.userId) {
+      const { date } = this.state;
+      this.setState(
+        {
+          items: this.itemsFromConfig(
+            await this.fetchConfigFromDB(date, channelId, nextProps.userId)
           )
         },
         () => this.count()
@@ -282,17 +303,17 @@ class SerwisForm extends Component {
     const year = dateObj.getUTCFullYear();
     return `${year}${month}`;
   };
-
+  //!!!!!!!!!!!
   handleSubmit = async e => {
-    const { channelId } = this.props;
+    const { channelId, userId } = this.props;
     let url;
 
     if (this.props.edit) {
       url = `/api/transaction/edit/id/${this.props.edit.id}`;
     } else {
-      url = "/api/transaction";
+      url = `/api/transaction/${userId}`;
     }
-
+    //!!!!!!!!!!
     // this.props.submit(true);
     e.preventDefault();
     const {
@@ -463,10 +484,10 @@ class SerwisForm extends Component {
   fetchConfig = async (value, props) => {
     // props.setFieldValue("date", value);
     const { date } = this.state;
-    const { channelId } = this.props;
+    const { channelId, userId } = this.props;
     console.log("fetchConfig()", channelId, date, value, date !== value);
     if (date !== value) {
-      const response = await this.fetchConfigFromDB(value, channelId);
+      const response = await this.fetchConfigFromDB(value, channelId, userId);
 
       console.log("fetchConfig response", response, props);
       this.setState(
@@ -484,22 +505,35 @@ class SerwisForm extends Component {
     }
   };
 
-  fetchConfigFromDB = async (value, channelId) => {
+  fetchConfigFromDB = async (value, channelId, userId) => {
+    console.log("fetchConfigFromDB()", value, channelId, userId);
+    // const { userId } = this.props;
     const result = await axios.get(
-      `/api/config/month_channel/${value}/${channelId}`
+      `/api/config/month_channel/${value}/${channelId}/${userId}`
     );
+    console.log("fetchConfigFromDB()", result.data);
     return result.data;
   };
 
   render() {
-    const { edit, modal, channelId } = this.props;
+    const {
+      edit,
+      modal,
+      channelId,
+      user,
+      users,
+      wybrano,
+      edytuj,
+      czysc,
+      userRole
+    } = this.props;
     const { dateWithConfig, items } = this.state;
 
     const validationSchemaFlat = props => {
       return {
         // date: Yup.string().required("Podaj prawidłową datę"),
         date: Yup.mixed().test("a", "Podaj prawidłową datę", value => {
-          console.log("date validate", items, items.length, items.length > 0);
+          // console.log("date validate", items, items.length, items.length > 0);
           // return this.fetchConfig(value);
           return items.length > 0;
         }),
@@ -590,6 +624,29 @@ class SerwisForm extends Component {
                 >
                   <Grid container spacing={24}>
                     <Grid item xs={3}>
+                      <InputSelectBaza
+                        disabled={userRole !== "master"}
+                        daty={daty => {}}
+                        wybrano={item => {
+                          item.id && wybrano(item);
+                        }}
+                        edytuj={value => {
+                          value.id || edytuj(value);
+                        }}
+                        czysc={() => {
+                          czysc();
+                        }}
+                        value={user.name}
+                        label={
+                          userRole === "master"
+                            ? "Wybierz pracownika"
+                            : "Pracownik"
+                        }
+                        przeszukuje={users}
+                        name="items"
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
                       <InputData
                         id="date"
                         name="date"
@@ -609,7 +666,7 @@ class SerwisForm extends Component {
                         error={props.touched.date && Boolean(props.errors.date)}
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <InputSelectBaza
                         error={
                           props.touched.items && Boolean(props.errors.items)
@@ -642,7 +699,7 @@ class SerwisForm extends Component {
                         name="items"
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                       <InputComponent
                         format="number"
                         suffix={this.state.unit}
