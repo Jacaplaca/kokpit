@@ -55,40 +55,51 @@ module.exports = app => {
       //   channelsIds.includes(Math.trunc(channelId))
       // );
 
-      if (channelsIds.includes(Math.trunc(channelId))) {
-        ChannelsConfig.findAll({
-          attributes: ["id", "bonusType", "bonus", "suffix", "from", "to"],
-          where: {
-            clientId,
-            channelId,
-            [Op.or]: [
-              {
-                from: {
-                  [Op.lte]: new Date(day)
-                },
-                to: {
-                  [Op.gte]: new Date(day)
-                }
-              }
-            ]
-          },
-          include: [
-            {
-              model: Item,
-              as: "Item",
-              attributes: ["name", "id", "unit"]
+      const add = { channelId };
+
+      const where = {
+        clientId,
+        [Op.or]: [
+          {
+            from: {
+              [Op.lte]: new Date(day)
             },
-            {
-              model: Channel,
-              as: "Channel",
-              attributes: ["name", "id"]
-              // include: [{ model: User, as: "SalesUsers" }]
+            to: {
+              [Op.gte]: new Date(day)
             }
-          ],
-          raw: true
-        })
+          }
+        ]
+      };
+
+      const query = {
+        attributes: ["id", "bonusType", "bonus", "suffix", "from", "to"],
+        where: channelId === "0" ? where : Object.assign(where, add),
+        include: [
+          {
+            model: Item,
+            as: "Item",
+            attributes: ["name", "id", "unit"]
+          },
+          {
+            model: Channel,
+            as: "Channel",
+            attributes: ["name", "id"]
+            // include: [{ model: User, as: "SalesUsers" }]
+          }
+        ],
+        raw: true
+      };
+      if (
+        channelsIds.includes(Math.trunc(channelId)) ||
+        (role === "master" && channelId === "0")
+      ) {
+        console.log(
+          channelsIds.includes(Math.trunc(channelId)) ||
+            (role === "master" && channelId === "0")
+        );
+        ChannelsConfig.findAll(query)
           .then(result => {
-            console.log("config", result);
+            // console.log("config", result);
             return res.json(result);
           })
           .catch(err => {

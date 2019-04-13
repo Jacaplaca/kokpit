@@ -45,11 +45,17 @@ class Calculator extends Component {
 
   componentWillMount = async () => {
     const { role, user_id, name, surname } = this.props.auth;
+    const { channelId } = this.props;
     // const {users} = this.props
 
     if (role === "master") {
-      await this.setAsyncState({ employee: { id: 0, name: "" } });
-      await this.fetchChannelUsers();
+      if (channelId === 0) {
+        await this.setAsyncState({ employee: { id: 0, name: "" } });
+        await this.fetchAllChannelUsers();
+      } else {
+        await this.setAsyncState({ employee: { id: 0, name: "" } });
+        await this.fetchChannelUsers();
+      }
     } else {
       await this.setAsyncState({
         employee: { id: user_id, name: `${name} ${surname}` }
@@ -125,6 +131,31 @@ class Calculator extends Component {
     // const { startDate, endDate } = this.state.rangeselection;
 
     const fetched = await axios.get(`/api/channelusers/${channelId}`);
+    const employees = fetched.data.map(x =>
+      Object.assign(x, { name: `${x.surname}, ${x.name}` })
+    );
+    // console.log("calculator", employees);
+
+    const empIds = employees.map(x => x.id);
+    empIds.includes(user_id)
+      ? this.setState({
+          employees,
+          employee: { id: user_id, name: `${surname}, ${name}` }
+        })
+      : this.setState({ employees });
+    await loading(false);
+  };
+
+  fetchAllChannelUsers = async () => {
+    const {
+      channelId,
+      loading,
+      auth: { user_id, name, surname }
+    } = this.props;
+    loading(true);
+    // const { startDate, endDate } = this.state.rangeselection;
+
+    const fetched = await axios.get(`/api/allchannelusers/`);
     const employees = fetched.data.map(x =>
       Object.assign(x, { name: `${x.surname}, ${x.name}` })
     );
@@ -221,6 +252,7 @@ class Calculator extends Component {
         />
         {this.state.transactions.length > 0 && (
           <TransactionList
+            channelId={channelId}
             userId={employee.id}
             delete={this.handleDelete}
             transactions={this.state.transactions}

@@ -98,16 +98,19 @@ class Calculators extends Component {
             variant="scrollable"
             scrollButtons="auto"
           >
+            <Tab label={"Wszystko"} />
             {channels &&
-              channels.map((channel, i) => (
+              [...channels].map((channel, i) => (
                 <Tab key={i} label={channel.name} />
               ))}
           </Tabs>
         </AppBar>
+        {value === 0 && <Caluculator channelId={0} />}
         {channels &&
-          channels.map(
+          [{ id: 0, name: "Wszystko" }, ...channels].map(
             (channel, i) =>
-              value === i && <Caluculator channelId={channel.id} />
+              value === i &&
+              value !== 0 && <Caluculator channelId={channel.id} />
           )}
         {/* {value === 0 && <TabContainer>Item One</TabContainer>}
         {value === 1 && <TabContainer>Item Two</TabContainer>}

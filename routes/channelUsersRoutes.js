@@ -125,4 +125,33 @@ module.exports = app => {
       res.json(details);
     }
   });
+
+  app.get("/api/allchannelusers/", async (req, res) => {
+    // console.log("api/channelusers");
+    // const { id } = req.params;
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
+    // console.log("ChannelUsers", clientId, user_id, id);
+
+    const [err, details] = await to(
+      User.findAll({
+        include: [
+          {
+            model: Channel,
+            as: "SalesChannels",
+            // where: { id },
+            attributes: ["id", "name"]
+          }
+        ],
+        where: { clientId },
+        attributes: ["id", "name", "surname"]
+      })
+    );
+    // console.log("details", details, err);
+    if (!details) {
+      res.sendStatus(500);
+    } else {
+      res.json(details);
+    }
+  });
 };

@@ -64,14 +64,13 @@ class SerwisForm extends Component {
   componentWillMount = async () => {
     const { edit, channelId, userId } = this.props;
     const date = dataToString(new Date());
-    console.log("SerwisForm() componentWillMount(), date", date);
-    edit ||
-      this.setState({
-        date,
-        items: this.itemsFromConfig(
-          await this.fetchConfigFromDB(date, channelId, userId)
-        )
-      });
+
+    if (!edit) {
+      const fetched = await this.fetchConfigFromDB(date, channelId, userId);
+      const items = this.itemsFromConfig(fetched);
+      console.log("SerwisForm() componentWillMount(), date", date);
+      this.setState({ date, items, itemsUnfiltered: items });
+    }
   };
 
   componentWillReceiveProps = async nextProps => {
@@ -79,7 +78,8 @@ class SerwisForm extends Component {
     console.log(
       "przed warunkiem userid in SerwisForm()",
       nextProps.userId !== 0,
-      nextProps.userId
+      nextProps.userId,
+      this.state.date
     );
     if (nextProps.edit && nextProps.edit !== this.props.edit) {
       //Perform some operation
@@ -113,6 +113,13 @@ class SerwisForm extends Component {
       // this.fetchItems(date);
       // this.askForConfig(date, name);
 
+      const fetched = await this.fetchConfigFromDB(
+        date,
+        channelId,
+        nextProps.userId
+      );
+      const items = this.itemsFromConfig(fetched);
+
       this.setState(
         {
           bonus,
@@ -134,27 +141,67 @@ class SerwisForm extends Component {
           month,
           customer,
           cityName,
-          items: this.itemsFromConfig(
-            await this.fetchConfigFromDB(date, channelId, nextProps.userId)
-          )
+          items,
+          itemsUnfiltered: items
         },
         () => this.count()
       );
     } else if (userId !== nextProps.userId) {
       const { date } = this.state;
 
+      // if (channelId === 0) {
+      //   // this.setState({ items: this.state.items });
+      //
+      //   nextProps.users.length > 0 &&
+      //     // this.state.itemsUnfiltered &&
+      //     // this.state.itemsUnfiltered.length > 0 &&
+      //     this.filterItemsForUsers(nextProps.userId, nextProps.users);
+      // } else {
+      const fetched = await this.fetchConfigFromDB(
+        date || dataToString(new Date()),
+        channelId,
+        nextProps.userId
+      );
+      const items = this.itemsFromConfig(fetched);
+
       this.setState(
         {
-          items: this.itemsFromConfig(
-            await this.fetchConfigFromDB(
-              date || dataToString(new Date()),
-              channelId,
-              nextProps.userId
-            )
-          )
+          // date: date || dataToString(new Date()),
+          items,
+          itemsUnfiltered: items
         },
-        () => this.count()
+        () => {
+          this.filterItemsForUsers(nextProps.userId, nextProps.users);
+          this.count();
+        }
       );
+      // }
+    }
+  };
+
+  filterItemsForUsers = (userId, users) => {
+    // const { users } = this.props;
+    const { items } = this.state;
+    const itemsFromState = JSON.parse(JSON.stringify(items));
+    const user = users.filter(x => x.id === userId);
+    if (user[0]) {
+      const userChannels = user[0].SalesChannels.map(x => x.id);
+      let filteredItems = [];
+      for (let channel of userChannels) {
+        filteredItems.push(
+          ...itemsFromState.filter(x => x["Channel.id"] === channel)
+        );
+      }
+      console.log("filterItemsForUsers()");
+      // this.clearForm();
+      this.clearOnlyItem();
+      // props.resetForm();
+      this.setState({ items: filteredItems });
+    } else {
+      // this.clearForm();
+      this.clearOnlyItem();
+      // props.resetForm();
+      this.setState({ items: [] });
     }
   };
 
@@ -191,7 +238,7 @@ class SerwisForm extends Component {
   clearForm = () => {
     this.setState({
       cityId: null,
-      date: null,
+      date: dataToString(new Date()),
       name: null,
       item: null,
       unit: null,
@@ -201,6 +248,29 @@ class SerwisForm extends Component {
       month: null,
       customer: null,
       cityName: null,
+      submitIsDisable: true,
+      bonus: 0,
+      marginUnit: null,
+      bonusType: null,
+      bonusUnit: null,
+      gross: null,
+      grossMargin: null
+    });
+  };
+
+  clearOnlyItem = () => {
+    this.setState({
+      // cityId: null,
+      // date: null,
+      name: null,
+      item: null,
+      unit: null,
+      quantity: 1,
+      // buy: null,
+      // sell: null,
+      // month: null,
+      // customer: null,
+      // cityName: null,
       submitIsDisable: true,
       bonus: 0,
       marginUnit: null,
@@ -321,7 +391,8 @@ class SerwisForm extends Component {
   };
   //!!!!!!!!!!!
   handleSubmit = async e => {
-    const { channelId, userId, edit } = this.props;
+    const { userId, edit } = this.props;
+    const { channelId } = this.state;
     let url;
 
     if (edit) {
@@ -492,8 +563,13 @@ class SerwisForm extends Component {
     data.map(x =>
       Object.assign(x, {
         id: x["Item.id"],
-        name: x["Item.name"],
-        unit: x["Item.unit"]
+        name:
+          this.props.channelId === 0
+            ? `${x["Item.name"]} (${x["Channel.name"]})`
+            : `${x["Item.name"]}`,
+        unit: x["Item.unit"],
+        channelId: x["Channel.id"],
+        channelName: x["Channel.name"]
       })
     );
 
@@ -501,15 +577,17 @@ class SerwisForm extends Component {
     // props.setFieldValue("date", value);
     const { date } = this.state;
     const { channelId, userId } = this.props;
-    console.log("fetchConfig()", channelId, date, value, date !== value);
+    // console.log("fetchConfig()", channelId, date, value, date !== value);
     if (date !== value) {
       const response = await this.fetchConfigFromDB(value, channelId, userId);
 
-      console.log("fetchConfig response", response, props);
+      // console.log("fetchConfig response", response, props);
+      const items = this.itemsFromConfig(response);
       this.setState(
         {
           date: value,
-          items: this.itemsFromConfig(response)
+          items,
+          itemsUnfiltered: items
           // dateWithConfig: true
         },
         () => {
@@ -522,12 +600,12 @@ class SerwisForm extends Component {
   };
 
   fetchConfigFromDB = async (value, channelId, userId) => {
-    console.log("fetchConfigFromDB()", value, channelId, userId);
+    // console.log("fetchConfigFromDB()", value, channelId, userId);
     // const { userId } = this.props;
     const result = await axios.get(
       `/api/config/month_channel/${value}/${channelId}/${userId}`
     );
-    console.log("fetchConfigFromDB()", result.data);
+    // console.log("fetchConfigFromDB()", result.data);
     return result.data;
   };
 
@@ -550,9 +628,9 @@ class SerwisForm extends Component {
       return {
         // date: Yup.string().required("Podaj prawidłową datę"),
         date: Yup.mixed().test("a", "Podaj prawidłową datę", value => {
-          // console.log("date validate", items, items.length, items.length > 0);
+          console.log("date validate", items, items.length, items.length > 0);
           // return this.fetchConfig(value);
-          return items.length > 0;
+          return true;
         }),
         items: Yup.mixed().test(
           "a",
@@ -650,6 +728,8 @@ class SerwisForm extends Component {
                         daty={daty => {}}
                         wybrano={item => {
                           item.id && wybrano(item);
+                          item.id &&
+                            props.setFieldValue("items", { name: "", id: 0 });
                         }}
                         edytuj={value => {
                           value.id || edytuj(value);
@@ -700,6 +780,8 @@ class SerwisForm extends Component {
                         wybrano={item => {
                           item.id && props.setFieldValue("items", item);
                           this.handleChange("items", item);
+                          item.channelId &&
+                            this.setState({ channelId: item.channelId });
                           props.setFieldTouched("items", true);
                         }}
                         edytuj={edytuj => {

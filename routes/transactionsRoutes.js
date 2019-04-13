@@ -344,7 +344,7 @@ module.exports = app => {
 
     if (userIdParams === "0" && role === "master") {
       //showing every transaction in channel
-      query = { channelId, clientId };
+      query = channelId === "0" ? { clientId } : { channelId, clientId };
     } else {
       // showing transaction only for specyfic user
       if (role !== "master" && userIdParams !== user_id) {
@@ -354,7 +354,10 @@ module.exports = app => {
         user = userIdParams;
       }
       // user = user_id;
-      query = { clientId, userId: user, channelId };
+      query =
+        channelId === "0"
+          ? { clientId, userId: user }
+          : { clientId, userId: user, channelId };
     }
 
     console.log("query", query);
@@ -369,6 +372,20 @@ module.exports = app => {
             // where: { id: userIdParams === "0" ? user_id : userIdParams },
             // where: { id: user_id },
             attributes: ["id", "name", "surname"]
+          },
+          {
+            model: Channel,
+            as: "ChannelTrans",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name"]
+          },
+          {
+            model: Item,
+            as: "ItemTrans",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name"]
           }
         ]
       })

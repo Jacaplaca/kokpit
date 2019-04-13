@@ -243,6 +243,18 @@ Transaction.belongsTo(User, {
   foreignKey: "userId"
 });
 
+Transaction.belongsTo(Channel, {
+  as: "ChannelTrans",
+  targetKey: "id",
+  foreignKey: "channelId"
+});
+
+Transaction.belongsTo(Item, {
+  as: "ItemTrans",
+  targetKey: "id",
+  foreignKey: "itemId"
+});
+
 Module.belongsToMany(Client, {
   as: "ModuleClient",
   through: db.modules_clients, //this can be string or a model,

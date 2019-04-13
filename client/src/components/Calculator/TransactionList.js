@@ -76,13 +76,14 @@ class EnhancedTableHead extends React.Component {
       orderBy,
       numSelected,
       rowCount,
-      auth
+      auth,
+      channelId
     } = this.props;
 
     const rows = [
       { id: "date", numeric: false, disablePadding: false, label: "Data" },
       {
-        id: "name",
+        id: "ItemTrans.name",
         numeric: false,
         disablePadding: true,
         label: "Towar/Usługa"
@@ -113,7 +114,14 @@ class EnhancedTableHead extends React.Component {
         numeric: false,
         disablePadding: false,
         label: "Pracownik"
-      }
+      },
+      channelId === 0 &&
+        auth.role === "master" && {
+          id: "ChannelTrans.name",
+          numeric: false,
+          disablePadding: false,
+          label: "System"
+        }
     ];
 
     return (
@@ -352,7 +360,7 @@ class EnhancedTable extends React.Component {
   };
 
   render() {
-    const { classes, transactions, auth } = this.props;
+    const { classes, transactions, auth, channelId } = this.props;
     const {
       data,
       order,
@@ -396,6 +404,7 @@ class EnhancedTable extends React.Component {
                 onRequestSort={this.handleRequestSort}
                 // rowCount={data.length}
                 rowCount={transactions.length}
+                channelId={channelId}
               />
               <TableBody>
                 {stableSort(transactions, getSorting(order, orderBy))
@@ -421,7 +430,7 @@ class EnhancedTable extends React.Component {
                         </TableCell>
                         <TableCell align="right">{n.date}</TableCell>
                         <TableCell component="th" scope="row" padding="none">
-                          {n.name}
+                          {n.ItemTrans.name}
                         </TableCell>
                         <TableCell component="th" scope="row" padding="none">
                           {shorting(n.cityName, 30)}
@@ -473,6 +482,11 @@ class EnhancedTable extends React.Component {
                         {auth.role === "master" && (
                           <TableCell component="th" scope="row" padding="none">
                             {`${n.User.name} ${n.User.surname}`}
+                          </TableCell>
+                        )}
+                        {channelId === 0 && auth.role === "master" && (
+                          <TableCell component="th" scope="row" padding="none">
+                            {`${n.ChannelTrans.name}`}
                           </TableCell>
                         )}
                         {/* <TableCell align="right">{n.calories}</TableCell>
