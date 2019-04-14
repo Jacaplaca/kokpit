@@ -619,7 +619,9 @@ class SerwisForm extends Component {
       wybrano,
       edytuj,
       czysc,
-      loggedUser
+      loggedUser,
+      show,
+      changeItem
     } = this.props;
     const { dateWithConfig, items } = this.state;
 
@@ -632,10 +634,8 @@ class SerwisForm extends Component {
           // return this.fetchConfig(value);
           return true;
         }),
-        items: Yup.mixed().test(
-          "a",
-          "Wybierz produkt/usługę",
-          value => this.state.item
+        items: Yup.mixed().test("a", "Wybierz produkt/usługę", value =>
+          show ? true : this.state.item
         ),
         customer: Yup.string().required("Wpisz klienta"),
         city: Yup.mixed().test(
@@ -728,6 +728,7 @@ class SerwisForm extends Component {
                         daty={daty => {}}
                         wybrano={item => {
                           item.id && wybrano(item);
+                          item.id && changeItem({ name: "", id: 0 });
                           item.id &&
                             props.setFieldValue("items", { name: "", id: 0 });
                         }}
@@ -747,26 +748,30 @@ class SerwisForm extends Component {
                         name="items"
                       />
                     </Grid>
-                    <Grid item xs={3}>
-                      <InputData
-                        id="date"
-                        name="date"
-                        label={
-                          props.touched.date && props.errors.date
-                            ? props.errors.date
-                            : "Data transakcji"
-                        }
-                        type="date"
-                        value={props.values.date}
-                        edytuj={value => {
-                          // props.setFieldValue("date", value);
-                          this.handleChange("date", value, props);
-                          // this.fetchItems(value);
-                          props.setFieldTouched("date", true);
-                        }}
-                        error={props.touched.date && Boolean(props.errors.date)}
-                      />
-                    </Grid>
+                    {show || (
+                      <Grid item xs={3}>
+                        <InputData
+                          id="date"
+                          name="date"
+                          label={
+                            props.touched.date && props.errors.date
+                              ? props.errors.date
+                              : "Data transakcji"
+                          }
+                          type="date"
+                          value={props.values.date}
+                          edytuj={value => {
+                            // props.setFieldValue("date", value);
+                            this.handleChange("date", value, props);
+                            // this.fetchItems(value);
+                            props.setFieldTouched("date", true);
+                          }}
+                          error={
+                            props.touched.date && Boolean(props.errors.date)
+                          }
+                        />
+                      </Grid>
+                    )}
                     <Grid
                       item
                       xs={modal ? 6 : 4}
@@ -779,6 +784,7 @@ class SerwisForm extends Component {
                         daty={daty => {}}
                         wybrano={item => {
                           item.id && props.setFieldValue("items", item);
+                          item.id && changeItem(item);
                           this.handleChange("items", item);
                           item.channelId &&
                             this.setState({ channelId: item.channelId });
@@ -788,12 +794,13 @@ class SerwisForm extends Component {
                           edytuj.id ||
                             props.setFieldValue("items", {
                               name: edytuj,
-                              id: 0
+                              "Item.id": 0
                             });
                           props.setFieldTouched("items", true);
                         }}
                         czysc={() => {
                           props.setFieldValue("items", { name: "", id: 0 });
+                          changeItem({ name: "", "Item.id": 0 });
                           this.setState({ name: null, item: null });
                         }}
                         value={props.values.items.name}
@@ -806,194 +813,209 @@ class SerwisForm extends Component {
                         name="items"
                       />
                     </Grid>
-                    <Grid
-                      item
-                      xs={2}
-                      style={quantity > 0 ? styles.filled : styles.toFill}
-                    >
-                      <InputComponent
-                        disabled={!item}
-                        format="number"
-                        suffix={this.state.unit}
-                        name="quantity"
-                        error={
-                          props.touched.quantity &&
-                          Boolean(props.errors.quantity)
-                        }
-                        label={
-                          props.touched.quantity && props.errors.quantity
-                            ? props.errors.quantity
-                            : "Ilość"
-                        }
-                        type="text"
-                        edytuj={value => {
-                          props.setFieldValue("quantity", value);
-                          // this.setState({ quantity: value });
-                          props.setFieldTouched("quantity", true);
-                          this.handleChange("quantity", value);
-                        }}
-                        value={props.values.quantity}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <InputComponent
-                        name="customer"
-                        label={
-                          props.touched.customer && props.errors.customer
-                            ? props.errors.customer
-                            : "Klient"
-                        }
-                        type="text"
-                        edytuj={value => {
-                          props.setFieldValue("customer", value);
-                          this.handleChange("customer", value);
-                          props.setFieldTouched("customer", true);
-                        }}
-                        error={
-                          props.touched.customer &&
-                          Boolean(props.errors.customer)
-                        }
-                        value={props.values.customer}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <CitySearch
-                        miejsceLabel={props.values.city.name}
-                        edytuj={id => {
-                          this.handleChange("cityId", id);
-
-                          props.values.city.name &&
-                            props.setFieldTouched("city", true);
-                        }}
-                        wybranoLabel={wybranoLabel => {
-                          props.setFieldValue("city", {
-                            name: wybranoLabel
-                          });
-                          this.setState({ cityName: wybranoLabel });
-                        }}
-                        error={props.touched.city && Boolean(props.errors.city)}
-                        label={
-                          props.touched.city && props.errors.city
-                            ? props.errors.city
-                            : "Miejscowość"
-                        }
-                        places
-                      />
-                    </Grid>
-
-                    <Grid
-                      item
-                      xs={6}
-                      style={
+                    {show || (
+                      <Grid
                         item
-                          ? bonusType === "stawka"
-                            ? styles.filled
-                            : Math.trunc(buy) > 0
-                            ? styles.filled
-                            : styles.toFill
-                          : styles.filled
-                      }
-                    >
-                      <InputComponent
-                        disabled={bonusType !== "% marży"}
-                        format="number"
-                        suffix="zł"
-                        name="buy"
-                        error={props.touched.buy && Boolean(props.errors.buy)}
-                        label={
-                          props.touched.buy && props.errors.buy
-                            ? props.errors.buy
-                            : "Cena zakupu jedn. brutto"
-                        }
-                        type="text"
-                        edytuj={value => {
-                          props.setFieldValue("buy", value);
-                          // this.setState({ buy: value });
-                          props.setFieldTouched("buy", true);
-                          this.handleChange("buy", value);
-                        }}
-                        value={props.values.buy}
-                      />
-                    </Grid>
-                    <Grid
-                      item
-                      xs={6}
-                      style={
+                        xs={2}
+                        style={quantity > 0 ? styles.filled : styles.toFill}
+                      >
+                        <InputComponent
+                          disabled={!item}
+                          format="number"
+                          suffix={this.state.unit}
+                          name="quantity"
+                          error={
+                            props.touched.quantity &&
+                            Boolean(props.errors.quantity)
+                          }
+                          label={
+                            props.touched.quantity && props.errors.quantity
+                              ? props.errors.quantity
+                              : "Ilość"
+                          }
+                          type="text"
+                          edytuj={value => {
+                            props.setFieldValue("quantity", value);
+                            // this.setState({ quantity: value });
+                            props.setFieldTouched("quantity", true);
+                            this.handleChange("quantity", value);
+                          }}
+                          value={props.values.quantity}
+                        />
+                      </Grid>
+                    )}
+                    {show || (
+                      <Grid item xs={6}>
+                        <InputComponent
+                          name="customer"
+                          label={
+                            props.touched.customer && props.errors.customer
+                              ? props.errors.customer
+                              : "Klient"
+                          }
+                          type="text"
+                          edytuj={value => {
+                            props.setFieldValue("customer", value);
+                            this.handleChange("customer", value);
+                            props.setFieldTouched("customer", true);
+                          }}
+                          error={
+                            props.touched.customer &&
+                            Boolean(props.errors.customer)
+                          }
+                          value={props.values.customer}
+                        />
+                      </Grid>
+                    )}
+                    {show || (
+                      <Grid item xs={6}>
+                        <CitySearch
+                          miejsceLabel={props.values.city.name}
+                          edytuj={id => {
+                            this.handleChange("cityId", id);
+
+                            props.values.city.name &&
+                              props.setFieldTouched("city", true);
+                          }}
+                          wybranoLabel={wybranoLabel => {
+                            props.setFieldValue("city", {
+                              name: wybranoLabel
+                            });
+                            this.setState({ cityName: wybranoLabel });
+                          }}
+                          error={
+                            props.touched.city && Boolean(props.errors.city)
+                          }
+                          label={
+                            props.touched.city && props.errors.city
+                              ? props.errors.city
+                              : "Miejscowość"
+                          }
+                          places
+                        />
+                      </Grid>
+                    )}
+                    {show || (
+                      <Grid
                         item
-                          ? bonusType === "stawka"
-                            ? styles.filled
-                            : Math.trunc(sell) > Math.trunc(buy)
-                            ? styles.filled
-                            : styles.toFill
-                          : styles.filled
-                      }
-                    >
-                      <InputComponent
-                        disabled={bonusType !== "% marży"}
-                        format="sell"
-                        suffix="zł"
-                        name="sell"
-                        error={props.touched.sell && Boolean(props.errors.sell)}
-                        label={
-                          props.touched.sell && props.errors.sell
-                            ? props.errors.sell
-                            : "Cena sprzedaży jedn. brutto"
+                        xs={6}
+                        style={
+                          item
+                            ? bonusType === "stawka"
+                              ? styles.filled
+                              : Math.trunc(buy) > 0
+                              ? styles.filled
+                              : styles.toFill
+                            : styles.filled
                         }
-                        type="text"
-                        edytuj={value => {
-                          props.setFieldValue("sell", value);
-                          // this.setState({ sell: value });
-                          props.setFieldTouched("sell", true);
-                          this.handleChange("sell", value);
-                        }}
-                        value={props.values.sell}
-                      />
-                    </Grid>
+                      >
+                        <InputComponent
+                          disabled={bonusType !== "% marży"}
+                          format="number"
+                          suffix="zł"
+                          name="buy"
+                          error={props.touched.buy && Boolean(props.errors.buy)}
+                          label={
+                            props.touched.buy && props.errors.buy
+                              ? props.errors.buy
+                              : "Cena zakupu jedn. brutto"
+                          }
+                          type="text"
+                          edytuj={value => {
+                            props.setFieldValue("buy", value);
+                            // this.setState({ buy: value });
+                            props.setFieldTouched("buy", true);
+                            this.handleChange("buy", value);
+                          }}
+                          value={props.values.buy}
+                        />
+                      </Grid>
+                    )}
+                    {show || (
+                      <Grid
+                        item
+                        xs={6}
+                        style={
+                          item
+                            ? bonusType === "stawka"
+                              ? styles.filled
+                              : Math.trunc(sell) > Math.trunc(buy)
+                              ? styles.filled
+                              : styles.toFill
+                            : styles.filled
+                        }
+                      >
+                        <InputComponent
+                          disabled={bonusType !== "% marży"}
+                          format="sell"
+                          suffix="zł"
+                          name="sell"
+                          error={
+                            props.touched.sell && Boolean(props.errors.sell)
+                          }
+                          label={
+                            props.touched.sell && props.errors.sell
+                              ? props.errors.sell
+                              : "Cena sprzedaży jedn. brutto"
+                          }
+                          type="text"
+                          edytuj={value => {
+                            props.setFieldValue("sell", value);
+                            // this.setState({ sell: value });
+                            props.setFieldTouched("sell", true);
+                            this.handleChange("sell", value);
+                          }}
+                          value={props.values.sell}
+                        />
+                      </Grid>
+                    )}
                   </Grid>
-
-                  <FormButtons
-                    subDisable={
-                      props.isValid ? (submitIsDisable ? true : false) : true
-                    }
-                    subLabel={
-                      modal && edit
-                        ? "Potwierdź edycję"
-                        : bonus > 0
-                        ? `Dodaj premię ${formatNumber(bonus)} zł`
-                        : "Potwierdź"
-                    }
-                    subAction={e => {
-                      this.handleSubmit(e);
-                      this.props.modal && this.props.closeModal();
-                      this.clearForm();
-                      props.resetForm();
-                      props.setFieldValue("city", {
-                        name: "cancelLabel"
-                      });
-                    }}
-                    cancelLabel={"Anuluj"}
-                    cancelAction={() => {
-                      this.props.modal && this.props.closeModal();
-                      this.clearForm();
-                      props.resetForm();
-                      props.setFieldValue("city", {
-                        name: "cancelLabel"
-                      });
-                    }}
-                  />
+                  {show || (
+                    <FormButtons
+                      subDisable={
+                        props.isValid ? (submitIsDisable ? true : false) : true
+                      }
+                      subLabel={
+                        modal && edit
+                          ? "Potwierdź edycję"
+                          : bonus > 0
+                          ? `Dodaj premię ${formatNumber(bonus)} zł`
+                          : "Potwierdź"
+                      }
+                      subAction={e => {
+                        this.handleSubmit(e);
+                        this.props.modal && this.props.closeModal();
+                        this.clearForm();
+                        props.resetForm();
+                        props.setFieldValue("city", {
+                          name: "cancelLabel"
+                        });
+                      }}
+                      cancelLabel={"Anuluj"}
+                      cancelAction={() => {
+                        this.props.modal && this.props.closeModal();
+                        this.clearForm();
+                        props.resetForm();
+                        props.setFieldValue("city", {
+                          name: "cancelLabel"
+                        });
+                      }}
+                    />
+                  )}
                 </form>
               );
             }}
           />
-          <SerwisSummary
-            bonus={bonus}
-            bonusType={bonusType}
-            marginUnit={marginUnit}
-            gross={gross}
-            grossMargin={grossMargin}
-            bonusUnit={bonusUnit}
-          />
+          {show || (
+            <SerwisSummary
+              bonus={bonus}
+              bonusType={bonusType}
+              marginUnit={marginUnit}
+              gross={gross}
+              grossMargin={grossMargin}
+              bonusUnit={bonusUnit}
+            />
+          )}
         </Paper>
       </div>
     );

@@ -69,6 +69,17 @@ class Calculator extends Component {
   setAsyncState = newState =>
     new Promise(resolve => this.setState(newState, () => resolve()));
 
+  // componentWillReceiveProps(nextProps, nextState) {
+  //   // console.log("nextState nextProps", nextState, nextProps);
+  //   const {show} = this.props
+  //   const {}
+  //   if (show !== nextProps.show) {
+  //
+  //   }
+  //
+  //
+  // }
+
   handleClose = () => {
     this.setState({ openModal: false });
   };
@@ -195,14 +206,32 @@ class Calculator extends Component {
     await this.fetchTransactions();
   };
 
+  handleChangeItem = item => {
+    let itemId;
+    let transactions;
+    if (item) {
+      itemId = item["Item.id"];
+      if (itemId === 0) {
+        transactions = this.state.transactionsUnfiltered;
+      } else {
+        transactions = this.state.transactionsUnfiltered.filter(
+          x => x.itemId === itemId
+        );
+      }
+    } else {
+      transactions = this.state.transactionsUnfiltered;
+    }
+    this.setState({ transactions, item });
+  };
+
   handleEmptyEmployee = async () => {
     await this.setAsyncState({ employee: { id: 0, name: "" } });
     await this.fetchTransactions();
   };
 
   render() {
-    const { channelId, auth } = this.props;
-    const { employees, employee } = this.state;
+    const { channelId, auth, show } = this.props;
+    const { employees, employee, item } = this.state;
     return (
       <React.Fragment>
         <ModalWindow
@@ -235,6 +264,8 @@ class Calculator extends Component {
         </ModalWindow>
 
         <SerwisForm
+          show={show}
+          changeItem={this.handleChangeItem}
           loggedUser={auth}
           wybrano={this.handleChooseEmployee}
           edytuj={value => this.setState({ employee: { name: value, id: 0 } })}
@@ -252,6 +283,8 @@ class Calculator extends Component {
         />
         {this.state.transactions.length > 0 && (
           <TransactionList
+            // show={show}
+            // item={item}
             channelId={channelId}
             userId={employee.id}
             delete={this.handleDelete}

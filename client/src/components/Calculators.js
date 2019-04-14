@@ -5,6 +5,10 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+
 import { connect } from "react-redux";
 import { compose } from "redux";
 import axios from "axios";
@@ -48,6 +52,7 @@ function TabContainer(props) {
 class Calculators extends Component {
   state = {
     channels: null,
+    presentation: false,
     // transactions: [],
     // transactionsUnfiltered: [],
     // openModal: false,
@@ -63,6 +68,11 @@ class Calculators extends Component {
 
   handleChange = (event, value) => {
     this.setState({ value });
+  };
+
+  handleSwitch = name => event => {
+    console.log("switch", name, event);
+    this.setState({ [name]: event.target.checked });
   };
 
   componentWillMount = async () => {
@@ -86,10 +96,18 @@ class Calculators extends Component {
 
   render() {
     const { classes } = this.props;
-    const { value, channels } = this.state;
+    const { value, channels, presentation } = this.state;
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
+        <AppBar
+          position="static"
+          color="default"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 150px",
+            alignItems: "end"
+          }}
+        >
           <Tabs
             value={value}
             onChange={this.handleChange}
@@ -104,13 +122,27 @@ class Calculators extends Component {
                 <Tab key={i} label={channel.name} />
               ))}
           </Tabs>
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={presentation}
+                  onChange={this.handleSwitch("presentation")}
+                  value="presentation"
+                />
+              }
+              label={presentation ? "Edycja" : "Prezentacja"}
+            />
+          </FormGroup>
         </AppBar>
-        {value === 0 && <Caluculator channelId={0} />}
+        {value === 0 && <Caluculator channelId={0} show={presentation} />}
         {channels &&
           [{ id: 0, name: "Wszystko" }, ...channels].map(
             (channel, i) =>
               value === i &&
-              value !== 0 && <Caluculator channelId={channel.id} />
+              value !== 0 && (
+                <Caluculator channelId={channel.id} show={presentation} />
+              )
           )}
         {/* {value === 0 && <TabContainer>Item One</TabContainer>}
         {value === 1 && <TabContainer>Item Two</TabContainer>}
