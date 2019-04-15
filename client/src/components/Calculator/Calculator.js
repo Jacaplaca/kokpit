@@ -7,12 +7,14 @@ import { withStyles } from "@material-ui/core/styles";
 import * as actions from "../../actions";
 import { defineds } from "../../common/functions";
 import MainFrameHOC from "../../common/MainFrameHOC";
+import { dataToString } from "../../common/functions";
 //import SiteHeader from "../common/SiteHeader";
 import ModalWindow from "../ModalWindow";
 import DateRangePickerMy from "../../common/DateRangePickerMy";
 import SerwisForm from "./SerwisForm";
 import TransactionList from "./TransactionList";
 import InputSelectBaza from "../../common/inputs/InputSelectBaza";
+import Summary from "./Summary";
 
 const styles = theme => ({
   input: {
@@ -33,6 +35,7 @@ class Calculator extends Component {
     channels: null,
     transactions: [],
     transactionsUnfiltered: [],
+    allTransactions: [],
     openModal: false,
     editedId: null,
     edit: null,
@@ -52,9 +55,11 @@ class Calculator extends Component {
       if (channelId === 0) {
         await this.setAsyncState({ employee: { id: 0, name: "" } });
         await this.fetchAllChannelUsers();
+        await this.fetchAllTransactionsInRange();
       } else {
         await this.setAsyncState({ employee: { id: 0, name: "" } });
         await this.fetchChannelUsers();
+        await this.fetchAllTransactionsInRange();
       }
     } else {
       await this.setAsyncState({
@@ -101,9 +106,12 @@ class Calculator extends Component {
   handleDateFilter = (array, startDate, endDate) => {
     const arrayFiltered = array.filter(x => {
       const data = new Date(x.date);
+      console.log("data", data, data.getTime(), startDate, startDate.getTime());
       return (
-        data.getTime() > startDate.getTime() &&
-        data.getTime() < endDate.getTime()
+        // data.getTime() >= startDate.getTime() + 2 * 60 * 60 * 1000 &&
+        data.getTime() >= new Date(dataToString(startDate)).getTime() &&
+        // data.getTime() <= endDate.getTime() + 2 * 60 * 60 * 1000
+        data.getTime() <= new Date(dataToString(endDate)).getTime()
       );
     });
     return arrayFiltered;
@@ -123,6 +131,7 @@ class Calculator extends Component {
     const { startDate, endDate } = this.state.rangeselection;
 
     const fetched = await axios.get(`/api/transactions/${channelId}/${id}`);
+    console.log("fetchedtransactions", fetched.data);
     const transactions = this.handleDateFilter(
       fetched.data,
       startDate,
@@ -130,6 +139,18 @@ class Calculator extends Component {
     );
     this.setState({ transactions, transactionsUnfiltered: fetched.data });
     await loading(false);
+  };
+
+  fetchAllTransactionsInRange = async range => {
+    const { channelId, loading } = this.props;
+    const { startDate, endDate } = this.state.rangeselection;
+    const fetched = await axios.get(
+      `/api/transactions/${channelId}/${dataToString(startDate)}/${dataToString(
+        endDate
+      )}`
+    );
+    // console.log("fetched all transactions", fetched.data);
+    this.setState({ allTransactions: fetched.data });
   };
 
   fetchChannelUsers = async () => {
@@ -206,12 +227,15 @@ class Calculator extends Component {
     await this.fetchTransactions();
   };
 
-  handleChangeItem = item => {
+  handleChangeItem = (item, show) => {
     let itemId;
     let transactions;
-    if (item) {
-      itemId = item["Item.id"];
+    if (item && show) {
+      itemId = item.id;
+      console.log("handle changeItem", item, itemId, show, itemId === 0);
+      // itemId = item["Item.id"];
       if (itemId === 0) {
+        console.log("handleChange(), in 0 item id");
         transactions = this.state.transactionsUnfiltered;
       } else {
         transactions = this.state.transactionsUnfiltered.filter(
@@ -282,22 +306,29 @@ class Calculator extends Component {
           onChange={this.handleSelect}
         />
         {this.state.transactions.length > 0 && (
-          <TransactionList
-            // show={show}
-            // item={item}
-            channelId={channelId}
-            userId={employee.id}
-            delete={this.handleDelete}
-            transactions={this.state.transactions}
-            edit={id => {
-              this.setState({
-                openModal: true,
-                editedId: id,
-                duplicate: false
-              });
-              this.handleEdit(id);
-            }}
-          />
+          <div>
+            <Summary
+              transactions={this.state.allTransactions}
+              show={show}
+              channelId={channelId}
+            />
+            <TransactionList
+              // show={show}
+              // item={item}
+              channelId={channelId}
+              userId={employee.id}
+              delete={this.handleDelete}
+              transactions={this.state.transactions}
+              edit={id => {
+                this.setState({
+                  openModal: true,
+                  editedId: id,
+                  duplicate: false
+                });
+                this.handleEdit(id);
+              }}
+            />
+          </div>
         )}
       </React.Fragment>
     );

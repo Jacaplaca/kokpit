@@ -890,14 +890,14 @@ module.exports = app => {
       //       res.sendStatus(500);
       //     });
       //   break;
-      case "items":
-        Item.findAll({ where: { clientId } })
-          .then(result => res.json(result))
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-        break;
+      // case "items":
+      //   Item.findAll({ where: { clientId } })
+      //     .then(result => res.json(result))
+      //     .catch(err => {
+      //       console.log(err);
+      //       res.sendStatus(500);
+      //     });
+      //   break;
       case "category":
         Category.findAll({ where: { clientId } })
           .then(result => res.json(result))
