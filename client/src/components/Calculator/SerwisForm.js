@@ -653,7 +653,8 @@ class SerwisForm extends Component {
       czysc,
       loggedUser,
       show,
-      changeItem
+      changeItem,
+      userId
     } = this.props;
     const { dateWithConfig, items } = this.state;
 
@@ -699,6 +700,7 @@ class SerwisForm extends Component {
       buy,
       sell
     } = this.state;
+    const { toFill, filled } = styles;
     return (
       <div
         style={
@@ -754,7 +756,11 @@ class SerwisForm extends Component {
                   }}
                 >
                   <Grid container spacing={24}>
-                    <Grid item xs={modal ? 12 : 3}>
+                    <Grid
+                      item
+                      xs={modal ? 12 : 3}
+                      style={show ? filled : userId ? filled : toFill}
+                    >
                       <InputSelectBaza
                         disabled={loggedUser.role !== "master"}
                         daty={daty => {}}
@@ -808,7 +814,15 @@ class SerwisForm extends Component {
                     <Grid
                       item
                       xs={modal ? 6 : 4}
-                      style={item ? styles.filled : styles.toFill}
+                      style={
+                        show
+                          ? filled
+                          : userId
+                          ? item
+                            ? filled
+                            : toFill
+                          : filled
+                      }
                     >
                       <InputSelectBaza
                         error={

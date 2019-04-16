@@ -88,6 +88,7 @@ class Costs extends Component {
     const fetch = await axios.get(
       `/api/table/costs/${dataToString(poczatek)}_${dataToString(koniec)}`
     );
+    // console.log("fetrch", fetch);
     await this.resultToState(fetch);
     await this.props.loading(false);
   };
@@ -128,9 +129,10 @@ class Costs extends Component {
   };
 
   changeRange = data => {
+    console.log("data", data);
     const dataWystawienia = data.data_wystawienia;
-    const startDate = startOfMonth(dataWystawienia);
-    const endDate = endOfMonth(dataWystawienia);
+    const startDate = startOfMonth(new Date(dataWystawienia));
+    const endDate = endOfMonth(new Date(dataWystawienia));
     const rangeselection = { endDate, startDate, key: "rangeselection" };
     this.setState({ rangeselection });
   };

@@ -16,8 +16,8 @@ module.exports = app => {
   //remove configs
 
   app.post("/api/transaction/:userId", (req, res, next) => {
-    console.log("api/transaction/");
-    console.log(req.body);
+    // console.log("api/transaction/");
+    // console.log(req.body);
     const { userId } = req.params;
     const { clientId, user_id } = req.user;
     if (!req.user) {
@@ -38,10 +38,10 @@ module.exports = app => {
   });
 
   app.post("/api/transaction/delete/:id", (req, res, next) => {
-    console.log("transaction/delete/id");
+    // console.log("transaction/delete/id");
     const id = req.params.id;
     if (!req.user) {
-      console.log("przekierowanie");
+      // console.log("przekierowanie");
       return res.redirect("/");
     }
     // let ids;
@@ -60,9 +60,9 @@ module.exports = app => {
 
   app.post("/api/transaction/edit/id/:id/:userId", (req, res, next) => {
     const { id, userId } = req.params;
-    console.log("edytuje transaction api", id, req.body);
+    // console.log("edytuje transaction api", id, req.body);
     if (!req.user) {
-      console.log("przekierowanie");
+      // console.log("przekierowanie");
       return res.redirect("/");
     }
     const { user_id, clientId } = req.user;
@@ -87,7 +87,7 @@ module.exports = app => {
     const { clientId, role, user_id } = req.user;
 
     const { channel_id, item_id } = req.params;
-    console.log("channelId itemId", channel_id, item_id);
+    // console.log("channelId itemId", channel_id, item_id);
 
     const [errItem, items] = await to(
       ChannelItems.findAll({ where: { item_id, channel_id } })
@@ -132,7 +132,7 @@ module.exports = app => {
         where: { clientId }
       })
     );
-    console.log("channels", users);
+    // console.log("channels", users);
 
     if (!users) {
       res.sendStatus(500);
@@ -214,7 +214,7 @@ module.exports = app => {
           : { clientId, userId: user, channelId };
     }
 
-    console.log("query", query);
+    // console.log("query", query);
 
     const [err, transactions] = await to(
       Transaction.findAll({
@@ -254,7 +254,7 @@ module.exports = app => {
 
   app.get("/api/transactions/:channelId/:start/:end", async (req, res) => {
     const { channelId, start, end } = req.params;
-    console.log(`api/transactions/${channelId}/${start}/${end}`);
+    // console.log(`api/transactions/${channelId}/${start}/${end}`);
     if (!req.user) res.redirect("/");
     const { clientId, role, user_id } = req.user;
 
@@ -306,7 +306,7 @@ module.exports = app => {
       };
     }
 
-    console.log("query", query);
+    // console.log("query", query);
 
     const [err, transactions] = await to(
       Transaction.findAll({

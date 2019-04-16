@@ -64,7 +64,7 @@ function getSorting(order, orderBy) {
     : (a, b) => -desc(a, b, orderBy);
 }
 
-class EnhancedTableHead extends React.Component {
+class SimpleListHead extends React.Component {
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property);
   };
@@ -81,11 +81,12 @@ class EnhancedTableHead extends React.Component {
     } = this.props;
 
     const rows = [
+      { id: "rank", numeric: true, disablePadding: true, label: "Ranking" },
       { id: "name", numeric: false, disablePadding: false, label: "Nazwa" },
       {
         id: "bonuses",
         numeric: true,
-        disablePadding: true,
+        disablePadding: false,
         label: "Prowizja"
       }
     ];
@@ -98,6 +99,7 @@ class EnhancedTableHead extends React.Component {
               <TableCell
                 key={row.id}
                 align={row.numeric ? "right" : "left"}
+                // align={"center"}
                 padding={row.disablePadding ? "none" : "default"}
                 sortDirection={orderBy === row.id ? order : false}
               >
@@ -124,7 +126,7 @@ class EnhancedTableHead extends React.Component {
   }
 }
 
-EnhancedTableHead.propTypes = {
+SimpleListHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
@@ -158,7 +160,7 @@ const toolbarStyles = theme => ({
   }
 });
 
-let EnhancedTableToolbar = props => {
+let SimpleListToolbar = props => {
   const { numSelected, classes, deleteRows } = props;
 
   return (
@@ -187,12 +189,12 @@ let EnhancedTableToolbar = props => {
   );
 };
 
-EnhancedTableToolbar.propTypes = {
+SimpleListToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired
 };
 
-EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
+SimpleListToolbar = withStyles(toolbarStyles)(SimpleListToolbar);
 
 const styles = theme => ({
   root: {
@@ -207,7 +209,7 @@ const styles = theme => ({
   }
 });
 
-class EnhancedTable extends React.Component {
+class SimpleList extends React.Component {
   state = {
     order: "desc",
     orderBy: "date",
@@ -331,13 +333,9 @@ class EnhancedTable extends React.Component {
           komunikat={"Czy na pewno?"}
         />
         <div className={classes.root}>
-          <EnhancedTableToolbar
-            numSelected={selected.length}
-            deleteRows={this.handleConfirmation}
-          />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
-              <EnhancedTableHead
+              <SimpleListHead
                 auth={auth}
                 numSelected={selected.length}
                 order={order}
@@ -356,6 +354,7 @@ class EnhancedTable extends React.Component {
                     const isSelected = this.isSelected(n.id);
                     return (
                       <TableRow
+                        style={{ height: 10 }}
                         hover
                         // onClick={event => this.handleClick(event, n.id)}
                         role="checkbox"
@@ -364,8 +363,14 @@ class EnhancedTable extends React.Component {
                         key={n.id}
                         selected={isSelected}
                       >
-                        <TableCell align="right">{n.name}</TableCell>
-                        <TableCell align="right">
+                        <TableCell
+                          style={{ maxWidth: 50, width: 50 }}
+                          align="center"
+                        >
+                          {n.rank}
+                        </TableCell>
+                        <TableCell align="left">{n.name}</TableCell>
+                        <TableCell align="left">
                           {n.bonuses !== 0 && (
                             <NumberFormat
                               value={formatNumber(n.bonuses)}
@@ -379,16 +384,16 @@ class EnhancedTable extends React.Component {
                       </TableRow>
                     );
                   })}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 49 * emptyRows }}>
+                {/* {emptyRows > 0 && (
+                  <TableRow style={{ height: 10 * emptyRows }}>
                     <TableCell colSpan={6} />
                   </TableRow>
-                )}
+                )} */}
               </TableBody>
             </Table>
           </div>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
             // count={data.length}
             count={transactions.length}
@@ -410,7 +415,7 @@ class EnhancedTable extends React.Component {
   }
 }
 
-EnhancedTable.propTypes = {
+SimpleList.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
@@ -424,4 +429,4 @@ export default compose(
     mapStateToProps,
     actions
   )
-)(EnhancedTable);
+)(SimpleList);

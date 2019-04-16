@@ -286,7 +286,7 @@ class EnhancedTable extends React.Component {
       createData("Oreo", 437, 18.0, 63, 4.0)
     ],
     page: 0,
-    rowsPerPage: 5,
+    rowsPerPage: 25,
     open: false
   };
 

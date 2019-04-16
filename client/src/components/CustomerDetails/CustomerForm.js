@@ -98,7 +98,7 @@ class CustomerForm extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { edited } = nextProps;
-    // console.log(edited && this.props.edited !== edited);
+    console.log(edited && this.props.edited !== edited);
     if (edited && this.props.edited !== edited) {
       const brands = [];
       console.log("nxp", edited);

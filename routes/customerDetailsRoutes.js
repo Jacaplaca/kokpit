@@ -441,6 +441,12 @@ module.exports = app => {
     const id = req.params.id;
     const { clientId, role, user_id } = req.user;
     // console.log("customer detail", clientId, user_id, id);
+    let where = {};
+    if (role === "master") {
+      where = { clientId, id };
+    } else {
+      where = { clientId, userId: user_id, id };
+    }
 
     const [err, details] = await to(
       CustomerDetail.findAll({
@@ -460,9 +466,14 @@ module.exports = app => {
           {
             model: Agro,
             as: "Agros"
+          },
+          {
+            model: User,
+            as: "User",
+            attributes: ["name", "surname"]
           }
         ],
-        where: { clientId, userId: user_id, id }
+        where
       })
     );
     // console.log("de", details);

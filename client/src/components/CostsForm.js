@@ -46,10 +46,10 @@ class CostsForm extends Component {
   state = {
     id: "",
     nr_dokumentu: "a",
-    data_wystawienia: "2018-10-01",
+    data_wystawienia: "2019-04-11",
     nazwa_pozycji: "a",
-    kwota_netto: "1",
-    kwota_brutto: "2",
+    kwota_netto: "95",
+    kwota_brutto: "115",
     categoryId: "",
     groupId: "",
     groups: [],

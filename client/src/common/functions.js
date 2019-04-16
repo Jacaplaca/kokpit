@@ -11,6 +11,7 @@ import {
 
 import axios from "axios";
 import moment from "moment";
+import _ from "lodash";
 
 var {
   startOfQuarter,
@@ -148,6 +149,27 @@ export const getSuggestions = (fetchowane, value, names) => {
 //     return result * sortOrder;
 //   };
 // };
+
+export const addRank = (array, property) => {
+  let onlyProperties = [];
+  for (let elem of array) {
+    onlyProperties.push(elem[property]);
+  }
+  const sortedProperties = onlyProperties.sort(sortNumber).reverse();
+  const sorted = _.sortedUniqBy(sortedProperties);
+
+  const rankedArray = array.map(x => {
+    let rank = 0;
+    for (var i = 0; i < sorted.length; i++) {
+      if (sorted[i] === x[property]) {
+        rank = i + 1;
+      }
+    }
+    return Object.assign(x, { rank });
+  });
+
+  return rankedArray;
+};
 
 export const simpleSortUpDown = (array, what, how) => {
   let rows = [];

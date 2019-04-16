@@ -6,7 +6,33 @@ import { DatePicker } from "material-ui-pickers";
 import InputComponent from "../../common/inputs/InputComponent";
 import { YMtoDate, dateToYM } from "../../common/functions";
 
+// const child = React.createRef();
+
 class ProductForm extends React.Component {
+  state = { nameFocus: false };
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyDown);
+    this.nameField._focus();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  handleKeyDown = event => {
+    const { disableSubmit, submit } = this.props;
+    // console.log("event", event.keyCode);
+    switch (event.keyCode) {
+      case 13:
+        submit(event);
+        this.nameField._focus();
+        break;
+      default:
+        break;
+    }
+  };
+
   render() {
     const {
       change,
@@ -23,6 +49,8 @@ class ProductForm extends React.Component {
       submit
     } = this.props;
 
+    const { nameFocus } = this.state;
+
     return (
       <div
         style={{
@@ -33,8 +61,11 @@ class ProductForm extends React.Component {
         }}
       >
         <InputComponent
+          // ref={child}
+          onRef={ref => (this.nameField = ref)}
           // disabled={disabled}
           // key={i}
+          autoFocus
           name="channel"
           label="Nazwa produktu/usługi"
           type="text"
@@ -43,9 +74,10 @@ class ProductForm extends React.Component {
           // disabled={field2disabled}
         />
         <InputComponent
+          onRef={ref => (this.bbb = ref)}
           // disabled={disabled}
           // key={i}
-          name="channel"
+          name="unit"
           label="Jednostka"
           type="text"
           edytuj={value => change("unit", value, "adding")}
@@ -84,7 +116,10 @@ class ProductForm extends React.Component {
             //     ? `Dodaj premię ${formatNumber(bonus)} zł`
             //     : "Potwierdź"
           }
-          subAction={e => submit(e)}
+          subAction={e => {
+            submit(e);
+            this.nameField._focus();
+          }}
           cancelLabel={"Anuluj"}
           cancelAction={() => {
             console.log("clear");

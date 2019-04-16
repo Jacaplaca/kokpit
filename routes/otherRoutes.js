@@ -873,6 +873,7 @@ module.exports = app => {
     //   return res.redirect("/");
     // }
     const { clientId, role, user_id } = req.user;
+    console.log("table", clientId, role, user_id);
     switch (table.table) {
       // case "channels":
       //   Channel.findAll({ where: { clientId } })
@@ -908,7 +909,10 @@ module.exports = app => {
         break;
       case "group":
         Group.findAll({ where: { clientId } })
-          .then(result => res.json(result))
+          .then(result => {
+            console.log("result", result);
+            res.json(result);
+          })
           .catch(err => {
             console.log(err);
             res.sendStatus(500);

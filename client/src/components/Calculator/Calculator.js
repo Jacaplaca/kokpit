@@ -15,6 +15,7 @@ import SerwisForm from "./SerwisForm";
 import TransactionList from "./TransactionList";
 import InputSelectBaza from "../../common/inputs/InputSelectBaza";
 import Summary from "./Summary";
+import { greyBackground } from "../../globalStyles";
 
 const styles = theme => ({
   input: {
@@ -138,6 +139,7 @@ class Calculator extends Component {
       endDate
     );
     this.setState({ transactions, transactionsUnfiltered: fetched.data });
+    await this.fetchAllTransactionsInRange();
     await loading(false);
   };
 
@@ -286,48 +288,75 @@ class Calculator extends Component {
             }
           />
         </ModalWindow>
-
-        <SerwisForm
-          show={show}
-          changeItem={this.handleChangeItem}
-          loggedUser={auth}
-          wybrano={this.handleChooseEmployee}
-          edytuj={value => this.setState({ employee: { name: value, id: 0 } })}
-          czysc={this.handleEmptyEmployee}
-          users={employees}
-          user={employee}
-          userId={employee.id}
-          channelId={channelId}
-          fetch={this.fetchTransactions}
-          // edit={this.state.edit}
-        />
-        <DateRangePickerMy
-          range={[this.state.rangeselection]}
-          onChange={this.handleSelect}
-        />
+        <div
+          style={{
+            // paddingTop: 115,
+            paddingBottom: 20,
+            backgroundColor: greyBackground
+          }}
+        >
+          <SerwisForm
+            show={show}
+            changeItem={this.handleChangeItem}
+            loggedUser={auth}
+            wybrano={this.handleChooseEmployee}
+            edytuj={value =>
+              this.setState({ employee: { name: value, id: 0 } })
+            }
+            czysc={this.handleEmptyEmployee}
+            users={employees}
+            user={employee}
+            userId={employee.id}
+            channelId={channelId}
+            fetch={this.fetchTransactions}
+            // edit={this.state.edit}
+          />
+        </div>
+        <div
+          style={{
+            // paddingTop: 15,
+            // paddingBottom: 15,
+            backgroundColor: greyBackground
+          }}
+        >
+          <DateRangePickerMy
+            range={[this.state.rangeselection]}
+            onChange={this.handleSelect}
+          />
+        </div>
         {this.state.transactions.length > 0 && (
           <div>
-            <Summary
-              transactions={this.state.allTransactions}
-              show={show}
-              channelId={channelId}
-            />
-            <TransactionList
-              // show={show}
-              // item={item}
-              channelId={channelId}
-              userId={employee.id}
-              delete={this.handleDelete}
-              transactions={this.state.transactions}
-              edit={id => {
-                this.setState({
-                  openModal: true,
-                  editedId: id,
-                  duplicate: false
-                });
-                this.handleEdit(id);
+            {show && (
+              <Summary
+                transactions={this.state.allTransactions}
+                show={show}
+                channelId={channelId}
+              />
+            )}
+            <div
+              style={{
+                paddingTop: 1,
+                paddingBottom: 15,
+                backgroundColor: greyBackground
               }}
-            />
+            >
+              <TransactionList
+                // show={show}
+                // item={item}
+                channelId={channelId}
+                userId={employee.id}
+                delete={this.handleDelete}
+                transactions={this.state.transactions}
+                edit={id => {
+                  this.setState({
+                    openModal: true,
+                    editedId: id,
+                    duplicate: false
+                  });
+                  this.handleEdit(id);
+                }}
+              />
+            </div>
           </div>
         )}
       </React.Fragment>

@@ -9,6 +9,7 @@ import { DatePicker } from "material-ui-pickers";
 import InputComponent from "../../../common/inputs/InputComponent";
 import InputData from "../../../common/inputs/InputData";
 import DateRangePickerMy from "../../../common/DateRangePickerMy";
+import { lighRed } from "../../../globalStyles";
 // import SelectItem from "../../../common/SelectItem";
 import {
   YMtoDate,
@@ -298,6 +299,8 @@ class ConfigForm extends React.Component {
       month: "long",
       day: "2-digit"
     }).format(endDate);
+    // const { filled, toFill } = styles;
+    const { bonusType, bonus } = values;
 
     return (
       <div
@@ -335,7 +338,13 @@ class ConfigForm extends React.Component {
           }
         >
           <div style={{ display: "flex", marginTop: 40, marginBottom: 15 }}>
-            <div style={{ gridArea: "bonusType", marginRight: 15 }}>
+            <div
+              style={{
+                gridArea: "bonusType",
+                marginRight: 15
+                // backgroundColor: bonusType === "" ? lighRed : "white"
+              }}
+            >
               <SelectItem
                 // simpleInput
                 // short
@@ -349,9 +358,17 @@ class ConfigForm extends React.Component {
                 updateSelected={value => change("bonusType", value, activity)}
               />
             </div>
-            <div style={{ gridArea: "bonus", marginRight: 15 }}>
+            <div
+              style={{
+                gridArea: "bonus",
+                marginRight: 15,
+                padding: 10,
+                backgroundColor:
+                  bonusType !== "" && bonus === "" ? lighRed : "white"
+              }}
+            >
               <InputComponent
-                // disabled={disabled}
+                disabled={bonusType === ""}
                 // key={i}
                 name="bonus"
                 label="Premia"

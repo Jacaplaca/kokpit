@@ -42,6 +42,28 @@ class InputComponent extends React.Component {
     width: 100
   };
 
+  _focus() {
+    this.textInput.focus();
+  }
+
+  getAlert = () => {
+    console.log("getAler()");
+  };
+
+  componentDidUpdate() {
+    // this.props.name === this.props.autoFocus && this._focus();
+  }
+
+  componentDidMount() {
+    this.props.onRef(this);
+    console.log("thisprops", this.props.onRef(this));
+    // this.props.name === this.props.autoFocus && this._focus();
+  }
+  componentWillUnmount() {
+    console.log("unmount");
+    this.props.onRef(null);
+  }
+
   componentWillMount() {
     this.setState({ width: 10 + this.props.value.length * 8 });
     switch (this.props.format) {
@@ -209,6 +231,9 @@ class InputComponent extends React.Component {
         ) : (
           <TextField
             // disableUnderline={true}
+            inputRef={input => {
+              this.textInput = input;
+            }}
             decimals={decimals}
             disabled={disabled}
             helperText={helperText}

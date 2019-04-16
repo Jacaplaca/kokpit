@@ -168,6 +168,7 @@ class DateTimePickerMy extends React.Component {
     const { classes, range, onChange, nopaper, expand } = this.props;
 
     const { startDate, endDate } = range[0];
+    console.log("DateRangePickerMy", range[0], startDate, endDate);
 
     const startDateString = new Intl.DateTimeFormat("pl-PL", {
       year: "numeric",
@@ -180,13 +181,14 @@ class DateTimePickerMy extends React.Component {
       day: "2-digit"
     }).format(endDate);
     return nopaper ? (
-      <ExpansionPanel
-        expanded={expand}
-        defaultExpanded={nopaper ? true : false}
-        elevation={nopaper ? 0 : 2}
-        style={{ marginTop: 20, marginBottom: 20 }}
-      >
-        {/* <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+      <div>
+        <ExpansionPanel
+          expanded={expand}
+          defaultExpanded={nopaper ? true : false}
+          elevation={nopaper ? 0 : 2}
+          // style={{ marginTop: 20, marginBottom: 20 }}
+        >
+          {/* <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <ButtonMy>
             <Typography>
               <span
@@ -199,67 +201,70 @@ class DateTimePickerMy extends React.Component {
             </Typography>
           </ButtonMy>
         </ExpansionPanelSummary> */}
-        <ExpansionPanelDetails style={{ display: "block" }}>
-          <DateRangePicker
-            locale={pl}
-            inputRanges={configInputRanges}
-            staticRanges={nopaper ? configRanges : staticRanges}
-            showSelectionPreview={true}
-            ranges={range}
-            onChange={onChange}
-            moveRangeOnFirstSelection={false}
-            months={2}
-            direction="horizontal"
-            rangeColors={["#303f9f"]}
-            // onChange={this.handleRangeChange.bind(this, 'dateRangePicker')}
-            // showSelectionPreview={true}
-            // moveRangeOnFirstSelection={false}
-            className={"PreviewArea"}
-            // months={2}
-            // ranges={[this.state.dateRangePicker.selection]}
-            // direction="horizontal"
-          />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+          <ExpansionPanelDetails style={{ display: "block" }}>
+            <DateRangePicker
+              locale={pl}
+              inputRanges={configInputRanges}
+              staticRanges={nopaper ? configRanges : staticRanges}
+              showSelectionPreview={true}
+              ranges={range}
+              onChange={onChange}
+              moveRangeOnFirstSelection={false}
+              months={2}
+              direction="horizontal"
+              rangeColors={["#303f9f"]}
+              // onChange={this.handleRangeChange.bind(this, 'dateRangePicker')}
+              // showSelectionPreview={true}
+              // moveRangeOnFirstSelection={false}
+              className={"PreviewArea"}
+              // months={2}
+              // ranges={[this.state.dateRangePicker.selection]}
+              // direction="horizontal"
+            />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      </div>
     ) : (
-      <ExpansionPanel
-        defaultExpanded={nopaper ? true : false}
-        elevation={nopaper ? 0 : 2}
-        style={{ marginTop: 20, marginBottom: 20 }}
-      >
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>
-            <span
-              style={{
-                fontWeight: "600"
-              }}
-            >
-              Zakres: {startDateString} - {endDateString}
-            </span>
-          </Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails style={{ display: "block" }}>
-          <DateRangePicker
-            locale={pl}
-            inputRanges={configInputRanges}
-            staticRanges={nopaper ? configRanges : staticRanges}
-            showSelectionPreview={true}
-            ranges={range}
-            onChange={onChange}
-            moveRangeOnFirstSelection={false}
-            months={2}
-            direction="horizontal"
-            rangeColors={["#303f9f"]}
-            // onChange={this.handleRangeChange.bind(this, 'dateRangePicker')}
-            // showSelectionPreview={true}
-            // moveRangeOnFirstSelection={false}
-            className={"PreviewArea"}
-            // months={2}
-            // ranges={[this.state.dateRangePicker.selection]}
-            // direction="horizontal"
-          />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+      <div style={{ backgroundColor: "red" }}>
+        <ExpansionPanel
+          defaultExpanded={nopaper ? true : false}
+          elevation={nopaper ? 0 : 2}
+          // style={{ marginTop: 20, marginBottom: 20 }}
+        >
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>
+              <span
+                style={{
+                  fontWeight: "600"
+                }}
+              >
+                Zakres: {startDateString} - {endDateString}
+              </span>
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails style={{ display: "block" }}>
+            <DateRangePicker
+              locale={pl}
+              inputRanges={configInputRanges}
+              staticRanges={nopaper ? configRanges : staticRanges}
+              showSelectionPreview={true}
+              ranges={range}
+              onChange={onChange}
+              moveRangeOnFirstSelection={false}
+              months={2}
+              direction="horizontal"
+              rangeColors={["#303f9f"]}
+              // onChange={this.handleRangeChange.bind(this, 'dateRangePicker')}
+              // showSelectionPreview={true}
+              // moveRangeOnFirstSelection={false}
+              className={"PreviewArea"}
+              // months={2}
+              // ranges={[this.state.dateRangePicker.selection]}
+              // direction="horizontal"
+            />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      </div>
     );
   }
 }
