@@ -13,6 +13,7 @@ import Config from "../components/Channels/Config";
 
 // import Test from "../components/Products/Test";
 const fetchItemsUrl = "api/allitem/channel";
+const fetchConfigsUrl = "api/channel_config/";
 const styles = theme => ({
   input: {
     display: "flex",
@@ -39,6 +40,11 @@ class Channels extends Component {
 
   componentWillMount = async () => {
     await this.urlToState(fetchItemsUrl, ["items", "itemsUnfilter"]);
+    // this.fetchItemsAndConfigs()
+  };
+
+  fetchItemsAndConfigs = async () => {
+    const items = await fetch(fetchItemsUrl);
   };
 
   urlToState = async (url, names) => {
@@ -75,7 +81,7 @@ class Channels extends Component {
     this.setState(state => ({ itemsConfig: !state.itemsConfig }));
   };
 
-  handleClickOnRow = (comp, id) => {
+  handleClickOnRow = async (comp, id) => {
     this.setState({ [comp]: id });
     const { itemsUnfilter } = this.state;
     if (comp === "clickedChannel") {
@@ -90,12 +96,39 @@ class Channels extends Component {
           }
         }
       }
-      console.log("items", filteredItems);
-      this.setState({
-        items: filteredItems,
-        channel: ` w ${name}`,
-        channelName: name
-      });
+      const configs = await this.fetch(`${fetchConfigsUrl}${id}`);
+      // console.log("configs", configs);
+      let itemsWithLastConfig = [];
+      for (let item of filteredItems) {
+        const itemLastConfig = configs.filter(x => item.id === x.itemId);
+        const itemWithConfig =
+          itemLastConfig.length > 0
+            ? Object.assign(item, {
+                config: `${itemLastConfig[0].from} - ${itemLastConfig[0].to} ${
+                  itemLastConfig[0].bonusType
+                } ${
+                  itemLastConfig[0].suffix === "%"
+                    ? `${parseFloat(itemLastConfig[0].bonus) * 100}`.replace(
+                        ".",
+                        ","
+                      )
+                    : `${parseFloat(itemLastConfig[0].bonus)}`.replace(".", ",")
+                }${itemLastConfig[0].suffix} `
+              })
+            : Object.assign(item, { config: "Brak konfiguracji" });
+        itemsWithLastConfig.push(itemWithConfig);
+      }
+
+      // console.log("items", filteredItems);
+      // console.log(itemsWithLastConfig);
+      this.setState(
+        {
+          items: [],
+          channel: ` w ${name}`,
+          channelName: name
+        },
+        () => this.setState({ items: itemsWithLastConfig })
+      );
 
       this.hideItemsConfig();
     } else if (comp === "clickedItem") {

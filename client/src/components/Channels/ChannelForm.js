@@ -7,6 +7,28 @@ import InputComponent from "../../common/inputs/InputComponent";
 import { YMtoDate, dateToYM } from "../../common/functions";
 
 class ChannelForm extends React.Component {
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyDown);
+    this.nameField._focus();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  handleKeyDown = event => {
+    const { disableSubmit, submit } = this.props;
+    // console.log("event", event.keyCode);
+    switch (event.keyCode) {
+      case 13:
+        submit(event);
+        this.nameField._focus();
+        break;
+      default:
+        break;
+    }
+  };
+
   render() {
     const {
       change,
@@ -35,6 +57,8 @@ class ChannelForm extends React.Component {
         <InputComponent
           // disabled={disabled}
           // key={i}
+          autoFocus
+          onRef={ref => (this.nameField = ref)}
           name="channel"
           label="Nazwa kanału/systemu prowizyjnego"
           type="text"

@@ -433,7 +433,7 @@ class EnhancedTable extends React.Component {
                           {n.ItemTrans.name}
                         </TableCell>
                         <TableCell component="th" scope="row" padding="none">
-                          {shorting(n.cityName, 30)}
+                          {shorting(n.Places.name, 30)}
                         </TableCell>
                         <TableCell component="th" scope="row" padding="none">
                           {n.customer}

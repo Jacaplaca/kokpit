@@ -5,7 +5,7 @@ const Channel = db.sales_channels;
 const Item = db.items;
 const ChannelItems = db.channel_items;
 const ChannelUsers = db.channel_users;
-const ChannelsConfig = db.channels_config;
+const ChannelsConfig = db.channels_config_new;
 const to = require("await-to-js").default;
 
 module.exports = app => {
@@ -115,12 +115,29 @@ module.exports = app => {
           }
         ],
         where: { clientId }
+        // raw: true
       })
     );
 
     if (!items) {
       res.sendStatus(500);
     } else {
+      // console.log("items", items);
+      // const itemIds = items.map(x => x.get().id);
+      // console.log("itemIds", itemIds);
+      // const [err, configs] = await to(
+      //   ChannelsConfig.findAll({
+      //     where: { clientId, itemId: itemIds, channelId }
+      //     // raw: true
+      //   })
+      // );
+      // console.log("configs", configs);
+      //
+      // res.json(
+      //   items.map(x => {
+      //     return Object.assign(x.get(), { aaa: "aaa" });
+      //   })
+      // );
       res.json(items);
     }
   });
@@ -156,7 +173,7 @@ module.exports = app => {
       Item.findAll(channelId === "0" ? query0 : query)
     );
 
-    console.log("items", items);
+    // console.log("items", items);
 
     if (!items) {
       res.sendStatus(500);

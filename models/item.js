@@ -17,10 +17,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         defaultValue: 1
       },
-      channelId: {
-        type: Sequelize.INTEGER,
-        defaultValue: 1
-      },
+      // ddd: {
+      //   type: Sequelize.INTEGER,
+      //   defaultValue: 1
+      // },
       order: {
         type: Sequelize.INTEGER
       }

@@ -55,13 +55,13 @@ class InputComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.props.onRef(this);
-    console.log("thisprops", this.props.onRef(this));
+    this.props.onRef && this.props.onRef(this);
+    // console.log("thisprops", this.props.onRef(this));
     // this.props.name === this.props.autoFocus && this._focus();
   }
   componentWillUnmount() {
-    console.log("unmount");
-    this.props.onRef(null);
+    // console.log("unmount");
+    this.props.onRef && this.props.onRef(null);
   }
 
   componentWillMount() {

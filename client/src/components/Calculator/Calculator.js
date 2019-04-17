@@ -54,6 +54,7 @@ class Calculator extends Component {
 
     if (role === "master") {
       if (channelId === 0) {
+        console.log("calc cwm");
         await this.setAsyncState({ employee: { id: 0, name: "" } });
         await this.fetchAllChannelUsers();
         await this.fetchAllTransactionsInRange();
@@ -67,6 +68,7 @@ class Calculator extends Component {
         employee: { id: user_id, name: `${name} ${surname}` }
       });
     }
+    // console.log("calc cwm state", this.state.employee);
 
     // const dates = []
     await this.fetchTransactions();
@@ -171,6 +173,7 @@ class Calculator extends Component {
     // console.log("calculator", employees);
 
     const empIds = employees.map(x => x.id);
+    // console.log("empIds", empIds);
     empIds.includes(user_id)
       ? this.setState({
           employees,
@@ -184,7 +187,8 @@ class Calculator extends Component {
     const {
       channelId,
       loading,
-      auth: { user_id, name, surname }
+      auth: { user_id, name, surname, role },
+      show
     } = this.props;
     loading(true);
     // const { startDate, endDate } = this.state.rangeselection;
@@ -196,10 +200,14 @@ class Calculator extends Component {
     // console.log("calculator", employees);
 
     const empIds = employees.map(x => x.id);
+    console.log("empIds", empIds);
     empIds.includes(user_id)
       ? this.setState({
           employees,
-          employee: { id: user_id, name: `${surname}, ${name}` }
+          employee:
+            role === "master"
+              ? { id: 0, name: "" }
+              : { id: user_id, name: `${surname}, ${name}` }
         })
       : this.setState({ employees });
     await loading(false);

@@ -18,7 +18,94 @@ const suffix = bonusType => {
   }
 };
 
+const onlyUnique = (value, index, self) => {
+  return self.indexOf(value) === index;
+};
+
+export const dynamicSort = property => {
+  // console.log("dynamicSort", property);
+  let sortOrder = 1;
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+
+  return function(a, b) {
+    const aPL = a[property];
+    const bPL = b[property];
+    const aDate = new Date(aPL).getTime();
+    const bDate = new Date(bPL).getTime();
+    // console.log(aDate, bDate);
+    const result = aDate < bDate ? -1 : aDate > bDate ? 1 : 0;
+    // console.log(result);
+    // console.log(sortOrder);
+    return result * sortOrder;
+  };
+};
+
 module.exports = app => {
+  app.get("/api/channel_config/:channelId/", async (req, res) => {
+    if (!req.user) {
+      return res.redirect("/");
+    }
+    // const clientId = 2;
+    const { clientId, role, user_id } = req.user;
+    const { channelId } = req.params;
+
+    const [errItems, items] = await to(
+      Item.findAll({
+        include: [
+          {
+            model: Channel,
+            as: "SalesChannels",
+            where: { id: channelId }
+          }
+        ],
+        where: {},
+        raw: true
+      })
+    );
+
+    const itemsIds = items.map(x => x.id);
+    console.log("itemsids", itemsIds);
+
+    const [errConfigs, configs] = await to(
+      ChannelsConfig.findAll({
+        where: { clientId, itemId: itemsIds, channelId },
+        attributes: [
+          "from",
+          "to",
+          "itemId",
+          "channelId",
+          "bonusType",
+          "bonus",
+          "suffix"
+        ],
+        raw: true
+      })
+    );
+
+    // console.log(configs);
+
+    if (!configs) {
+      res.sendStatus(500);
+    } else {
+      const availableItems = configs.map(x => x.itemId);
+      const uniqueItems = availableItems.filter(onlyUnique);
+      console.log(uniqueItems);
+      let groupedConfigs = [];
+      for (let item of uniqueItems) {
+        const filtered = configs.filter(x => x.itemId === item);
+        const sorted = filtered.sort(dynamicSort("to"));
+        // console.log(filtered);
+        groupedConfigs.push(sorted.reverse()[0]);
+      }
+      // console.log(groupedConfigs);
+
+      res.json(groupedConfigs);
+    }
+  });
+
   app.get(
     "/api/config/month_channel/:day/:channelId/:userId",
     async (req, res) => {

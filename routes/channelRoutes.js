@@ -33,7 +33,7 @@ module.exports = app => {
     // const form = Object.assign(req.body, { clientId: 2 });
     Channel.create(form)
       .then(results => {
-        console.log("res", results.dataValues.id);
+        // console.log("res", results.dataValues.id);
         return res.json(results);
       })
       .catch(err => {

@@ -4,6 +4,7 @@ const Transaction = db.transactions;
 const Channel = db.sales_channels;
 const Item = db.items;
 const ChannelItems = db.channel_items;
+const Place = db.places;
 const ChannelUsers = db.channel_users;
 const ChannelsConfig = db.channels_config;
 
@@ -27,14 +28,20 @@ module.exports = app => {
       clientId,
       userId: userId === "0" ? user_id : userId
     });
-    Transaction.create(form)
-      .then(results => {
-        return res.json(results);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
+    console.log("form", form);
+    if (!form.channelId || !form.itemId || !form.clientId || !form.userId) {
+      console.log("nie zapisuje");
+      res.sendStatus(500);
+    } else {
+      Transaction.create(form)
+        .then(results => {
+          return res.json(results);
+        })
+        .catch(err => {
+          console.log(err);
+          res.sendStatus(500);
+        });
+    }
   });
 
   app.post("/api/transaction/delete/:id", (req, res, next) => {
@@ -70,7 +77,7 @@ module.exports = app => {
       clientId,
       userId: userId === 0 ? user_id : userId
     });
-    // console.log(req.body);
+    console.log(form);
     Transaction.update(form, {
       where: { clientId, id }
     })
@@ -240,6 +247,13 @@ module.exports = app => {
             // where: { id: userIdParams === "0" ? user_id : userIdParams },
             // where: { id: user_id },
             attributes: ["id", "name"]
+          },
+          {
+            model: Place,
+            as: "Places",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name"]
           }
         ]
       })
@@ -288,22 +302,38 @@ module.exports = app => {
     //       ? { clientId, userId: user }
     //       : { clientId, userId: user, channelId };
     // }
-
-    if (channelId === "0") {
-      query = {
-        date: {
-          [Op.lte]: new Date(end),
-          [Op.gte]: new Date(start)
-        }
-      };
+    const queryDate = {
+      [Op.lte]: new Date(end),
+      [Op.gte]: new Date(start)
+    };
+    if (role === "master") {
+      if (channelId === "0") {
+        query = {
+          date: queryDate,
+          clientId
+        };
+      } else {
+        query = {
+          channelId,
+          date: queryDate,
+          clientId
+        };
+      }
     } else {
-      query = {
-        channelId,
-        date: {
-          [Op.lte]: new Date(end),
-          [Op.gte]: new Date(start)
-        }
-      };
+      if (channelId === "0") {
+        query = {
+          date: queryDate,
+          clientId,
+          userId: user_id
+        };
+      } else {
+        query = {
+          channelId,
+          date: queryDate,
+          clientId,
+          userId: user_id
+        };
+      }
     }
 
     // console.log("query", query);
@@ -329,6 +359,13 @@ module.exports = app => {
           {
             model: Item,
             as: "ItemTrans",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name"]
+          },
+          {
+            model: Place,
+            as: "Places",
             // where: { id: userIdParams === "0" ? user_id : userIdParams },
             // where: { id: user_id },
             attributes: ["id", "name"]

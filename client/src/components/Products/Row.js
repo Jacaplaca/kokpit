@@ -378,6 +378,17 @@ const Field2 = ({
           {row.surname}
         </TableCell>
       );
+    case "productsInChannel":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ width: 15 + row["name_max"] * 6.5 }}
+        >
+          {row.config}
+        </TableCell>
+      );
     case "invoices":
       return (
         <TableCell

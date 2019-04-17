@@ -49,8 +49,6 @@ class ProductForm extends React.Component {
       submit
     } = this.props;
 
-    const { nameFocus } = this.state;
-
     return (
       <div
         style={{
@@ -74,7 +72,6 @@ class ProductForm extends React.Component {
           // disabled={field2disabled}
         />
         <InputComponent
-          onRef={ref => (this.bbb = ref)}
           // disabled={disabled}
           // key={i}
           name="unit"

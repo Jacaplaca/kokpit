@@ -98,6 +98,7 @@ class SerwisForm extends Component {
         gross,
         grossMargin,
         item,
+        itemId,
         marginUnit,
         name,
         quantity,
@@ -145,6 +146,7 @@ class SerwisForm extends Component {
           customer,
           cityName,
           items,
+          itemId,
           itemsUnfiltered: items
         },
         () => this.count()
@@ -445,6 +447,7 @@ class SerwisForm extends Component {
       customer,
       cityName
     } = this.state;
+    // console.log("update", itemId);
     const resp = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

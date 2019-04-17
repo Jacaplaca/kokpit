@@ -255,6 +255,12 @@ Transaction.belongsTo(Item, {
   foreignKey: "itemId"
 });
 
+Transaction.belongsTo(db.places, {
+  as: "Places",
+  targetKey: "id",
+  foreignKey: "cityId"
+});
+
 Module.belongsToMany(Client, {
   as: "ModuleClient",
   through: db.modules_clients, //this can be string or a model,

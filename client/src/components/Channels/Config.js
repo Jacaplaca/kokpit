@@ -82,6 +82,12 @@ class Config extends Component {
                   numeric: false,
                   disablePadding: true,
                   label: "Nazwa"
+                },
+                {
+                  id: "config",
+                  numeric: false,
+                  disablePadding: true,
+                  label: "Konfiguracja"
                 }
                 // {
                 //   id: "unit",
