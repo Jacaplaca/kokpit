@@ -22,7 +22,7 @@ const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
-export const dynamicSort = property => {
+const dynamicSort = property => {
   // console.log("dynamicSort", property);
   let sortOrder = 1;
   if (property[0] === "-") {
