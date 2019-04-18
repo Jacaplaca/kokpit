@@ -63,6 +63,7 @@ class SerwisForm extends Component {
 
   componentWillMount = async () => {
     const { edit, channelId, userId, show } = this.props;
+    console.log("SerwisForm() channelId", channelId);
     const date = dataToString(new Date());
 
     if (!edit && !show) {
@@ -626,7 +627,7 @@ class SerwisForm extends Component {
   };
 
   fetchConfigFromDB = async (value, channelId, userId) => {
-    // console.log("fetchConfigFromDB()", value, channelId, userId);
+    console.log("fetchConfigFromDB()", value, channelId, userId);
     // const { userId } = this.props;
     const result = await axios.get(
       `/api/config/month_channel/${value}/${channelId}/${userId}`

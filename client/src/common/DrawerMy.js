@@ -91,23 +91,23 @@ class DrawerMy extends React.Component {
       {
         text: "Prowizje",
         icon: "MoneyIcon",
-        comp: "products",
+        comp: "bonus_system",
         // link: "/costs",
         comps: [
           {
-            comp: "products",
+            // comp: "products",
             text: "Produkty",
             link: "/products",
             icon: "InsertChartOutlined"
           },
           {
-            comp: "channels",
+            // comp: "channels",
             text: "Systemy prowizyjne",
             link: "/systems",
             icon: "InsertChartOutlined"
           },
           {
-            comp: "users_channels",
+            // comp: "users_channels",
             text: "Pracownicy",
             link: "/users_channels",
             icon: "InsertChartOutlined"

@@ -72,6 +72,9 @@ class Users extends Component {
             }
           ]}
           rowType="user"
+          disableDelete
+          disableEdit
+          labelList="Pracownicy w systemach premiowych"
           modal
         >
           {/* <ModalWindow

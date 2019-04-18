@@ -99,51 +99,72 @@ class Calculators extends Component {
     const { value, channels, presentation } = this.state;
     return (
       <div className={classes.root}>
-        <AppBar
-          position="static"
-          color="default"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 150px",
-            alignItems: "end"
-          }}
-        >
-          <Tabs
-            value={value}
-            onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
+        {channels && channels.length !== 0 ? (
+          <AppBar
+            position="static"
+            color="default"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 150px",
+              alignItems: "end"
+            }}
           >
-            <Tab label={"Wszystko"} />
-            {channels &&
-              [...channels].map((channel, i) => (
-                <Tab key={i} label={channel.name} />
-              ))}
-          </Tabs>
-          <FormGroup row>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={presentation}
-                  onChange={this.handleSwitch("presentation")}
-                  value="presentation"
-                />
-              }
-              label={presentation ? "Edycja" : "Prezentacja"}
-            />
-          </FormGroup>
-        </AppBar>
-        {value === 0 && <Caluculator channelId={0} show={presentation} />}
-        {channels &&
+            <Tabs
+              value={value}
+              onChange={this.handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+            >
+              {channels && channels.length > 1 && <Tab label={"Wszystko"} />}
+              {channels &&
+                [...channels].map((channel, i) => (
+                  <Tab key={i} label={channel.name} />
+                ))}
+            </Tabs>
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={presentation}
+                    onChange={this.handleSwitch("presentation")}
+                    value="presentation"
+                  />
+                }
+                label={presentation ? "Prezentacja" : "Wprowadzanie"}
+              />
+            </FormGroup>
+          </AppBar>
+        ) : (
+          <span>Brak skonfigurowanych kanałów/systemów premiowych</span>
+        )}
+        {/* {value === 0 && <Caluculator channelId={0} show={presentation} />} */}
+
+        {channels
+          ? channels.length > 1
+            ? [{ id: 0, name: "Wszystko" }, ...channels].map(
+                (channel, i) =>
+                  value === i && (
+                    <Caluculator channelId={channel.id} show={presentation} />
+                  )
+              )
+            : [...channels].map(
+                (channel, i) =>
+                  value === i && (
+                    <Caluculator channelId={channel.id} show={presentation} />
+                  )
+              )
+          : null}
+
+        {/* {channels &&
           [{ id: 0, name: "Wszystko" }, ...channels].map(
             (channel, i) =>
               value === i &&
               value !== 0 && (
                 <Caluculator channelId={channel.id} show={presentation} />
               )
-          )}
+          )} */}
         {/* {value === 0 && <TabContainer>Item One</TabContainer>}
         {value === 1 && <TabContainer>Item Two</TabContainer>}
         {value === 2 && <TabContainer>Item Three</TabContainer>}

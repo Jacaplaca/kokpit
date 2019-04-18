@@ -142,13 +142,13 @@ class Row extends Component {
         />
         <Field3 rowType={rowType} row={item} />
         <Field4 rowType={rowType} row={item} />
-        <Field5 rowType={rowType} row={item} />
+        <Field5 rowType={rowType} row={item} role={role} />
         <Field6 rowType={rowType} row={item} />
         <Field7 rowType={rowType} row={item} />
         <Field8 rowType={rowType} row={item} />
         <Field9 rowType={rowType} row={item} />
         <Field10 rowType={rowType} row={item} />
-        {role === "master" && <Field11 rowType={rowType} row={item} />}
+        <Field11 rowType={rowType} row={item} role={role} />
         {headCols.map(channel => {
           return (
             <TableCell
@@ -531,8 +531,20 @@ const Field4 = ({ rowType, row }) => {
   }
 };
 
-const Field5 = ({ rowType, row }) => {
+const Field5 = ({ rowType, row, role }) => {
   switch (rowType) {
+    case "invoices":
+      return role === "master" ? (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ width: 150 }}
+        >
+          {`${row.User.name} ${row.User.surname}`}
+        </TableCell>
+      ) : null;
     case "customerDetails":
       return (
         <TableCell
@@ -640,10 +652,10 @@ const Field10 = ({ rowType, row }) => {
   }
 };
 
-const Field11 = ({ rowType, row }) => {
+const Field11 = ({ rowType, row, role }) => {
   switch (rowType) {
     case "customerDetails":
-      return (
+      return role === "master" ? (
         <TableCell
           component="th"
           scope="row"
@@ -652,7 +664,7 @@ const Field11 = ({ rowType, row }) => {
         >
           {row.employee}
         </TableCell>
-      );
+      ) : null;
     default:
       return null;
   }

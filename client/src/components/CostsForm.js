@@ -9,6 +9,7 @@ import * as actions from "../actions";
 import Send from "@material-ui/icons/Send";
 //import Edit from "@material-ui/icons/Edit";
 import Cancel from "@material-ui/icons/Clear";
+import { dataToString } from "../common/functions";
 
 import ButtonMy from "../common/ButtonMy";
 import SiteHeader from "../common/SiteHeader";
@@ -45,11 +46,11 @@ const styles = theme => ({
 class CostsForm extends Component {
   state = {
     id: "",
-    nr_dokumentu: "a",
-    data_wystawienia: "2019-04-11",
-    nazwa_pozycji: "a",
-    kwota_netto: "95",
-    kwota_brutto: "115",
+    nr_dokumentu: "",
+    data_wystawienia: dataToString(new Date()),
+    nazwa_pozycji: "",
+    kwota_netto: "",
+    kwota_brutto: "",
     categoryId: "",
     groupId: "",
     groups: [],

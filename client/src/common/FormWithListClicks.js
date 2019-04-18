@@ -291,7 +291,10 @@ class FormWithListClicks extends Component {
       children,
       rowClick,
       leftBar,
-      overlaps
+      overlaps,
+      disableDelete,
+      disableEdit,
+      labelList
     } = this.props;
     const {
       clickedChannel,
@@ -370,9 +373,11 @@ class FormWithListClicks extends Component {
               value={value}
               disableSubmit={disableSubmit["editing"]}
               onSubmit={this.handleSubmit}
-              labelList={"Lista produktów/usług"}
+              labelList={labelList}
               headRow={headRow}
               rowType={rowType}
+              disableDelete={disableDelete}
+              disableEdit={disableEdit}
             />
           )}
         </div>
@@ -393,5 +398,9 @@ class FormWithListClicks extends Component {
 //   ),
 //   MainFrameHOC
 // )(FormWithListClicks);
+
+FormWithListClicks.defaultProps = {
+  labelList: "Lista"
+};
 
 export default FormWithListClicks;

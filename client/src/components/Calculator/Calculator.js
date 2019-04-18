@@ -51,6 +51,7 @@ class Calculator extends Component {
     const { role, user_id, name, surname } = this.props.auth;
     const { channelId } = this.props;
     // const {users} = this.props
+    console.log("Caluculator componentWillMount(), channelId", channelId);
 
     if (role === "master") {
       if (channelId === 0) {

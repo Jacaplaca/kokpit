@@ -66,6 +66,7 @@ const Module = db.modules;
 const Item = db.items;
 const User = db.users;
 const Transaction = db.transactions;
+const Invoices = db.invoices4sms_intf;
 
 // console.log(db);
 ///
@@ -235,6 +236,12 @@ db.channels_config_new.belongsTo(Channel, {
   as: "Channel",
   targetKey: "id",
   foreignKey: "channelId"
+});
+
+Invoices.belongsTo(User, {
+  as: "User",
+  targetKey: "id_client_soft",
+  foreignKey: "id_pracownik"
 });
 
 Transaction.belongsTo(User, {

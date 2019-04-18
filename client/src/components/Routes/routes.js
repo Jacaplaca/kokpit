@@ -24,7 +24,7 @@ const routes = [
     // title: "Start"
   },
   {
-    comp: "users_channels",
+    comp: "bonus_system",
     path: "/users_channels",
     component: UsersChannels
     // title: "Dodaj koszty"
@@ -61,14 +61,14 @@ const routes = [
   //   channel: auth ? auth.channel_first : 0
   // },
   {
-    comp: "chanprodconf",
+    comp: "bonus_system",
     path: "/channelconfiguration",
     component: ChanProdConf,
     title: "Skonfiguruj kanały sprzedaży"
     //channel: auth ? auth.channel_first : 0
   },
   {
-    comp: "products",
+    comp: "bonus_system",
     path: "/products",
     component: Products,
     title: "Produkty"
@@ -82,7 +82,7 @@ const routes = [
     //channel: auth ? auth.channel_first : 0
   },
   {
-    comp: "channels",
+    comp: "bonus_system",
     path: "/systems",
     component: Channels
     // title: "Systemy prowizyjne"

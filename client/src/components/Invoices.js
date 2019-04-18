@@ -91,6 +91,9 @@ class Invoices extends Component {
 
   render() {
     const { items, channel, label } = this.state;
+    const {
+      auth: { role }
+    } = this.props;
     return (
       <div>
         {items && items.length > 0 && (
@@ -139,6 +142,12 @@ class Invoices extends Component {
                   numeric: true,
                   disablePadding: true,
                   label: "Klient"
+                },
+                role === "master" && {
+                  id: "surname",
+                  numeric: true,
+                  disablePadding: true,
+                  label: "Pracownik"
                 }
                 // {
                 //   id: "unit",

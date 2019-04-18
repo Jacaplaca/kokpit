@@ -52,6 +52,7 @@ const Products = () => (
         }
       ]}
       rowType="product"
+      labelList="Produkty/usługi w systemach premiowych"
     >
       <ProductForm addLabel={"Dodaj"} />
     </FormWithListClicks>

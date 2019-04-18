@@ -193,6 +193,7 @@ class Channels extends Component {
               // }
             ]}
             rowType="channel"
+            labelList="Kanały/systemy premiowe"
           >
             <ChannelForm addLabel={"Dodaj"} />
           </FormWithListClicks>

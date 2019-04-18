@@ -77,6 +77,7 @@ class Users extends Component {
           ]}
           rowType="user"
           modal
+          labelList="Edycja użytkowników i uprawnienia"
         >
           {/* <ModalWindow
           open={this.state.openModal}

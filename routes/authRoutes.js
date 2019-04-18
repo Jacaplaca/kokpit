@@ -31,7 +31,8 @@ const validatorsRegister = [
   // })
 ];
 
-const startingPackage = [1, 7, 9, 13, 19, 11];
+const startingPackage = [1, 11, 20];
+const modulesForPracownik = [11];
 
 const findMaxClientId = async () => {
   const result = await User.findAll({});
@@ -61,7 +62,6 @@ const assignUserModuleToMaster = async user_id => {
   });
 };
 const assignUserModuleToPracownik = async user_id => {
-  const modulesForPracownik = [11];
   modulesForPracownik.map(async x => {
     const [errMC, mu] = await to(ModuleUser.create({ user_id, module_id: x }));
     return mu;
