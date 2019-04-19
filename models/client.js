@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const Client = sequelize.define(
-    'clients',
+    "clients",
     {
       id: {
         autoIncrement: true,
@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER
       },
       name: {
+        type: Sequelize.STRING
+      },
+      logo: {
         type: Sequelize.STRING
       }
     },

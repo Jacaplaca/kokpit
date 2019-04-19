@@ -12,6 +12,7 @@ import DrawerMy from "../common/DrawerMy";
 import Login from "./Login";
 import MyComponent from "./Routes/MyComponent";
 import routes from "./Routes/routes";
+import Footer from "../common/Footer";
 
 let drawerWidth = 240;
 
@@ -94,6 +95,8 @@ class MiniDrawer extends React.Component {
     return (
       <BrowserRouter>
         <div className={classes.root} id="classesRoot">
+          {/* <Footer /> */}
+
           <TopNavBar
             open={this.state.open}
             handleDrawerOpen={this.handleDrawerOpen}

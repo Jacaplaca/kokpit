@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import axios from "axios";
@@ -16,6 +16,7 @@ import TransactionList from "./TransactionList";
 import InputSelectBaza from "../../common/inputs/InputSelectBaza";
 import Summary from "./Summary";
 import { greyBackground } from "../../globalStyles";
+import ProductsList from "../Products/ProductsList";
 
 const styles = theme => ({
   input: {
@@ -349,7 +350,7 @@ class Calculator extends Component {
                 backgroundColor: greyBackground
               }}
             >
-              <TransactionList
+              {/* <TransactionList
                 // show={show}
                 // item={item}
                 channelId={channelId}
@@ -364,7 +365,90 @@ class Calculator extends Component {
                   });
                   this.handleEdit(id);
                 }}
-              />
+              /> */}
+              <Paper>
+                <ProductsList
+                  conditionOne={channelId === 0}
+                  userId={employee.id}
+                  delete={this.handleDelete}
+                  transactions={this.state.transactions}
+                  edit={id => {
+                    this.setState({
+                      openModal: true,
+                      editedId: id,
+                      duplicate: false
+                    });
+                    this.handleEdit(id);
+                  }}
+                  rowType="transactions"
+                  headRow={[
+                    {
+                      id: "date",
+                      numeric: false,
+                      disablePadding: false,
+                      label: "Data"
+                    },
+                    {
+                      id: "ItemTrans.name",
+                      numeric: false,
+                      disablePadding: true,
+                      label: "Towar/Usługa"
+                    },
+                    {
+                      id: "cityName",
+                      numeric: false,
+                      disablePadding: false,
+                      label: "Lokalizacja"
+                    },
+                    {
+                      id: "customer",
+                      numeric: false,
+                      disablePadding: false,
+                      label: "Klient"
+                    },
+                    {
+                      id: "quantity",
+                      numeric: true,
+                      disablePadding: false,
+                      label: "Ilość",
+                      textAlign: "center"
+                    },
+                    {
+                      id: "sell",
+                      numeric: true,
+                      disablePadding: false,
+                      label: "Cena jedn."
+                    },
+                    {
+                      id: "gross",
+                      numeric: true,
+                      disablePadding: false,
+                      label: "Wartość brutto"
+                    },
+                    {
+                      id: "bonus",
+                      numeric: true,
+                      disablePadding: false,
+                      label: "Premia"
+                    },
+                    // auth.role === "master" && {
+                    {
+                      id: "User.name",
+                      numeric: false,
+                      disablePadding: false,
+                      label: "Pracownik",
+                      hide: auth.role !== "master"
+                    },
+                    {
+                      id: "ChannelTrans.name",
+                      numeric: false,
+                      disablePadding: false,
+                      label: "System",
+                      hide: channelId !== 0 || auth.role !== "master"
+                    }
+                  ]}
+                />
+              </Paper>
             </div>
           </div>
         )}

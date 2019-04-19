@@ -4,6 +4,7 @@ var bcrypt = require("bcrypt");
 const db = require("../models/index");
 const User = db.users;
 const Module = db.modules;
+const Client = db.clients;
 // var User = require('../models/user');
 // const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // const mongoose = require('mongoose');
@@ -29,6 +30,10 @@ passport.deserializeUser((user_id, done) => {
         as: "UserModule"
         // where: { id: clientId },
         // attributes: []
+      },
+      {
+        model: Client,
+        as: "Company"
       }
     ]
   })
@@ -57,7 +62,8 @@ passport.deserializeUser((user_id, done) => {
         // customer_details,
         // calculators,
         start_comp,
-        UserModule
+        UserModule,
+        Company
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -86,7 +92,8 @@ passport.deserializeUser((user_id, done) => {
             // customer_details,
             // calculators,
             start_comp,
-            UserModule
+            UserModule,
+            Company
           })
         );
       } else {

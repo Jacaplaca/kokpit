@@ -56,7 +56,7 @@ const components = {
 
 class DrawerLink extends React.Component {
   state = {
-    open: true
+    open: false
   };
 
   handleClick = () => {

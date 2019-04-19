@@ -15,6 +15,7 @@ import * as actions from "../actions";
 
 import DrawerLink from "./DrawerLink";
 import ShowLinkToComp from "./ShowLinkToComp";
+import CompanyInfo from "../common/CompanyInfo";
 
 let drawerWidth = 240;
 
@@ -291,6 +292,7 @@ class DrawerMy extends React.Component {
             );
           })} */}
         </div>
+        <CompanyInfo width={drawerWidth} open={open} auth={auth} />
       </Drawer>
     );
   }

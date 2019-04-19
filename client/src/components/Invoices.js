@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
+import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
@@ -52,7 +53,11 @@ class Invoices extends Component {
     const list = await axios.get(url);
     const integers = list.data.map(x =>
       Object.assign(x, {
-        pozostalo_do_zaplacenia: parseFloat(x.pozostalo_do_zaplacenia)
+        pozostalo_do_zaplacenia: parseFloat(x.pozostalo_do_zaplacenia),
+        overdue: differenceInCalendarDays(
+          new Date(),
+          new Date(x.termin_platnosci)
+        )
       })
     );
     return integers;
@@ -129,7 +134,8 @@ class Invoices extends Component {
                   id: "termin_platnosci",
                   numeric: false,
                   disablePadding: true,
-                  label: "Termin płat. "
+                  label: "Termin płat. ",
+                  textAlign: "center"
                 },
                 {
                   id: "pozostalo_do_zaplacenia",
@@ -143,11 +149,19 @@ class Invoices extends Component {
                   disablePadding: true,
                   label: "Klient"
                 },
-                role === "master" && {
-                  id: "surname",
+                {
+                  id: "overdue",
                   numeric: true,
                   disablePadding: true,
-                  label: "Pracownik"
+                  label: "Po terminie",
+                  textAlign: "center"
+                },
+                role === "master" && {
+                  id: "surname",
+                  numeric: false,
+                  disablePadding: true,
+                  label: "Pracownik",
+                  hideRightBorder: true
                 }
                 // {
                 //   id: "unit",

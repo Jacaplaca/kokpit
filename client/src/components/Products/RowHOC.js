@@ -69,7 +69,7 @@ const RowHOC = WrappedComponent => {
       return (
         <TableRow
           hover
-          onClick={event => console.log(event, n.id)}
+          onClick={event => console.log(event)}
           role="checkbox"
           aria-checked={isSelected}
           tabIndex={-1}

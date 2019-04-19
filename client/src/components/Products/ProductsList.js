@@ -135,6 +135,17 @@ class EnhancedTableHead extends Component {
 
     const { headCols } = this.state;
 
+    const styleField = {
+      content: {
+        // paddingRight: 10,
+        // paddingLeft: 7,
+        borderRightStyle: "solid",
+        borderRightColor: "rgba(224, 224, 224, 1)",
+        borderRightWidth: 1
+      },
+      suffix: { paddingLeft: 2, fontSize: 11 }
+    };
+
     return (
       <TableHead>
         <TableRow>
@@ -155,44 +166,63 @@ class EnhancedTableHead extends Component {
                   align={row.numeric ? "right" : "left"}
                   padding={row.disablePadding ? "none" : "default"}
                   sortDirection={orderBy === row.id ? order : false}
+                  style={{
+                    textAlign: row.textAlign,
+                    paddingLeft: row.textAlign === "center" ? 4 : 7,
+                    paddingRight: row.textAlign === "center" ? 4 : 7,
+                    ...styleField.content,
+                    borderRightWidth: row.hideRightBorder ? 0 : 1
+                  }}
                 >
-                  <Tooltip
-                    title="Sortuj"
-                    placement={row.numeric ? "bottom-end" : "bottom-start"}
-                    enterDelay={300}
-                  >
-                    <TableSortLabel
-                      active={orderBy === row.id}
-                      direction={order}
-                      onClick={this.createSortHandler(row.id)}
-                      hideSortIcon
-                      classes={{
-                        // Override with the active class if this is the selected column or inactive otherwise
-                        icon:
-                          orderBy === row.id
-                            ? classes.activeSortIcon
-                            : classes.inactiveSortIcon,
-                        root:
-                          orderBy === row.id
-                            ? classes.activeTableSort
-                            : classes.inactiveTableSort
-                      }}
+                  {row.hideSort ? (
+                    row.label
+                  ) : (
+                    <Tooltip
+                      title="Sortuj"
+                      placement={row.numeric ? "bottom-end" : "bottom-start"}
+                      enterDelay={300}
                     >
-                      {row.label}
-                    </TableSortLabel>
-                  </Tooltip>
+                      <TableSortLabel
+                        active={orderBy === row.id}
+                        direction={order}
+                        onClick={this.createSortHandler(row.id)}
+                        classes={{
+                          // Override with the active class if this is the selected column or inactive otherwise
+                          icon:
+                            orderBy === row.id
+                              ? classes.activeSortIcon
+                              : classes.inactiveSortIcon,
+                          root:
+                            orderBy === row.id
+                              ? classes.activeTableSort
+                              : classes.inactiveTableSort
+                        }}
+                        // hideSortIcon={row.hideSort}
+                      >
+                        {row.label}
+                      </TableSortLabel>
+                    </Tooltip>
+                  )}
                 </TableCell>
               )
             );
           }, this)}
           {headCols.map(
-            col => (
+            (col, i) => (
               <TableCell
                 key={col.id}
                 align="center"
                 padding={col.disablePadding ? "none" : "default"}
                 sortDirection={orderBy === col.id ? order : false}
-                style={{ textAlign: "center" }}
+                // style={{ textAlign: "center" }}
+                style={{
+                  // textAlign: "center",
+                  paddingLeft: 2,
+                  ...styleField.content,
+                  borderRightWidth:
+                    col.hideRightBorder || i === headCols.length - 1 ? 0 : 1,
+                  textAlign: "center"
+                }}
               >
                 {/* {col.label} */}
                 <Tooltip
@@ -355,6 +385,8 @@ const styles = theme => ({
 
   // Half visible for inactive icons
   inactiveSortIcon: {
+    width: 0,
+    display: "none",
     opacity: 0.2,
     // opacity: 0,
     webkitTransition: "opacity 0.5s" /* Safari */,
@@ -564,7 +596,8 @@ class EnhancedTable extends Component {
       searchColumns,
       children,
       showChild,
-      overlaps
+      overlaps,
+      conditionOne
     } = this.props;
     const {
       data,
@@ -662,6 +695,7 @@ class EnhancedTable extends Component {
                       const isSelected = this.isSelected(item.id);
                       return (
                         <Row
+                          conditionOne={conditionOne}
                           isClicked={clickedRow === item.id}
                           overlaps={overlaps && overlaps.includes(item.id)}
                           // itemId={item.id}
@@ -722,6 +756,11 @@ class EnhancedTable extends Component {
 
 EnhancedTable.propTypes = {
   classes: PropTypes.object.isRequired
+};
+
+EnhancedTable.defaultProps = {
+  headCols: [],
+  clickOnRow: () => {}
 };
 
 function mapStateToProps({ auth }) {

@@ -74,7 +74,11 @@ const Invoices = db.invoices4sms_intf;
 // db.clients = require('./client')(sequelize, Sequelize);
 // console.log(db.gus_simc);
 
-db.users.belongsTo(db.clients, { foreignKey: "clientId", targetKey: "id" });
+db.users.belongsTo(db.clients, {
+  as: "Company",
+  foreignKey: "clientId",
+  targetKey: "id"
+});
 db.categories.belongsTo(db.clients, {
   foreignKey: "clientId",
   targetKey: "id"

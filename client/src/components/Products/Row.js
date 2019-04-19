@@ -4,6 +4,7 @@ import currency from "currency.js";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
+import NumberFormat from "react-number-format";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/RadioButtonUnchecked";
 import CheckBoxIcon from "@material-ui/icons/CheckCircle";
 import InputInRow from "../../common/inputs/InputInRow";
@@ -12,6 +13,7 @@ import ButtonIconCircle from "../../common/ButtonIconCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import { shallowEqual } from "../../common/functions";
 import ButtonMy from "../../common/ButtonMy";
+import { shorting, formatNumber } from "../../common/functions";
 
 class Row extends Component {
   // componentWillReceiveProps(nextProps) {
@@ -94,6 +96,7 @@ class Row extends Component {
       clickedRow,
       isClicked,
       overlaps,
+      conditionOne,
       auth: { role }
     } = this.props;
     // const { clickedRow } = this.state;
@@ -143,17 +146,33 @@ class Row extends Component {
         <Field3 rowType={rowType} row={item} />
         <Field4 rowType={rowType} row={item} />
         <Field5 rowType={rowType} row={item} role={role} />
-        <Field6 rowType={rowType} row={item} />
+        <Field6 rowType={rowType} row={item} role={role} />
         <Field7 rowType={rowType} row={item} />
         <Field8 rowType={rowType} row={item} />
-        <Field9 rowType={rowType} row={item} />
-        <Field10 rowType={rowType} row={item} />
+        <Field9 rowType={rowType} row={item} role={role} />
+        <Field10
+          rowType={rowType}
+          row={item}
+          role={role}
+          conditionOne={conditionOne}
+        />
         <Field11 rowType={rowType} row={item} role={role} />
-        {headCols.map(channel => {
+        {headCols.map((channel, i) => {
           return (
             <TableCell
-              padding="checkbox"
-              style={{ width: 35 }}
+              // padding="checkbox"
+              align="center"
+              padding="none"
+              // sortDirection={orderBy === col.id ? order : false}
+              style={
+                i === headCols.length - 1
+                  ? {
+                      ...styleField.contentWithoutRightBorder,
+                      textAlign: "center"
+                    }
+                  : { ...styleField.content, textAlign: "center" }
+              }
+              // style={{ width: 35 }}
               key={channel.id}
             >
               <Checkbox
@@ -166,7 +185,16 @@ class Row extends Component {
             </TableCell>
           );
         })}
-        <TableCell padding="checkbox" style={{ width: 35 }}>
+        <TableCell
+          padding="checkbox"
+          style={{
+            width: 35,
+            borderTopStyle: "solid",
+            borderTopColor: "rgba(224, 224, 224, 1)",
+            // borderTopWidth: channel.length === i -1 ? 0 : 1
+            borderTopWidth: 1
+          }}
+        >
           {/* <Checkbox checked={is selected} /> */}
           {disableDelete || (
             <ButtonIconCircle
@@ -187,11 +215,33 @@ class Row extends Component {
 
 const styleField = {
   content: {
-    paddingRight: 7,
+    paddingRight: 10,
+    paddingLeft: 7,
+    borderRightStyle: "solid",
+    borderRightColor: "rgba(224, 224, 224, 1)",
+    borderRightWidth: 1
+  },
+  contentWithoutRightBorder: {
+    paddingRight: 10,
     paddingLeft: 7
   },
   suffix: { paddingLeft: 2, fontSize: 11 }
 };
+
+const DefaultTC = ({ children, center }) => (
+  <TableCell
+    component="th"
+    scope="row"
+    padding="none"
+    // style={{ width: 200 }}
+    style={{
+      ...styleField.content,
+      textAlign: center ? "center" : "none"
+    }}
+  >
+    {children}
+  </TableCell>
+);
 
 const Field1 = ({
   rowType,
@@ -211,7 +261,9 @@ const Field1 = ({
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 25 + row["name_max"] * 7, paddingRight: 23 }}
+          style={{
+            ...styleField.content
+          }}
         >
           <Input
             inputProps={{
@@ -229,7 +281,9 @@ const Field1 = ({
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 10 + row["name_max"] * 7 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.name}
         </TableCell>
@@ -242,7 +296,9 @@ const Field1 = ({
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 25 + row["name_max"] * 7, paddingRight: 23 }}
+          style={{
+            ...styleField.content
+          }}
         >
           <Input
             inputProps={{
@@ -264,7 +320,9 @@ const Field1 = ({
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 10 + row["name_max"] * 7 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.name}
         </TableCell>
@@ -276,7 +334,9 @@ const Field1 = ({
           component="th"
           scope="row"
           padding="none"
-          style={{ width: 15 + row["name_max"] * 6.5 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.name}
         </TableCell>
@@ -287,7 +347,9 @@ const Field1 = ({
           component="th"
           scope="row"
           padding="none"
-          style={{ width: 15 + row["name_max"] * 6.5 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.name}
         </TableCell>
@@ -298,7 +360,9 @@ const Field1 = ({
           component="th"
           scope="row"
           padding="none"
-          style={{ width: 100 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.nr_pelny}
         </TableCell>
@@ -309,7 +373,9 @@ const Field1 = ({
           component="th"
           scope="row"
           padding="none"
-          style={{ width: 80 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.from}
         </TableCell>
@@ -317,14 +383,20 @@ const Field1 = ({
     case "customerDetails":
       return (
         <TableCell
+          // align="right"
           component="th"
           scope="row"
-          padding="default"
-          style={{ width: 80 }}
+          padding="none"
+          // style={{ width: 80 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.name}
         </TableCell>
       );
+    case "transactions":
+      return <DefaultTC>{row.date}</DefaultTC>;
     default:
       return null;
   }
@@ -361,7 +433,12 @@ const Field2 = ({
           </ButtonMy>
         </TableCell>
       ) : (
-        <TableCell component="th" scope="row" padding="none">
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{ ...styleField.content, textAlign: "center" }}
+        >
           {row.unit}
         </TableCell>
       );
@@ -373,7 +450,9 @@ const Field2 = ({
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 15 + row["surname_max"] * 6.5 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.surname}
         </TableCell>
@@ -384,7 +463,9 @@ const Field2 = ({
           component="th"
           scope="row"
           padding="none"
-          style={{ width: 15 + row["name_max"] * 6.5 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.config}
         </TableCell>
@@ -396,7 +477,7 @@ const Field2 = ({
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 60 }}
+          style={{ ...styleField.content, textAlign: "center" }}
         >
           {row.termin_platnosci}
         </TableCell>
@@ -418,12 +499,17 @@ const Field2 = ({
         <TableCell
           component="th"
           scope="row"
-          padding="default"
-          style={{ width: 80 }}
+          padding="none"
+          // style={{ width: 65 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.surname}
         </TableCell>
       );
+    case "transactions":
+      return <DefaultTC>{row.ItemTrans.name}</DefaultTC>;
     default:
       return null;
   }
@@ -436,8 +522,51 @@ const Field3 = ({ rowType, row }) => {
     // break;
     case "user":
       return (
-        <TableCell component="th" scope="row" padding="none">
-          {row.role}
+        <TableCell
+          component="th"
+          // align="center"
+          scope="row"
+          padding="none"
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
+        >
+          <div
+            style={
+              {
+                // textAlign: "center",
+                // display: "inherit"
+              }
+            }
+          >
+            <div
+              style={{
+                backgroundColor:
+                  row.role === "master"
+                    ? "rgb(176, 203, 142)"
+                    : "rgb(182, 182, 182)",
+                padding: 3,
+                // margin: 5,
+                textAlign: "center",
+                borderRadius: 4,
+                display: "initial"
+              }}
+            >
+              <span
+                style={{
+                  // ...styleField.content,
+                  fontSize: 10.5,
+                  fontWeight: 700,
+                  color: "white",
+                  textAlign: "center",
+                  textTransform: "uppercase"
+                }}
+              >
+                {row.role}
+              </span>
+            </div>
+          </div>
         </TableCell>
       );
     case "invoices":
@@ -447,7 +576,7 @@ const Field3 = ({ rowType, row }) => {
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 60 }}
+          style={{ ...styleField.content }}
         >
           {`${currency(row.pozostalo_do_zaplacenia, {
             separator: " ",
@@ -472,12 +601,17 @@ const Field3 = ({ rowType, row }) => {
         <TableCell
           component="th"
           scope="row"
-          padding="default"
-          style={{ width: 220 }}
+          padding="none"
+          // style={{ width: 150 }}
+          style={{
+            ...styleField.content
+          }}
         >
           {row.address}
         </TableCell>
       );
+    case "transactions":
+      return <DefaultTC>{shorting(row.Places.name, 30)}</DefaultTC>;
     default:
       return null;
   }
@@ -487,7 +621,15 @@ const Field4 = ({ rowType, row }) => {
   switch (rowType) {
     case "user":
       return (
-        <TableCell component="th" scope="row" padding="none">
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
+        >
           {row.email}
         </TableCell>
       );
@@ -498,7 +640,7 @@ const Field4 = ({ rowType, row }) => {
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 100 }}
+          style={{ ...styleField.content }}
         >
           {row.klient}
         </TableCell>
@@ -520,12 +662,18 @@ const Field4 = ({ rowType, row }) => {
         <TableCell
           component="th"
           scope="row"
-          padding="default"
-          style={{ width: 170 }}
+          padding="none"
+          // style={{ width: 30 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
         >
           {row.phone}
         </TableCell>
       );
+    case "transactions":
+      return <DefaultTC>{row.customer}</DefaultTC>;
     default:
       return null;
   }
@@ -534,13 +682,59 @@ const Field4 = ({ rowType, row }) => {
 const Field5 = ({ rowType, row, role }) => {
   switch (rowType) {
     case "invoices":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 200 }}
+          style={{ ...styleField.content, textAlign: "center" }}
+        >
+          {row.overdue}
+        </TableCell>
+      );
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ maxWidth: 30 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
+        >
+          {row.field.replace(".", ",")}
+          <span style={{ ...styleField.suffix }}>ha</span>
+        </TableCell>
+      );
+    case "transactions":
+      return (
+        <DefaultTC center>
+          <NumberFormat
+            value={row.quantity}
+            displayType={"text"}
+            thousandSeparator={" "}
+            decimalSeparator={","}
+            suffix={` ${row.unit}`}
+          />
+        </DefaultTC>
+      );
+    default:
+      return null;
+  }
+};
+const Field6 = ({ rowType, row, role }) => {
+  switch (rowType) {
+    case "invoices":
       return role === "master" ? (
         <TableCell
           component="th"
           scope="row"
           padding="none"
           // style={{ width: 200 }}
-          style={{ width: 150 }}
+          style={{ ...styleField.contentWithoutRightBorder }}
         >
           {`${row.User.name} ${row.User.surname}`}
         </TableCell>
@@ -550,30 +744,30 @@ const Field5 = ({ rowType, row, role }) => {
         <TableCell
           component="th"
           scope="row"
-          padding="default"
-          style={{ width: 100 }}
-        >
-          {row.field.replace(".", ",")}
-          <span style={{ ...styleField.suffix }}>ha</span>
-        </TableCell>
-      );
-    default:
-      return null;
-  }
-};
-const Field6 = ({ rowType, row }) => {
-  switch (rowType) {
-    case "customerDetails":
-      return (
-        <TableCell
-          component="th"
-          scope="row"
-          padding="default"
-          style={{ width: 100 }}
+          padding="none"
+          // style={{ width: 100 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
         >
           {row.meadow.replace(".", ",")}
           <span style={{ ...styleField.suffix }}>ha</span>
         </TableCell>
+      );
+    case "transactions":
+      return (
+        <DefaultTC>
+          {row.gross !== 0 && (
+            <NumberFormat
+              value={formatNumber(row.gross)}
+              displayType={"text"}
+              thousandSeparator={" "}
+              decimalSeparator={","}
+              suffix={" zł"}
+            />
+          )}
+        </DefaultTC>
       );
     default:
       return null;
@@ -586,12 +780,30 @@ const Field7 = ({ rowType, row }) => {
         <TableCell
           component="th"
           scope="row"
-          padding="default"
-          style={{ width: 100 }}
+          padding="none"
+          // style={{ width: 100 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
         >
           {row.qTractors}
           <span style={{ ...styleField.suffix }}>szt.</span>
         </TableCell>
+      );
+    case "transactions":
+      return (
+        <DefaultTC>
+          {row.gross !== 0 && (
+            <NumberFormat
+              value={formatNumber(row.gross)}
+              displayType={"text"}
+              thousandSeparator={" "}
+              decimalSeparator={","}
+              suffix={" zł"}
+            />
+          )}
+        </DefaultTC>
       );
     default:
       return null;
@@ -604,36 +816,34 @@ const Field8 = ({ rowType, row }) => {
         <TableCell
           component="th"
           scope="row"
-          padding="default"
-          style={{ width: 100 }}
+          padding="none"
+          // style={{ width: 100 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
         >
           {row.qHarvesters}
           <span style={{ ...styleField.suffix }}>szt.</span>
         </TableCell>
       );
-    default:
-      return null;
-  }
-};
-const Field9 = ({ rowType, row }) => {
-  switch (rowType) {
-    case "customerDetails":
+    case "transactions":
       return (
-        <TableCell
-          component="th"
-          scope="row"
-          padding="default"
-          style={{ width: 100 }}
-        >
-          {row.qCultivators}
-          <span style={{ ...styleField.suffix }}>szt.</span>
-        </TableCell>
+        <DefaultTC>
+          <NumberFormat
+            value={formatNumber(row.bonus)}
+            displayType={"text"}
+            thousandSeparator={" "}
+            decimalSeparator={","}
+            suffix={" zł"}
+          />
+        </DefaultTC>
       );
     default:
       return null;
   }
 };
-const Field10 = ({ rowType, row }) => {
+const Field9 = ({ rowType, row, role }) => {
   switch (rowType) {
     case "customerDetails":
       return (
@@ -641,12 +851,46 @@ const Field10 = ({ rowType, row }) => {
           component="th"
           scope="row"
           padding="none"
-          style={{ width: 100 }}
+          // style={{ width: 100 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
+        >
+          {row.qCultivators}
+          <span style={{ ...styleField.suffix }}>szt.</span>
+        </TableCell>
+      );
+    case "transactions":
+      return role === "master" ? (
+        <DefaultTC>{`${row.User.name} ${row.User.surname}`}</DefaultTC>
+      ) : null;
+    default:
+      return null;
+  }
+};
+const Field10 = ({ rowType, row, role, conditionOne }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          // style={{ width: 100 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
         >
           {row.qAgros}
           <span style={{ ...styleField.suffix }}>szt.</span>
         </TableCell>
       );
+    case "transactions":
+      return conditionOne && role === "master" ? (
+        <DefaultTC>{`${row.ChannelTrans.name}`}</DefaultTC>
+      ) : null;
     default:
       return null;
   }
@@ -660,7 +904,11 @@ const Field11 = ({ rowType, row, role }) => {
           component="th"
           scope="row"
           padding="none"
-          style={{ width: 140 }}
+          // style={{ width: 140 }}
+          style={{
+            ...styleField.content,
+            textAlign: "center"
+          }}
         >
           {row.employee}
         </TableCell>

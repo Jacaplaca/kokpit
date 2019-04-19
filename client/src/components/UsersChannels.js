@@ -62,13 +62,15 @@ class Users extends Component {
               id: "role",
               numeric: false,
               disablePadding: true,
-              label: "Rola"
+              label: "Rola",
+              textAlign: "center"
             },
             {
               id: "email",
               numeric: false,
               disablePadding: true,
-              label: "Email"
+              label: "Email",
+              textAlign: "center"
             }
           ]}
           rowType="user"

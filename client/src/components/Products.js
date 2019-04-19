@@ -48,7 +48,8 @@ const Products = () => (
           id: "unit",
           numeric: false,
           disablePadding: true,
-          label: "Jednostka"
+          label: "Jednostka",
+          textAlign: "center"
         }
       ]}
       rowType="product"

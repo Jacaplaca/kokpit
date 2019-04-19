@@ -127,69 +127,87 @@ class CustomerDetails extends Component {
                 {
                   id: "name",
                   numeric: false,
-                  disablePadding: false,
+                  disablePadding: true,
                   label: "Imię"
                 },
                 {
                   id: "surname",
                   numeric: false,
-                  disablePadding: false,
+                  disablePadding: true,
                   label: "Nazwisko"
                 },
                 {
                   id: "address",
                   numeric: false,
-                  disablePadding: false,
+                  disablePadding: true,
                   label: "Adres"
                 },
                 {
                   id: "phone",
-                  numeric: true,
-                  disablePadding: false,
-                  label: "Nr tel."
+                  numeric: false,
+                  disablePadding: true,
+                  label: "Nr tel.",
+                  textAlign: "center"
                 },
                 {
                   id: "field",
-                  numeric: true,
-                  disablePadding: false,
-                  label: "Pola."
+                  numeric: false,
+                  disablePadding: true,
+                  label: "Pola.",
+                  textAlign: "center"
                 },
                 {
                   id: "meadow",
                   numeric: true,
-                  disablePadding: false,
-                  label: "Łąki"
+                  disablePadding: true,
+                  label: "Łąki",
+                  textAlign: "center"
                 },
                 {
                   id: "qTractors",
                   numeric: true,
-                  disablePadding: false,
-                  label: "Traktory"
+                  disablePadding: true,
+                  label: "Traktory",
+                  textAlign: "center"
                 },
                 {
                   id: "qHarvesters",
                   numeric: true,
-                  disablePadding: false,
-                  label: "Kombajny"
+                  disablePadding: true,
+                  label: "Kombajny",
+                  textAlign: "center"
                 },
                 {
                   id: "qCultivators",
                   numeric: true,
-                  disablePadding: false,
-                  label: "Siewniki"
+                  disablePadding: true,
+                  label: "Siewniki",
+                  textAlign: "center"
                 },
                 {
                   id: "qAgros",
                   numeric: true,
                   disablePadding: true,
-                  label: "Inne"
+                  label: "Inne",
+                  textAlign: "center"
                 },
                 {
                   id: "employee",
                   numeric: true,
                   disablePadding: true,
                   label: "Pracownik",
-                  hide: auth.role !== "master"
+                  hide: auth.role !== "master",
+                  textAlign: "center"
+                },
+                {
+                  id: "employee",
+                  numeric: true,
+                  disablePadding: true,
+                  label: "",
+                  // hide: auth.role !== "master",
+                  hideSort: true,
+                  hideRightBorder: true,
+                  textAlign: "center"
                 }
                 // {
                 //   id: "to",
