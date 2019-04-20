@@ -15,6 +15,7 @@ import CustomerDetails from "../CustomerDetails";
 import Calculators from "../Calculators";
 import Start from "../Start";
 import UsersChannels from "../UsersChannels";
+import Settings from "../Settings";
 
 const routes = [
   {
@@ -114,6 +115,14 @@ const routes = [
     comp: "calculators",
     path: "/calculators",
     component: Calculators
+    // title: "Kalkulatory"
+    // open: true
+    //channel: auth ? auth.channel_first : 0
+  },
+  {
+    comp: "settings",
+    path: "/settings",
+    component: Settings
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0

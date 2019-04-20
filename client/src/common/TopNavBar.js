@@ -72,7 +72,8 @@ class TopNavBar extends React.Component {
     const { classes, theme, auth, open, handleDrawerOpen } = this.props;
     return (
       <AppBar
-        position="absolute"
+        // position="absolute"
+        position="fixed"
         className={classNames(
           classes.appBar,
           open && classes.appBarShift,
@@ -98,7 +99,14 @@ class TopNavBar extends React.Component {
                 }}
                 to="/"
               >
-                Świadoma Firma
+                <img
+                  style={{
+                    maxWidth: 150,
+                    maxHeight: 150,
+                    margin: 5
+                  }}
+                  src={require(`../images/logo-tylko-text.png`)}
+                />
               </NavLink>
             </Typography>
           </div>

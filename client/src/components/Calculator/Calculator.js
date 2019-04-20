@@ -281,6 +281,7 @@ class Calculator extends Component {
             edytuj={value =>
               this.setState({ employee: { name: value, id: 0 } })
             }
+            changeItem={this.handleChangeItem}
             czysc={this.handleEmptyEmployee}
             users={employees}
             user={employee}

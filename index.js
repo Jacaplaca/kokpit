@@ -1,6 +1,7 @@
 const express = require("express");
 // const router = express.Router()
 // const mongoose = require('mongoose');
+const fileUpload = require("express-fileupload");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -33,6 +34,7 @@ const jsonParser = bodyParser.json();
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 require("dotenv").config();
 app.use(morgan("short"));
+app.use(fileUpload());
 // console.log("datazmienia", YMtoMonthYear(201905));
 // console.log(db);
 
@@ -149,6 +151,8 @@ require("./routes/moduleClientRoutes")(app);
 require("./routes/moduleUserRoutes")(app);
 require("./routes/moduleRoutes")(app);
 require("./routes/itemsRoutes")(app);
+require("./routes/upload")(app);
+require("./routes/clientsRoutes")(app);
 // require('./routes/surveyRoutes')(app);
 
 if (process.env.NODE_ENV === "online") {

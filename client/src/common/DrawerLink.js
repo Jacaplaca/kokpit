@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { lighten } from "@material-ui/core/styles/colorManipulator";
 
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
@@ -22,6 +23,11 @@ import MoneyIcon from "@material-ui/icons/AttachMoney";
 import EventIcon from "@material-ui/icons/Event";
 import EventAvailableIcon from "@material-ui/icons/EventAvailable";
 import InsertChartOutlined from "@material-ui/icons/InsertChartOutlined";
+import Settings from "@material-ui/icons/Settings";
+import Person from "@material-ui/icons/Person";
+import ListAlt from "@material-ui/icons/ListAlt";
+import People from "@material-ui/icons/People";
+import Assignment from "@material-ui/icons/Assignment";
 import ShowLinkToComp from "./ShowLinkToComp";
 import { connect } from "react-redux";
 import * as actions from "../actions";
@@ -39,11 +45,16 @@ const styles = theme => ({
     textAlign: "left"
   },
   listItemText: {
-    fontSize: "0.9em" //Insert your required size
+    fontSize: "0.9em"
+    // padding: "0px 1px" //Insert your required size
+  },
+  itemText: {
+    padding: "0px 1px"
   },
   expanded: {
-    backgroundColor: "rgb(231, 231, 231, 0.35)",
-    borderBottom: "1px solid rgb(208, 208, 208, 0.35)"
+    // backgroundColor: "rgb(231, 231, 231, 0.35)",
+    backgroundColor: lighten(theme.palette.primary.main, 0.86),
+    boxShadow: "0 5px 11px -6px gray"
   }
 });
 
@@ -51,7 +62,12 @@ const components = {
   MoneyIcon: <MoneyIcon />,
   EventIcon: <EventIcon />,
   EventAvailableIcon: <EventAvailableIcon />,
-  InsertChartOutlined: <InsertChartOutlined />
+  InsertChartOutlined: <InsertChartOutlined />,
+  Settings: <Settings />,
+  Person: <Person />,
+  ListAlt: <ListAlt />,
+  People: <People />,
+  Assignment: <Assignment />
 };
 
 class DrawerLink extends React.Component {
@@ -78,7 +94,7 @@ class DrawerLink extends React.Component {
           <ListItemText
             inset
             primary={text}
-            classes={{ primary: classes.listItemText }}
+            classes={{ primary: classes.listItemText, root: classes.itemText }}
           />
           {open ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
@@ -96,7 +112,10 @@ class DrawerLink extends React.Component {
                 <ListItemText
                   inset
                   primary={x.text}
-                  classes={{ primary: classes.listItemText }}
+                  classes={{
+                    primary: classes.listItemText,
+                    root: classes.itemText
+                  }}
                 />
               </ListItem>
               {/* </List> */}
@@ -110,7 +129,10 @@ class DrawerLink extends React.Component {
           <ListItem button>
             <ListItemIcon>{this.ktoraIkona(icon)}</ListItemIcon>
             <ListItemText
-              classes={{ primary: classes.listItemText }}
+              classes={{
+                primary: classes.listItemText,
+                root: classes.itemText
+              }}
               primary={text}
             />
           </ListItem>

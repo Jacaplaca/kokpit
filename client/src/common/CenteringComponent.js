@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 
-const CenteringComponent = ({ children }) => {
+const CenteringComponent = ({ children, head }) => {
   return (
     <div
       style={{
@@ -12,11 +12,11 @@ const CenteringComponent = ({ children }) => {
         overflow: "auto"
       }}
     >
-      <Paper
+      <div
         style={{
           textAlign: "center",
           width: 500,
-          padding: 30,
+
           margin: 0,
           position: "absolute",
           top: "40%",
@@ -25,8 +25,9 @@ const CenteringComponent = ({ children }) => {
           transform: "translate(-40%, -50%)"
         }}
       >
-        {children}
-      </Paper>
+        {head}
+        <Paper style={{ padding: 30 }}>{children}</Paper>
+      </div>
     </div>
   );
 };

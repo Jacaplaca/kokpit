@@ -164,6 +164,27 @@ module.exports = app => {
             // where: { id: userIdParams === "0" ? user_id : userIdParams },
             // where: { id: user_id },
             attributes: ["id", "name", "surname"]
+          },
+          {
+            model: Place,
+            as: "Places",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name"]
+          },
+          {
+            model: Channel,
+            as: "ChannelTrans",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name"]
+          },
+          {
+            model: Item,
+            as: "ItemTrans",
+            // where: { id: userIdParams === "0" ? user_id : userIdParams },
+            // where: { id: user_id },
+            attributes: ["id", "name"]
           }
         ]
       })

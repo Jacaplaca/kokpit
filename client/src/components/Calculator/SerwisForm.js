@@ -734,11 +734,11 @@ class SerwisForm extends Component {
             }
             enableReinitialize={true}
             initialValues={{
-              items: edit ? { name: `${edit.name}` } : { name: "" },
+              items: edit ? { name: `${edit.ItemTrans.name}` } : { name: "" },
               date: edit ? edit.date : dataToString(new Date()),
               customer: edit ? edit.customer : "",
               city: edit
-                ? { name: `${edit.cityName}`, id: `${edit.city}` }
+                ? { name: `${edit.Places.name}`, id: `${edit.Places.id}` }
                 : { name: "", id: 1 },
               quantity: edit ? edit.quantity : "1",
               buy: edit ? `${edit.buy}` : "",

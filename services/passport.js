@@ -28,8 +28,6 @@ passport.deserializeUser((user_id, done) => {
       {
         model: Module,
         as: "UserModule"
-        // where: { id: clientId },
-        // attributes: []
       },
       {
         model: Client,
@@ -47,20 +45,6 @@ passport.deserializeUser((user_id, done) => {
         role,
         name,
         surname,
-        // costs,
-        // planer,
-        // raporty,
-        // nextReports,
-        // serwis,
-        // channel_first,
-        // chanprodconf,
-        // products,
-        // users,
-        // channels,
-        // channels_config,
-        // invoices,
-        // customer_details,
-        // calculators,
         start_comp,
         UserModule,
         Company
@@ -77,20 +61,6 @@ passport.deserializeUser((user_id, done) => {
             role,
             name,
             surname,
-            // costs,
-            // planer,
-            // raporty,
-            // nextReports,
-            // serwis,
-            // channel_first,
-            // chanprodconf,
-            // products,
-            // users,
-            // channels,
-            // channels_config,
-            // invoices,
-            // customer_details,
-            // calculators,
             start_comp,
             UserModule,
             Company
@@ -103,11 +73,6 @@ passport.deserializeUser((user_id, done) => {
         });
       }
     })
-    // .catch(err =>
-    //   done(null, false, {
-    //     message: 'Incorrect username or password.'
-    //   })
-    // );
     .catch(err => {
       console.log("blad w deserialize");
       return done(null, false);

@@ -93,7 +93,18 @@ class Register extends Component {
   render() {
     const { disableSubmit, email, password, password2 } = this.state;
     return (
-      <CenteringComponent>
+      <CenteringComponent
+        head={
+          <img
+            style={{
+              maxWidth: 270,
+              maxHeight: 270,
+              marginBottom: 20
+            }}
+            src={require(`../images/sf_logo_strona_retina.png`)}
+          />
+        }
+      >
         <form method="POST" action="/auth/register">
           <div className="form-group">
             {/* <label htmlFor="exampleInputEmail1">Email address</label>

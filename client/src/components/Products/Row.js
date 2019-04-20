@@ -13,6 +13,7 @@ import ButtonIconCircle from "../../common/ButtonIconCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import { shallowEqual } from "../../common/functions";
 import ButtonMy from "../../common/ButtonMy";
+import SemiButton from "../../common/SemiButton";
 import { shorting, formatNumber } from "../../common/functions";
 
 class Row extends Component {
@@ -522,52 +523,11 @@ const Field3 = ({ rowType, row }) => {
     // break;
     case "user":
       return (
-        <TableCell
-          component="th"
-          // align="center"
-          scope="row"
-          padding="none"
-          style={{
-            ...styleField.content,
-            textAlign: "center"
-          }}
-        >
-          <div
-            style={
-              {
-                // textAlign: "center",
-                // display: "inherit"
-              }
-            }
-          >
-            <div
-              style={{
-                backgroundColor:
-                  row.role === "master"
-                    ? "rgb(176, 203, 142)"
-                    : "rgb(182, 182, 182)",
-                padding: 3,
-                // margin: 5,
-                textAlign: "center",
-                borderRadius: 4,
-                display: "initial"
-              }}
-            >
-              <span
-                style={{
-                  // ...styleField.content,
-                  fontSize: 10.5,
-                  fontWeight: 700,
-                  color: "white",
-                  textAlign: "center",
-                  textTransform: "uppercase"
-                }}
-              >
-                {row.role}
-              </span>
-            </div>
-          </div>
-        </TableCell>
+        <DefaultTC center>
+          <SemiButton ver={row.role === "master" ? "one" : "two"}>
+            {row.role}
+          </SemiButton>
+        </DefaultTC>
       );
     case "invoices":
       return (

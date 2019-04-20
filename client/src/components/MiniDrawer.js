@@ -120,10 +120,10 @@ class MiniDrawer extends React.Component {
             {auth &&
               routes.map((route, i) => {
                 const { comp, path, component, open } = route;
-                console.log("auth", comp, auth.UserModule);
                 const titlesFromDb = auth.UserModule.filter(
                   x => x.comp === comp
                 );
+                console.log("auth", comp, titlesFromDb);
                 const titleFromDb = titlesFromDb[0] ? titlesFromDb[0].name : "";
                 return (auth && this.compAllowed(auth.UserModule, comp)) ||
                   open ? (

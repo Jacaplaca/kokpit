@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { withStyles } from "@material-ui/core/styles";
+import { lighten } from "@material-ui/core/styles/colorManipulator";
 import classNames from "classnames";
 
 import Drawer from "@material-ui/core/Drawer";
@@ -48,6 +49,8 @@ const styles = theme => ({
     marginRight: 36
   },
   drawerPaper: {
+    // backgroundColor: lighten(theme.palette.primary.light, 0.92),
+    backgroundColor: lighten(theme.palette.primary.main, 0.92),
     position: "relative",
     whiteSpace: "nowrap",
     width: drawerWidth,
@@ -62,9 +65,9 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing.unit * 7,
+    width: theme.spacing.unit * 6,
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing.unit * 9
+      width: theme.spacing.unit * 8.35
     }
   },
   drawerPaperHide: {
@@ -75,6 +78,8 @@ const styles = theme => ({
     alignItems: "center",
     justifyContent: "flex-end",
     padding: "0 8px",
+    backgroundColor: "white",
+    textAlign: "center",
     ...theme.mixins.toolbar
   },
   content: {
@@ -90,8 +95,8 @@ class DrawerMy extends React.Component {
 
     const expLinks = [
       {
-        text: "Prowizje",
-        icon: "MoneyIcon",
+        text: "Ustawienia premii",
+        icon: "Assignment",
         comp: "bonus_system",
         // link: "/costs",
         comps: [
@@ -140,7 +145,7 @@ class DrawerMy extends React.Component {
         comp: "users",
         text: "Użytkownicy",
         link: "/users",
-        icon: "InsertChartOutlined"
+        icon: "Person"
       },
 
       {
@@ -153,19 +158,25 @@ class DrawerMy extends React.Component {
         comp: "invoices",
         text: "Faktury",
         link: "/invoices",
-        icon: "InsertChartOutlined"
+        icon: "ListAlt"
       },
       {
         comp: "customer_details",
         text: "Informacje o klientach",
         link: "/customerdetails",
-        icon: "InsertChartOutlined"
+        icon: "People"
       },
       {
         comp: "calculators",
-        text: "Kalkulatory",
+        text: "Premie",
         link: "/calculators",
         icon: "InsertChartOutlined"
+      },
+      {
+        comp: "settings",
+        text: "Ustawienia",
+        link: "/settings",
+        icon: "Settings"
       }
     ];
 
@@ -257,7 +268,8 @@ class DrawerMy extends React.Component {
         open={open}
       >
         <div className={classes.toolbar}>
-          {auth && auth.email.split("@")[0]}
+          {/* {auth && auth.Company.name} */}
+          {/* {auth && auth.email.split("@")[0]} */}
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
@@ -266,7 +278,7 @@ class DrawerMy extends React.Component {
             )}
           </IconButton>
         </div>
-
+        <CompanyInfo width={drawerWidth} open={open} auth={auth} />
         <div>
           {expLinks.map((el, i) => {
             console.log("el", el);
@@ -292,7 +304,6 @@ class DrawerMy extends React.Component {
             );
           })} */}
         </div>
-        <CompanyInfo width={drawerWidth} open={open} auth={auth} />
       </Drawer>
     );
   }

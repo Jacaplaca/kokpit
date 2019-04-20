@@ -31,7 +31,7 @@ const validatorsRegister = [
   // })
 ];
 
-const startingPackage = [1, 11, 20];
+const startingPackage = [1, 11, 20, 21];
 const modulesForPracownik = [11];
 
 const findMaxClientId = async () => {
