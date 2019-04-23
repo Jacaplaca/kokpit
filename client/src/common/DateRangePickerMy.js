@@ -168,7 +168,7 @@ class DateTimePickerMy extends React.Component {
     const { classes, range, onChange, nopaper, expand } = this.props;
 
     const { startDate, endDate } = range[0];
-    console.log("DateRangePickerMy", range[0], startDate, endDate);
+    // console.log("DateRangePickerMy", range[0], startDate, endDate);
 
     const startDateString = new Intl.DateTimeFormat("pl-PL", {
       year: "numeric",

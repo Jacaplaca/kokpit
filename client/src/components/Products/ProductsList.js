@@ -430,7 +430,7 @@ class EnhancedTable extends Component {
   // }
 
   componentWillReceiveProps(nextProps) {
-    // console.log("componentWillReceiveProps", nextProps.values);
+    console.log("componentWillReceiveProps", this.props);
     // console.log("componentWillReceiveProps()");
     const { query } = this.state;
     const { transactions, showChild } = this.props;
@@ -445,7 +445,11 @@ class EnhancedTable extends Component {
           orderBy: "order"
         });
       } else {
-        this.setState({ list, listUnfiltered: list, orderBy: "order" });
+        this.setState({
+          list,
+          listUnfiltered: list,
+          orderBy: "order"
+        });
       }
     }
     if (showChild !== shoChNext) {
@@ -626,6 +630,7 @@ class EnhancedTable extends Component {
     };
 
     // console.log("product list", values, values["name"], values["unit"]);
+    console.log("ProductsList", this.props.clickedRow);
     return (
       <React.Fragment>
         <div style={{ position: "relative" }}>{children}</div>
@@ -696,7 +701,7 @@ class EnhancedTable extends Component {
                       return (
                         <Row
                           conditionOne={conditionOne}
-                          isClicked={clickedRow === item.id}
+                          isClicked={this.props.clickedRow === item.id}
                           overlaps={overlaps && overlaps.includes(item.id)}
                           // itemId={item.id}
                           // clickedRow={clickedRow}
@@ -760,7 +765,8 @@ EnhancedTable.propTypes = {
 
 EnhancedTable.defaultProps = {
   headCols: [],
-  clickOnRow: () => {}
+  clickOnRow: () => {},
+  clicked: 0
 };
 
 function mapStateToProps({ auth }) {

@@ -111,7 +111,7 @@ class Calculator extends Component {
   handleDateFilter = (array, startDate, endDate) => {
     const arrayFiltered = array.filter(x => {
       const data = new Date(x.date);
-      console.log("data", data, data.getTime(), startDate, startDate.getTime());
+      // console.log("data", data, data.getTime(), startDate, startDate.getTime());
       return (
         // data.getTime() >= startDate.getTime() + 2 * 60 * 60 * 1000 &&
         data.getTime() >= new Date(dataToString(startDate)).getTime() &&

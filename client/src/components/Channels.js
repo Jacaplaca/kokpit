@@ -82,6 +82,7 @@ class Channels extends Component {
   };
 
   handleClickOnRow = async (comp, id) => {
+    console.log("handleClickOnRow", comp, id);
     this.setState({ [comp]: id });
     const { itemsUnfilter } = this.state;
     if (comp === "clickedChannel") {
@@ -142,6 +143,11 @@ class Channels extends Component {
     }
   };
 
+  fetchedItemsCallback = values => {
+    console.log("values", values);
+    values.length > 0 && this.handleClickOnRow("clickedChannel", values[0].id);
+  };
+
   // handleClickOnItem = id => {
   //   console.log("id id", id);
   // };
@@ -168,9 +174,11 @@ class Channels extends Component {
       >
         <Paper>
           <FormWithListClicks
+            items={values => this.fetchedItemsCallback(values)}
             rowClick={id => this.handleClickOnRow("clickedChannel", id)}
             postUrl="/api/channel/"
             fetchItemsUrl="/api/channels"
+            clicked={clickedChannel}
             //fetchChannels="/api/table/channels"
             editUrl="/api/channel/edit/id/"
             deleteUrl="/api/channel/destroy/"

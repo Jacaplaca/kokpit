@@ -281,7 +281,7 @@ class DrawerMy extends React.Component {
         <CompanyInfo width={drawerWidth} open={open} auth={auth} />
         <div>
           {expLinks.map((el, i) => {
-            console.log("el", el);
+            // console.log("el", el);
             const { comp, text, link, icon, comps } = el;
             return (
               <ShowLinkToComp key={i} comp={comp}>

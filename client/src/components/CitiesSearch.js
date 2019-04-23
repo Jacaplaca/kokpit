@@ -174,7 +174,7 @@ class CitySearch extends React.Component {
 
     axios.get(url).then(result => {
       const suggestions = result.data;
-      console.log(suggestions);
+      // console.log(suggestions);
 
       if (value === this.state.value) {
         this.setState({

@@ -28,10 +28,11 @@ class FormWithListClicks extends Component {
   };
 
   componentWillMount = async () => {
-    const { fetchChannels } = this.props;
+    const { fetchChannels, items } = this.props;
     this.createEmptyFields();
     fetchChannels && (await this.urlToState(fetchChannels, "channels"));
-    this.itemsToState(this.props.fetchItemsUrl, "items");
+    await this.itemsToState(this.props.fetchItemsUrl, "items");
+    items(this.state.items);
   };
 
   createEmptyFields = () => {
@@ -58,7 +59,7 @@ class FormWithListClicks extends Component {
     const result = await this.fetch(url);
     // console.log("itemsToState", this.addChannelsToItems(result));
     this.props.itemsToState && this.props.itemsToState(result);
-    this.setState({
+    await this.setAsyncState({
       [name]: this.addChannelsToItems(result).reverse()
     });
   };
@@ -164,6 +165,7 @@ class FormWithListClicks extends Component {
   };
 
   handleClickOnRow = (comp, row) => {
+    console.log("clicke on row");
     this.setState({ [comp]: row });
     if (comp === "clickedChannel") {
       this.hideItemsConfig();
@@ -181,7 +183,8 @@ class FormWithListClicks extends Component {
     await axios.post(
       `/api/${this.props.manyOne}/${channel}/${this.props.manyTwo}/${item}`
     );
-    this.itemsToState(this.props.fetchItemsUrl, "items");
+    await this.itemsToState(this.props.fetchItemsUrl, "items");
+    console.log("this.state.FormWithListClicks", this.state);
   };
 
   handleSubmit = async e => {
@@ -247,7 +250,7 @@ class FormWithListClicks extends Component {
     const { items, editedId } = this.state;
     const { editFields, editedIdSend } = this.props;
     const editedItem = items.filter(item => item.id === id);
-    console.log("editedItem", editedItem);
+    // console.log("editedItem", editedItem);
     let editing = {};
     for (let field of editFields) {
       if (field === "password" || field === "password2") {
@@ -272,7 +275,7 @@ class FormWithListClicks extends Component {
   };
 
   handleDelete = async selected => {
-    console.log("handleDelete");
+    // console.log("handleDelete");
     await axios.post(`${this.props.deleteUrl}${selected}`);
     this.itemsToState(this.props.fetchItemsUrl, "items");
     // this.handleOpenConfirmation();
@@ -294,7 +297,8 @@ class FormWithListClicks extends Component {
       overlaps,
       disableDelete,
       disableEdit,
-      labelList
+      labelList,
+      clicked
     } = this.props;
     const {
       clickedChannel,
@@ -307,7 +311,7 @@ class FormWithListClicks extends Component {
       value
       // justAdded
     } = this.state;
-    // console.log("reactchio", React.Children);
+    // console.log("reactchio", this.props.clicked);
     const childrenWithProps = React.Children.map(children, (child, i) => {
       // console.log("child", child, i);
       if (i !== 1) {
@@ -359,6 +363,7 @@ class FormWithListClicks extends Component {
         >
           {this.state.items.length > 0 && (
             <ProductsList
+              clickedRow={clicked}
               overlaps={overlaps}
               leftBar={leftBar}
               clickOnChannel={this.handleClickOnChannel}
@@ -400,7 +405,8 @@ class FormWithListClicks extends Component {
 // )(FormWithListClicks);
 
 FormWithListClicks.defaultProps = {
-  labelList: "Lista"
+  labelList: "Lista",
+  items: () => {}
 };
 
 export default FormWithListClicks;
