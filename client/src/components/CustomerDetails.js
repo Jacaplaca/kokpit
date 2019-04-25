@@ -116,7 +116,13 @@ class CustomerDetails extends Component {
         {details && (
           <Paper style={{ padding: 20, marginTop: "1.3rem" }}>
             <CustomerDetailsList
-              searchColumns={["name", "surname", "address"]}
+              searchColumns={[
+                "name",
+                "surname",
+                "address",
+                "phone",
+                { User: ["name", "surname"] }
+              ]}
               delete={this.delete}
               transactions={details}
               headCols={[]}
@@ -249,7 +255,10 @@ const styles = theme => ({
 });
 
 function mapStateToProps({ auth }) {
-  return { auth };
+  return {
+    auth,
+    help: "Moduł do zarządzania szczegółowymi informacjami o klientach."
+  };
 }
 
 export default compose(

@@ -35,7 +35,9 @@ const report = (transactions, key) => {
     const values = channel.values;
     let name;
     for (let el of values) {
-      name = el[group].name;
+      name = el[group].surname
+        ? `${el[group].name} ${el[group].surname}`
+        : el[group].name;
       bonuses = el.bonus + bonuses;
     }
     report.push({ name, bonuses });

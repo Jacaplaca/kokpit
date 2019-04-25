@@ -10,6 +10,7 @@ class Thumb extends Component {
 
   componentWillReceiveProps(nextProps) {
     // console.log("thumb will receive props", nextProps);
+
     if (!nextProps.file) {
       return;
     }
@@ -26,10 +27,22 @@ class Thumb extends Component {
           reader.readAsDataURL(nextProps.file);
         });
       } else {
+        let isImage = false;
+        try {
+          var image = require(`../${nextProps.file}`);
+          isImage = true;
+          // do stuff
+          // console.log("img ok");
+        } catch (e) {
+          // console.log("e", e);
+          isImage = false;
+          // console.log(ex);
+        }
+
         // console.log("file", require(`../${nextProps.file}`));
         this.setState({
           loading: false,
-          thumb: require(`../${nextProps.file}`)
+          thumb: isImage ? require(`../${nextProps.file}`) : ""
         });
       }
     }

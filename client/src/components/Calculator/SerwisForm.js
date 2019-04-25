@@ -63,16 +63,25 @@ class SerwisForm extends Component {
 
   componentWillMount = async () => {
     const { edit, channelId, userId, show } = this.props;
-    console.log("SerwisForm() channelId", channelId);
+    console.log("SerwisForm() componentWillMount channelId", channelId);
     const date = dataToString(new Date());
 
     if (!edit && !show) {
       const fetched = await this.fetchConfigFromDB(date, channelId, userId);
       const items = this.itemsFromConfig(fetched);
-      console.log("SerwisForm() componentWillMount(), date", date);
+      console.log(
+        "SerwisForm() componentWillMount(), !edit && !show date",
+        date,
+        items
+      );
       this.setState({ date, items, itemsUnfiltered: items });
     } else if (!edit && show) {
-      console.log("channelId userId show", channelId, userId, show);
+      console.log(
+        "componentWillMount SerwisForm() !edit && show",
+        channelId,
+        userId,
+        show
+      );
       const items = await this.fetchItemsFromDB(channelId);
       this.setState({ date, items, itemsUnfiltered: items });
     }
@@ -81,7 +90,7 @@ class SerwisForm extends Component {
   componentWillReceiveProps = async nextProps => {
     const { channelId, userId, show } = this.props;
     console.log(
-      "update condition",
+      "SerwisForm, componentWillReceiveProps",
       userId !== nextProps.userId || (show !== nextProps.show && nextProps.show)
     );
 
@@ -171,8 +180,6 @@ class SerwisForm extends Component {
           itemsUnfiltered: items
         });
       } else {
-        // console.log("userchange");
-
         // if (channelId === 0) {
         //   // this.setState({ items: this.state.items });
         //
@@ -187,6 +194,7 @@ class SerwisForm extends Component {
           nextProps.userId
         );
         const items = this.itemsFromConfig(fetched);
+        console.log("SerwisForm(), receive fetched items", fetched, items);
 
         this.setState(
           {
@@ -209,7 +217,18 @@ class SerwisForm extends Component {
     // const { users } = this.props;
     const { items } = this.state;
     const itemsFromState = JSON.parse(JSON.stringify(items));
-    const user = users.filter(x => x.id === userId);
+    let user = users.filter(x => x.id === userId);
+    if (users.length === 0) {
+      user = [];
+      user.push(this.props.loggedUser);
+    }
+    console.log(
+      "itemsFromState, userId, user, users",
+      itemsFromState,
+      userId,
+      user,
+      users
+    );
     if (user[0]) {
       const userChannels = user[0].SalesChannels.map(x => x.id);
       let filteredItems = [];
@@ -285,6 +304,7 @@ class SerwisForm extends Component {
   };
 
   clearOnlyItem = props => {
+    console.log("clearOnlyItem");
     this.setState({
       // cityId: null,
       // date: null,
@@ -334,6 +354,7 @@ class SerwisForm extends Component {
     quantity = cleanNumber(quantity);
     // console.log("count()", bonusUnit, buy, sell, quantity);
 
+    console.log("count", bonusType);
     if (bonusType === "% marży") {
       const marginUnit = sell - buy;
       const gross = sell * quantity;
@@ -344,7 +365,7 @@ class SerwisForm extends Component {
     } else if (bonusType === "stawka") {
       const bonus = bonusUnit * quantity;
       this.validate(bonus);
-      this.setState({ bonus });
+      this.setState({ bonus, marginUnit: 0, gross: 0, grossMargin: 0 });
     }
   };
 
@@ -374,6 +395,7 @@ class SerwisForm extends Component {
     const { items } = this.state;
     const configs = _.clone(items);
     this.clearSummary();
+    // this.clearOnlyItem();
     // this.setState({ buy: "0", sell: null });
     const config = configs.filter(x => x.id === id);
 
@@ -528,7 +550,13 @@ class SerwisForm extends Component {
 
     if (field === "items") {
       this.setState(
-        { name: value.name, item: value.id, unit: value.unit },
+        {
+          name: value.name,
+          item: value.id,
+          unit: value.unit
+          // gross: null,
+          // grossMargin: null
+        },
         () => {
           // props.setFieldValue("buy", "");
           // props.setFieldValue("sell", "");
@@ -698,12 +726,12 @@ class SerwisForm extends Component {
         items: Yup.mixed().test("a", "Wybierz produkt/usługę", value =>
           show ? true : this.state.item
         ),
-        customer: Yup.string().required("Wpisz klienta"),
-        city: Yup.mixed().test(
-          "a",
-          "Wybierz miejscowość",
-          value => this.state.cityId
-        ),
+        // customer: Yup.string().required("Wpisz klienta"),
+        // city: Yup.mixed().test(
+        //   "a",
+        //   "Wybierz miejscowość",
+        //   value => this.state.cityId
+        // ),
         quantity: Yup.string().required("Wpisz ilość")
       };
     };
@@ -874,9 +902,20 @@ class SerwisForm extends Component {
                           props.setFieldTouched("items", true);
                         }}
                         czysc={() => {
-                          props.setFieldValue("items", { name: "", id: 0 });
+                          props.setFieldValue("items", {
+                            name: "",
+                            id: 0,
+                            buy: 0,
+                            sell: 0
+                          });
                           changeItem({ name: "", "Item.id": 0, id: 0 }, show);
-                          this.setState({ name: null, item: null });
+                          this.setState({
+                            name: null,
+                            item: null,
+                            gross: null,
+                            grossMargin: null,
+                            marginUnit: null
+                          });
                         }}
                         value={props.values.items.name}
                         label={

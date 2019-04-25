@@ -23,6 +23,10 @@ const styles = theme => ({
     position: "absolute",
     left: 2,
     fontSize: 16
+  },
+  tooltip: {
+    color: "lightblue",
+    backgroundColor: "green"
   }
 });
 
@@ -159,67 +163,73 @@ class Channels extends Component {
       itemsConfig,
       clickedChannel,
       clickedItem,
+      itemsUnfilter,
       itemName,
       channelName
     } = this.state;
     return (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "400px minmax(max-content, auto)",
-          gridGap: "1rem",
-          gridTemplateRows: "1fr"
-          // minHeight: "70vh"
-        }}
-      >
-        <Paper>
-          <FormWithListClicks
-            items={values => this.fetchedItemsCallback(values)}
-            rowClick={id => this.handleClickOnRow("clickedChannel", id)}
-            postUrl="/api/channel/"
-            fetchItemsUrl="/api/channels"
-            clicked={clickedChannel}
-            //fetchChannels="/api/table/channels"
-            editUrl="/api/channel/edit/id/"
-            deleteUrl="/api/channel/destroy/"
-            manyOne="channel"
-            manyTwo="item"
-            formFields={["name"]}
-            editFields={["name"]}
-            headRow={[
-              {
-                id: "name",
-                numeric: false,
-                disablePadding: true,
-                label: "Towar/Usługa"
+      <div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "400px minmax(max-content, auto)",
+            gridGap: "1rem",
+            gridTemplateRows: "1fr",
+            marginTop: 10
+            // minHeight: "70vh"
+          }}
+        >
+          {itemsUnfilter && (
+            <Paper>
+              <FormWithListClicks
+                items={values => this.fetchedItemsCallback(values)}
+                rowClick={id => this.handleClickOnRow("clickedChannel", id)}
+                postUrl="/api/channel/"
+                fetchItemsUrl="/api/channels"
+                clicked={clickedChannel}
+                //fetchChannels="/api/table/channels"
+                editUrl="/api/channel/edit/id/"
+                deleteUrl="/api/channel/destroy/"
+                manyOne="channel"
+                manyTwo="item"
+                formFields={["name"]}
+                editFields={["name"]}
+                headRow={[
+                  {
+                    id: "name",
+                    numeric: false,
+                    disablePadding: true,
+                    label: "Towar/Usługa"
+                  }
+                  // {
+                  //   id: "unit",
+                  //   numeric: false,
+                  //   disablePadding: true,
+                  //   label: "Jednostka"
+                  // }
+                ]}
+                rowType="channel"
+                labelList="Kanały/systemy premiowe"
+              >
+                <ChannelForm addLabel={"Dodaj"} />
+              </FormWithListClicks>
+            </Paper>
+          )}
+          <div style={{ height: "100%" }}>
+            <Config
+              data={items}
+              rowClick={id =>
+                clickedChannel && this.handleClickOnRow("clickedItem", id)
               }
-              // {
-              //   id: "unit",
-              //   numeric: false,
-              //   disablePadding: true,
-              //   label: "Jednostka"
-              // }
-            ]}
-            rowType="channel"
-            labelList="Kanały/systemy premiowe"
-          >
-            <ChannelForm addLabel={"Dodaj"} />
-          </FormWithListClicks>
-        </Paper>
-        <div style={{ height: "100%" }}>
-          <Config
-            data={items}
-            rowClick={id =>
-              clickedChannel && this.handleClickOnRow("clickedItem", id)
-            }
-            label={channel}
-            showChild={itemsConfig}
-            hideChild={this.hideItemsConfig}
-            channelId={clickedChannel}
-            itemId={clickedItem}
-            channelName={channelName}
-            itemName={itemName}
-          />
+              label={channel}
+              showChild={itemsConfig}
+              hideChild={this.hideItemsConfig}
+              channelId={clickedChannel}
+              itemId={clickedItem}
+              channelName={channelName}
+              itemName={itemName}
+            />
+          </div>
         </div>
       </div>
     );
@@ -227,7 +237,16 @@ class Channels extends Component {
 }
 
 function mapStateToProps({ auth }) {
-  return { auth };
+  return {
+    auth,
+    help: `W lewym panelu możesz zarządzać systemami prowizyjnymi, dodawać je,
+          edytować i usuwać. Po prawej stronie możesz konfigurować premie dla
+          poszczególnych produktów, usług lub innych promowanych aktywności.\nAby skonfigurować system wystarczy najpierw dopisać do niego produkty w
+          zakładce "Produkty", następnie w obecnej zakładce kliknąć na dany
+          system/kanał sprzedaży i wybrać produkt. Pojawi się okno, w którym
+          będziesz mógł wybrać czas trwania promocji oraz sposób wynagradzania %
+          marży lub płaską stawkę.`
+  };
 }
 
 export default compose(

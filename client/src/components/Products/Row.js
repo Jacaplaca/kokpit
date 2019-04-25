@@ -571,7 +571,9 @@ const Field3 = ({ rowType, row }) => {
         </TableCell>
       );
     case "transactions":
-      return <DefaultTC>{shorting(row.Places.name, 30)}</DefaultTC>;
+      return (
+        <DefaultTC>{shorting(row.Places ? row.Places.name : "", 30)}</DefaultTC>
+      );
     default:
       return null;
   }

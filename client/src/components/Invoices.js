@@ -105,7 +105,15 @@ class Invoices extends Component {
           <Paper>
             {/* <SimpleProductList data={data} /> */}
             <ProductsList
-              searchColumns={["nr_pelny", "klient"]}
+              searchSum="pozostalo_do_zaplacenia"
+              searchColumns={[
+                "nr_pelny",
+                "klient",
+                { User: ["name", "surname"] },
+                "overdue",
+                "pozostalo_do_zaplacenia",
+                "termin_platnosci"
+              ]}
               disableEdit
               disableDelete
               // clickOnChannel={this.handleClickOnChannel}

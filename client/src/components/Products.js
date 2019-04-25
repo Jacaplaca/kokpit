@@ -26,6 +26,7 @@ const styles = theme => ({
 const Products = () => (
   <Paper>
     <FormWithListClicks
+      searchColumns={["name", "unit"]}
       rowClick={id => console.log(id)}
       postUrl="/api/item/"
       includeAs="SalesChannels"
@@ -61,7 +62,10 @@ const Products = () => (
 );
 
 function mapStateToProps({ auth }) {
-  return { auth };
+  return {
+    auth,
+    help: `Tu możesz dopisywać produkty/usługi/czynności do kanałów sprzedaży/systemów prowizyjnych. Aby zacząć to robić należy wcześniej dodać przynajmniej jeden system prowizyjny.`
+  };
 }
 
 export default compose(

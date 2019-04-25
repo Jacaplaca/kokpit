@@ -32,63 +32,66 @@ class Users extends Component {
 
   render() {
     return (
-      <Paper>
-        <FormWithListClicks
-          rowClick={id => console.log(id)}
-          postUrl="/auth/register"
-          fetchItemsUrl="api/allusers/channel"
-          fetchChannels="/api/channels"
-          includeAs="SalesChannels"
-          editUrl="/auth/user/edit/id/"
-          deleteUrl="/api/user/destroy/"
-          manyOne="channel"
-          manyTwo="user"
-          formFields={["name", "surname", "email", "password", "password2"]}
-          editFields={["name", "surname", "email", "password", "password2"]}
-          headRow={[
-            {
-              id: "name",
-              numeric: false,
-              disablePadding: true,
-              label: "Imię"
-            },
-            {
-              id: "surname",
-              numeric: false,
-              disablePadding: true,
-              label: "Nazwisko"
-            },
-            {
-              id: "role",
-              numeric: false,
-              disablePadding: true,
-              label: "Rola",
-              textAlign: "center"
-            },
-            {
-              id: "email",
-              numeric: false,
-              disablePadding: true,
-              label: "Email",
-              textAlign: "center"
-            }
-          ]}
-          rowType="user"
-          disableDelete
-          disableEdit
-          labelList="Pracownicy w systemach premiowych"
-          modal
-        >
-          {/* <ModalWindow
+      <div>
+        <Paper>
+          <FormWithListClicks
+            searchColumns={["name", "surname", "email", "role"]}
+            rowClick={id => console.log(id)}
+            postUrl="/auth/register"
+            fetchItemsUrl="api/allusers/channel"
+            fetchChannels="/api/channels"
+            includeAs="SalesChannels"
+            editUrl="/auth/user/edit/id/"
+            deleteUrl="/api/user/destroy/"
+            manyOne="channel"
+            manyTwo="user"
+            formFields={["name", "surname", "email", "password", "password2"]}
+            editFields={["name", "surname", "email", "password", "password2"]}
+            headRow={[
+              {
+                id: "name",
+                numeric: false,
+                disablePadding: true,
+                label: "Imię"
+              },
+              {
+                id: "surname",
+                numeric: false,
+                disablePadding: true,
+                label: "Nazwisko"
+              },
+              {
+                id: "role",
+                numeric: false,
+                disablePadding: true,
+                label: "Rola",
+                textAlign: "center"
+              },
+              {
+                id: "email",
+                numeric: false,
+                disablePadding: true,
+                label: "Email",
+                textAlign: "center"
+              }
+            ]}
+            rowType="user"
+            disableDelete
+            disableEdit
+            labelList="Pracownicy w systemach premiowych"
+            modal
+          >
+            {/* <ModalWindow
           open={this.state.openModal}
           close={this.handleClose}
           maxWidth={900}
         >
         </ModalWindow> */}
-          {/* <Form addLabel={"Dodaj"} activity="adding" /> */}
-          {/* <EditUserForm addLabel={"Dodaj"} activity="editing" /> */}
-        </FormWithListClicks>
-      </Paper>
+            {/* <Form addLabel={"Dodaj"} activity="adding" /> */}
+            {/* <EditUserForm addLabel={"Dodaj"} activity="editing" /> */}
+          </FormWithListClicks>
+        </Paper>
+      </div>
     );
   }
 }
@@ -96,7 +99,12 @@ class Users extends Component {
 // export default Users;
 
 function mapStateToProps({ auth }) {
-  return { auth };
+  return {
+    auth,
+    help: `Tu możesz dopisywać pracowników do kanałów sprzedaży/systemów
+          prowizyjnych. Aby zacząć to robić należy wcześniej dodać przynajmniej
+          jeden system prowizyjny.`
+  };
 }
 
 export default compose(

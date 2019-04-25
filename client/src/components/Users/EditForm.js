@@ -46,12 +46,12 @@ class EditUser extends React.Component {
   // };
 
   componentWillReceiveProps(nextProps) {
-    console.log(
-      "form",
-      nextProps.values,
-      this.props.values,
-      shallowEqual(nextProps.values, this.props.values)
-    );
+    // console.log(
+    //   "form",
+    //   nextProps.values,
+    //   this.props.values,
+    //   shallowEqual(nextProps.values, this.props.values)
+    // );
     const { name, surname, email, password, password2 } = nextProps.values;
     if (!shallowEqual(nextProps.values, this.props.values)) {
       this.validate(
@@ -76,15 +76,15 @@ class EditUser extends React.Component {
     changePassword
   ) => {
     const { originalEmail } = this.props.values;
-    console.log(
-      "validate",
-      name,
-      surname,
-      email,
-      password,
-      password2,
-      changePassword
-    );
+    // console.log(
+    //   "validate",
+    //   name,
+    //   surname,
+    //   email,
+    //   password,
+    //   password2,
+    //   changePassword
+    // );
     // const { email, password, password2 } = this.state;
 
     let validate;

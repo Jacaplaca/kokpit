@@ -12,8 +12,8 @@ import { dataToString } from "../../common/functions";
 import ModalWindow from "../ModalWindow";
 import DateRangePickerMy from "../../common/DateRangePickerMy";
 import SerwisForm from "./SerwisForm";
-import TransactionList from "./TransactionList";
-import InputSelectBaza from "../../common/inputs/InputSelectBaza";
+// import InputSelectBaza from "../../common/inputs/InputSelectBaza";
+// import TransactionList from "./TransactionList";
 import Summary from "./Summary";
 import { greyBackground } from "../../globalStyles";
 import ProductsList from "../Products/ProductsList";
@@ -369,6 +369,17 @@ class Calculator extends Component {
               /> */}
               <Paper>
                 <ProductsList
+                  searchSum="bonus"
+                  searchColumns={[
+                    "cityName",
+                    "customer",
+                    "date",
+                    "bonus",
+                    { User: ["name", "surname"] },
+                    { Places: ["name"] },
+                    { ItemTrans: ["name"] },
+                    { ChannelTrans: ["name"] }
+                  ]}
                   conditionOne={channelId === 0}
                   userId={employee.id}
                   delete={this.handleDelete}

@@ -75,6 +75,12 @@ class DrawerLink extends React.Component {
     open: false
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.openDrawer) {
+      this.setState({ open: false });
+    }
+  }
+
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
   };

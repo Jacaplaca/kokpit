@@ -2,6 +2,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 var bcrypt = require("bcrypt");
 const db = require("../models/index");
+const Channel = db.sales_channels;
 const User = db.users;
 const Module = db.modules;
 const Client = db.clients;
@@ -32,6 +33,10 @@ passport.deserializeUser((user_id, done) => {
       {
         model: Client,
         as: "Company"
+      },
+      {
+        model: Channel,
+        as: "SalesChannels"
       }
     ]
   })
@@ -47,7 +52,8 @@ passport.deserializeUser((user_id, done) => {
         surname,
         start_comp,
         UserModule,
-        Company
+        Company,
+        SalesChannels
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -63,7 +69,8 @@ passport.deserializeUser((user_id, done) => {
             surname,
             start_comp,
             UserModule,
-            Company
+            Company,
+            SalesChannels
           })
         );
       } else {

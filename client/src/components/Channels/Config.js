@@ -61,6 +61,7 @@ class Config extends Component {
               showChild={showChild}
               disableEdit
               disableDelete
+              searchColumns={["name", "config"]}
               // clickOnChannel={this.handleClickOnChannel}
               // delete={this.handleDelete}
               transactions={data}
@@ -142,6 +143,7 @@ class Config extends Component {
                       editedIdSend={this.editedIdSend}
                       overlaps={overlaps}
                       itemsToState={this.itemsToState}
+                      searchColumns={["bonusType", "bonus", "from", "to"]}
                       rowClick={id => console.log("rowClick in config", id)}
                       postUrl="/api/channels_config/"
                       fetchItemsUrl={`/api/channel_config_new/itemchannel/id/${itemId}/${channelId}`}

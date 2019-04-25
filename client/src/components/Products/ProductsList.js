@@ -35,11 +35,13 @@ import {
   formatNumber,
   shorting,
   simpleSortUpDown,
-  getSuggestions
+  getSuggestions,
+  sum
 } from "../../common/functions";
 import MainFrameHOC from "../../common/MainFrameHOC";
 import SearchField from "../../common/inputs/SearchField";
 import InputInRow from "../../common/inputs/InputInRow";
+import SemiButton from "../../common/SemiButton";
 import Row from "./Row";
 
 let counter = 0;
@@ -286,6 +288,9 @@ const toolbarStyles = theme => ({
   spacer: {
     flex: "1 1 100%"
   },
+  center: {
+    flex: "1 1 100%"
+  },
   actions: {
     color: theme.palette.text.secondary
   },
@@ -302,7 +307,8 @@ let EnhancedTableToolbar = props => {
     data,
     search,
     labelList,
-    searchColumns
+    searchColumns,
+    sum
   } = props;
 
   return (
@@ -324,11 +330,26 @@ let EnhancedTableToolbar = props => {
             // variant="h6"
             id="tableTitle"
           >
-            {labelList}
+            {labelList}{" "}
           </Typography>
         )}
       </div>
       <div className={classes.spacer} />
+      <div className={classes.center}>
+        {sum && (
+          <div style={{ fontSize: "0.85em" }}>
+            Suma:{" "}
+            <NumberFormat
+              style={{ fontWeight: 600 }}
+              value={formatNumber(sum)}
+              displayType={"text"}
+              thousandSeparator={" "}
+              decimalSeparator={","}
+              suffix={" zł"}
+            />
+          </div>
+        )}
+      </div>
       <div className={classes.actions}>
         {numSelected > 0 ? (
           <Tooltip title="Usuń">
@@ -364,6 +385,8 @@ EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 const styles = theme => ({
   root: {
     width: "100%"
+    // display: "grid",
+    // gridTemplateColumns: "1fr, 1fr, 1fr"
     // marginTop: theme.spacing.unit * 3
   },
   table: {
@@ -413,7 +436,12 @@ class EnhancedTable extends Component {
   componentWillMount() {
     const list = this.makeOrder(this.props.transactions);
     const ordering = list.map(el => el.id);
-    this.setState({ list, ordering, listUnfiltered: list });
+    this.setState({
+      list,
+      ordering,
+      listUnfiltered: list,
+      sum: this.props.searchSum ? sum(list, this.props.searchSum) : null
+    });
   }
 
   // shouldComponentUpdate(nextProps, nextState) {
@@ -430,7 +458,7 @@ class EnhancedTable extends Component {
   // }
 
   componentWillReceiveProps(nextProps) {
-    console.log("componentWillReceiveProps", this.props);
+    // console.log("componentWillReceiveProps", this.props);
     // console.log("componentWillReceiveProps()");
     const { query } = this.state;
     const { transactions, showChild } = this.props;
@@ -442,13 +470,15 @@ class EnhancedTable extends Component {
         this.setState({
           list: getSuggestions(list, query, ["name"]),
           listUnfiltered: list,
-          orderBy: "order"
+          orderBy: "order",
+          sum: this.props.searchSum ? sum(list, this.props.searchSum) : null
         });
       } else {
         this.setState({
           list,
           listUnfiltered: list,
-          orderBy: "order"
+          orderBy: "order",
+          sum: this.props.searchSum ? sum(list, this.props.searchSum) : null
         });
       }
     }
@@ -572,8 +602,13 @@ class EnhancedTable extends Component {
   };
 
   handleSearch = (result, query) => {
-    // console.log("searched", searched);
-    this.setState({ list: result, query });
+    // console.log("searched", result);
+    console.log("searchin sum");
+    this.setState({
+      list: result,
+      query,
+      sum: this.props.searchSum ? sum(result, this.props.searchSum) : null
+    });
   };
 
   // handleRowClick = id => {
@@ -613,7 +648,8 @@ class EnhancedTable extends Component {
       open,
       list,
       listUnfiltered,
-      clickedRow
+      clickedRow,
+      sum
     } = this.state;
     const emptyRows =
       // rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
@@ -630,7 +666,7 @@ class EnhancedTable extends Component {
     };
 
     // console.log("product list", values, values["name"], values["unit"]);
-    console.log("ProductsList", this.props.clickedRow);
+    // console.log("ProductsList", this.props.clickedRow);
     return (
       <React.Fragment>
         <div style={{ position: "relative" }}>{children}</div>
@@ -668,6 +704,7 @@ class EnhancedTable extends Component {
         >
           <div className={classes.root}>
             <EnhancedTableToolbar
+              sum={sum}
               numSelected={selected.length}
               deleteRows={this.handleConfirmation}
               search={this.handleSearch}

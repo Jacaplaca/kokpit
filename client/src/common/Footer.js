@@ -24,7 +24,10 @@ const styles = theme => ({
     backgroundColor: theme.palette.primary.main,
     zIndex: theme.zIndex.drawer + 1,
     padding: 5,
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: "0.8em",
+    opacity: 0.75
+    // boxShadow: "0px -15px 10px -15px #111"
   }
 });
 

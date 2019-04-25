@@ -34,6 +34,7 @@ class Users extends Component {
     return (
       <Paper>
         <FormWithListClicks
+          searchColumns={["name", "surname", "email", "nr_telefonu", "role"]}
           rowClick={id => console.log(id)}
           postUrl="/auth/register"
           // fetchItemsUrl="api/allusers/channel"
@@ -98,7 +99,11 @@ class Users extends Component {
 // export default Users;
 
 function mapStateToProps({ auth }) {
-  return { auth };
+  return {
+    auth,
+    help:
+      "Tu możesz dodawać, usuwać oraz edytować użytkowników/pracowników oraz nadawać im uprawnienia do poszczególnych modułów."
+  };
 }
 
 export default compose(

@@ -12,7 +12,9 @@ import ButtonMy from "../common/ButtonMy";
 class Settings extends Component {
   state = {
     logo: null,
-    name: ""
+    name: "",
+    disableSubmit: false,
+    size: 0
   };
 
   componentDidMount() {
@@ -32,13 +34,13 @@ class Settings extends Component {
   handleSubmit = async () => {
     const { logo, name } = this.state;
     let fileName;
+    console.log("logo nam", logo, typeof logo);
 
-    if (logo) {
+    if (logo && typeof logo === "object") {
       const formData = new FormData();
 
       formData.append("file", logo);
       formData.append("filename", logo.name);
-      console.log("logo nam", logo, logo.name);
 
       const res = await axios.post("api/upload", formData, {
         onUploadProgress: ProgressEvent => {
@@ -48,7 +50,7 @@ class Settings extends Component {
 
       fileName = res.data.file;
     } else {
-      fileName = null;
+      fileName = logo;
     }
 
     // console.log("data", logo, logo.name, formData);
@@ -95,10 +97,29 @@ class Settings extends Component {
     this.setState({ [field]: value });
   };
 
+  addLogo = event => {
+    const logo = event.currentTarget.files[0];
+    const size = logo.size;
+    console.log("size", size);
+    if (size > 512000) {
+      this.setState({
+        size: `${size / 1024}`,
+        logo: null,
+        disableSubmit: true
+      });
+    } else {
+      this.setState({ logo });
+    }
+  };
+
+  clearLogo = () => {
+    this.setState({ logo: null });
+  };
+
   render() {
-    const { logo, name } = this.state;
+    const { logo, name, disableSubmit, size } = this.state;
     return (
-      <div>
+      <div style={{ maxWidth: 500 }}>
         <InputComponent
           // disabled={disabled}
           // key={i}
@@ -113,17 +134,16 @@ class Settings extends Component {
         <UploadFile
           name="0"
           title="Załącz logo firmy"
-          onChange={event => {
-            console.log("event", event);
-            this.setState({ logo: event.currentTarget.files[0] });
-          }}
+          onChange={this.addLogo}
         />
-        <Thumb
-          key={1}
-          file={logo}
-          name="0"
-          clear={() => this.setState({ logo: null })}
-        />
+        <Thumb key={1} file={logo} name="0" clear={this.clearLogo} />
+        {disableSubmit && (
+          <p>
+            Plik zajmuje {Math.trunc(size)}KB i jest {Math.trunc(size / 500)}{" "}
+            razy większy niż dopuszczalne 500KB. Zmniejsz rozdzielczość zdjęcia,
+            zastosuj silniejszą kompresję lub wybierz inny plik.
+          </p>
+        )}
         <ButtonMy onClick={this.handleSubmit}>Zapisz zmiany</ButtonMy>
       </div>
     );

@@ -178,7 +178,11 @@ class Calculators extends Component {
 }
 
 function mapStateToProps({ auth }) {
-  return { auth };
+  return {
+    auth,
+    help:
+      "Tu możesz dodawać, usuwać oraz edytować transakcje lub inne premiowane czynności oraz przeglądać zbiorcze podsumowania."
+  };
 }
 
 export default compose(

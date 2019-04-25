@@ -26,7 +26,7 @@ export const validateRegister = async ({
   password2,
   originalEmail
 }) => {
-  console.log("validateRegister()", email, password, password2, originalEmail);
+  // console.log("validateRegister()", email, password, password2, originalEmail);
   const goodEmail = "Podaj prawidłowy adres email";
   const wrongEmail = "Podany email jest już wykorzystany";
   const badPass = `Hasło powinno mieć conajmniej 6 znaków. Brakuje: ${6 -
@@ -53,16 +53,20 @@ export const validateRegister = async ({
   validates.push(freeEmail);
   validates.push(passwordValid);
   validates.push(password2Valid);
-  console.log(
-    "validatesregister",
-    validates,
-    originalEmail === email,
-    originalEmail,
-    email
-  );
+  // console.log(
+  //   "validatesregister",
+  //   validates,
+  //   originalEmail === email,
+  //   originalEmail,
+  //   email
+  // );
   const disableSubmit = validates.includes(false);
 
   return { disableSubmit, emailHelper, passwordHelper, passwordHelper2 };
+};
+
+export const sum = (arr, key) => {
+  return arr.reduce((a, b) => a + (b[key] || 0), 0);
 };
 
 export const emailFree = async email => {
@@ -113,21 +117,40 @@ export const shallowEqual = (objA, objB) => {
 };
 
 export const getSuggestions = (fetchowane, value, names) => {
-  const regex = new RegExp(escapeRegexCharacters(value).toLowerCase());
+  console.log("getSuggestions()", fetchowane, value, names);
+  const regex = new RegExp(
+    value ? escapeRegexCharacters(value).toLowerCase() : ""
+  );
   let filtered = [];
 
   for (let field of names) {
-    const main = field.split("[")[0];
-    const subs = field.split("[")[1] && field.split("[")[1].slice(0, -1);
-    const subsArr = subs && subs.split(",");
+    // console.log("field", field);
+    // const main = field.split("[")[0];
+    // const subs = field.split("[")[1] && field.split("[")[1].slice(0, -1);
+    // const subsArr = subs && subs.split(",");
+    let main;
+    let subsArr;
+    if (typeof field === "object") {
+      for (var variable in field) {
+        if (field.hasOwnProperty(variable)) {
+          main = variable;
+          subsArr = field[variable];
+        }
+      }
+    }
+    // console.log("type field main subsArr", typeof field, field, main, subsArr);
     filtered.push(
       ...fetchowane.filter(suggestion => {
-        if (!subs) {
-          return regex.test(suggestion[field].toString().toLowerCase());
+        if (typeof field !== "object") {
+          return regex.test(
+            suggestion[field] ? suggestion[field].toString().toLowerCase() : ""
+          );
         } else {
           const subsValues = [];
           for (let sub of subsArr) {
-            subsValues.push(`${suggestion[main][sub]} `);
+            subsValues.push(
+              suggestion[main] ? `${suggestion[main][sub]} ` : ""
+            );
           }
           return regex.test(subsValues.toString().toLowerCase());
         }
