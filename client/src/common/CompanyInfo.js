@@ -77,7 +77,8 @@ const styles = theme => ({
   companyBox: {
     backgroundColor: "white",
     // backgroundColor: lighten(theme.palette.primary.light, 0.8),
-    boxShadow: "0 5px 11px -6px gray",
+    // boxShadow: "0 5px 11px -6px gray",
+    // boxShadow: "inset 1px -2px 9px -6px",
     marginBottom: 6
   }
 });

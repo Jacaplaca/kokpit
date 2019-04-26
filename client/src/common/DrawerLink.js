@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
-import { lighten } from "@material-ui/core/styles/colorManipulator";
+import { lighten, darken } from "@material-ui/core/styles/colorManipulator";
 
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
@@ -13,6 +13,12 @@ import SendIcon from "@material-ui/icons/Send";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import StarBorder from "@material-ui/icons/StarBorder";
+
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Fade from "@material-ui/core/Fade";
+import Grow from "@material-ui/core/Grow";
 
 import { withStyles } from "@material-ui/core/styles";
 
@@ -28,6 +34,7 @@ import Person from "@material-ui/icons/Person";
 import ListAlt from "@material-ui/icons/ListAlt";
 import People from "@material-ui/icons/People";
 import Assignment from "@material-ui/icons/Assignment";
+import LocalOffer from "@material-ui/icons/LocalOffer";
 import ShowLinkToComp from "./ShowLinkToComp";
 import { connect } from "react-redux";
 import * as actions from "../actions";
@@ -39,6 +46,7 @@ const styles = theme => ({
       color: "white"
     }
   },
+  iconWhite: { color: "white" },
   hover: {},
   labelButton: {
     borderColor: "gray",
@@ -48,14 +56,54 @@ const styles = theme => ({
     fontSize: "0.9em"
     // padding: "0px 1px" //Insert your required size
   },
+  listItemTextWhite: { fontSize: "0.9em", color: "white", fontWeight: 500 },
   itemText: {
     padding: "0px 1px"
   },
   expanded: {
     // backgroundColor: "rgb(231, 231, 231, 0.35)",
-    backgroundColor: lighten(theme.palette.primary.main, 0.86),
-    boxShadow: "0 5px 11px -6px gray"
-  }
+    // backgroundColor: lighten(theme.palette.primary.main, 0.86),
+    boxShadow: "inset 1px 4px 9px -6px"
+    // boxShadow: "0 5px 11px -6px gray",
+    // webkitBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
+    // mozBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
+    // boxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
+    // borderBottomWidth: 1,
+    // borderBottomStyle: "solid",
+    // borderBottomColor: lighten(theme.palette.primary.main, 0.7)
+    // borderTopWidth: 1,
+    // borderTopStyle: "solid",
+    // borderTopColor: theme.palette.primary.main
+  },
+  expandedBottom: {
+    // backgroundColor: "rgb(231, 231, 231, 0.35)",
+    // backgroundColor: lighten(theme.palette.primary.main, 0.86),
+    // boxShadow: "inset 1px -2px 9px -6px"
+    // boxShadow: "0 5px 11px -6px gray",
+    // webkitBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
+    // mozBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
+    // boxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
+    // borderBottomWidth: 1,
+    // borderBottomStyle: "solid",
+    // borderBottomColor: theme.palette.primary.main,
+    // borderTopWidth: 1,
+    // borderTopStyle: "solid",
+    // borderTopColor: theme.palette.primary.main
+  },
+  menu: {
+    // backgroundColor: lighten(theme.palette.primary.main, 0.92),
+    // backgroundColor: theme.palette.grey["700"],
+    borderRadius: 0,
+    backgroundColor: theme.palette.grey["200"]
+    // color: "white"
+  },
+  menuDark: {
+    // backgroundColor: lighten(theme.palette.primary.main, 0.92),
+    backgroundColor: darken(theme.palette.primary.main, 0.3),
+    borderRadius: 0
+    // color: "white"
+  },
+  collapseIcon: { color: "white" }
 });
 
 const components = {
@@ -67,12 +115,14 @@ const components = {
   Person: <Person />,
   ListAlt: <ListAlt />,
   People: <People />,
-  Assignment: <Assignment />
+  Assignment: <Assignment />,
+  LocalOffer: <LocalOffer />
 };
 
 class DrawerLink extends React.Component {
   state = {
-    open: false
+    open: false,
+    anchorEl: null
   };
 
   componentWillReceiveProps(nextProps) {
@@ -81,72 +131,248 @@ class DrawerLink extends React.Component {
     }
   }
 
+  handleClickMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
   };
 
-  ktoraIkona = icon => {
-    return components[icon];
-  };
-
   render() {
-    const { classes, theme, link, text, icon, comps, comp } = this.props;
-    const { open } = this.state;
+    const {
+      classes,
+      theme,
+      link,
+      text,
+      icon,
+      comps,
+      comp,
+      element
+    } = this.props;
+    const { open, anchorEl } = this.state;
+
+    const openMenu = Boolean(anchorEl);
+
     console.log("drawerlink", link, text, icon);
+    const darkTheme = false;
     return comps ? (
-      <div className={classNames(open && classes.expanded)}>
-        <ListItem button onClick={this.handleClick}>
-          <ListItemIcon>{this.ktoraIkona(icon)}</ListItemIcon>
-          <ListItemText
-            inset
-            primary={text}
-            classes={{ primary: classes.listItemText, root: classes.itemText }}
-          />
-          {open ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse
-          in={open}
-          timeout="auto"
-          unmountOnExit
-          // className={classNames(open && classes.expanded)}
-        >
-          {comps.map((x, i) => (
-            <Link key={i} to={x.link}>
-              {/* <List component="div" disablePadding> */}
-              <ListItem button className={classes.nested}>
-                {/* <ListItemIcon>{this.ktoraIkona(icon)}</ListItemIcon> */}
-                <ListItemText
-                  inset
-                  primary={x.text}
-                  classes={{
-                    primary: classes.listItemText,
-                    root: classes.itemText
-                  }}
-                />
-              </ListItem>
-              {/* </List> */}
-            </Link>
-          ))}
-        </Collapse>
-      </div>
-    ) : (
-      <ShowLinkToComp comp={comp}>
-        <Link to={link}>
-          <ListItem button>
-            <ListItemIcon>{this.ktoraIkona(icon)}</ListItemIcon>
+      <div className={classNames(open && classes.expandedBottom)}>
+        <div className={classNames(open && classes.expanded)}>
+          <ListItem button onClick={this.handleClick}>
+            <ListItemIcon className={darkTheme && classes.iconWhite}>
+              {ktoraIkona(icon)}
+            </ListItemIcon>
             <ListItemText
+              inset
+              primary={text}
               classes={{
-                primary: classes.listItemText,
+                primary: darkTheme
+                  ? classes.listItemTextWhite
+                  : classes.listItemText,
                 root: classes.itemText
               }}
-              primary={text}
             />
+            {open ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-        </Link>
-      </ShowLinkToComp>
+          <Collapse
+            // expandIcon={<LocalOffer />}
+            in={open}
+            timeout="auto"
+            unmountOnExit
+            // className={classNames(open && classes.expanded)}
+          >
+            {comps.map((x, i) => {
+              if (x.link) {
+                return (
+                  // <Link key={i} to={x.link}>
+                  //   {/* <List component="div" disablePadding> */}
+                  //   <ListItem button className={classes.nested}>
+                  //     {/* <ListItemIcon>{this.ktoraIkona(icon)}</ListItemIcon> */}
+                  //     <ListItemText
+                  //       inset
+                  //       primary={x.text}
+                  //       classes={{
+                  //         primary: classes.listItemText,
+                  //         root: classes.itemText
+                  //       }}
+                  //     />
+                  //   </ListItem>
+                  //   {/* </List> */}
+                  // </Link>
+                  <ItemLink
+                    key={i}
+                    click={() => {}}
+                    element={x}
+                    classes={classes}
+                    nested
+                    dark={darkTheme}
+                  />
+                );
+              } else if (x.menus) {
+                return (
+                  <Menus
+                    style={{
+                      backgroundColor: lighten(theme.palette.primary.main, 0.92)
+                    }}
+                    openMenu={openMenu}
+                    click={this.handleClickMenu}
+                    anchorEl={anchorEl}
+                    close={this.handleClose}
+                    element={x}
+                    classes={classes}
+                    nested
+                    dark={darkTheme}
+                  />
+                );
+              }
+            })}
+          </Collapse>
+        </div>
+      </div>
+    ) : element.menus ? (
+      <Menus
+        openMenu={openMenu}
+        click={this.handleClickMenu}
+        anchorEl={anchorEl}
+        close={this.handleClose}
+        element={element}
+        classes={classes}
+        dark={darkTheme}
+        // nested
+      />
+    ) : (
+      // <ShowLinkToComp comp={comp}>
+      //   <Link to={link}>
+      //     <ListItem button>
+      //       <ListItemIcon>{ktoraIkona(icon)}</ListItemIcon>
+      //       <ListItemText
+      //         classes={{
+      //           primary: classes.listItemText,
+      //           root: classes.itemText
+      //         }}
+      //         primary={text}
+      //       />
+      //     </ListItem>
+      //   </Link>
+      // </ShowLinkToComp>
+      <ItemLink
+        click={() => {}}
+        element={element}
+        classes={classes}
+        dark={darkTheme}
+      />
     );
   }
 }
+
+const ktoraIkona = icon => {
+  return components[icon];
+};
+
+const Item = ({ comp, classes, text, click, nested, icon, dark }) => (
+  <ShowLinkToComp comp={comp}>
+    <ListItem button onClick={click}>
+      {icon && (
+        <ListItemIcon className={dark && classes.iconWhite}>
+          {ktoraIkona(icon)}
+        </ListItemIcon>
+      )}
+      <ListItemText
+        inset={nested}
+        classes={{
+          primary: dark ? classes.listItemTextWhite : classes.listItemText,
+          root: classes.itemText
+        }}
+        primary={text}
+      />
+    </ListItem>
+  </ShowLinkToComp>
+);
+
+const ItemLink = ({ comp, classes, text, click, element, nested, dark }) => (
+  <ShowLinkToComp comp={element.comp}>
+    <Link to={element.link}>
+      <ListItem button onClick={click} className={classes.main}>
+        {nested || (
+          <ListItemIcon className={dark && classes.iconWhite}>
+            {ktoraIkona(element.icon)}
+          </ListItemIcon>
+        )}
+        <ListItemText
+          inset={nested}
+          classes={{
+            primary: dark ? classes.listItemTextWhite : classes.listItemText,
+            root: classes.itemText
+          }}
+          primary={element.text}
+        />
+      </ListItem>
+    </Link>
+  </ShowLinkToComp>
+);
+
+const Menus = ({
+  openMenu,
+  click,
+  anchorEl,
+  close,
+  element,
+  classes,
+  nested,
+  dark
+}) => (
+  <div>
+    {/* <Button
+      aria-owns={openMenu ? "fade-menu" : undefined}
+      aria-haspopup="true"
+      onClick={click}
+    >
+      {element.text}
+    </Button> */}
+    <Item
+      comp={element.comp}
+      text={element.text}
+      icon={element.icon}
+      classes={classes}
+      click={click}
+      nested={nested}
+      dark={dark}
+    />
+    <Menu
+      PopoverClasses={{ paper: dark ? classes.menuDark : classes.menu }}
+      // square={false}
+      elevation={1}
+      id="fade-menu"
+      anchorEl={anchorEl}
+      open={openMenu}
+      onClose={close}
+      TransitionComponent={Grow}
+      // id="menu-appbar"
+      // anchorEl={anchorEl}
+      getContentAnchorEl={null}
+      anchorOrigin={{ vertical: "center", horizontal: "right" }}
+      transformOrigin={{ vertical: "center", horizontal: "left" }}
+    >
+      {element.menus.map((x, i) => (
+        <ItemLink
+          key={i}
+          click={close}
+          element={x}
+          classes={classes}
+          dark={dark}
+        />
+      ))}
+      {/* <MenuItem onClick={close}>Profile</MenuItem> */}
+      {/* <MenuItem onClick={close}>My account</MenuItem> */}
+      {/* <MenuItem onClick={close}>Logout</MenuItem> */}
+    </Menu>
+  </div>
+);
 
 DrawerLink.propTypes = {
   classes: PropTypes.object.isRequired,

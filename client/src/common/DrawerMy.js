@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { withStyles } from "@material-ui/core/styles";
-import { lighten } from "@material-ui/core/styles/colorManipulator";
+import { lighten, darken } from "@material-ui/core/styles/colorManipulator";
 import classNames from "classnames";
 
 import Drawer from "@material-ui/core/Drawer";
@@ -12,6 +12,13 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import { connect } from "react-redux";
+
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Fade from "@material-ui/core/Fade";
+import Grow from "@material-ui/core/Grow";
+
 import * as actions from "../actions";
 
 import DrawerLink from "./DrawerLink";
@@ -50,14 +57,17 @@ const styles = theme => ({
   },
   drawerPaper: {
     // backgroundColor: lighten(theme.palette.primary.light, 0.92),
-    backgroundColor: lighten(theme.palette.primary.main, 0.92),
+    // backgroundColor: lighten(theme.palette.primary.main, 0.92),
+    backgroundColor: theme.palette.grey["200"],
+    // backgroundColor: darken(theme.palette.primary.main, 0.3),
     position: "relative",
     whiteSpace: "nowrap",
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen
-    })
+    }),
+    borderRightWidth: 0
   },
   drawerPaperClose: {
     overflowX: "hidden",
@@ -67,7 +77,7 @@ const styles = theme => ({
     }),
     width: theme.spacing.unit * 6,
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing.unit * 8.35
+      width: theme.spacing.unit * 8.2
     }
   },
   drawerPaperHide: {
@@ -90,36 +100,25 @@ const styles = theme => ({
 });
 
 class DrawerMy extends React.Component {
+  // state = {
+  //   anchorEl: null
+  // };
+  //
+  // handleClick = event => {
+  //   this.setState({ anchorEl: event.currentTarget });
+  // };
+  //
+  // handleClose = () => {
+  //   this.setState({ anchorEl: null });
+  // };
+
   render() {
     const { classes, theme, auth, open, handleDrawerClose } = this.props;
 
+    // const { anchorEl } = this.state;
+    // const open2 = Boolean(anchorEl);
+
     const expLinks = [
-      {
-        text: "Ustawienia premii",
-        icon: "Assignment",
-        comp: "bonus_system",
-        // link: "/costs",
-        comps: [
-          {
-            // comp: "products",
-            text: "Produkty",
-            link: "/products",
-            icon: "InsertChartOutlined"
-          },
-          {
-            // comp: "channels",
-            text: "Systemy prowizyjne",
-            link: "/systems",
-            icon: "InsertChartOutlined"
-          },
-          {
-            // comp: "users_channels",
-            text: "Pracownicy",
-            link: "/users_channels",
-            icon: "InsertChartOutlined"
-          }
-        ]
-      },
       {
         text: "Planer",
         icon: "EventIcon",
@@ -140,13 +139,6 @@ class DrawerMy extends React.Component {
         ]
       },
       { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
-
-      {
-        comp: "users",
-        text: "Użytkownicy",
-        link: "/users",
-        icon: "Person"
-      },
 
       {
         comp: "nextReports",
@@ -173,10 +165,49 @@ class DrawerMy extends React.Component {
         icon: "InsertChartOutlined"
       },
       {
+        text: "Konfiguracja",
         comp: "settings",
-        text: "Ustawienia",
-        link: "/settings",
-        icon: "Settings"
+        icon: "Settings",
+        // link: "/costs",
+        comps: [
+          {
+            comp: "bonus_system",
+            // icon: "Assignment",
+            text: "Ustawienia premii",
+            menus: [
+              {
+                // comp: "products",
+                text: "Produkty",
+                link: "/products",
+                icon: "LocalOffer"
+              },
+              {
+                // comp: "channels",
+                text: "Systemy prowizyjne",
+                link: "/systems",
+                icon: "Assignment"
+              },
+              {
+                // comp: "users_channels",
+                text: "Pracownicy",
+                link: "/users_channels",
+                icon: "People"
+              }
+            ]
+          },
+          {
+            comp: "users",
+            text: "Użytkownicy",
+            link: "/users",
+            icon: "Person"
+          },
+          {
+            comp: "settings",
+            text: "Ogólne ustawienia",
+            link: "/settings",
+            icon: "Settings"
+          }
+        ]
       }
     ];
 
@@ -292,6 +323,7 @@ class DrawerMy extends React.Component {
                   icon={icon}
                   comps={comps}
                   comp={comp}
+                  element={el}
                 />
               </ShowLinkToComp>
             );
@@ -305,6 +337,33 @@ class DrawerMy extends React.Component {
             );
           })} */}
         </div>
+        {/* <div>
+          <Button
+            aria-owns={open2 ? "fade-menu" : undefined}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+          >
+            Open with fade transition
+          </Button>
+          <Menu
+            elevation={1}
+            id="fade-menu"
+            anchorEl={anchorEl}
+            open={open2}
+            onClose={this.handleClose}
+            TransitionComponent={Grow}
+            // id="menu-appbar"
+            // anchorEl={anchorEl}
+            getContentAnchorEl={null}
+            anchorOrigin={{ vertical: "center", horizontal: "right" }}
+            transformOrigin={{ vertical: "center", horizontal: "left" }}
+            // className={props.classes.menu}
+          >
+            <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+            <MenuItem onClick={this.handleClose}>My account</MenuItem>
+            <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+          </Menu>
+        </div> */}
       </Drawer>
     );
   }

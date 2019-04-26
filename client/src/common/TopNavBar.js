@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
-
+import { lighten, darken } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 
@@ -28,7 +28,8 @@ const styles = theme => ({
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
-    })
+    }),
+    backgroundColor: darken(theme.palette.primary.main, 0.3)
   },
   appBarShift: {
     marginLeft: drawerWidth,
