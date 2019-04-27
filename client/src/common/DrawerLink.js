@@ -66,7 +66,7 @@ const styles = theme => ({
   expanded: {
     // backgroundColor: "rgb(231, 231, 231, 0.35)",
     // backgroundColor: lighten(theme.palette.primary.main, 0.86),
-    boxShadow: "inset 1px 4px 9px -6px"
+    // boxShadow: "inset 1px 4px 9px -6px"
     // boxShadow: "0 5px 11px -6px gray",
     // webkitBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
     // mozBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
@@ -79,6 +79,7 @@ const styles = theme => ({
     // borderTopColor: theme.palette.primary.main
   },
   expandedBottom: {
+    backgroundColor: theme.palette.grey["300"]
     // backgroundColor: "rgb(231, 231, 231, 0.35)",
     // backgroundColor: lighten(theme.palette.primary.main, 0.86),
     // boxShadow: "inset 1px -2px 9px -6px"
@@ -97,12 +98,35 @@ const styles = theme => ({
     // backgroundColor: lighten(theme.palette.primary.main, 0.92),
     // backgroundColor: theme.palette.grey["700"],
     borderRadius: 0,
-    backgroundColor: theme.palette.grey["200"]
+    backgroundColor: theme.palette.grey["300"],
+    boxShadow: "8px 5px 14px -9px rgba(0,0,0,0.63)"
+    // borderTop: `1px solid ${theme.palette.grey["500"]}`,
+    // borderRight: `1px solid ${theme.palette.grey["500"]}`,
+    // borderBottom: `1px solid ${theme.palette.grey["500"]}`,
+    // borderLeft: `1px solid ${theme.palette.grey["500"]}`
     // color: "white"
+  },
+  menuNested: {
+    // backgroundColor: lighten(theme.palette.primary.main, 0.92),
+    // backgroundColor: theme.palette.grey["700"],
+    borderRadius: 0,
+    backgroundColor: theme.palette.grey["200"],
+    boxShadow: "8px 5px 14px -9px rgba(0,0,0,0.63)"
+    // color: "white"
+  },
+  item: {
+    backgroundColor: theme.palette.grey["300"]
+    // borderTop: `1px solid ${theme.palette.grey["500"]}`,
+    // borderLeft: `1px solid ${theme.palette.grey["500"]}`,
+    // borderBottom: `1px solid ${theme.palette.grey["500"]}`
+  },
+  itemNested: {
+    backgroundColor: theme.palette.grey["200"]
   },
   menuDark: {
     // backgroundColor: lighten(theme.palette.primary.main, 0.92),
     backgroundColor: darken(theme.palette.primary.main, 0.3),
+    boxShadow: "8px 5px 14px -9px rgba(0,0,0,0.63)",
     borderRadius: 0
     // color: "white"
   },
@@ -279,9 +303,13 @@ const ktoraIkona = icon => {
   return components[icon];
 };
 
-const Item = ({ comp, classes, text, click, nested, icon, dark }) => (
+const Item = ({ comp, classes, text, click, nested, icon, dark, anchor }) => (
   <ShowLinkToComp comp={comp}>
-    <ListItem button onClick={click}>
+    <ListItem
+      button
+      onClick={click}
+      className={anchor ? (nested ? classes.itemNested : classes.item) : null}
+    >
       {icon && (
         <ListItemIcon className={dark && classes.iconWhite}>
           {ktoraIkona(icon)}
@@ -369,11 +397,18 @@ const Menus = ({
       click={click}
       nested={nested}
       dark={dark}
+      anchor={anchorEl}
     />
     <Menu
-      PopoverClasses={{ paper: dark ? classes.menuDark : classes.menu }}
+      PopoverClasses={{
+        paper: dark
+          ? classes.menuDark
+          : nested
+          ? classes.menuNested
+          : classes.menu
+      }}
       // square={false}
-      elevation={1}
+      elevation={0}
       id="fade-menu"
       anchorEl={anchorEl}
       open={openMenu}
