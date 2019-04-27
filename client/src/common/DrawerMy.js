@@ -141,6 +141,12 @@ class DrawerMy extends React.Component {
       { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
 
       {
+        comp: "powerBi",
+        text: "Power BI",
+        link: "https://powerbi.microsoft.com/pl-pl/",
+        icon: "Pageview"
+      },
+      {
         comp: "nextReports",
         text: "Next Reports",
         link: "/nextreports",
@@ -162,7 +168,7 @@ class DrawerMy extends React.Component {
         comp: "calculators",
         text: "Premie",
         link: "/calculators",
-        icon: "InsertChartOutlined"
+        icon: "Money"
       },
       {
         text: "Konfiguracja",

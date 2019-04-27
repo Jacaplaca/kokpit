@@ -23,6 +23,9 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
+import Fade from "@material-ui/core/Fade";
+import Grow from "@material-ui/core/Grow";
+import Zoom from "@material-ui/core/Zoom";
 
 import ButtonIconCircle from "../../common/ButtonIconCircle";
 import EditIcon from "@material-ui/icons/Edit";
@@ -677,13 +680,14 @@ class EnhancedTable extends Component {
           komunikat={"Czy na pewno?"}
         />
 
-        <Slide
+        <Grow
           direction="left"
           in={!showChild}
           mountOnEnter
           unmountOnExit
-          timeout={300}
+          // timeout={300}
           style={{
+            transformOrigin: "0 0 0",
             // gridRow: "2 / 4",
             // gridColumn: "2 /4",
             // backgroundColor: "yellow",
@@ -790,7 +794,7 @@ class EnhancedTable extends Component {
               onChangeRowsPerPage={this.handleChangeRowsPerPage}
             />
           </div>
-        </Slide>
+        </Grow>
       </React.Fragment>
     );
   }

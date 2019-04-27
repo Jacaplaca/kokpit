@@ -25,7 +25,7 @@ class ProductForm extends React.Component {
     // console.log("event", event.keyCode);
     switch (event.keyCode) {
       case 13:
-        submit(event);
+        disableSubmit || submit(event);
         this.nameField._focus();
         break;
       default:

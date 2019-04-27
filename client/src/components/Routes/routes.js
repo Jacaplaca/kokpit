@@ -16,6 +16,7 @@ import Calculators from "../Calculators";
 import Start from "../Start";
 import UsersChannels from "../UsersChannels";
 import Settings from "../Settings";
+import PowerBI from "../PowerBI";
 
 const routes = [
   {
@@ -52,6 +53,12 @@ const routes = [
     comp: "nextReports",
     path: "/nextreports",
     component: NextReports
+    // title: ""
+  },
+  {
+    comp: "powerBi",
+    path: "/powerbi",
+    component: PowerBI
     // title: ""
   },
   // {

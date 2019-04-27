@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+// import Link from "@material-ui/core/Link";
 import classNames from "classnames";
 import { lighten, darken } from "@material-ui/core/styles/colorManipulator";
 
@@ -35,6 +36,8 @@ import ListAlt from "@material-ui/icons/ListAlt";
 import People from "@material-ui/icons/People";
 import Assignment from "@material-ui/icons/Assignment";
 import LocalOffer from "@material-ui/icons/LocalOffer";
+import Money from "@material-ui/icons/Money";
+import Pageview from "@material-ui/icons/Pageview";
 import ShowLinkToComp from "./ShowLinkToComp";
 import { connect } from "react-redux";
 import * as actions from "../actions";
@@ -116,7 +119,9 @@ const components = {
   ListAlt: <ListAlt />,
   People: <People />,
   Assignment: <Assignment />,
-  LocalOffer: <LocalOffer />
+  LocalOffer: <LocalOffer />,
+  Money: <Money />,
+  Pageview: <Pageview />
 };
 
 class DrawerLink extends React.Component {
@@ -296,24 +301,46 @@ const Item = ({ comp, classes, text, click, nested, icon, dark }) => (
 
 const ItemLink = ({ comp, classes, text, click, element, nested, dark }) => (
   <ShowLinkToComp comp={element.comp}>
-    <Link to={element.link}>
-      <ListItem button onClick={click} className={classes.main}>
-        {nested || (
-          <ListItemIcon className={dark && classes.iconWhite}>
-            {ktoraIkona(element.icon)}
-          </ListItemIcon>
-        )}
-        <ListItemText
-          inset={nested}
-          classes={{
-            primary: dark ? classes.listItemTextWhite : classes.listItemText,
-            root: classes.itemText
-          }}
-          primary={element.text}
+    {element.link[0] === "h" ? (
+      <a target="_blank" href={element.link}>
+        <ListItemMy
+          click={click}
+          classes={classes}
+          nested={nested}
+          element={element}
+          dark={dark}
         />
-      </ListItem>
-    </Link>
+      </a>
+    ) : (
+      <RouterLink to={element.link} href={element.link}>
+        <ListItemMy
+          click={click}
+          classes={classes}
+          nested={nested}
+          element={element}
+          dark={dark}
+        />
+      </RouterLink>
+    )}
   </ShowLinkToComp>
+);
+
+const ListItemMy = ({ click, classes, nested, element, dark }) => (
+  <ListItem button onClick={click} className={classes.main}>
+    {nested || (
+      <ListItemIcon className={dark && classes.iconWhite}>
+        {ktoraIkona(element.icon)}
+      </ListItemIcon>
+    )}
+    <ListItemText
+      inset={nested}
+      classes={{
+        primary: dark ? classes.listItemTextWhite : classes.listItemText,
+        root: classes.itemText
+      }}
+      primary={element.text}
+    />
+  </ListItem>
 );
 
 const Menus = ({

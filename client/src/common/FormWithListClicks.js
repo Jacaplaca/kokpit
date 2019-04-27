@@ -43,7 +43,11 @@ class FormWithListClicks extends Component {
       Object.assign(adding, { [field]: "" });
       Object.assign(editing, { [field]: "" });
     }
-    this.setState({ adding, editing });
+    this.setState({
+      adding,
+      editing,
+      disableSubmit: { adding: true, editing: true }
+    });
   };
 
   urlToState = async (url, name) => {
