@@ -184,6 +184,7 @@ class Row extends Component {
           {/* <Checkbox checked={is selected} /> */}
           {disableDelete || (
             <ButtonIconCircle
+              title="Edytuj"
               akcja={() => {
                 // props.edit(cell);
                 console.log("edit", item.id);

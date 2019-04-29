@@ -142,7 +142,7 @@ class DrawerMy extends React.Component {
       {
         comp: "powerBi",
         text: "Power BI",
-        link: "https://powerbi.microsoft.com/pl-pl/",
+        link: "https://login.microsoftonline.com/",
         icon: "Pageview"
       },
       {

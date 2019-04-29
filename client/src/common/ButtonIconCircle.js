@@ -30,7 +30,7 @@ const styles = theme => ({
 });
 
 function ButtonIconCircle(props) {
-  const { classes, children, akcja } = props;
+  const { classes, children, akcja, title } = props;
 
   return (
     <IconButton
@@ -41,7 +41,7 @@ function ButtonIconCircle(props) {
       aria-label="Delete"
       onClick={akcja}
     >
-      {children}
+      <span title={title}>{children}</span>
     </IconButton>
   );
 }

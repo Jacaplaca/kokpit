@@ -7,7 +7,11 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-
+import Typography from "@material-ui/core/Typography";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import * as actions from "../actions";
 import { dataToString, defineds, dynamicSort } from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
@@ -190,24 +194,42 @@ class Costs extends Component {
           close={this.handleClose}
           maxWidth={900}
         >
-          <CostsForm
-            fetchuj={() => this.fetchCosts()}
-            //groups={this.state.groups}
-            //categories={this.state.categories}
-            changeRange={data => this.changeRange(data)}
-            editedId={this.state.editedId}
-            modal
-            duplicate={this.state.duplicate}
-            closeModal={() => this.setState({ openModal: false })}
-          />
+          <Paper>
+            <CostsForm
+              fetchuj={() => this.fetchCosts()}
+              //groups={this.state.groups}
+              //categories={this.state.categories}
+              changeRange={data => this.changeRange(data)}
+              editedId={this.state.editedId}
+              modal
+              duplicate={this.state.duplicate}
+              closeModal={() => this.setState({ openModal: false })}
+            />
+          </Paper>
         </ModalWindow>
-        <CostsForm
-          fetchuj={() => this.fetchCosts()}
-          groups={this.state.groups}
-          categories={this.state.categories}
-          changeRange={data => this.changeRange(data)}
-          editedId={this.state.editedId}
-        />
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>
+              <span
+                style={{
+                  fontWeight: "600"
+                }}
+              >
+                Dodawanie i edycja kosztów
+              </span>
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails style={{ display: "block" }}>
+            <CostsForm
+              fetchuj={() => this.fetchCosts()}
+              groups={this.state.groups}
+              categories={this.state.categories}
+              changeRange={data => this.changeRange(data)}
+              editedId={this.state.editedId}
+            />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
         <DateRangePickerMy
           range={[this.state.rangeselection]}
           onChange={this.handleSelect}

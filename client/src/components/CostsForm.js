@@ -256,7 +256,7 @@ class CostsForm extends Component {
     const { edited, submitIsDisable } = this.state;
 
     return (
-      <Paper style={{ padding: 20 }}>
+      <div style={{ padding: 20 }}>
         {modal && (
           <SiteHeader text={duplicate ? "Utwórz nowy koszt" : "Edytuj koszt"} />
         )}
@@ -377,7 +377,7 @@ class CostsForm extends Component {
             </ButtonMy>
           )}
         </form>
-      </Paper>
+      </div>
     );
   }
 }

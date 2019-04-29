@@ -359,7 +359,7 @@ class FormWithListClicks extends Component {
         <div
           style={{
             marginTop: "1rem",
-            display: "grid",
+            // display: "grid",
             // gridGap: "1rem",
             // gridTemplateColumns: "1fr 2fr",
             gridTemplateRows: "100%"

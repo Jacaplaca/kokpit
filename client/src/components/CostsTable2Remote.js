@@ -164,17 +164,24 @@ const RemoteFilter = props => {
   const rowButtons = cell => {
     return (
       <div>
-        <ButtonIconCircle akcja={() => handleDeleteConfirm(cell)}>
+        <ButtonIconCircle
+          akcja={() => handleDeleteConfirm(cell)}
+          title="Usuń koszt"
+        >
           <DeleteIcon {...iconProps} />
         </ButtonIconCircle>
         <ButtonIconCircle
+          title="Edytuj koszt"
           akcja={() => {
             props.edit(cell);
           }}
         >
           <EditIcon {...iconProps} />
         </ButtonIconCircle>
-        <ButtonIconCircle akcja={() => props.duplicate(cell)}>
+        <ButtonIconCircle
+          akcja={() => props.duplicate(cell)}
+          title="Duplikuj koszt"
+        >
           <FilterNoneIcon {...iconProps} />
         </ButtonIconCircle>
       </div>

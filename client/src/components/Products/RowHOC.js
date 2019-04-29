@@ -146,6 +146,7 @@ const RowHOC = WrappedComponent => {
           <TableCell padding="checkbox" style={{ width: 35 }}>
             {/* <Checkbox checked={is selected} /> */}
             <ButtonIconCircle
+              title="Edytuj"
               akcja={() => {
                 // props.edit(cell);
                 console.log("edit", item.id);

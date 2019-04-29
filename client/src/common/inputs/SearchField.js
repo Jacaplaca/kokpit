@@ -45,7 +45,7 @@ const styles = theme => ({
     }
   },
   searchIcon: {
-    width: theme.spacing.unit * 9,
+    // width: theme.spacing.unit * 9,
     height: "100%",
     position: "absolute",
     pointerEvents: "none",
@@ -61,13 +61,13 @@ const styles = theme => ({
     paddingTop: theme.spacing.unit,
     paddingRight: theme.spacing.unit,
     paddingBottom: theme.spacing.unit,
-    paddingLeft: theme.spacing.unit * 10,
+    paddingLeft: theme.spacing.unit * 5,
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("sm")]: {
-      width: 20,
+      width: 60,
       "&:focus": {
-        width: 200
+        width: 150
       }
     }
   }
@@ -111,13 +111,14 @@ class SearchField extends Component {
       <div className={classes.root}>
         <div className={classes.grow} />
         <div className={classes.search}>
-          <div className={classes.searchIcon}>
+          <div className={classes.searchIcon} title="Szukaj...">
             <SearchIcon />
           </div>
           <Input
-            disableUnderline
+            title="Szukaj..."
+            // disableUnderline
             // type="search"
-            // placeholder="Search…"
+            placeholder="Szukaj…"
             classes={{
               root: classes.inputRoot,
               input: classes.inputInput
