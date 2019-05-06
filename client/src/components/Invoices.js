@@ -105,6 +105,7 @@ class Invoices extends Component {
           <Paper>
             {/* <SimpleProductList data={data} /> */}
             <ProductsList
+              defaultSort="overdue"
               searchSum="pozostalo_do_zaplacenia"
               searchColumns={[
                 "nr_pelny",

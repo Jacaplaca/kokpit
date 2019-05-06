@@ -63,10 +63,16 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { user_id, clientId, role } = req.user;
     console.log("trans remove id", id.split(","));
+    let where = {};
+    if (role === "master") {
+      where = { clientId, id: id.split(",") };
+    } else {
+      where = { clientId, userId: user_id, id: id.split(",") };
+    }
     CustomerDetail.destroy({
-      where: { clientId, userId: user_id, id: id.split(",") }
+      where
     })
       .then(result => {
         res.json(result);

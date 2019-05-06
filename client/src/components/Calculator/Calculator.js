@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import { startOfMonth, endOfMonth } from "date-fns";
 import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import * as actions from "../../actions";
 import { defineds } from "../../common/functions";
 import MainFrameHOC from "../../common/MainFrameHOC";
-import { dataToString } from "../../common/functions";
+import { dataToString, durationLabel } from "../../common/functions";
 //import SiteHeader from "../common/SiteHeader";
 import ModalWindow from "../ModalWindow";
 import DateRangePickerMy from "../../common/DateRangePickerMy";
@@ -17,6 +18,7 @@ import SerwisForm from "./SerwisForm";
 import Summary from "./Summary";
 import { greyBackground } from "../../globalStyles";
 import ProductsList from "../Products/ProductsList";
+import ButtonMy from "../../common/ButtonMy";
 
 const styles = theme => ({
   input: {
@@ -42,10 +44,11 @@ class Calculator extends Component {
     editedId: null,
     edit: null,
     rangeselection: {
-      startDate: defineds.startOfMonth,
+      startDate: defineds.startOfLastMonth,
       endDate: defineds.endOfMonth,
       key: "rangeselection"
-    }
+    },
+    openModalDuration: false
   };
 
   componentWillMount = async () => {
@@ -90,22 +93,63 @@ class Calculator extends Component {
   //
   // }
 
+  changeRange = data => {
+    let { rangeselection } = this.state;
+    const durStart = new Date(rangeselection.startDate).getTime();
+    const durEnd = new Date(rangeselection.endDate).getTime();
+    const dataTrans = new Date(data.date).getTime();
+    console.log(
+      "data",
+      new Date(data.date).getTime() >= durStart,
+      new Date(data.date).getTime() <= durStart,
+      new Date(data.date).getTime() >= durEnd,
+      new Date(data.date).getTime() <= durEnd
+    );
+    let startDate = rangeselection.startDate;
+    let endDate = rangeselection.endDate;
+    if (dataTrans >= durEnd) {
+      endDate = endOfMonth(new Date(dataTrans));
+      if (dataTrans <= durStart) {
+        startDate = startOfMonth(new Date(dataTrans));
+      }
+    } else if (dataTrans <= durStart) {
+      startDate = startOfMonth(new Date(dataTrans));
+      if (dataTrans >= durEnd) {
+        endDate = endOfMonth(new Date(dataTrans));
+      }
+    }
+    // const startDate = startOfMonth(new Date(dataWystawienia));
+    // const endDate = endOfMonth(new Date(dataWystawienia));
+    rangeselection = { endDate, startDate, key: "rangeselection" };
+    this.handleSelect({ rangeselection });
+    // this.setState({ rangeselection });
+  };
+
   handleClose = () => {
     this.setState({ openModal: false });
   };
+  handleCloseDuration = () => {
+    this.setState({ openModalDuration: false });
+  };
 
   handleSelect = ranges => {
+    console.log("handleSelect", ranges);
     const { startDate, endDate } = ranges.rangeselection;
-    this.setState({
-      ...ranges
-    });
-    this.setState({
-      transactions: this.handleDateFilter(
-        this.state.transactionsUnfiltered,
-        startDate,
-        endDate
-      )
-    });
+    this.setState(
+      {
+        ...ranges
+      },
+      () => {
+        this.fetchTransactions();
+      }
+    );
+    // this.setState({
+    //   transactions: this.handleDateFilter(
+    //     this.state.transactionsUnfiltered,
+    //     startDate,
+    //     endDate
+    //   )
+    // });
   };
 
   handleDateFilter = (array, startDate, endDate) => {
@@ -135,14 +179,21 @@ class Calculator extends Component {
     loading(true);
     const { startDate, endDate } = this.state.rangeselection;
 
-    const fetched = await axios.get(`/api/transactions/${channelId}/${id}`);
-    console.log("fetchedtransactions", fetched.data);
-    const transactions = this.handleDateFilter(
-      fetched.data,
-      startDate,
-      endDate
+    const fetched = await axios.get(
+      `/api/transactions/${channelId}/${id}/${startDate}/${endDate}`
     );
-    this.setState({ transactions, transactionsUnfiltered: fetched.data });
+    console.log("fetchedtransactions", fetched.data);
+    // const transactions = this.handleDateFilter(
+    //   fetched.data,
+    //   startDate,
+    //   endDate
+    // );
+    this.setState({ transactions: [], transactionsUnfiltered: [] }, () => {
+      this.setState({
+        transactions: fetched.data,
+        transactionsUnfiltered: fetched.data
+      });
+    });
     await this.fetchAllTransactionsInRange();
     await loading(false);
   };
@@ -267,7 +318,7 @@ class Calculator extends Component {
 
   render() {
     const { channelId, auth, show } = this.props;
-    const { employees, employee, item } = this.state;
+    const { employees, employee, item, openModalDuration } = this.state;
     return (
       <React.Fragment>
         <ModalWindow
@@ -290,7 +341,7 @@ class Calculator extends Component {
             fetch={this.fetchTransactions}
             edit={this.state.edit}
             editClean={() => this.setState({ edit: null })}
-            // changeRange={data => this.changeRange(data)}
+            changeRange={data => this.changeRange(data)}
             // editedId={this.state.editedId}
             modal
             // duplicate={this.state.duplicate}
@@ -320,10 +371,28 @@ class Calculator extends Component {
             userId={employee.id}
             channelId={channelId}
             fetch={this.fetchTransactions}
+            changeRange={data => this.changeRange(data)}
             // edit={this.state.edit}
           />
         </div>
-        <div
+        <ButtonMy onClick={() => this.setState({ openModalDuration: true })}>
+          Zakres {durationLabel([this.state.rangeselection])}
+        </ButtonMy>
+        <ModalWindow
+          open={this.state.openModalDuration}
+          close={this.handleCloseDuration}
+          maxWidth={1000}
+        >
+          <Paper>
+            <DateRangePickerMy
+              range={[this.state.rangeselection]}
+              onChange={this.handleSelect}
+              // nopaper
+              defaultExp
+            />
+          </Paper>
+        </ModalWindow>
+        {/* <div
           style={{
             // paddingTop: 15,
             // paddingBottom: 15,
@@ -334,7 +403,7 @@ class Calculator extends Component {
             range={[this.state.rangeselection]}
             onChange={this.handleSelect}
           />
-        </div>
+        </div> */}
         {this.state.transactions.length > 0 && (
           <div>
             {show && (
@@ -369,6 +438,7 @@ class Calculator extends Component {
               /> */}
               <Paper>
                 <ProductsList
+                  defaultSort="id"
                   searchSum="bonus"
                   searchColumns={[
                     "cityName",
@@ -407,6 +477,13 @@ class Calculator extends Component {
                       label: "Towar/Usługa"
                     },
                     {
+                      id: "quantity",
+                      numeric: true,
+                      disablePadding: false,
+                      label: "Ilość",
+                      textAlign: "center"
+                    },
+                    {
                       id: "cityName",
                       numeric: false,
                       disablePadding: false,
@@ -417,13 +494,6 @@ class Calculator extends Component {
                       numeric: false,
                       disablePadding: false,
                       label: "Klient"
-                    },
-                    {
-                      id: "quantity",
-                      numeric: true,
-                      disablePadding: false,
-                      label: "Ilość",
-                      textAlign: "center"
                     },
                     {
                       id: "sell",

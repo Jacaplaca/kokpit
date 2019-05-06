@@ -65,6 +65,22 @@ export const validateRegister = async ({
   return { disableSubmit, emailHelper, passwordHelper, passwordHelper2 };
 };
 
+export const durationLabel = range => {
+  const { startDate, endDate } = range[0];
+  const startDateString = new Intl.DateTimeFormat("pl-PL", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit"
+  }).format(startDate);
+  const endDateString = new Intl.DateTimeFormat("pl-PL", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit"
+  }).format(endDate);
+
+  return `${startDateString} - ${endDateString}`;
+};
+
 export const sum = (arr, key) => {
   return arr.reduce((a, b) => a + (b[key] || 0), 0);
 };

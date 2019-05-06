@@ -437,13 +437,18 @@ class EnhancedTable extends Component {
   };
 
   componentWillMount() {
-    const list = this.makeOrder(this.props.transactions);
+    const { defaultSort, searchSum, transactions, defaultOrder } = this.props;
+    const list = this.makeOrder(
+      simpleSortUpDown(transactions, defaultSort, defaultOrder)
+    );
     const ordering = list.map(el => el.id);
+    // const sortedList = simpleSortUpDown(list, defaultSort, "desc");
     this.setState({
-      list,
+      list: list,
       ordering,
       listUnfiltered: list,
-      sum: this.props.searchSum ? sum(list, this.props.searchSum) : null
+      sum: searchSum ? sum(list, searchSum) : null,
+      orderBy: this.props.defaultSort
     });
   }
 
@@ -807,7 +812,9 @@ EnhancedTable.propTypes = {
 EnhancedTable.defaultProps = {
   headCols: [],
   clickOnRow: () => {},
-  clicked: 0
+  clicked: 0,
+  defaultSort: "order",
+  defaultOrder: "desc"
 };
 
 function mapStateToProps({ auth }) {

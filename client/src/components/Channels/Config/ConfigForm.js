@@ -410,6 +410,8 @@ class ConfigForm extends React.Component {
               range={[this.state.rangeselection]}
               expand={this.state.openRange}
               nopaper
+              config
+              defaultExp
             />
             {/* <div
               style={{ width: 1000, display: "block", backgroundColor: "red" }}

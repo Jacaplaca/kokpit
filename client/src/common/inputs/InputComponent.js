@@ -11,6 +11,10 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
+import ButtonIconCircle from "../ButtonIconCircle";
+import KeyboardArrowUp from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDown from "@material-ui/icons/KeyboardArrowDown";
+
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
 let formatField = null;
@@ -45,6 +49,38 @@ class InputComponent extends React.Component {
   _focus() {
     this.textInput.focus();
   }
+
+  operation = direction => {
+    const { value, edytuj } = this.props;
+    const nowa = parseFloat(value.replace(",", "."));
+    let mod = nowa % 1;
+    mod = parseFloat(mod.toFixed(2));
+    let mod2 = mod * 10;
+    mod2 = parseFloat(mod2.toFixed(2));
+    let dec = mod2 % 1;
+    dec = parseFloat(dec.toFixed(2));
+    let addon = 0;
+    let fixed = 0;
+    console.log(value, nowa, mod, mod2, dec, addon);
+    if (mod === 0) {
+      addon = 1;
+    } else if (mod !== 0 && dec === 0) {
+      addon = 0.1;
+      fixed = 2;
+    } else if (mod !== 0 && mod2 !== 0 && dec !== 0) {
+      addon = 0.01;
+      fixed = 2;
+    }
+
+    if (direction === "more") {
+      const sum = nowa + addon;
+      edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","));
+    } else if (direction === "less") {
+      const sum = nowa - addon;
+      edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","));
+    }
+    // console.log("number", direction, value, number);
+  };
 
   getAlert = () => {
     console.log("getAler()");
@@ -184,7 +220,8 @@ class InputComponent extends React.Component {
       autoFocus,
       short,
       prefix,
-      decimals
+      decimals,
+      format
     } = this.props;
 
     const { width } = this.state;
@@ -243,7 +280,9 @@ class InputComponent extends React.Component {
             id="name-helper"
             value={value}
             onChange={event => edytuj(event.target.value)}
-            type={this.state.showPassword ? "text" : "password"}
+            // type={this.state.showPassword ? "text" : "password"}
+            // type="number"
+            // step="1"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">{prefix}</InputAdornment>
@@ -264,7 +303,15 @@ class InputComponent extends React.Component {
                   </IconButton>
                 </InputAdornment>
               ) : (
-                <InputAdornment position="end">{suffix}</InputAdornment>
+                <InputAdornment position="end">
+                  {suffix}
+                  {format === "number" && !disabled && (
+                    <MoreLess
+                      up={() => this.operation("more")}
+                      down={() => this.operation("less")}
+                    />
+                  )}
+                </InputAdornment>
               )
             }}
           />
@@ -273,6 +320,24 @@ class InputComponent extends React.Component {
     );
   }
 }
+
+const MoreLess = ({ up, down }) => (
+  <div
+    style={{
+      display: "grid",
+      gridTemplateRows: "1fr 1fr",
+      paddingBottom: 10,
+      paddingLeft: 5
+    }}
+  >
+    <ButtonIconCircle small title="Edytuj" akcja={up}>
+      <KeyboardArrowUp style={{ fontSize: 20 }} />
+    </ButtonIconCircle>
+    <ButtonIconCircle small title="Edytuj" akcja={down}>
+      <KeyboardArrowDown style={{ fontSize: 20 }} />
+    </ButtonIconCircle>
+  </div>
+);
 
 InputComponent.defaultProps = {
   error: false,

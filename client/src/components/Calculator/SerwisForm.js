@@ -37,7 +37,7 @@ class SerwisForm extends Component {
     bonus: 0,
     bonusType: null,
     bonusUnit: null,
-    buy: null,
+    buy: 0,
     cityId: null,
     cityName: null,
 
@@ -173,6 +173,7 @@ class SerwisForm extends Component {
       );
       const { date } = this.state;
       if (nextProps.userId === 0 && nextProps.show) {
+        console.log("receive", date);
         const items = await this.fetchItemsFromDB(channelId);
         this.setState({
           date: date || dataToString(new Date()),
@@ -281,14 +282,15 @@ class SerwisForm extends Component {
   };
 
   clearForm = () => {
+    console.log("clearForm()");
     this.setState({
       cityId: null,
-      date: dataToString(new Date()),
+      // date: dataToString(new Date()),
       name: null,
       item: null,
       unit: null,
       quantity: 1,
-      buy: null,
+      buy: 0,
       sell: null,
       month: null,
       customer: null,
@@ -415,8 +417,8 @@ class SerwisForm extends Component {
     } else if (config.length > 0) {
       const { bonus, bonusType, unit } = config[0];
       if (bonusType !== this.state.bonusType) {
-        this.setState({ buy: "0", sell: null });
-        props.setFieldValue("buy", "");
+        this.setState({ buy: 0, sell: null });
+        props.setFieldValue("buy", "0");
         props.setFieldValue("sell", "");
       }
       // console.log(
@@ -516,9 +518,9 @@ class SerwisForm extends Component {
         cityName
       })
     });
-    // const data = await resp.json();
-    // await this.props.changeRange(data);
-    await this.props.fetch();
+    const data = await resp.json();
+    await this.props.changeRange(data);
+    // await this.props.fetch();
     // await this.clearForm();
     // await this.props.submit(false);
   };
@@ -754,7 +756,8 @@ class SerwisForm extends Component {
       item,
       quantity,
       buy,
-      sell
+      sell,
+      date
     } = this.state;
     const { toFill, filled } = styles;
     return (
@@ -787,13 +790,13 @@ class SerwisForm extends Component {
             enableReinitialize={true}
             initialValues={{
               items: edit ? { name: `${edit.ItemTrans.name}` } : { name: "" },
-              date: edit ? edit.date : dataToString(new Date()),
+              date: edit ? edit.date : date,
               customer: edit ? edit.customer : "",
               city: edit
                 ? { name: `${edit.Places.name}`, id: `${edit.Places.id}` }
                 : { name: "", id: 1 },
               quantity: edit ? edit.quantity : "1",
-              buy: edit ? `${edit.buy}` : "",
+              buy: edit ? `${edit.buy}` : "0",
               sell: edit ? `${edit.sell}` : ""
             }}
             onSubmit={(values, actions) => {
@@ -1061,7 +1064,7 @@ class SerwisForm extends Component {
                       >
                         <InputComponent
                           disabled={bonusType !== "% marży"}
-                          format="sell"
+                          format="number"
                           suffix="zł"
                           name="sell"
                           error={

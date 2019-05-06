@@ -12,6 +12,9 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+import ExpansionWithAbsolute from "../common/ExpansionWithAbsolute";
+
 import * as actions from "../actions";
 import { dataToString, defineds, dynamicSort } from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
@@ -207,7 +210,16 @@ class Costs extends Component {
             />
           </Paper>
         </ModalWindow>
-        <ExpansionPanel>
+        <ExpansionWithAbsolute title="Dodawanie i edycja kosztów">
+          <CostsForm
+            fetchuj={() => this.fetchCosts()}
+            groups={this.state.groups}
+            categories={this.state.categories}
+            changeRange={data => this.changeRange(data)}
+            editedId={this.state.editedId}
+          />
+        </ExpansionWithAbsolute>
+        {/* <ExpansionPanel>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>
               <span
@@ -228,7 +240,7 @@ class Costs extends Component {
               editedId={this.state.editedId}
             />
           </ExpansionPanelDetails>
-        </ExpansionPanel>
+        </ExpansionPanel> */}
 
         <DateRangePickerMy
           range={[this.state.rangeselection]}

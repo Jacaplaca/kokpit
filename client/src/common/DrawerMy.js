@@ -67,7 +67,8 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen
     }),
-    borderRightWidth: 0
+    borderRightWidth: 0,
+    paddingBottom: 25
   },
   drawerPaperClose: {
     overflowX: "hidden",
@@ -142,7 +143,7 @@ class DrawerMy extends React.Component {
       {
         comp: "powerBi",
         text: "Power BI",
-        link: "https://login.microsoftonline.com/",
+        link: "https://powerbi.microsoft.com/pl-pl/",
         icon: "Pageview"
       },
       {
@@ -169,6 +170,12 @@ class DrawerMy extends React.Component {
         text: "Premie",
         link: "/calculators",
         icon: "Money"
+      },
+      {
+        comp: "bonusRules",
+        text: "Regulamin premiowy",
+        link: "/bonusrules",
+        icon: "Description"
       },
       {
         text: "Konfiguracja",

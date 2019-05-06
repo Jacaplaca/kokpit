@@ -303,7 +303,9 @@ class FormWithListClicks extends Component {
       disableEdit,
       labelList,
       clicked,
-      searchColumns
+      searchColumns,
+      defaultSort,
+      defaultOrder
     } = this.props;
     const {
       clickedChannel,
@@ -368,6 +370,8 @@ class FormWithListClicks extends Component {
         >
           {this.state.items.length > 0 && (
             <ProductsList
+              defaultOrder={defaultOrder}
+              defaultSort={defaultSort}
               searchColumns={searchColumns}
               clickedRow={clicked}
               overlaps={overlaps}

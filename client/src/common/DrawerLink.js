@@ -38,6 +38,7 @@ import Assignment from "@material-ui/icons/Assignment";
 import LocalOffer from "@material-ui/icons/LocalOffer";
 import Money from "@material-ui/icons/Money";
 import Pageview from "@material-ui/icons/Pageview";
+import Description from "@material-ui/icons/Description";
 import ShowLinkToComp from "./ShowLinkToComp";
 import { connect } from "react-redux";
 import * as actions from "../actions";
@@ -145,6 +146,7 @@ const components = {
   Assignment: <Assignment />,
   LocalOffer: <LocalOffer />,
   Money: <Money />,
+  Description: <Description />,
   Pageview: <Pageview />
 };
 

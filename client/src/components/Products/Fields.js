@@ -197,7 +197,15 @@ export const Field3 = ({ rowType, row }) => {
       return <DefaultTC>{row.address}</DefaultTC>;
     case "transactions":
       return (
-        <DefaultTC>{shorting(row.Places ? row.Places.name : "", 30)}</DefaultTC>
+        <DefaultTC center>
+          <NumberFormat
+            value={row.quantity}
+            displayType={"text"}
+            thousandSeparator={" "}
+            decimalSeparator={","}
+            suffix={` ${row.unit}`}
+          />
+        </DefaultTC>
       );
     default:
       return null;
@@ -215,7 +223,9 @@ export const Field4 = ({ rowType, row }) => {
     case "customerDetails":
       return <DefaultTC center>{row.phone}</DefaultTC>;
     case "transactions":
-      return <DefaultTC>{row.customer}</DefaultTC>;
+      return (
+        <DefaultTC>{shorting(row.Places ? row.Places.name : "", 30)}</DefaultTC>
+      );
     default:
       return null;
   }
@@ -233,17 +243,7 @@ export const Field5 = ({ rowType, row, role }) => {
         </DefaultTC>
       );
     case "transactions":
-      return (
-        <DefaultTC center>
-          <NumberFormat
-            value={row.quantity}
-            displayType={"text"}
-            thousandSeparator={" "}
-            decimalSeparator={","}
-            suffix={` ${row.unit}`}
-          />
-        </DefaultTC>
-      );
+      return <DefaultTC>{row.customer}</DefaultTC>;
     default:
       return null;
   }

@@ -17,6 +17,7 @@ import Start from "../Start";
 import UsersChannels from "../UsersChannels";
 import Settings from "../Settings";
 import PowerBI from "../PowerBI";
+import BonusRules from "../BonusRules";
 
 const routes = [
   {
@@ -130,6 +131,14 @@ const routes = [
     comp: "settings",
     path: "/settings",
     component: Settings
+    // title: "Kalkulatory"
+    // open: true
+    //channel: auth ? auth.channel_first : 0
+  },
+  {
+    comp: "bonusRules",
+    path: "/bonusrules",
+    component: BonusRules
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0

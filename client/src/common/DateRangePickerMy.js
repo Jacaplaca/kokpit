@@ -9,6 +9,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { getYear } from "date-fns";
+import { durationLabel } from "../common/functions";
 
 import {
   addDays,
@@ -165,26 +166,20 @@ const styles = {};
 class DateTimePickerMy extends React.Component {
   //const zakres = `Zakres: ${startDateString} - ${endDateString}`;
   render() {
-    const { classes, range, onChange, nopaper, expand } = this.props;
-
-    const { startDate, endDate } = range[0];
-    // console.log("DateRangePickerMy", range[0], startDate, endDate);
-
-    const startDateString = new Intl.DateTimeFormat("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit"
-    }).format(startDate);
-    const endDateString = new Intl.DateTimeFormat("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit"
-    }).format(endDate);
+    const {
+      classes,
+      range,
+      onChange,
+      nopaper,
+      expand,
+      defaultExp,
+      config
+    } = this.props;
     return nopaper ? (
       <div>
         <ExpansionPanel
           expanded={expand}
-          defaultExpanded={nopaper ? true : false}
+          defaultExpanded={defaultExp ? true : false}
           elevation={nopaper ? 0 : 2}
           // style={{ marginTop: 20, marginBottom: 20 }}
         >
@@ -205,7 +200,7 @@ class DateTimePickerMy extends React.Component {
             <DateRangePicker
               locale={pl}
               inputRanges={configInputRanges}
-              staticRanges={nopaper ? configRanges : staticRanges}
+              staticRanges={config ? configRanges : staticRanges}
               showSelectionPreview={true}
               ranges={range}
               onChange={onChange}
@@ -227,7 +222,7 @@ class DateTimePickerMy extends React.Component {
     ) : (
       <div style={{ backgroundColor: "red" }}>
         <ExpansionPanel
-          defaultExpanded={nopaper ? true : false}
+          defaultExpanded={defaultExp ? true : false}
           elevation={nopaper ? 0 : 2}
           // style={{ marginTop: 20, marginBottom: 20 }}
         >
@@ -238,7 +233,7 @@ class DateTimePickerMy extends React.Component {
                   fontWeight: "600"
                 }}
               >
-                Zakres: {startDateString} - {endDateString}
+                Zakres: {durationLabel([range])}
               </span>
             </Typography>
           </ExpansionPanelSummary>
@@ -246,7 +241,7 @@ class DateTimePickerMy extends React.Component {
             <DateRangePicker
               locale={pl}
               inputRanges={configInputRanges}
-              staticRanges={nopaper ? configRanges : staticRanges}
+              staticRanges={config ? configRanges : staticRanges}
               showSelectionPreview={true}
               ranges={range}
               onChange={onChange}

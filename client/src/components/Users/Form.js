@@ -4,6 +4,7 @@ import FormButtons from "../../common/FormButtons";
 import SelectItem from "../../common/inputs/SelectItem";
 import { DatePicker } from "material-ui-pickers";
 import InputComponent from "../../common/inputs/InputComponent";
+import Expansion from "../../common/Expansion";
 import {
   YMtoDate,
   dateToYM,
@@ -126,7 +127,7 @@ class UserForm extends React.Component {
     } = this.props;
 
     return (
-      <div>
+      <Expansion title="Dodaj użytkownika">
         <div
           style={{
             display: "grid",
@@ -268,7 +269,7 @@ class UserForm extends React.Component {
             />
           )}
         </div>
-      </div>
+      </Expansion>
     );
   }
 }

@@ -11,6 +11,18 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
     marginTop: theme.spacing.unit / 2,
     marginBottom: theme.spacing.unit / 2,
+    // padding: 1,
+    "&:hover": {
+      background: fade(theme.palette.secondary.light, 0)
+    }
+  },
+  rootSmall: {
+    height: 15,
+    width: 15,
+    marginRight: theme.spacing.unit / 2,
+    marginTop: theme.spacing.unit / 3,
+    marginBottom: theme.spacing.unit / 3,
+    // padding: 1,
     "&:hover": {
       background: fade(theme.palette.secondary.light, 0)
     }
@@ -20,7 +32,7 @@ const styles = theme => ({
   },
   icon: {
     borderRadius: 15,
-    padding: 5,
+    padding: 3,
     color: theme.palette.primary.main,
     "&:hover": {
       color: "white",
@@ -30,12 +42,12 @@ const styles = theme => ({
 });
 
 function ButtonIconCircle(props) {
-  const { classes, children, akcja, title } = props;
+  const { classes, children, akcja, title, small } = props;
 
   return (
     <IconButton
       classes={{
-        root: props.classes.root, // class name, e.g. `classes-nesting-root-x`
+        root: small ? props.classes.rootSmall : props.classes.root, // class name, e.g. `classes-nesting-root-x`
         label: props.classes.label // class name, e.g. `classes-nesting-label-x`
       }}
       aria-label="Delete"
@@ -45,6 +57,10 @@ function ButtonIconCircle(props) {
     </IconButton>
   );
 }
+
+// ButtonIconCircle.defaultProps = {
+//   height: 30
+// };
 
 ButtonIconCircle.propTypes = {
   classes: PropTypes.object.isRequired

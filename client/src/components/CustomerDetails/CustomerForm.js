@@ -540,7 +540,7 @@ class CustomerForm extends React.Component {
                 {/* <Typography className={classes.instructions}>
                   All steps completed - you&apos;re finished
                 </Typography> */}
-                <Button onClick={this.handleReset}>Resetuj formularz</Button>
+
                 <Button
                   disabled={activeStep === 0}
                   onClick={this.handleBack}
@@ -598,6 +598,7 @@ class CustomerForm extends React.Component {
                     {activeStep === 0 && "Dane szczegółowe"}
                     {activeStep === 2 && "Następny krok"}
                   </Button>
+                  <Button onClick={this.handleReset}>Resetuj formularz</Button>
                   {this.isStepOptional(activeStep) &&
                     !this.state.completed.has(this.state.activeStep) && (
                       <Button

@@ -34,6 +34,8 @@ class Users extends Component {
     return (
       <Paper>
         <FormWithListClicks
+          defaultSort="surname"
+          defaultOrder="asc"
           searchColumns={["name", "surname", "email", "nr_telefonu", "role"]}
           rowClick={id => console.log(id)}
           postUrl="/auth/register"

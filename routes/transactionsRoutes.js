@@ -206,86 +206,96 @@ module.exports = app => {
   //     });
   //   break;
 
-  app.get("/api/transactions/:channelId/:userIdParams", async (req, res) => {
-    const { channelId, userIdParams } = req.params;
-    if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+  app.get(
+    "/api/transactions/:channelId/:userIdParams/:start/:end",
+    async (req, res) => {
+      const { channelId, userIdParams, start, end } = req.params;
+      if (!req.user) res.redirect("/");
+      const { clientId, role, user_id } = req.user;
+      console.log("start", start, new Date(start));
+      let user = user_id;
+      let query = {};
+      const queryDate = {
+        [Op.lte]: new Date(end),
+        [Op.gte]: new Date(start)
+      };
 
-    let user = user_id;
-    let query = {};
+      // if (role === "master" && userIdParams !== user_id && userIdParams !== "0") {
+      //   user = userIdParams;
+      //   query = { clientId, userId: user, channelId };
+      // } else if (role === "master" && userIdParams !== "0") {
+      //   query = { clientId, user: userIdParams };
+      // } else {
+      //   user = user_id;
+      //   query = { clientId };
+      // }
 
-    // if (role === "master" && userIdParams !== user_id && userIdParams !== "0") {
-    //   user = userIdParams;
-    //   query = { clientId, userId: user, channelId };
-    // } else if (role === "master" && userIdParams !== "0") {
-    //   query = { clientId, user: userIdParams };
-    // } else {
-    //   user = user_id;
-    //   query = { clientId };
-    // }
-
-    if (userIdParams === "0" && role === "master") {
-      //showing every transaction in channel
-      query = channelId === "0" ? { clientId } : { channelId, clientId };
-    } else {
-      // showing transaction only for specyfic user
-      if (role !== "master" && userIdParams !== user_id) {
-        user = user_id;
-        // query = { clientId, userId: user, channelId };
+      if (userIdParams === "0" && role === "master") {
+        //showing every transaction in channel
+        query =
+          channelId === "0"
+            ? { clientId, date: queryDate }
+            : { channelId, clientId, date: queryDate };
       } else {
-        user = userIdParams;
+        // showing transaction only for specyfic user
+        if (role !== "master" && userIdParams !== user_id) {
+          user = user_id;
+          // query = { clientId, userId: user, channelId };
+        } else {
+          user = userIdParams;
+        }
+        // user = user_id;
+        query =
+          channelId === "0"
+            ? { clientId, userId: user, date: queryDate }
+            : { clientId, userId: user, channelId, date: queryDate };
       }
-      // user = user_id;
-      query =
-        channelId === "0"
-          ? { clientId, userId: user }
-          : { clientId, userId: user, channelId };
+
+      // console.log("query", query);
+
+      const [err, transactions] = await to(
+        Transaction.findAll({
+          where: query,
+          include: [
+            {
+              model: User,
+              as: "User",
+              // where: { id: userIdParams === "0" ? user_id : userIdParams },
+              // where: { id: user_id },
+              attributes: ["id", "name", "surname"]
+            },
+            {
+              model: Channel,
+              as: "ChannelTrans",
+              // where: { id: userIdParams === "0" ? user_id : userIdParams },
+              // where: { id: user_id },
+              attributes: ["id", "name"]
+            },
+            {
+              model: Item,
+              as: "ItemTrans",
+              // where: { id: userIdParams === "0" ? user_id : userIdParams },
+              // where: { id: user_id },
+              attributes: ["id", "name"]
+            },
+            {
+              model: Place,
+              as: "Places",
+              // where: { id: userIdParams === "0" ? user_id : userIdParams },
+              // where: { id: user_id },
+              attributes: ["id", "name"]
+            }
+          ]
+        })
+      );
+
+      if (!transactions) {
+        res.sendStatus(500);
+      } else {
+        res.json(transactions);
+      }
     }
-
-    // console.log("query", query);
-
-    const [err, transactions] = await to(
-      Transaction.findAll({
-        where: query,
-        include: [
-          {
-            model: User,
-            as: "User",
-            // where: { id: userIdParams === "0" ? user_id : userIdParams },
-            // where: { id: user_id },
-            attributes: ["id", "name", "surname"]
-          },
-          {
-            model: Channel,
-            as: "ChannelTrans",
-            // where: { id: userIdParams === "0" ? user_id : userIdParams },
-            // where: { id: user_id },
-            attributes: ["id", "name"]
-          },
-          {
-            model: Item,
-            as: "ItemTrans",
-            // where: { id: userIdParams === "0" ? user_id : userIdParams },
-            // where: { id: user_id },
-            attributes: ["id", "name"]
-          },
-          {
-            model: Place,
-            as: "Places",
-            // where: { id: userIdParams === "0" ? user_id : userIdParams },
-            // where: { id: user_id },
-            attributes: ["id", "name"]
-          }
-        ]
-      })
-    );
-
-    if (!transactions) {
-      res.sendStatus(500);
-    } else {
-      res.json(transactions);
-    }
-  });
+  );
 
   app.get("/api/transactions/:channelId/:start/:end", async (req, res) => {
     const { channelId, start, end } = req.params;
