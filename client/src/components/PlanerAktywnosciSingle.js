@@ -23,7 +23,7 @@ const styles = theme => ({
   row: {
     borderBottomColor: fade(theme.palette.primary.main, 0.22),
     borderBottomStyle: "solid",
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     width: "100%"
   },
   aktywnosc: {
@@ -86,7 +86,10 @@ class PlanerAktywnosciSingle extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      auth: { role }
+    } = this.props;
 
     return (
       <div>
@@ -119,15 +122,17 @@ class PlanerAktywnosciSingle extends Component {
           } = day;
           return (
             <div key={id} className={classes.row}>
-              <IconButton
-                onClick={() => this.handleEdit(id)}
-                color="primary"
-                className={classes.button}
-                aria-label="Add to shopping cart"
-                disabled={wyslano ? true : false}
-              >
-                <Edit />
-              </IconButton>
+              {role !== "master" && (
+                <IconButton
+                  onClick={() => this.handleEdit(id)}
+                  color="primary"
+                  className={classes.button}
+                  aria-label="Add to shopping cart"
+                  disabled={wyslano ? true : false}
+                >
+                  <Edit />
+                </IconButton>
+              )}
               {/* <div style={{ display: "inline" }}> */}
               <span className={classes.hours}>
                 {wezGodzine(start)} - {wezGodzine(stop)}
@@ -159,22 +164,23 @@ class PlanerAktywnosciSingle extends Component {
                 {planer_klienci && planer_klienci.nazwa}
               </span>
               <RaportyAkcjeIndicator day={day} />
-
-              <IconButton
-                style={
-                  {
-                    //position: "absolute",
-                    //right: "20px"
+              {role !== "master" && (
+                <IconButton
+                  style={
+                    {
+                      //position: "absolute",
+                      //right: "20px"
+                    }
                   }
-                }
-                className={classes.button}
-                aria-label="Delete"
-                // onClick={() => this.handleDelete(id)}
-                onClick={() => this.setState({ open: true, id })}
-                disabled={wyslano ? true : false}
-              >
-                <DeleteIcon />
-              </IconButton>
+                  className={classes.button}
+                  aria-label="Delete"
+                  // onClick={() => this.handleDelete(id)}
+                  onClick={() => this.setState({ open: true, id })}
+                  disabled={wyslano ? true : false}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </div>
           );
         })}

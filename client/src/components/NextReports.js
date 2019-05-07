@@ -32,7 +32,7 @@ class NextReports extends React.Component {
             width: "100%",
             height: "100%"
           }}
-          src="http://217.182.72.224:8080/nextreports-server"
+          src={this.props.auth.Company.nextReportsLink}
         />
         {/* <div
           style={{

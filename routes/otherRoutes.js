@@ -674,22 +674,29 @@ module.exports = app => {
     const { clientId, role, user_id } = req.user;
     switch (table.table) {
       case "planerAktywnosci":
+        let whereMasterAct = { klient_id: clientId };
+        let whereUserAct = { user_id };
+        let whereAct = {
+          start: {
+            [Op.gte]: startDate
+          },
+          stop: {
+            [Op.lte]: stopDate
+          }
+        };
+        const where = Object.assign(
+          whereAct,
+          role === "master" ? { klient_id: clientId } : { user_id }
+        );
+
         Aktywnosci.findAll({
           include: [
-            // { model: User },
+            { model: User, attributes: ["name", "surname", "id"] },
             { model: RodzajAktywnosci, attributes: ["name"] },
             // { model: City, attributes: ["nazwa"] }
             { model: Miejsca, attributes: ["name"] }
           ],
-          where: {
-            user_id,
-            start: {
-              [Op.gte]: startDate
-            },
-            stop: {
-              [Op.lte]: stopDate
-            }
-          }
+          where
         })
           .then(result => res.json(result))
           .catch(err => {
@@ -928,10 +935,6 @@ module.exports = app => {
         break;
       case "dniDoRaportu":
         Aktywnosci.findAll({ where: { user_id, wyslano: 1 } })
-          // .then(result => {
-          //   console.log(result);
-          //   res.json(result);
-          // })
           .then(result => {
             const datyDoRaportu = result.map(x => x.get().kiedy);
             const unique = datyDoRaportu.filter(onlyUnique);

@@ -17,8 +17,8 @@ function renderSuggestionsContainer({ containerProps, children, query }) {
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.nazwa, query);
-  const parts = parse(suggestion.nazwa, matches);
+  const matches = match(suggestion.name, query);
+  const parts = parse(suggestion.name, matches);
   const { adr_Kod, adr_Miejscowosc } = suggestion;
   // console.log(suggestion);
 
@@ -149,7 +149,7 @@ class KlienciSearch extends React.Component {
   }
 
   getSuggestionValue = suggestion => {
-    const klient = suggestion.nazwa;
+    const klient = suggestion.name;
     const id = suggestion.id;
     const kod = suggestion.adr_Kod;
     const miejscowosc = suggestion.adr_Miejscowosc;

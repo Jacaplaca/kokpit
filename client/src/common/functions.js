@@ -374,6 +374,27 @@ export const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
+export const podzielUnikalnymiPlaner = array => {
+  // const users = array.map(el => el.user.id).filter(onlyUnique);
+  // const days = array.map(el => el.kiedy).filter(onlyUnique);
+  // console.log(users, days);
+  const byUser = podzielUnikalnymi(array, "user_id");
+  console.log(byUser);
+  let partedBig = [];
+  for (let user of byUser) {
+    // let parted = [];
+    let newObj = { user_id: user, kiedy: "", values: [] };
+    let byDay = podzielUnikalnymi(user.values, "kiedy");
+    const parted = byDay.map(x => {
+      return { user_id: user.user_id, kiedy: x.kiedy, values: x.values };
+    });
+    // console.log(parted);
+    partedBig.push(...parted);
+  }
+  // const byDay = byUser.map(x => podzielUnikalnymi(x.values, "kiedy"));
+  return partedBig;
+};
+
 export const podzielUnikalnymi = (array, key) => {
   const notUnique = array.map(el => el[key]);
   const unique = notUnique.filter(onlyUnique);

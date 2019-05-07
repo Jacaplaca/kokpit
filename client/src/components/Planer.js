@@ -9,6 +9,7 @@ import * as actions from "../actions";
 import {
   dataToString,
   podzielUnikalnymi,
+  podzielUnikalnymiPlaner,
   dynamicSort,
   defineds
 } from "../common/functions";
@@ -77,7 +78,8 @@ class Planer extends Component {
   };
 
   addFetchToState = fetch => {
-    const podzielone = podzielUnikalnymi(fetch.data, "kiedy");
+    // const podzielone = podzielUnikalnymi(fetch.data, "kiedy", "user");
+    const podzielone = podzielUnikalnymiPlaner(fetch.data);
     this.setState({
       aktywnosci: []
     });
@@ -114,17 +116,19 @@ class Planer extends Component {
   };
 
   render() {
-    //const { classes } = this.props;
+    const { auth } = this.props;
 
     return (
       <div>
-        <PlanerAktywnosciForm
-          editedId={this.state.editedId}
-          expanded={expanded => this.setState({ expanded })}
-          fetchuj={() => this.fetchAktywnosci()}
-          edytuj={kiedy => this.setState({ kiedy })}
-          kiedy={this.state.kiedy}
-        />
+        {auth.role === "master" || (
+          <PlanerAktywnosciForm
+            editedId={this.state.editedId}
+            expanded={expanded => this.setState({ expanded })}
+            fetchuj={() => this.fetchAktywnosci()}
+            edytuj={kiedy => this.setState({ kiedy })}
+            kiedy={this.state.kiedy}
+          />
+        )}
         <DateRangePickerMy
           range={[this.state.rangeselection]}
           onChange={this.handleSelect}

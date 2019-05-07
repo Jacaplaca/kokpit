@@ -58,7 +58,13 @@ class PlanerLista extends Component {
   };
 
   render() {
-    const { classes, expanded, wyslijDoPlanuButton, dodajDoDnia } = this.props;
+    const {
+      classes,
+      expanded,
+      wyslijDoPlanuButton,
+      dodajDoDnia,
+      auth: { role }
+    } = this.props;
 
     return (
       <div>
@@ -105,7 +111,7 @@ class PlanerLista extends Component {
                       />
                     </Icon>{" "}
                     {minutes2hours(sumaCzasow(day.values))}
-                    {wyslijDoPlanuButton && (
+                    {wyslijDoPlanuButton && role !== "master" && (
                       <ButtonMy
                         onClick={() =>
                           this.setState({ open: true, kiedy: day.kiedy })
@@ -143,7 +149,7 @@ class PlanerLista extends Component {
                     textAlign: "end"
                   }}
                 >
-                  {!day.values[0].wyslano && (
+                  {!day.values[0].wyslano && role !== "master" && (
                     <ButtonMy
                       onClick={() => dodajDoDnia(day.kiedy)}
                       //this.setState({ open: true, kiedy: day.kiedy })

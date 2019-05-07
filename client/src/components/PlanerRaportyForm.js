@@ -159,13 +159,22 @@ class PlanerRaportyForm extends Component {
     //editedId: null,
 
     miejsce_id_temp: "",
-    miejsceLabel_temp: ""
+    miejsceLabel_temp: "",
+
+    datesToReport: []
   };
 
   componentWillMount() {
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
+    this.fetchDatesToReport();
   }
+
+  fetchDatesToReport = () => {
+    axios.get(`/api/table/dniDoRaportu`).then(result => {
+      this.setState({ datesToReport: result.data });
+    });
+  };
 
   validateTime = (time, pole) => {
     const nazwaPola = `error${pole}`;
@@ -218,11 +227,11 @@ class PlanerRaportyForm extends Component {
       return true;
     }
     const nalezy =
-      this.state.datyDoRaportu.filter(x => x.name === data).length === 1
+      this.state.datesToReport.filter(x => x.name === data).length === 1
         ? true
         : false;
     const pelnaData = data.length === 10 ? true : false;
-    console.log(data);
+    console.log(nalezy, data, data.length, pelnaData);
 
     if (pelnaData) {
       if (nalezy) {
@@ -616,7 +625,7 @@ class PlanerRaportyForm extends Component {
 
   renderAktywnosci = () => {
     const { classes } = this.props;
-    console.log(this.state);
+    // console.log(this.state);
     return this.state.aktyDaty.map(day => {
       const {
         id,
@@ -630,7 +639,7 @@ class PlanerRaportyForm extends Component {
         miejsca,
         planer_akt_rodz
       } = day;
-      console.log(day);
+      // console.log(day);
       return (
         <Button
           key={id}
@@ -662,7 +671,7 @@ class PlanerRaportyForm extends Component {
 
   render() {
     const { classes, modal, edytuj, kiedy, submitCheck } = this.props;
-    //const { kiedy } = this.state;
+    const { datesToReport } = this.state;
     const pola = [
       { pole: "nawozy", nazwa: "Nawozy" },
       { pole: "nowyKlient", nazwa: "Nowy klient" },
@@ -705,7 +714,7 @@ class PlanerRaportyForm extends Component {
                   //cancelLabel={() => this.setState({ miejsceLabel: "" })}
                   label="Kiedy"
                   placeholder="Dzień"
-                  przeszukuje="dniDoRaportu"
+                  przeszukuje={datesToReport}
                   reverse
                 />
               )}

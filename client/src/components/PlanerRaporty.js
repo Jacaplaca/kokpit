@@ -113,17 +113,22 @@ class PlanerRaporty extends Component {
   };
 
   render() {
-    //const { classes } = this.props;
+    const {
+      classes,
+      auth: { role }
+    } = this.props;
 
     return (
       <div>
-        <PlanerRaportyForm
-          editedId={this.state.editedId}
-          expanded={expanded => this.setState({ expanded })}
-          fetchuj={() => this.fetchRaporty()}
-          edytuj={kiedy => this.setState({ kiedy })}
-          kiedy={this.state.kiedy}
-        />
+        {role !== "master" && (
+          <PlanerRaportyForm
+            editedId={this.state.editedId}
+            expanded={expanded => this.setState({ expanded })}
+            fetchuj={() => this.fetchRaporty()}
+            edytuj={kiedy => this.setState({ kiedy })}
+            kiedy={this.state.kiedy}
+          />
+        )}
         <DateRangePickerMy
           range={[this.state.rangeselection]}
           onChange={this.handleSelect}
