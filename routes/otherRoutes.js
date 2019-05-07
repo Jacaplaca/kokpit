@@ -228,7 +228,7 @@ module.exports = app => {
           [Op.or]: [
             { adr_Miejscowosc: { [Op.like]: `${query}%` } },
             { adr_Kod: { [Op.like]: `${query}%` } },
-            { nazwa: { [Op.like]: `${query}%` } }
+            { name: { [Op.like]: `${query}%` } }
           ],
           clientId
         },
@@ -487,7 +487,7 @@ module.exports = app => {
             { model: RodzajAktywnosci, attributes: ["name"] },
             //{ model: City, attributes: ["nazwa"] },
             { model: Miejsca, attributes: ["name"] },
-            { model: PlanerKlienci, attributes: ["nazwa"] }
+            { model: PlanerKlienci, attributes: ["name"] }
           ],
           where: { user_id, id }
         })
@@ -704,7 +704,7 @@ module.exports = app => {
             { model: RodzajAktywnosci, attributes: ["name"] },
             // { model: City, attributes: ["nazwa"] },
             { model: Miejsca, attributes: ["name"] },
-            { model: PlanerKlienci, attributes: ["nazwa"] }
+            { model: PlanerKlienci, attributes: ["name"] }
           ],
           where: {
             user_id,

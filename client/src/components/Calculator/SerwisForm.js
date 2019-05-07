@@ -793,9 +793,12 @@ class SerwisForm extends Component {
               date: edit ? edit.date : date,
               customer: edit ? edit.customer : "",
               city: edit
-                ? { name: `${edit.Places.name}`, id: `${edit.Places.id}` }
+                ? {
+                    name: `${edit.Places ? edit.Places.name : ""}`,
+                    id: `${edit.Places ? edit.Places.id : 1}`
+                  }
                 : { name: "", id: 1 },
-              quantity: edit ? edit.quantity : "1",
+              quantity: edit ? `${edit.quantity}` : "1",
               buy: edit ? `${edit.buy}` : "0",
               sell: edit ? `${edit.sell}` : ""
             }}

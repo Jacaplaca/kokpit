@@ -146,7 +146,7 @@ class InputComponent extends React.Component {
           onChange({
             target: {
               // value: values.value
-              value: values.formattedValue.replace(/ /g, "")
+              value: values.formattedValue.replace(/ /g, "").replace("-", "")
             }
           });
         }}

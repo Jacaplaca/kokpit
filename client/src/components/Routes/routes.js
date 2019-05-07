@@ -39,13 +39,13 @@ const routes = [
     // title: "Dodaj koszty"
   },
   {
-    comp: "planer",
+    comp: "planer_reports",
     path: "/planer",
     component: Planer
     // title: "Zaplanuj aktywności"
   },
   {
-    comp: "raporty",
+    comp: "planer_reports",
     path: "/raporty",
     component: PlanerRaport
     // title: "Dodaj raport z aktywności"

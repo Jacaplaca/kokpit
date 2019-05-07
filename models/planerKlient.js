@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nazwa: {
+      name: {
         type: Sequelize.TEXT
       },
       adr_Kod: {

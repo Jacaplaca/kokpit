@@ -121,26 +121,6 @@ class DrawerMy extends React.Component {
 
     const expLinks = [
       {
-        text: "Planer",
-        icon: "EventIcon",
-        comp: "planer",
-        comps: [
-          {
-            comp: "planer",
-            text: "Aktywności",
-            link: "/planer",
-            icon: "EventIcon"
-          },
-          {
-            comp: "raporty",
-            text: "Raporty",
-            link: "/raporty",
-            icon: "EventAvailableIcon"
-          }
-        ]
-      },
-
-      {
         comp: "powerBi",
         text: "Power BI",
         link: "https://powerbi.microsoft.com/pl-pl/",
@@ -151,6 +131,25 @@ class DrawerMy extends React.Component {
         text: "Next Reports",
         link: "/nextreports",
         icon: "InsertChartOutlined"
+      },
+      {
+        text: "Planer",
+        icon: "EventIcon",
+        comp: "planer_reports",
+        menus: [
+          {
+            // comp: "planer",
+            text: "Zaplanuj aktywności",
+            link: "/planer",
+            icon: "EventIcon"
+          },
+          {
+            // comp: "raporty",
+            text: "Raporty",
+            link: "/raporty",
+            icon: "EventAvailableIcon"
+          }
+        ]
       },
       { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
       {

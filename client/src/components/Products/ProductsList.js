@@ -707,8 +707,8 @@ class EnhancedTable extends Component {
             // width: "100%",
             // position: "absolute",
             top: 0,
-            right: 0,
-            zIndex: 23
+            right: 0
+            // zIndex: 23
           }}
         >
           <div className={classes.root}>
