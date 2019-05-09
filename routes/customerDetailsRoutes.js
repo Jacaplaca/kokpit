@@ -1,7 +1,7 @@
 const db = require("../models/index");
 const _ = require("lodash");
 const User = db.users;
-
+const PlanerKlienci = db.planer_klienci;
 const CustomerDetail = db.customer_details;
 const Tractor = db.tractors;
 const Harvester = db.harvesters;
@@ -121,7 +121,8 @@ module.exports = app => {
       tractor,
       harvester,
       cultivator,
-      agro
+      agro,
+      customerId
     } = req.body;
     const form = {
       name,
@@ -131,7 +132,8 @@ module.exports = app => {
       field: field === "" ? 0 : parseFloat(field.replace(",", ".")),
       meadow: meadow === "" ? 0 : parseFloat(meadow.replace(",", ".")),
       clientId,
-      userId: user_id
+      userId: user_id,
+      customerId
       // tractor: tractor || [],
       // harvester: harvester || [],
       // cultivator: cultivator || [],
@@ -429,7 +431,8 @@ module.exports = app => {
             model: User,
             as: "User",
             attributes: ["name", "surname"]
-          }
+          },
+          { model: PlanerKlienci, as: "Customer" }
         ],
         where: role === "master" ? { clientId } : { clientId, userId: user_id }
       })
@@ -477,7 +480,8 @@ module.exports = app => {
             model: User,
             as: "User",
             attributes: ["name", "surname"]
-          }
+          },
+          { model: PlanerKlienci, as: "Customer" }
         ],
         where
       })

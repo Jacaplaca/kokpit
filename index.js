@@ -153,6 +153,7 @@ require("./routes/moduleRoutes")(app);
 require("./routes/itemsRoutes")(app);
 require("./routes/upload")(app);
 require("./routes/clientsRoutes")(app);
+require("./routes/customerRoutes")(app);
 // require('./routes/surveyRoutes')(app);
 
 if (process.env.NODE_ENV === "online") {

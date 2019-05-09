@@ -10,7 +10,8 @@ import {
   dataToString,
   podzielUnikalnymi,
   dynamicSort,
-  defineds
+  defineds,
+  podzielUnikalnymiPlaner
 } from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
 import PlanerRaportyForm from "./PlanerRaportyForm";
@@ -18,6 +19,7 @@ import PlanerLista from "./PlanerLista";
 import ModalWindow from "./ModalWindow";
 
 import DateRangePickerMy from "../common/DateRangePickerMy";
+import DurationWithButton from "../common/DurationWithButton";
 
 const styles = theme => ({
   input: {
@@ -76,7 +78,13 @@ class PlanerRaporty extends Component {
   };
 
   addFetchToState = fetch => {
-    const podzielone = podzielUnikalnymi(fetch.data, "kiedy");
+    const {
+      auth: { role }
+    } = this.props;
+    const podzielone =
+      role === "master"
+        ? podzielUnikalnymiPlaner(fetch.data)
+        : podzielUnikalnymi(fetch.data, "kiedy", "user");
     this.setState({
       aktywnosci: []
     });
@@ -129,8 +137,8 @@ class PlanerRaporty extends Component {
             kiedy={this.state.kiedy}
           />
         )}
-        <DateRangePickerMy
-          range={[this.state.rangeselection]}
+        <DurationWithButton
+          range={this.state.rangeselection}
           onChange={this.handleSelect}
         />
         <Paper>

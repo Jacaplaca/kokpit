@@ -19,6 +19,7 @@ import PlanerLista from "./PlanerLista";
 import ModalWindow from "./ModalWindow";
 
 import DateRangePickerMy from "../common/DateRangePickerMy";
+import DurationWithButton from "../common/DurationWithButton";
 
 const styles = theme => ({
   placeholder: {
@@ -78,8 +79,14 @@ class Planer extends Component {
   };
 
   addFetchToState = fetch => {
+    const {
+      auth: { role }
+    } = this.props;
     // const podzielone = podzielUnikalnymi(fetch.data, "kiedy", "user");
-    const podzielone = podzielUnikalnymiPlaner(fetch.data);
+    const podzielone =
+      role === "master"
+        ? podzielUnikalnymiPlaner(fetch.data)
+        : podzielUnikalnymi(fetch.data, "kiedy", "user");
     this.setState({
       aktywnosci: []
     });
@@ -129,8 +136,8 @@ class Planer extends Component {
             kiedy={this.state.kiedy}
           />
         )}
-        <DateRangePickerMy
-          range={[this.state.rangeselection]}
+        <DurationWithButton
+          range={this.state.rangeselection}
           onChange={this.handleSelect}
         />
         <Paper>

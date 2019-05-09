@@ -206,7 +206,7 @@ class MachinesForm extends React.Component {
                     type="text"
                     edytuj={v => change(group, "howMany", v, i)}
                     // edytuj={value => change("name", value, "adding")}
-                    value={values[i].howMany || ""}
+                    value={`${values[i].howMany}` || ""}
                     format="number"
                     suffix={"szt."}
                     decimals={0}

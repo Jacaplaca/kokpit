@@ -234,21 +234,21 @@ export const dynamicSort = property => {
         .toLowerCase()
         .replace(/[ąęśćółńżź]/g, function(s) {
           return (
-            (s == "ą"
+            (s === "ą"
               ? "a"
-              : s == "ę"
+              : s === "ę"
               ? "e"
-              : s == "ś"
+              : s === "ś"
               ? "s"
-              : s == "ć"
+              : s === "ć"
               ? "c"
-              : s == "ó"
+              : s === "ó"
               ? "o"
-              : s == "ł"
+              : s === "ł"
               ? "l"
-              : s == "ń"
+              : s === "ń"
               ? "n"
-              : s == "ż"
+              : s === "ż"
               ? "z"
               : "zż") + "ż"
           );
@@ -259,21 +259,21 @@ export const dynamicSort = property => {
           ? ""
           : b[property].toLowerCase().replace(/[ąęśćółńżź]/g, function(s) {
               return (
-                (s == "ą"
+                (s === "ą"
                   ? "a"
-                  : s == "ę"
+                  : s === "ę"
                   ? "e"
-                  : s == "ś"
+                  : s === "ś"
                   ? "s"
-                  : s == "ć"
+                  : s === "ć"
                   ? "c"
-                  : s == "ó"
+                  : s === "ó"
                   ? "o"
-                  : s == "ł"
+                  : s === "ł"
                   ? "l"
-                  : s == "ń"
+                  : s === "ń"
                   ? "n"
-                  : s == "ż"
+                  : s === "ż"
                   ? "z"
                   : "zż") + "ż"
               );
@@ -383,15 +383,15 @@ export const podzielUnikalnymiPlaner = array => {
   let partedBig = [];
   for (let user of byUser) {
     // let parted = [];
-    let newObj = { user_id: user, kiedy: "", values: [] };
+    // let newObj = { user_id: user, kiedy: "", values: [] };
     let byDay = podzielUnikalnymi(user.values, "kiedy");
     const parted = byDay.map(x => {
       return { user_id: user.user_id, kiedy: x.kiedy, values: x.values };
     });
-    // console.log(parted);
     partedBig.push(...parted);
   }
   // const byDay = byUser.map(x => podzielUnikalnymi(x.values, "kiedy"));
+  console.log(partedBig);
   return partedBig;
 };
 

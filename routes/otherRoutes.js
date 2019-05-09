@@ -707,7 +707,7 @@ module.exports = app => {
       case "planerRaporty":
         Raporty.findAll({
           include: [
-            // { model: User },
+            { model: User, attributes: ["name", "surname", "id"] },
             { model: RodzajAktywnosci, attributes: ["name"] },
             // { model: City, attributes: ["nazwa"] },
             { model: Miejsca, attributes: ["name"] },
@@ -879,6 +879,7 @@ module.exports = app => {
     // if (!req.user) {
     //   return res.redirect("/");
     // }
+    console.log("table", req.user);
     const { clientId, role, user_id } = req.user;
     console.log("table", clientId, role, user_id);
     switch (table.table) {

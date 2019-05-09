@@ -23,43 +23,43 @@ const routes = [
   {
     comp: "start",
     path: "/start",
-    component: Start
+    component: Start,
+    id: 0
     // title: "Start"
-  },
-  {
-    comp: "bonus_system",
-    path: "/users_channels",
-    component: UsersChannels
-    // title: "Dodaj koszty"
   },
   {
     comp: "costs",
     path: "/costs",
-    component: Costs
+    component: Costs,
+    id: 8
     // title: "Dodaj koszty"
   },
   {
     comp: "planer_reports",
     path: "/planer",
-    component: Planer
+    component: Planer,
+    id: 17
     // title: "Zaplanuj aktywności"
   },
   {
     comp: "planer_reports",
     path: "/raporty",
-    component: PlanerRaport
+    component: PlanerRaport,
+    id: 3
     // title: "Dodaj raport z aktywności"
   },
   {
     comp: "nextReports",
     path: "/nextreports",
-    component: NextReports
+    component: NextReports,
+    id: 4
     // title: ""
   },
   {
     comp: "powerBi",
     path: "/powerbi",
-    component: PowerBI
+    component: PowerBI,
+    id: 22
     // title: ""
   },
   // {
@@ -69,32 +69,44 @@ const routes = [
   //   title: "Dodaj transakcję dla serwisu",
   //   channel: auth ? auth.channel_first : 0
   // },
-  {
-    comp: "bonus_system",
-    path: "/channelconfiguration",
-    component: ChanProdConf,
-    title: "Skonfiguruj kanały sprzedaży"
-    //channel: auth ? auth.channel_first : 0
-  },
+  // {
+  //   comp: "bonus_system",
+  //   path: "/channelconfiguration",
+  //   component: ChanProdConf,
+  //   title: "Skonfiguruj kanały sprzedaży",
+  //   id: 20
+  //   //channel: auth ? auth.channel_first : 0
+  // },
   {
     comp: "bonus_system",
     path: "/products",
     component: Products,
-    title: "Produkty"
-    //channel: auth ? auth.channel_first : 0
-  },
-  {
-    comp: "users",
-    path: "/users",
-    component: Users
-    // title: "Użytkownicy"
+    id: 25
+    // title: "Produkty"
     //channel: auth ? auth.channel_first : 0
   },
   {
     comp: "bonus_system",
     path: "/systems",
-    component: Channels
+    component: Channels,
+    id: 26
     // title: "Systemy prowizyjne"
+    //channel: auth ? auth.channel_first : 0
+  },
+  {
+    comp: "bonus_system",
+    path: "/users_channels",
+    component: UsersChannels,
+    id: 27
+    // id: 20
+    // title: "Dodaj koszty"
+  },
+  {
+    comp: "users",
+    path: "/users",
+    component: Users,
+    id: 1
+    // title: "Użytkownicy"
     //channel: auth ? auth.channel_first : 0
   },
   // {
@@ -107,7 +119,8 @@ const routes = [
   {
     comp: "invoices",
     path: "/invoices",
-    component: Invoices
+    component: Invoices,
+    id: 10
     // title: "Zaległe faktury"
     //channel: auth ? auth.channel_first : 0
   },
@@ -116,13 +129,15 @@ const routes = [
     path: "/customerdetails",
     component: CustomerDetails,
     // title: "Informacje o klientach",
-    open: true
+    // open: true,
+    id: 12
     //channel: auth ? auth.channel_first : 0
   },
   {
     comp: "calculators",
     path: "/calculators",
-    component: Calculators
+    component: Calculators,
+    id: 11
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0
@@ -130,7 +145,8 @@ const routes = [
   {
     comp: "settings",
     path: "/settings",
-    component: Settings
+    component: Settings,
+    id: 21
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0
@@ -138,7 +154,8 @@ const routes = [
   {
     comp: "bonusRules",
     path: "/bonusrules",
-    component: BonusRules
+    component: BonusRules,
+    id: 23
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0

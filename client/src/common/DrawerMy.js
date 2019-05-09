@@ -13,12 +13,12 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import { connect } from "react-redux";
 
-import Button from "@material-ui/core/Button";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Fade from "@material-ui/core/Fade";
-import Grow from "@material-ui/core/Grow";
-
+// import Button from "@material-ui/core/Button";
+// import Menu from "@material-ui/core/Menu";
+// import MenuItem from "@material-ui/core/MenuItem";
+// import Fade from "@material-ui/core/Fade";
+// import Grow from "@material-ui/core/Grow";
+import { elements } from "./DrawerElements";
 import * as actions from "../actions";
 
 import DrawerLink from "./DrawerLink";
@@ -101,203 +101,8 @@ const styles = theme => ({
 });
 
 class DrawerMy extends React.Component {
-  // state = {
-  //   anchorEl: null
-  // };
-  //
-  // handleClick = event => {
-  //   this.setState({ anchorEl: event.currentTarget });
-  // };
-  //
-  // handleClose = () => {
-  //   this.setState({ anchorEl: null });
-  // };
-
   render() {
     const { classes, theme, auth, open, handleDrawerClose } = this.props;
-
-    // const { anchorEl } = this.state;
-    // const open2 = Boolean(anchorEl);
-
-    const expLinks = [
-      {
-        comp: "powerBi",
-        text: "Power BI",
-        link: "https://powerbi.microsoft.com/pl-pl/",
-        icon: "Pageview"
-      },
-      {
-        comp: "nextReports",
-        text: "Next Reports",
-        link: "/nextreports",
-        icon: "InsertChartOutlined"
-      },
-      {
-        text: "Planer",
-        icon: "EventIcon",
-        comp: "planer_reports",
-        menus: [
-          {
-            // comp: "planer",
-            text: "Zaplanuj aktywności",
-            link: "/planer",
-            icon: "EventIcon"
-          },
-          {
-            // comp: "raporty",
-            text: "Raporty",
-            link: "/raporty",
-            icon: "EventAvailableIcon"
-          }
-        ]
-      },
-      { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
-      {
-        comp: "invoices",
-        text: "Faktury",
-        link: "/invoices",
-        icon: "ListAlt"
-      },
-      {
-        comp: "customer_details",
-        text: "Informacje o klientach",
-        link: "/customerdetails",
-        icon: "People"
-      },
-      {
-        comp: "calculators",
-        text: "Premie",
-        link: "/calculators",
-        icon: "Money"
-      },
-      {
-        comp: "bonusRules",
-        text: "Regulamin premiowy",
-        link: "/bonusrules",
-        icon: "Description"
-      },
-      {
-        text: "Konfiguracja",
-        comp: "settings",
-        icon: "Settings",
-        // link: "/costs",
-        comps: [
-          {
-            comp: "bonus_system",
-            // icon: "Assignment",
-            text: "Ustawienia premii",
-            menus: [
-              {
-                // comp: "products",
-                text: "Produkty",
-                link: "/products",
-                icon: "LocalOffer"
-              },
-              {
-                // comp: "channels",
-                text: "Systemy prowizyjne",
-                link: "/systems",
-                icon: "Assignment"
-              },
-              {
-                // comp: "users_channels",
-                text: "Pracownicy",
-                link: "/users_channels",
-                icon: "People"
-              }
-            ]
-          },
-          {
-            comp: "users",
-            text: "Użytkownicy",
-            link: "/users",
-            icon: "Person"
-          },
-          {
-            comp: "settings",
-            text: "Ogólne ustawienia",
-            link: "/settings",
-            icon: "Settings"
-          }
-        ]
-      }
-    ];
-
-    const links = [
-      // { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
-      // {
-      //   comp: "planer",
-      //   text: "Aktywności",
-      //   link: "/planer",
-      //   icon: "EventIcon"
-      // },
-      // {
-      //   comp: "raporty",
-      //   text: "Raporty",
-      //   link: "/raporty",
-      //   icon: "EventAvailableIcon"
-      // },
-      // {
-      //   comp: "nextReports",
-      //   text: "Next Reports",
-      //   link: "/nextreports",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "serwis",
-      //   text: "Serwis",
-      //   link: "/serwis",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "chanprodconf",
-      //   text: "Konfiguracja",
-      //   link: "/channelconfiguration",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "products",
-      //   text: "Produkty",
-      //   link: "/products",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "users",
-      //   text: "Użytkownicy",
-      //   link: "/users",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "channels",
-      //   text: "Systemy prowizyjne",
-      //   link: "/systems",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "invoices",
-      //   text: "Faktury",
-      //   link: "/invoices",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "customer_details",
-      //   text: "Informacje o klientach",
-      //   link: "/customerdetails",
-      //   icon: "InsertChartOutlined"
-      // },
-      // {
-      //   comp: "calculators",
-      //   text: "Kalkulatory",
-      //   link: "/calculators",
-      //   icon: "InsertChartOutlined"
-      // }
-      // {
-      //   comp: "channels_config",
-      //   text: "Konfiguracja systemów",
-      //   link: "/configs",
-      //   icon: "InsertChartOutlined"
-      // }
-    ];
     return (
       <Drawer
         variant="permanent"
@@ -323,7 +128,7 @@ class DrawerMy extends React.Component {
         </div>
         {open && <CompanyInfo width={drawerWidth} open={open} auth={auth} />}
         <div>
-          {expLinks.map((el, i) => {
+          {elements(auth ? auth.role : null).map((el, i) => {
             // console.log("el", el);
             const { comp, text, link, icon, comps } = el;
             return (
@@ -340,42 +145,7 @@ class DrawerMy extends React.Component {
               </ShowLinkToComp>
             );
           })}
-          {/* {links.map((el, i) => {
-            const { comp, text, link, icon } = el;
-            return (
-              <ShowLinkToComp key={i} comp={comp}>
-                <DrawerLink key={i} text={text} link={link} icon={icon} />
-              </ShowLinkToComp>
-            );
-          })} */}
         </div>
-        {/* <div>
-          <Button
-            aria-owns={open2 ? "fade-menu" : undefined}
-            aria-haspopup="true"
-            onClick={this.handleClick}
-          >
-            Open with fade transition
-          </Button>
-          <Menu
-            elevation={1}
-            id="fade-menu"
-            anchorEl={anchorEl}
-            open={open2}
-            onClose={this.handleClose}
-            TransitionComponent={Grow}
-            // id="menu-appbar"
-            // anchorEl={anchorEl}
-            getContentAnchorEl={null}
-            anchorOrigin={{ vertical: "center", horizontal: "right" }}
-            transformOrigin={{ vertical: "center", horizontal: "left" }}
-            // className={props.classes.menu}
-          >
-            <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-            <MenuItem onClick={this.handleClose}>My account</MenuItem>
-            <MenuItem onClick={this.handleClose}>Logout</MenuItem>
-          </Menu>
-        </div> */}
       </Drawer>
     );
   }

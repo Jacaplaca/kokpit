@@ -158,6 +158,11 @@ db.planer_raporty.belongsTo(db.planer_klienci, {
   foreignKey: "planer_klienci_id",
   targetKey: "id"
 });
+db.customer_details.belongsTo(db.planer_klienci, {
+  foreignKey: "customerId",
+  targetKey: "id",
+  as: "Customer"
+});
 
 db.planer_klienci.belongsTo(db.clients, {
   foreignKey: "clientId",

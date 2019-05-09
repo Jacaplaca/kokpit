@@ -16,7 +16,8 @@ import CustomerDetailsList from "./Products/ProductsList";
 class CustomerDetails extends Component {
   state = {
     details: null,
-    edited: null
+    edited: null,
+    customersWithDetails: null
   };
 
   componentWillMount() {
@@ -26,13 +27,14 @@ class CustomerDetails extends Component {
   fetching = async () => {
     const data = await axios.get("/api/customerdetail/");
     const details = this.improveData(data.data);
-    // console.log(this.improveData(details));
-    await this.setAsyncState({ details });
+    // console.log(details);
+    const customersWithDetails = details.map(x => x.Customer.id);
+    await this.setAsyncState({ details, customersWithDetails });
   };
 
   handleEdit = async id => {
     const data = await axios.get(`/api/customerdetail/${id}`);
-    console.log("handleedit", id, data);
+    // console.log("handleedit", id, data);
     const edited = this.improveData(data.data);
     console.log("edit", edited);
     // console.log(this.improveData(details));
@@ -68,6 +70,9 @@ class CustomerDetails extends Component {
   improveData = data =>
     data.map(x => {
       let machines = {
+        name: x.Customer.name,
+        kod: x.Customer.adr_Kod,
+        city: x.Customer.adr_Miejscowosc,
         qAgros: 0,
         qCultivators: 0,
         qHarvesters: 0,
@@ -104,7 +109,7 @@ class CustomerDetails extends Component {
   };
 
   render() {
-    const { details, edited } = this.state;
+    const { details, edited, customersWithDetails } = this.state;
     const { auth } = this.props;
     return (
       <div>
@@ -112,14 +117,15 @@ class CustomerDetails extends Component {
           edited={edited}
           cleanEdit={this.handleClean}
           fetching={this.fetching}
+          filledCustomers={customersWithDetails}
         />
         {details && (
           <Paper style={{ padding: 20, marginTop: "1.3rem" }}>
             <CustomerDetailsList
               searchColumns={[
                 "name",
-                "surname",
-                "address",
+                "kod",
+                "city",
                 "phone",
                 { User: ["name", "surname"] }
               ]}
@@ -134,19 +140,19 @@ class CustomerDetails extends Component {
                   id: "name",
                   numeric: false,
                   disablePadding: true,
-                  label: "Imię"
+                  label: "Klient"
                 },
                 {
-                  id: "surname",
+                  id: "kod",
                   numeric: false,
                   disablePadding: true,
-                  label: "Nazwisko"
+                  label: "kod"
                 },
                 {
-                  id: "address",
+                  id: "city",
                   numeric: false,
                   disablePadding: true,
-                  label: "Adres"
+                  label: "Miejscowość"
                 },
                 {
                   id: "phone",

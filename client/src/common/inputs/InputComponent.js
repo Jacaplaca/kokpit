@@ -280,7 +280,7 @@ class InputComponent extends React.Component {
             id="name-helper"
             value={value}
             onChange={event => edytuj(event.target.value)}
-            // type={this.state.showPassword ? "text" : "password"}
+            type={this.state.showPassword ? "text" : "password"}
             // type="number"
             // step="1"
             InputProps={{

@@ -1,5 +1,8 @@
 import React, { Component, PureComponent } from "react";
+import classNames from "classnames";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { withStyles } from "@material-ui/core/styles";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -20,6 +23,20 @@ import {
   Field10,
   Field11
 } from "./Fields";
+
+const styles = theme => ({
+  everyRow: {
+    // borderBottomWidth: 1,
+    // borderBottomStyle: "solid",
+    // borderBottomColor: theme.palette.grey["100"]
+    borderBottom: `1px solid ${theme.palette.grey["300"]}`
+  },
+  rowEven: {
+    backgroundColor: theme.palette.grey["50"]
+    // border: "1px solid red"
+  },
+  rowOdd: {}
+});
 
 class Row extends Component {
   state = {
@@ -78,6 +95,7 @@ class Row extends Component {
 
   render() {
     const {
+      classes,
       isSelected,
       item,
       editedId,
@@ -116,8 +134,15 @@ class Row extends Component {
         tabIndex={-1}
         key={item.id}
         selected={isClicked}
+        className={classNames(
+          classes.everyRow,
+          i % 2 === 0 ? classes.rowEven : classes.rowOdd
+        )}
       >
-        <TableCell padding="checkbox" style={{ maxWidth: 35, width: 35 }}>
+        <TableCell
+          padding="checkbox"
+          style={{ maxWidth: 35, width: 35, borderWidth: 0 }}
+        >
           {disableDelete || (
             <Checkbox
               checked={isSelected}
@@ -175,10 +200,11 @@ class Row extends Component {
           padding="checkbox"
           style={{
             width: 35,
-            borderTopStyle: "solid",
-            borderTopColor: "rgba(224, 224, 224, 1)",
-            // borderTopWidth: channel.length === i -1 ? 0 : 1
-            borderTopWidth: 1
+            borderWidth: 0
+            // borderTopStyle: "solid",
+            // borderTopColor: "rgba(224, 224, 224, 1)",
+            // // borderTopWidth: channel.length === i -1 ? 0 : 1
+            // borderTopWidth: 1
           }}
         >
           {/* <Checkbox checked={is selected} /> */}
@@ -204,7 +230,15 @@ function mapStateToProps({ auth }) {
   return { auth };
 }
 
-export default connect(
-  mapStateToProps,
-  null
+// export default connect(
+//   mapStateToProps,
+//   null
+// )(Row);
+
+export default compose(
+  withStyles(styles, { withTheme: true }),
+  connect(
+    mapStateToProps,
+    null
+  )
 )(Row);

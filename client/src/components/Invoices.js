@@ -120,6 +120,7 @@ class Invoices extends Component {
               // clickOnChannel={this.handleClickOnChannel}
               // delete={this.handleDelete}
               transactions={items}
+              clickedRow={null}
               // headCols={this.state.channels}
               // edit={this.handleEdit}
               clickOnRow={this.handleRowClick}

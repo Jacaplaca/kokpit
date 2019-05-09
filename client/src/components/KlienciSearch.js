@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Info from "@material-ui/icons/Info";
 import Autosuggest from "react-autosuggest";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
@@ -7,24 +8,33 @@ import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import { withStyles } from "@material-ui/core/styles";
+import { dynamicSort } from "../common/functions";
 
 import InputSelectTextField from "../common/inputs/InputSelectTextField";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
 function renderSuggestionsContainer({ containerProps, children, query }) {
+  // const flag = children ? children.props : null;
+  // console.log("renderSuggestionsContainer", flag);
   return <div {...containerProps}>{children}</div>;
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.name, query);
   const parts = parse(suggestion.name, matches);
-  const { adr_Kod, adr_Miejscowosc } = suggestion;
+  const { adr_Kod, adr_Miejscowosc, flag } = suggestion;
   // console.log(suggestion);
 
   return (
     <MenuItem selected={isHighlighted} component="div" dense>
       <div style={{ display: "block", width: "100%" }}>
+        {flag && (
+          <Info
+            color="primary"
+            style={{ fontSize: 23, paddingRight: 5, paddingBottom: 5 }}
+          />
+        )}
         <span>
           {parts.map((part, index) => {
             return part.highlight ? (
@@ -119,34 +129,71 @@ class KlienciSearch extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log("klienci search", this.props.value, nextProps.value);
+    if (nextProps.value && nextProps.value > 0) {
+      this.loadEditedElement(nextProps.value);
+    } else if (nextProps.value === 0) {
+      this.setState({ single: "" });
+    }
+  }
+
+  loadEditedElement = id => {
+    axios.get(`/api/customer/${id}`).then(result => {
+      const fetched = result.data;
+      console.log(fetched);
+      this.setState({
+        single: `${fetched.name} (${fetched.adr_Kod} ${
+          fetched.adr_Miejscowosc
+        })`
+      });
+    });
+  };
+
   randomDelay = () => {
     return 300 + Math.random() * 1000;
   };
 
   loadSuggestions(value) {
-    console.log("loadSuggestions");
+    const { flags } = this.props;
+    console.log("loadSuggestions", flags);
 
     this.setState({
       isLoading: true
     });
     axios.get(`/api/klienci/${value}`).then(result => {
-      const suggestions = result.data;
+      const suggestions = flags
+        ? this.addFlags(result.data, flags)
+        : result.data;
       console.log(suggestions);
 
       if (value === this.state.value) {
         this.setState({
           isLoading: false,
-          suggestions
+          suggestions: suggestions.sort(dynamicSort("name"))
         });
       } else {
         // Ignore suggestions if input value changed
         this.setState({
           isLoading: false,
-          suggestions
+          suggestions: suggestions.sort(dynamicSort("name"))
         });
       }
     });
   }
+
+  addFlags = (list, flags) => {
+    const flaged = list.map(customer => {
+      let obj = customer;
+      for (let flag of flags) {
+        if (flag === customer.id) {
+          obj = Object.assign(customer, { flag: 1 });
+        }
+      }
+      return obj;
+    });
+    return flaged;
+  };
 
   getSuggestionValue = suggestion => {
     const klient = suggestion.name;
@@ -155,7 +202,7 @@ class KlienciSearch extends React.Component {
     const miejscowosc = suggestion.adr_Miejscowosc;
     // if (this.state.single !== "") {
     // }
-    this.props.edytuj(id);
+    this.props.edytuj(id, klient, kod, miejscowosc);
     return `${klient} (${kod} ${miejscowosc})`;
   };
 
@@ -177,6 +224,7 @@ class KlienciSearch extends React.Component {
   };
 
   handleChange = name => (event, { newValue }) => {
+    console.log("KlienciSearchandleChange, name");
     this.setState({
       [name]: newValue
     });

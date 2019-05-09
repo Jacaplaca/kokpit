@@ -7,7 +7,7 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import * as actions from "../../actions";
 import { defineds } from "../../common/functions";
-import MainFrameHOC from "../../common/MainFrameHOC";
+// import MainFrameHOC from "../../common/MainFrameHOC";
 import { dataToString, durationLabel } from "../../common/functions";
 //import SiteHeader from "../common/SiteHeader";
 import ModalWindow from "../ModalWindow";
@@ -19,6 +19,7 @@ import Summary from "./Summary";
 import { greyBackground } from "../../globalStyles";
 import ProductsList from "../Products/ProductsList";
 import ButtonMy from "../../common/ButtonMy";
+import DurationWithButton from "../../common/DurationWithButton";
 
 const styles = theme => ({
   input: {
@@ -82,17 +83,6 @@ class Calculator extends Component {
   setAsyncState = newState =>
     new Promise(resolve => this.setState(newState, () => resolve()));
 
-  // componentWillReceiveProps(nextProps, nextState) {
-  //   // console.log("nextState nextProps", nextState, nextProps);
-  //   const {show} = this.props
-  //   const {}
-  //   if (show !== nextProps.show) {
-  //
-  //   }
-  //
-  //
-  // }
-
   changeRange = data => {
     let { rangeselection } = this.state;
     const durStart = new Date(rangeselection.startDate).getTime();
@@ -128,13 +118,10 @@ class Calculator extends Component {
   handleClose = () => {
     this.setState({ openModal: false });
   };
-  handleCloseDuration = () => {
-    this.setState({ openModalDuration: false });
-  };
 
   handleSelect = ranges => {
     console.log("handleSelect", ranges);
-    const { startDate, endDate } = ranges.rangeselection;
+    // const { startDate, endDate } = ranges.rangeselection;
     this.setState(
       {
         ...ranges
@@ -199,7 +186,7 @@ class Calculator extends Component {
   };
 
   fetchAllTransactionsInRange = async range => {
-    const { channelId, loading } = this.props;
+    const { channelId } = this.props;
     const { startDate, endDate } = this.state.rangeselection;
     const fetched = await axios.get(
       `/api/transactions/${channelId}/${dataToString(startDate)}/${dataToString(
@@ -238,10 +225,10 @@ class Calculator extends Component {
 
   fetchAllChannelUsers = async () => {
     const {
-      channelId,
+      // channelId,
       loading,
-      auth: { user_id, name, surname, role },
-      show
+      auth: { user_id, name, surname, role }
+      // show
     } = this.props;
     loading(true);
     // const { startDate, endDate } = this.state.rangeselection;
@@ -273,7 +260,7 @@ class Calculator extends Component {
   };
 
   handleDelete = async id => {
-    const result = await axios.post(`/api/transaction/delete/${id}`);
+    await axios.post(`/api/transaction/delete/${id}`);
     this.fetchTransactions();
   };
 
@@ -318,7 +305,7 @@ class Calculator extends Component {
 
   render() {
     const { channelId, auth, show } = this.props;
-    const { employees, employee, item, openModalDuration } = this.state;
+    const { employees, employee } = this.state;
     return (
       <React.Fragment>
         <ModalWindow
@@ -375,35 +362,10 @@ class Calculator extends Component {
             // edit={this.state.edit}
           />
         </div>
-        <ButtonMy onClick={() => this.setState({ openModalDuration: true })}>
-          Zakres {durationLabel([this.state.rangeselection])}
-        </ButtonMy>
-        <ModalWindow
-          open={this.state.openModalDuration}
-          close={this.handleCloseDuration}
-          maxWidth={1000}
-        >
-          <Paper>
-            <DateRangePickerMy
-              range={[this.state.rangeselection]}
-              onChange={this.handleSelect}
-              // nopaper
-              defaultExp
-            />
-          </Paper>
-        </ModalWindow>
-        {/* <div
-          style={{
-            // paddingTop: 15,
-            // paddingBottom: 15,
-            backgroundColor: greyBackground
-          }}
-        >
-          <DateRangePickerMy
-            range={[this.state.rangeselection]}
-            onChange={this.handleSelect}
-          />
-        </div> */}
+        <DurationWithButton
+          onChange={this.handleSelect}
+          range={this.state.rangeselection}
+        />
         {this.state.transactions.length > 0 && (
           <div>
             {show && (

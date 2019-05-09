@@ -82,6 +82,22 @@ module.exports = app => {
       res.json(details);
     }
   });
+  app.get("/api/allmodules/", async (req, res) => {
+    // console.log("api/modules");
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
+
+    const [err, details] = await to(
+      Module.findAll({
+        where: {}
+      })
+    );
+    if (!details) {
+      res.sendStatus(500);
+    } else {
+      res.json(details);
+    }
+  });
 
   app.get("/api/modulefirst/", async (req, res) => {
     console.log("api/modules");

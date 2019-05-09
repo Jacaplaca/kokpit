@@ -233,7 +233,7 @@ class DateTimePickerMy extends React.Component {
                   fontWeight: "600"
                 }}
               >
-                Zakres: {durationLabel([range])}
+                Zakres: {durationLabel(range)}
               </span>
             </Typography>
           </ExpansionPanelSummary>

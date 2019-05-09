@@ -102,8 +102,8 @@ const Summary = ({ data }) => {
         >
           <div style={{ ...style.label }}>Imię:</div>
           <div style={{ ...style.content }}>{data.name}</div>
-          <div style={{ ...style.label }}>Nazwisko:</div>
-          <div style={{ ...style.content }}>{data.surname}</div>
+          {/* <div style={{ ...style.label }}>Nazwisko:</div>
+          <div style={{ ...style.content }}>{data.surname}</div> */}
           <div style={{ ...style.label }}>Adres:</div>
           <div style={{ ...style.content }}>{data.address}</div>
           <div style={{ ...style.label }}>Nr tel.:</div>

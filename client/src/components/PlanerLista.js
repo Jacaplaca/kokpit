@@ -129,6 +129,20 @@ class PlanerLista extends Component {
                           : "Wyślij do planu"}
                       </ButtonMy>
                     )}
+                    {role === "master" && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: "50px",
+                          marginTop: "-24px",
+                          color: "grey",
+                          fontSize: 13,
+                          fontWeight: 500
+                        }}
+                      >
+                        {day.values[0].user.name} {day.values[0].user.surname}
+                      </div>
+                    )}
                   </span>
                 </Typography>
               </ExpansionPanelSummary>

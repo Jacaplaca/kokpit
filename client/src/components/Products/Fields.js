@@ -16,7 +16,8 @@ const styleField = {
     paddingLeft: 7,
     borderRightStyle: "solid",
     borderRightColor: "rgba(224, 224, 224, 1)",
-    borderRightWidth: 1
+    borderRightWidth: 1,
+    borderBottomWidth: 0
   },
   contentWithoutRightBorder: {
     paddingRight: 10,
@@ -161,7 +162,7 @@ export const Field2 = ({
     case "channelConfig":
       return <DefaultTC>{row.to}</DefaultTC>;
     case "customerDetails":
-      return <DefaultTC>{row.surname}</DefaultTC>;
+      return <DefaultTC>{row.kod}</DefaultTC>;
     case "transactions":
       return <DefaultTC>{row.ItemTrans.name}</DefaultTC>;
     default:
@@ -194,7 +195,7 @@ export const Field3 = ({ rowType, row }) => {
     case "channelConfig":
       return <DefaultTC>{row.bonusType}</DefaultTC>;
     case "customerDetails":
-      return <DefaultTC>{row.address}</DefaultTC>;
+      return <DefaultTC>{row.city}</DefaultTC>;
     case "transactions":
       return (
         <DefaultTC center>

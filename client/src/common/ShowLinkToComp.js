@@ -5,7 +5,7 @@ const compAllowed = (comps, comp) =>
   comps.filter(x => x.comp === comp).length > 0;
 
 const ShowLinkToComp = ({ children, auth, comp }) => {
-  // console.log("ShowLinkToComp", auth && auth[comp] ? children : null);
+  console.log("ShowLinkToComp", auth && auth[comp] ? children : null);
   return auth && (compAllowed(auth.UserModule, comp) || !comp)
     ? children
     : null;

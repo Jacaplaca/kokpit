@@ -93,7 +93,8 @@ class CustomerForm extends React.Component {
     tractorFilled: null,
     harvesterFilled: null,
     cultivatorFilled: null,
-    agroFilled: null
+    agroFilled: null,
+    customer: { id: 0, name: "", kod: "", miejscowosc: "" }
   };
 
   componentWillReceiveProps(nextProps) {
@@ -107,16 +108,17 @@ class CustomerForm extends React.Component {
       // let tractor, harvester, cultivator, agro;
       const {
         id,
-        name,
-        surname,
-        address,
+        // name,
+        // surname,
+        // address,
         phone,
         field,
         meadow,
         Tractors,
         Harvesters,
         Cultivators,
-        Agros
+        Agros,
+        Customer: { id: idCust, name, adr_Kod, adr_Miejscowosc }
       } = edited[0];
 
       const tractor = this.modifyMachine(Tractors);
@@ -125,7 +127,7 @@ class CustomerForm extends React.Component {
       const cultMod = Cultivators.map(x =>
         Object.assign(x, { brand: "", otherBrand: x.brand, isOK: true })
       );
-      const cultivator = [...cultMod, ...scheme];
+      const cultivator = cultMod.length > 0 ? [...cultMod] : [...scheme];
       const agroMod = Agros.map(x =>
         Object.assign(x, {
           brand: "",
@@ -134,19 +136,25 @@ class CustomerForm extends React.Component {
           isOK: true
         })
       );
-      const agro = [...agroMod, ...scheme];
+      const agro = agroMod.length > 0 ? [...agroMod] : [...scheme];
       this.setState({
         id,
-        name,
-        surname,
-        address,
+        // name,
+        // surname,
+        // address,
         phone,
         field: field.replace(".", ","),
         meadow: meadow.replace(".", ","),
         tractor,
         harvester,
         cultivator,
-        agro
+        agro,
+        customer: {
+          id: idCust,
+          name,
+          kod: adr_Kod,
+          miejscowosc: adr_Miejscowosc
+        }
       });
     }
   }
@@ -160,7 +168,8 @@ class CustomerForm extends React.Component {
         isOK: true
       });
     });
-    return [...mod, ...scheme];
+    return mod.length > 0 ? [...mod] : [...scheme];
+    // return [...mod];
   };
 
   totalSteps = () => getSteps().length;
@@ -236,7 +245,8 @@ class CustomerForm extends React.Component {
       tractor,
       harvester,
       cultivator,
-      agro
+      agro,
+      customer
     } = this.state;
     const url = `/api/customerdetail/`;
 
@@ -255,7 +265,8 @@ class CustomerForm extends React.Component {
         tractor,
         harvester,
         cultivator,
-        agro
+        agro,
+        customerId: customer.id
         // tractor: tractorFilled,
         // harvester: harvesterFilled,
         // cultivator: cultivatorFilled,
@@ -318,8 +329,13 @@ class CustomerForm extends React.Component {
       tractorFilled: null,
       harvesterFilled: null,
       cultivatorFilled: null,
-      agroFilled: null
+      agroFilled: null,
+      customer: { id: 0, name: "", kod: "", miejscowosc: "" }
     });
+  };
+
+  clearCustomer = () => {
+    this.setState({ customer: { id: 0, name: "", kod: "", miejscowosc: "" } });
   };
 
   skippedSteps() {
@@ -415,8 +431,12 @@ class CustomerForm extends React.Component {
 
   validateAddressForm = () => {
     // console.log("validate AddressForm");
-    const { activeStep, name, surname, address, phone } = this.state;
-    if (name !== "" && surname !== "" && address !== "" && phone !== "") {
+    const {
+      activeStep,
+      phone,
+      customer: { id, name }
+    } = this.state;
+    if (id > 0 && name !== "" && phone !== "") {
       // console.log("full");
       // this.setState({acti})
       this.handleComplete();
@@ -432,7 +452,7 @@ class CustomerForm extends React.Component {
   };
 
   render() {
-    const { classes, edited } = this.props;
+    const { classes, edited, filledCustomers } = this.props;
     const steps = getSteps();
     const {
       activeStep,
@@ -450,7 +470,8 @@ class CustomerForm extends React.Component {
       tractorFilled,
       harvesterFilled,
       agroFilled,
-      cultivatorFilled
+      cultivatorFilled,
+      customer
     } = this.state;
 
     return (
@@ -488,19 +509,22 @@ class CustomerForm extends React.Component {
           {activeStep === 0 && (
             <AddressForm
               change={this.handleChange}
-              name={name}
-              surname={surname}
-              address={address}
+              // name={name}
+              // surname={surname}
+              // address={address}
               phone={phone}
+              customer={customer}
+              clearCustomer={this.clearCustomer}
+              filledCustomers={filledCustomers}
             />
           )}
           {activeStep === 1 && (
             <DetailsForm
               brands={tractorBrands}
               change={this.handleChange}
-              name={name}
+              name={customer.name}
               surname={surname}
-              address={address}
+              address={`${customer.kod} ${customer.miejscowosc}`}
               phone={phone}
               tractorBrand={tractorBrand}
               changeMachines={this.handleChangeMachines}
@@ -516,9 +540,9 @@ class CustomerForm extends React.Component {
           {activeStep === 2 && (
             <Summary
               data={{
-                name,
+                name: customer.name,
                 surname,
-                address,
+                address: `${customer.kod} ${customer.miejscowosc}`,
                 phone,
                 tractorBrand,
                 field,
@@ -570,7 +594,7 @@ class CustomerForm extends React.Component {
                     onClick={this.handleSubmit}
                     className={classes.button}
                   >
-                    {edited ? "Edytuj dane klienta" : "Dodaj dane klienta"}
+                    {edited ? "Zapisz dane klienta" : "Dodaj dane klienta"}
                   </Button>
                 )}
               </div>

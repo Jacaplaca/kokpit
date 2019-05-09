@@ -87,10 +87,13 @@ class MiniDrawer extends React.Component {
     this.props.clicked(where);
   };
 
-  compAllowed = (comps, comp) => comps.filter(x => x.comp === comp).length > 0;
+  compAllowed = (comps, comp) => {
+    console.log("comps comp", comps, comp);
+    return comps.filter(x => x.comp === comp).length > 0;
+  };
 
   render() {
-    const { classes, theme, auth } = this.props;
+    const { classes, theme, auth, modules } = this.props;
 
     return (
       <BrowserRouter>
@@ -119,12 +122,12 @@ class MiniDrawer extends React.Component {
             )}
             {auth &&
               routes.map((route, i) => {
-                const { comp, path, component, open } = route;
-                const titlesFromDb = auth.UserModule.filter(
-                  x => x.comp === comp
-                );
-                console.log("auth", comp, titlesFromDb);
-                const titleFromDb = titlesFromDb[0] ? titlesFromDb[0].name : "";
+                const { comp, path, component, open, id } = route;
+                const titles = modules.filter(x => x.id === id);
+                const moduleTitle = titles[0] ? titles[0].name : "";
+                // const titlesFromDb = auth.UserModule.filter(x => x.id === id);
+                // console.log("auth", path, id, comp, titlesFromDb);
+                // const titleFromDb = titlesFromDb[0] ? titlesFromDb[0].name : "";
                 return (auth && this.compAllowed(auth.UserModule, comp)) ||
                   open ? (
                   <Route
@@ -132,7 +135,7 @@ class MiniDrawer extends React.Component {
                     path={path}
                     render={() => (
                       <MyComponent
-                        title={titleFromDb}
+                        title={moduleTitle}
                         component={component}
                         // channel={channel}
                       />
@@ -153,8 +156,8 @@ MiniDrawer.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, modules }) {
+  return { auth, modules };
 }
 
 export default withStyles(styles, { withTheme: true })(

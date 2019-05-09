@@ -39,6 +39,7 @@ import Footer from "../common/Footer";
 class App extends Component {
   componentDidMount() {
     this.props.fetchUser();
+    this.props.fetchModules();
     document.title = `Świadoma Firma - Kokpit`;
     //this.props.loading(true);
   }
