@@ -109,7 +109,7 @@ class PlanerAktywnosciSingle extends Component {
             planer_akt_rodz,
             // miejsce_id,
             // gus_simc,
-            miejsca,
+            place,
             inna,
             // uwagi,
             wyslano,
@@ -158,10 +158,10 @@ class PlanerAktywnosciSingle extends Component {
               <span className={classes.aktywnosc}>
                 {aktywnosc_id === 5 ? inna : planer_akt_rodz.name}{" "}
                 {/* {aktywnosc_id === 1 && gus_simc.nazwa} */}
-                {aktywnosc_id === 1 && shortPlace(miejsca.name)}
+                {aktywnosc_id === 1 && shortPlace(place.name)}
               </span>
               <span className={classes.klient}>
-                {planer_klienci && planer_klienci.nazwa}
+                {planer_klienci && planer_klienci.name}
               </span>
               <RaportyAkcjeIndicator day={day} />
               {role !== "master" && (

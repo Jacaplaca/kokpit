@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { connect } from "react-redux";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -161,13 +163,16 @@ class PlanerRaportyForm extends Component {
     miejsce_id_temp: "",
     miejsceLabel_temp: "",
 
-    datesToReport: []
+    datesToReport: [],
+    customer: { id: 0, name: "", kod: "", miejscowosc: "" },
+    rodo: { short: "rodo", tick: false }
   };
 
   componentWillMount() {
     this.state.id !== this.props.editedId &&
       this.handleEdit(this.props.editedId);
     this.fetchDatesToReport();
+    this.props.fetchCustomersWithDetails();
   }
 
   fetchDatesToReport = () => {
@@ -369,7 +374,7 @@ class PlanerRaportyForm extends Component {
         inna,
         uwagi,
         //gus_simc,
-        miejsca
+        place
       } = result.data;
       const { kiedy } = this.props;
       this.setState({
@@ -379,7 +384,7 @@ class PlanerRaportyForm extends Component {
         miejsce_id,
         inna,
         uwagi,
-        miejsceLabel: miejsca ? miejsca.name : ""
+        miejsceLabel: place ? place.name : ""
         //edited: true
       });
       this.props.edytuj(kiedy);
@@ -440,7 +445,8 @@ class PlanerRaportyForm extends Component {
       nowyKlient: false,
       sprzedaz: false,
       zamowienie: false,
-      zboza: false
+      zboza: false,
+      customer: { id: 0, name: "", kod: "", miejscowosc: "" }
     });
     this.props.edytuj("");
     this.props.modal && this.props.closeModal();
@@ -478,6 +484,11 @@ class PlanerRaportyForm extends Component {
         miejsca,
         planer_klienci
       } = result.data;
+      console.log(
+        "handleedit",
+        result.data
+        // CustomerFlag.filter(x => x.flags_customers.flag_id === 1)
+      );
       this.props.edytuj(kiedy);
       this.setState({
         //kiedy,
@@ -499,7 +510,14 @@ class PlanerRaportyForm extends Component {
         nowyKlient,
         sprzedaz,
         zamowienie,
-        zboza
+        zboza,
+        customer: {
+          id: planer_klienci_id,
+          name: planer_klienci.name,
+          kod: planer_klienci.adr_Kod,
+          miejscowosc: planer_klienci.adr_Miejscowosc
+        },
+        rodo: this.checkRodo(planer_klienci.CustomerFlag)
       });
       this.fetchujDate(kiedy);
       this.props.loading(false);
@@ -521,7 +539,9 @@ class PlanerRaportyForm extends Component {
       nowyKlient,
       sprzedaz,
       zamowienie,
-      zboza
+      zboza,
+      customer,
+      rodo
     } = this.state;
     const { kiedy } = this.props;
     const url = `/api/planerRaporty/edit/${this.props.editedId}`;
@@ -536,14 +556,15 @@ class PlanerRaportyForm extends Component {
         stop,
         aktywnosc_id,
         miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
-        planer_klienci_id,
+        planer_klienci_id: customer.id,
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi,
         nawozy,
         nowyKlient,
         sprzedaz,
         zamowienie,
-        zboza
+        zboza,
+        rodo
       })
     })
       .then(() => {
@@ -574,7 +595,9 @@ class PlanerRaportyForm extends Component {
       nowyKlient,
       sprzedaz,
       zamowienie,
-      zboza
+      zboza,
+      customer,
+      rodo
     } = this.state;
     const { kiedy } = this.props;
     const url = "/api/planerRaporty";
@@ -588,7 +611,7 @@ class PlanerRaportyForm extends Component {
         start,
         stop,
         aktywnosc_id,
-        planer_klienci_id,
+        planer_klienci_id: customer.id,
         miejsce_id: aktywnosc_id === 1 ? miejsce_id : "",
         inna: aktywnosc_id === 5 ? inna : "",
         uwagi,
@@ -596,7 +619,8 @@ class PlanerRaportyForm extends Component {
         nowyKlient,
         sprzedaz,
         zamowienie,
-        zboza
+        zboza,
+        rodo
       })
     })
       .then(resp => resp.json())
@@ -615,6 +639,18 @@ class PlanerRaportyForm extends Component {
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
+  };
+
+  handleChangeCustomer = (field, value, flags) => {
+    this.setState({ [field]: value, rodo: this.checkRodo(flags) });
+  };
+
+  checkRodo = (flags = []) => {
+    const rodo = flags.filter(x => x.short === "rodo");
+    console.log("flags", flags);
+    return rodo.length > 0
+      ? { short: "rodo", tick: true }
+      : { short: "rodo", tick: false };
   };
 
   handleSelect = ranges => {
@@ -636,7 +672,7 @@ class PlanerRaportyForm extends Component {
         //miejsce_id,
         inna,
         //gus_simc,
-        miejsca,
+        place,
         planer_akt_rodz
       } = day;
       // console.log(day);
@@ -658,7 +694,7 @@ class PlanerRaportyForm extends Component {
               ? planer_akt_rodz.name.slice(0, 20)
               : inna.slice(0, 20)
             // } ${gus_simc !== null ? gus_simc.nazwa.slice(0, 20) : ""}`}
-          } ${miejsca !== null ? shortPlace(miejsca.name) : ""}`}
+          } ${place !== null ? shortPlace(place.name) : ""}`}
         </Button>
       );
     });
@@ -669,9 +705,28 @@ class PlanerRaportyForm extends Component {
     this.setState({ [akcja]: !this.state[akcja] });
   };
 
+  clearCustomer = () => {
+    this.setState({
+      customer: { id: 0, name: "", kod: "", miejscowosc: "" },
+      rodo: { short: "rodo", tick: false }
+    });
+  };
+
+  handleClick = event => {
+    console.log("PlanerRaportyForm() click", event);
+    this.setState({ rodo: { short: "rodo", tick: !this.state.rodo.tick } });
+  };
+
   render() {
-    const { classes, modal, edytuj, kiedy, submitCheck } = this.props;
-    const { datesToReport } = this.state;
+    const {
+      classes,
+      modal,
+      edytuj,
+      kiedy,
+      submitCheck,
+      custWithDets
+    } = this.props;
+    const { datesToReport, customer, miejsceLabel, rodo } = this.state;
     const pola = [
       { pole: "nawozy", nazwa: "Nawozy" },
       { pole: "nowyKlient", nazwa: "Nowy klient" },
@@ -691,7 +746,7 @@ class PlanerRaportyForm extends Component {
                 <InputSelectBaza
                   daty={datyDoRaportu => this.setState({ datyDoRaportu })}
                   error={this.state.errorKiedy}
-                  miejsceLabel={this.state.miejsceLabel}
+                  miejsceLabel={miejsceLabel}
                   // miejsceLabel="lublin"
                   // edytujValue={kiedy => {
                   //   this.setState({ kiedy });
@@ -769,35 +824,78 @@ class PlanerRaportyForm extends Component {
                     // test={miejsce_id =>
                     //   this.setState({ miejsce_id_temp: miejsce_id })
                     // }
-                    miejsceLabel={this.state.miejsceLabel}
+                    miejsceLabel={miejsceLabel}
                     edytuj={miejsce_id => this.setState({ miejsce_id })}
                     value={this.state.miejsce_id}
                     cancelLabel={() => this.setState({ miejsceLabel: "" })}
                     wybranoLabel={wybranoLabel =>
                       this.setState({ miejsceLabel: wybranoLabel })
                     }
+                    label="Kod lub miejscowość"
+                    places
                   />
-                  <KlienciSearch
-                    //miejsceLabel={this.state.miejsceLabel.slice(0, 6)}
-                    miejsceLabel={this.state.miejsceLabel.split(" ")[1]}
-                    klientLabel={this.state.klientLabel}
-                    clearLabel={() => this.setState({ klientLabel: "" })}
-                    // miejsceLabel="lublin"
-                    edytuj={id => this.setState({ planer_klienci_id: id })}
-                    value={this.state.planer_klienci_id}
-                    //cancelLabel={() => this.setState({ miejsceLabel: "" })}
-                    label="Klient"
-                    placeholder="Zacznij wpisywać klienta"
-                  />
+                  <Grid container spacing={24}>
+                    <Grid item xs={8}>
+                      <KlienciSearch
+                        flags={custWithDets}
+                        //miejsceLabel={this.state.miejsceLabel.slice(0, 6)}
+                        miejsceLabel={
+                          miejsceLabel ? miejsceLabel.split(" ")[1] : ""
+                        }
+                        klientLabel={""}
+                        clearLabel={this.clearCustomer}
+                        // miejsceLabel="lublin"
+                        edytuj={(id, name, kod, miejscowosc, flags) =>
+                          this.handleChangeCustomer(
+                            "customer",
+                            {
+                              id,
+                              name,
+                              kod,
+                              miejscowosc
+                            },
+                            flags
+                          )
+                        }
+                        value={customer.id}
+                        //cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                        label="Klient"
+                        placeholder="Zacznij wpisywać klienta"
+                      />
+                    </Grid>
+                    {customer.id > 0 && (
+                      <Grid item xs={4}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={rodo.tick}
+                              onChange={event => this.handleClick(event)}
+                              value="rodo"
+                            />
+                          }
+                          label="Zgody RODO?"
+                          labelPlacement="start"
+                        />
+                      </Grid>
+                    )}
+                  </Grid>
                 </div>
               )}
               {/* <InputTime label="Koniec" /> */}
+              {/* <Grid item xs={6}> */}
               <InputComponent
                 label="Uwagi"
                 type="text"
                 edytuj={uwagi => this.setState({ uwagi })}
                 value={this.state.uwagi}
               />
+              {/* </Grid>
+              <Grid item xs={6}>
+                <Checkbox
+                  checked={false}
+                  onClick={event => this.handleClick(event)}
+                />
+              </Grid> */}
               {this.state.aktywnosc_id === 1 && (
                 <div className={classes.chipsContainer}>
                   {pola.map((pole, i) => {
@@ -864,8 +962,11 @@ PlanerRaportyForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ submit: submitCheck }) {
-  return { submitCheck };
+function mapStateToProps({
+  submit: submitCheck,
+  customersWithDetails: custWithDets
+}) {
+  return { submitCheck, custWithDets };
 }
 
 // export default connect(mapStateToProps)(Header);

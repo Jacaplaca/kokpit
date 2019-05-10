@@ -444,6 +444,27 @@ module.exports = app => {
       res.json(details);
     }
   });
+  app.get("/api/customerswithdetails/", async (req, res) => {
+    if (!req.user) res.redirect("/");
+    const { clientId, role, user_id } = req.user;
+    console.log("customer with detail", clientId, user_id);
+
+    const [err, details] = await to(
+      CustomerDetail.findAll({
+        // include: [{ model: PlanerKlienci, as: "Customer" }],
+        where: { clientId },
+        attributes: ["customerId"],
+        raw: true
+      })
+    );
+    console.log("details", details, err);
+    if (!details) {
+      res.sendStatus(500);
+    } else {
+      const customersWithDetail = details.map(x => x.customerId);
+      res.json(customersWithDetail);
+    }
+  });
 
   app.get("/api/customerdetail/:id", async (req, res) => {
     if (!req.user) res.redirect("/");

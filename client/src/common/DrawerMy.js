@@ -101,8 +101,28 @@ const styles = theme => ({
 });
 
 class DrawerMy extends React.Component {
+  state = {
+    anchorEl: null
+  };
+
+  handleClickMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    console.log("handleClose()");
+    this.setState({ anchorEl: null });
+  };
+
   render() {
-    const { classes, theme, auth, open, handleDrawerClose } = this.props;
+    const {
+      classes,
+      theme,
+      auth,
+      open,
+      handleDrawerClose,
+      anchorEl
+    } = this.props;
     return (
       <Drawer
         variant="permanent"
@@ -141,6 +161,9 @@ class DrawerMy extends React.Component {
                   comps={comps}
                   comp={comp}
                   element={el}
+                  open={event => this.handleClickMenu(event)}
+                  anchor={anchorEl}
+                  close={this.handleClose}
                 />
               </ShowLinkToComp>
             );

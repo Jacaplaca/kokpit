@@ -27,6 +27,7 @@ const Aktywnosci = db.planer_aktywnosci;
 const Raporty = db.planer_raporty;
 const Miejsca = db.miejsca;
 const Place = db.places;
+const Flag = db.flags;
 const City = db.gus_simc;
 const Street = db.gus_ulic;
 const Terc = db.gus_terc;
@@ -209,138 +210,26 @@ module.exports = app => {
     }
   });
 
-  app.get("/api/klienci/:query", (req, res, next) => {
-    const query = req.params.query;
-
-    const { user_id, clientId } = req.user;
+  app.get("/api/placesid/:id", (req, res, next) => {
+    const id = req.params.id;
+    console.log(`/api/places/${id}`);
     if (!req.user) {
+      console.log("przekierowanie");
       return res.redirect("/");
     }
-    if (query.length < 3) {
-      res.json([]);
-    } else {
-      PlanerKlienci.findAll({
-        // where: {
-        //   adr_Miejscowosc: { [Op.like]: `${query}%` },
-        //   clientId
-        // },
-        where: {
-          [Op.or]: [
-            { adr_Miejscowosc: { [Op.like]: `${query}%` } },
-            { adr_Kod: { [Op.like]: `${query}%` } },
-            { name: { [Op.like]: `${query}%` } }
-          ],
-          clientId
-        },
-        limit: 100
-      })
-        .then(result => {
-          res.json(result);
-        })
-        .catch(err => {
-          console.log(err);
-          res.sendStatus(500);
-        });
-    }
-  });
-
-  app.get("/api/klienci", (req, res) => {
-    res.json([]);
+    const { user_id, clientId } = req.user;
+    Place.find({
+      where: {
+        id
+      }
+    }).then(result => {
+      return res.json(result);
+    });
   });
 
   app.get("/api/message", (req, res) => {
     const message = req.flash("info");
     res.send(message);
-  });
-
-  app.post("/api/:table/edit/:id", (req, res, next) => {
-    console.log("edytuje aktywnosc api");
-    // const id = req.params.id;
-    const { table, id } = req.params;
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const {
-      kiedy,
-      start,
-      stop,
-      aktywnosc_id,
-      miejsce_id,
-      inna,
-      uwagi
-    } = req.body;
-    const { user_id, clientId } = req.user;
-    const cleanStart = start.replace(" ", "").replace(" ", "");
-    const cleanStop = stop.replace(" ", "").replace(" ", "");
-    switch (table) {
-      case "akt":
-        Aktywnosci.update(
-          {
-            kiedy,
-            start: `${kiedy} ${cleanStart.split(":")[0]}:${
-              cleanStart.split(":")[1]
-            }`,
-            stop: `${kiedy} ${cleanStop.split(":")[0]}:${
-              cleanStop.split(":")[1]
-            }`,
-            aktywnosc_id,
-            miejsce_id: miejsce_id === "" ? null : miejsce_id,
-            inna,
-            uwagi
-          },
-          {
-            where: { user_id, id }
-          }
-        )
-          .then(() => res.end())
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-        break;
-      case "planerRaporty":
-        const {
-          planer_klienci_id,
-          nawozy,
-          nowyKlient,
-          sprzedaz,
-          zamowienie,
-          zboza
-        } = req.body;
-        Raporty.update(
-          {
-            kiedy,
-            start: `${kiedy} ${cleanStart.split(":")[0]}:${
-              cleanStart.split(":")[1]
-            }`,
-            stop: `${kiedy} ${cleanStop.split(":")[0]}:${
-              cleanStop.split(":")[1]
-            }`,
-            aktywnosc_id,
-            miejsce_id: miejsce_id === "" ? null : miejsce_id,
-            planer_klienci_id:
-              planer_klienci_id === "" ? null : planer_klienci_id,
-            inna,
-            uwagi,
-            nawozy,
-            nowyKlient,
-            sprzedaz,
-            zamowienie,
-            zboza
-          },
-          {
-            where: { user_id, id }
-          }
-        )
-          .then(() => res.end())
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-        break;
-      default:
-    }
   });
 
   app.post("/api/cost/remove/:id", (req, res, next) => {
@@ -467,7 +356,7 @@ module.exports = app => {
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
             //{ model: City, attributes: ["nazwa"] },
-            { model: Miejsca, attributes: ["name"] }
+            { model: Place, attributes: ["name"] }
           ],
           where: { user_id, id }
         })
@@ -486,8 +375,17 @@ module.exports = app => {
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
             //{ model: City, attributes: ["nazwa"] },
-            { model: Miejsca, attributes: ["name"] },
-            { model: PlanerKlienci, attributes: ["name"] }
+            { model: Place, attributes: ["name"] },
+            {
+              model: PlanerKlienci,
+              attributes: ["id", "name", "adr_Kod", "adr_Miejscowosc"],
+              include: [
+                {
+                  model: Flag,
+                  as: "CustomerFlag"
+                }
+              ]
+            }
           ],
           where: { user_id, id }
         })
@@ -515,7 +413,7 @@ module.exports = app => {
       include: [
         { model: RodzajAktywnosci, attributes: ["name"] },
         // { model: City, attributes: ["nazwa"] }
-        { model: Miejsca, attributes: ["name"] }
+        { model: Place, attributes: ["name"] }
       ],
       where: { user_id, kiedy: new Date(day) }
     })
@@ -607,57 +505,6 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/planerRaporty/", (req, res, next) => {
-    console.log("/api/planerRaporty/");
-    console.log(req.body);
-    const { clientId, user_id } = req.user;
-    if (!req.user) {
-      return res.redirect("/");
-    }
-    const {
-      kiedy,
-      start,
-      stop,
-      aktywnosc_id,
-      miejsce_id,
-      planer_klienci_id,
-      inna,
-      uwagi,
-      nawozy,
-      nowyKlient,
-      sprzedaz,
-      zamowienie,
-      zboza
-    } = req.body;
-    console.log(miejsce_id);
-    const cleanStart = start.replace(" ", "").replace(" ", "");
-    const cleanStop = stop.replace(" ", "").replace(" ", "");
-    Raporty.create({
-      kiedy,
-      start: `${kiedy} ${cleanStart.split(":")[0]}:${cleanStart.split(":")[1]}`,
-      stop: `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`,
-      aktywnosc_id,
-      miejsce_id: miejsce_id === "" ? null : miejsce_id,
-      inna,
-      uwagi,
-      firma_id: clientId,
-      planer_klienci_id: planer_klienci_id === "" ? null : planer_klienci_id,
-      user_id,
-      nawozy,
-      nowyKlient,
-      sprzedaz,
-      zamowienie,
-      zboza
-    })
-      .then(results => {
-        return res.json(results);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   //Changed for Miejsca
   app.get("/api/table/:table/:zakres", (req, res) => {
     const table = req.params;
@@ -694,7 +541,7 @@ module.exports = app => {
             { model: User, attributes: ["name", "surname", "id"] },
             { model: RodzajAktywnosci, attributes: ["name"] },
             // { model: City, attributes: ["nazwa"] }
-            { model: Miejsca, attributes: ["name"] }
+            { model: Place, attributes: ["name"] }
           ],
           where
         })
@@ -710,8 +557,11 @@ module.exports = app => {
             { model: User, attributes: ["name", "surname", "id"] },
             { model: RodzajAktywnosci, attributes: ["name"] },
             // { model: City, attributes: ["nazwa"] },
-            { model: Miejsca, attributes: ["name"] },
-            { model: PlanerKlienci, attributes: ["name"] }
+            { model: Place, attributes: ["name"] },
+            {
+              model: PlanerKlienci,
+              attributes: ["id", "name", "adr_Kod", "adr_Miejscowosc"]
+            }
           ],
           where: {
             user_id,

@@ -500,6 +500,8 @@ class PlanerAktywnosciForm extends Component {
                   wybranoLabel={wybranoLabel =>
                     this.setState({ miejsceLabel: wybranoLabel })
                   }
+                  label="Kod lub miejscowość"
+                  places
                 />
               )}
 

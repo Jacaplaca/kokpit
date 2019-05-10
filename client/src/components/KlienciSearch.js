@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Info from "@material-ui/icons/Info";
+import Capitol from "@material-ui/icons/AccountBalance";
 import Autosuggest from "react-autosuggest";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
@@ -21,18 +22,38 @@ function renderSuggestionsContainer({ containerProps, children, query }) {
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
+  console.log("renderSuggestion", suggestion);
   const matches = match(suggestion.name, query);
   const parts = parse(suggestion.name, matches);
-  const { adr_Kod, adr_Miejscowosc, flag } = suggestion;
+  const { adr_Kod, adr_Miejscowosc, flag, CustomerFlag } = suggestion;
   // console.log(suggestion);
 
   return (
     <MenuItem selected={isHighlighted} component="div" dense>
       <div style={{ display: "block", width: "100%" }}>
+        {CustomerFlag.map(
+          x =>
+            x.short === "rodo" && (
+              <Capitol
+                color="primary"
+                style={{
+                  fontSize: 21,
+                  paddingRight: 5,
+                  paddingBottom: 5,
+                  opacity: 0.67
+                }}
+              />
+            )
+        )}
         {flag && (
           <Info
             color="primary"
-            style={{ fontSize: 23, paddingRight: 5, paddingBottom: 5 }}
+            style={{
+              fontSize: 21,
+              paddingRight: 5,
+              paddingBottom: 5,
+              opacity: 0.67
+            }}
           />
         )}
         <span>
@@ -161,7 +182,7 @@ class KlienciSearch extends React.Component {
     this.setState({
       isLoading: true
     });
-    axios.get(`/api/klienci/${value}`).then(result => {
+    axios.get(`/api/customers/${value}`).then(result => {
       const suggestions = flags
         ? this.addFlags(result.data, flags)
         : result.data;
@@ -200,9 +221,10 @@ class KlienciSearch extends React.Component {
     const id = suggestion.id;
     const kod = suggestion.adr_Kod;
     const miejscowosc = suggestion.adr_Miejscowosc;
+    const flags = suggestion.CustomerFlag;
     // if (this.state.single !== "") {
     // }
-    this.props.edytuj(id, klient, kod, miejscowosc);
+    this.props.edytuj(id, klient, kod, miejscowosc, flags);
     return `${klient} (${kod} ${miejscowosc})`;
   };
 

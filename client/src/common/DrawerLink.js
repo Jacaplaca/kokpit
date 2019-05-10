@@ -242,6 +242,7 @@ class DrawerLink extends React.Component {
                     classes={classes}
                     nested
                     dark={darkTheme}
+                    close={this.props.close}
                   />
                 );
               } else if (x.menus) {
@@ -251,8 +252,10 @@ class DrawerLink extends React.Component {
                       backgroundColor: lighten(theme.palette.primary.main, 0.92)
                     }}
                     openMenu={openMenu}
-                    click={this.handleClickMenu}
-                    anchorEl={anchorEl}
+                    click={this.props.open}
+                    // click={this.handleClickMenu}
+                    anchorEl={this.props.anchor}
+                    // anchorEl={anchorEl}
                     close={this.handleClose}
                     element={x}
                     classes={classes}
@@ -292,10 +295,12 @@ class DrawerLink extends React.Component {
       //   </Link>
       // </ShowLinkToComp>
       <ItemLink
+        // onMouseOver={() => console.log("asdkfjlsakdfj")}
         click={() => {}}
         element={element}
         classes={classes}
         dark={darkTheme}
+        close={this.props.close}
       />
     );
   }
@@ -305,11 +310,24 @@ const ktoraIkona = icon => {
   return components[icon];
 };
 
-const Item = ({ comp, classes, text, click, nested, icon, dark, anchor }) => (
+const Item = ({
+  comp,
+  classes,
+  text,
+  click,
+  nested,
+  icon,
+  dark,
+  anchor,
+  close
+}) => (
   <ShowLinkToComp comp={comp}>
     <ListItem
       button
-      onClick={click}
+      //tu otwieram menu
+      onMouseOver={click}
+      // onMouseOver={close}
+      // onMouseOut={close}
       className={anchor ? (nested ? classes.itemNested : classes.item) : null}
     >
       {icon && (
@@ -329,7 +347,16 @@ const Item = ({ comp, classes, text, click, nested, icon, dark, anchor }) => (
   </ShowLinkToComp>
 );
 
-const ItemLink = ({ comp, classes, text, click, element, nested, dark }) => (
+const ItemLink = ({
+  comp,
+  classes,
+  text,
+  click,
+  element,
+  nested,
+  dark,
+  close
+}) => (
   <ShowLinkToComp comp={element.comp}>
     {element.link[0] === "h" ? (
       <a target="_blank" href={element.link}>
@@ -339,6 +366,7 @@ const ItemLink = ({ comp, classes, text, click, element, nested, dark }) => (
           nested={nested}
           element={element}
           dark={dark}
+          close={close}
         />
       </a>
     ) : (
@@ -349,14 +377,21 @@ const ItemLink = ({ comp, classes, text, click, element, nested, dark }) => (
           nested={nested}
           element={element}
           dark={dark}
+          close={close}
         />
       </RouterLink>
     )}
   </ShowLinkToComp>
 );
 
-const ListItemMy = ({ click, classes, nested, element, dark }) => (
-  <ListItem button onClick={click} className={classes.main}>
+const ListItemMy = ({ click, classes, nested, element, dark, close }) => (
+  <ListItem
+    button
+    onClick={click}
+    className={classes.main}
+    onMouseOver={() => console.log("ListItemMy")}
+    // onMouseOver={close}
+  >
     {nested || (
       <ListItemIcon className={dark && classes.iconWhite}>
         {ktoraIkona(element.icon)}
@@ -400,6 +435,7 @@ const Menus = ({
       nested={nested}
       dark={dark}
       anchor={anchorEl}
+      close={close}
     />
     <Menu
       PopoverClasses={{

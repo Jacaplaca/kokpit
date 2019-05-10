@@ -63,6 +63,8 @@ const ChannelItems = db.channel_items;
 const Channel = db.sales_channels;
 const Client = db.clients;
 const Module = db.modules;
+const Flag = db.flags;
+const CustomersOfCustomer = db.planer_klienci;
 const Item = db.items;
 const User = db.users;
 const Transaction = db.transactions;
@@ -117,7 +119,7 @@ db.gus_terc_pow.belongsTo(db.gus_terc_woj, {
 //   foreignKey: "miejsce_id",
 //   targetKey: "id"
 // });
-db.planer_aktywnosci.belongsTo(db.miejsca, {
+db.planer_aktywnosci.belongsTo(db.places, {
   foreignKey: "miejsce_id",
   targetKey: "id"
 });
@@ -138,7 +140,7 @@ db.planer_aktywnosci.belongsTo(db.clients, {
 //   foreignKey: "miejsce_id",
 //   targetKey: "id"
 // });
-db.planer_raporty.belongsTo(db.miejsca, {
+db.planer_raporty.belongsTo(db.places, {
   foreignKey: "miejsce_id",
   targetKey: "id"
 });
@@ -154,17 +156,17 @@ db.planer_raporty.belongsTo(db.clients, {
   foreignKey: "firma_id",
   targetKey: "id"
 });
-db.planer_raporty.belongsTo(db.planer_klienci, {
+db.planer_raporty.belongsTo(CustomersOfCustomer, {
   foreignKey: "planer_klienci_id",
   targetKey: "id"
 });
-db.customer_details.belongsTo(db.planer_klienci, {
+db.customer_details.belongsTo(CustomersOfCustomer, {
   foreignKey: "customerId",
   targetKey: "id",
   as: "Customer"
 });
 
-db.planer_klienci.belongsTo(db.clients, {
+CustomersOfCustomer.belongsTo(db.clients, {
   foreignKey: "clientId",
   targetKey: "id"
 });
@@ -173,7 +175,7 @@ db.overdue_payments.belongsTo(db.users, {
   foreignKey: "id_user",
   targetKey: "id"
 });
-db.overdue_payments.belongsTo(db.planer_klienci, {
+db.overdue_payments.belongsTo(CustomersOfCustomer, {
   foreignKey: "id_customer_client",
   targetKey: "id"
 });
@@ -299,6 +301,18 @@ User.belongsToMany(Module, {
   as: "UserModule",
   through: db.modules_users,
   foreignKey: "user_id"
+});
+
+Flag.belongsToMany(CustomersOfCustomer, {
+  as: "FlagCustomer",
+  through: db.flags_customers, //this can be string or a model,
+  foreignKey: "flag_id"
+});
+
+CustomersOfCustomer.belongsToMany(Flag, {
+  as: "CustomerFlag",
+  through: db.flags_customers,
+  foreignKey: "customer_id"
 });
 
 // db.overdue_payments.belongsTo(db.users, {

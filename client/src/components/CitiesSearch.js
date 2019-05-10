@@ -154,6 +154,25 @@ class CitySearch extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log("klienci search", this.props.value, nextProps.value);
+    if (nextProps.value && nextProps.value > 0) {
+      this.loadEditedElement(nextProps.value);
+    } else if (nextProps.value === 0) {
+      this.setState({ single: "" });
+    }
+  }
+
+  loadEditedElement = id => {
+    axios.get(`/api/placesid/${id}`).then(result => {
+      const fetched = result.data;
+      console.log(fetched);
+      this.setState({
+        single: fetched.name
+      });
+    });
+  };
+
   randomDelay = () => {
     return 300 + Math.random() * 1000;
   };
