@@ -102,8 +102,13 @@ const styles = theme => ({
 
 class DrawerMy extends React.Component {
   state = {
-    anchorEl: null
+    anchorEl: null,
+    activeLink: false
   };
+
+  // componentDidUpdate() {
+  //   console.log("drawerMy udpate");
+  // }
 
   handleClickMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -112,6 +117,11 @@ class DrawerMy extends React.Component {
   handleClose = () => {
     console.log("handleClose()");
     this.setState({ anchorEl: null });
+  };
+
+  handleClick = () => {
+    // console.log("drawermy", window.location.pathname);
+    this.setState({ activeLink: window.location.pathname });
   };
 
   render() {
@@ -123,6 +133,7 @@ class DrawerMy extends React.Component {
       handleDrawerClose,
       anchorEl
     } = this.props;
+    const { activeLink } = this.state;
     return (
       <Drawer
         variant="permanent"
@@ -150,7 +161,7 @@ class DrawerMy extends React.Component {
         <div>
           {elements(auth ? auth.role : null).map((el, i) => {
             // console.log("el", el);
-            const { comp, text, link, icon, comps } = el;
+            const { comp, text, link, icon, comps, links } = el;
             return (
               <ShowLinkToComp key={i} comp={comp}>
                 <DrawerLink
@@ -164,6 +175,9 @@ class DrawerMy extends React.Component {
                   open={event => this.handleClickMenu(event)}
                   anchor={anchorEl}
                   close={this.handleClose}
+                  links={links}
+                  path={activeLink}
+                  clickDrawer={this.handleClick}
                 />
               </ShowLinkToComp>
             );

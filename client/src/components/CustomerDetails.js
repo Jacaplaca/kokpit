@@ -12,6 +12,7 @@ import MainFrameHOC from "../common/MainFrameHOC";
 
 import CustomerForm from "./CustomerDetails/CustomerForm";
 import CustomerDetailsList from "./Products/ProductsList";
+import ExpansionWithAbsolute from "../common/ExpansionWithAbsolute";
 
 class CustomerDetails extends Component {
   state = {
@@ -113,12 +114,17 @@ class CustomerDetails extends Component {
     const { auth } = this.props;
     return (
       <div>
-        <CustomerForm
-          edited={edited}
-          cleanEdit={this.handleClean}
-          fetching={this.fetching}
-          filledCustomers={customersWithDetails}
-        />
+        <ExpansionWithAbsolute
+          title="Dodawanie i edycja informacji o klientach"
+          open={auth.role === "master" ? false : true}
+        >
+          <CustomerForm
+            edited={edited}
+            cleanEdit={this.handleClean}
+            fetching={this.fetching}
+            filledCustomers={customersWithDetails}
+          />
+        </ExpansionWithAbsolute>
         {details && (
           <Paper style={{ padding: 20, marginTop: "1.3rem" }}>
             <CustomerDetailsList

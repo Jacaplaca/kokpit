@@ -66,6 +66,10 @@ class Calculators extends Component {
     value: 0
   };
 
+  componentWillReceiveProps(nextProps) {
+    console.log("calculators", this.props, nextProps);
+  }
+
   handleChange = (event, value) => {
     this.setState({ value });
   };

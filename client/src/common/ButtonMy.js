@@ -45,7 +45,9 @@ function ButtonMy(props) {
     progress,
     submit,
     colorMy,
-    type
+    type,
+    title,
+    label
   } = props;
 
   return (
@@ -64,6 +66,7 @@ function ButtonMy(props) {
       style={style}
       size={"small"}
       disabled={disabled ? true : false}
+      title={title}
     >
       {children}
       {progress && submit && (

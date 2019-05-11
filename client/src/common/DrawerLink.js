@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink } from "react-router-dom";
 // import Link from "@material-ui/core/Link";
 import classNames from "classnames";
 import { lighten, darken } from "@material-ui/core/styles/colorManipulator";
-
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
 import Collapse from "@material-ui/core/Collapse";
@@ -14,15 +13,12 @@ import SendIcon from "@material-ui/icons/Send";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import StarBorder from "@material-ui/icons/StarBorder";
-
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
 import Grow from "@material-ui/core/Grow";
-
 import { withStyles } from "@material-ui/core/styles";
-
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -42,7 +38,6 @@ import Description from "@material-ui/icons/Description";
 import ShowLinkToComp from "./ShowLinkToComp";
 import { connect } from "react-redux";
 import * as actions from "../actions";
-
 const styles = theme => ({
   rootButton: {
     color: "white",
@@ -63,6 +58,9 @@ const styles = theme => ({
   listItemTextWhite: { fontSize: "0.9em", color: "white", fontWeight: 500 },
   itemText: {
     padding: "0px 1px"
+  },
+  itemClicked: {
+    backgroundColor: theme.palette.grey["300"]
   },
   expanded: {
     // backgroundColor: "rgb(231, 231, 231, 0.35)",
@@ -133,7 +131,6 @@ const styles = theme => ({
   },
   collapseIcon: { color: "white" }
 });
-
 const components = {
   MoneyIcon: <MoneyIcon />,
   EventIcon: <EventIcon />,
@@ -153,25 +150,68 @@ const components = {
 class DrawerLink extends React.Component {
   state = {
     open: false,
-    anchorEl: null
+    anchorEl: null,
+    active: false
   };
 
+  // componentDidMount() {
+  //   const { links } = this.props;
+  //   // let isActive = []
+  //   const isActive = links.filter(x => x === window.location.pathname);
+  //   isActive.length > 0
+  //     ? this.setState({ active: true })
+  //     : this.setState({ active: false });
+  //
+  //   // console.log(
+  //   //   "DrawerLink DidMount",
+  //   //   this.props.links,
+  //   //   window.location.pathname,
+  //   //   isActive
+  //   // );
+  // }
+
+  componentDidMount() {
+    this.checkIfActive(window.location.path);
+  }
+
   componentWillReceiveProps(nextProps) {
+    // console.log("receive props");
+    // console.log(
+    //   "drawerlink receive props,",
+    //   nextProps.path,
+    //   window.location.pathname
+    // );
+    this.checkIfActive(window.location.path);
+    // if (nextProps.path !== window.location.path) {
+    //   // this.setState({activeLink:})
+    //   this.checkIfActive(window.location.path);
+    // }
     if (!nextProps.openDrawer) {
       this.setState({ open: false });
     }
   }
 
+  checkIfActive = path => {
+    // console.log("active", path, window.location.pathname);
+    const { links } = this.props;
+    const isActive = links.filter(x => x === window.location.pathname);
+    // console.log("active", links, isActive);
+    isActive.length > 0
+      ? this.setState({ active: true })
+      : this.setState({ active: false });
+  };
+
   handleClickMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
+    this.props.clickDrawer();
   };
-
   handleClose = () => {
     this.setState({ anchorEl: null });
+    this.props.clickDrawer();
   };
-
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
+    // this.props.clickDrawer();
   };
 
   render() {
@@ -183,18 +223,22 @@ class DrawerLink extends React.Component {
       icon,
       comps,
       comp,
-      element
+      element,
+      path,
+      clickDrawer
     } = this.props;
-    const { open, anchorEl } = this.state;
-
+    const { open, anchorEl, active } = this.state;
     const openMenu = Boolean(anchorEl);
-
-    console.log("drawerlink", link, text, icon);
+    // console.log("drawerlink", text, active);
     const darkTheme = false;
     return comps ? (
       <div className={classNames(open && classes.expandedBottom)}>
         <div className={classNames(open && classes.expanded)}>
-          <ListItem button onClick={this.handleClick}>
+          <ListItem
+            button
+            onClick={this.handleClick}
+            className={active && classes.itemClicked}
+          >
             <ListItemIcon className={darkTheme && classes.iconWhite}>
               {ktoraIkona(icon)}
             </ListItemIcon>
@@ -237,12 +281,12 @@ class DrawerLink extends React.Component {
                   // </Link>
                   <ItemLink
                     key={i}
-                    click={() => {}}
+                    click={clickDrawer}
                     element={x}
                     classes={classes}
                     nested
                     dark={darkTheme}
-                    close={this.props.close}
+                    active={active}
                   />
                 );
               } else if (x.menus) {
@@ -252,15 +296,14 @@ class DrawerLink extends React.Component {
                       backgroundColor: lighten(theme.palette.primary.main, 0.92)
                     }}
                     openMenu={openMenu}
-                    click={this.props.open}
-                    // click={this.handleClickMenu}
-                    anchorEl={this.props.anchor}
-                    // anchorEl={anchorEl}
+                    click={this.handleClickMenu}
+                    anchorEl={anchorEl}
                     close={this.handleClose}
                     element={x}
                     classes={classes}
                     nested
                     dark={darkTheme}
+                    active={active}
                   />
                 );
               }
@@ -277,6 +320,7 @@ class DrawerLink extends React.Component {
         element={element}
         classes={classes}
         dark={darkTheme}
+        active={active}
         // nested
       />
     ) : (
@@ -295,21 +339,20 @@ class DrawerLink extends React.Component {
       //   </Link>
       // </ShowLinkToComp>
       <ItemLink
-        // onMouseOver={() => console.log("asdkfjlsakdfj")}
-        click={() => {}}
+        click={clickDrawer}
         element={element}
         classes={classes}
         dark={darkTheme}
-        close={this.props.close}
+        active={active}
+        // path={path}
+        // style={{ backgroundColor: "red" }}
       />
     );
   }
 }
-
 const ktoraIkona = icon => {
   return components[icon];
 };
-
 const Item = ({
   comp,
   classes,
@@ -319,34 +362,53 @@ const Item = ({
   icon,
   dark,
   anchor,
-  close
-}) => (
-  <ShowLinkToComp comp={comp}>
-    <ListItem
-      button
-      //tu otwieram menu
-      onMouseOver={click}
-      // onMouseOver={close}
-      // onMouseOut={close}
-      className={anchor ? (nested ? classes.itemNested : classes.item) : null}
-    >
-      {icon && (
-        <ListItemIcon className={dark && classes.iconWhite}>
-          {ktoraIkona(icon)}
-        </ListItemIcon>
-      )}
-      <ListItemText
-        inset={nested}
-        classes={{
-          primary: dark ? classes.listItemTextWhite : classes.listItemText,
-          root: classes.itemText
-        }}
-        primary={text}
-      />
-    </ListItem>
-  </ShowLinkToComp>
-);
-
+  active
+}) => {
+  // console.log("anchor nested active", anchor, nested, active);
+  return (
+    <ShowLinkToComp comp={comp}>
+      <ListItem
+        button
+        onClick={click}
+        className={
+          anchor
+            ? nested
+              ? classes.itemNested
+              : active
+              ? classes.itemClicked
+              : classes.item
+            : active
+            ? classes.itemClicked
+            : null
+        }
+        // className={
+        //   anchor
+        //     ? nested
+        //       ? classes.itemNested
+        //       : active
+        //       ? classes.itemClicked
+        //       : classes.item
+        //     : null
+        // }
+        // className={active && classes.itemClicked}
+      >
+        {icon && (
+          <ListItemIcon className={dark && classes.iconWhite}>
+            {ktoraIkona(icon)}
+          </ListItemIcon>
+        )}
+        <ListItemText
+          inset={nested}
+          classes={{
+            primary: dark ? classes.listItemTextWhite : classes.listItemText,
+            root: classes.itemText
+          }}
+          primary={text}
+        />
+      </ListItem>
+    </ShowLinkToComp>
+  );
+};
 const ItemLink = ({
   comp,
   classes,
@@ -355,7 +417,7 @@ const ItemLink = ({
   element,
   nested,
   dark,
-  close
+  active
 }) => (
   <ShowLinkToComp comp={element.comp}>
     {element.link[0] === "h" ? (
@@ -366,31 +428,39 @@ const ItemLink = ({
           nested={nested}
           element={element}
           dark={dark}
-          close={close}
+          active={active}
         />
       </a>
     ) : (
-      <RouterLink to={element.link} href={element.link}>
+      <RouterLink
+        // params={{ testvalue: "hello" }}
+        to={{
+          state: {
+            name: "asdfasdf"
+          },
+          pathname: element.link
+        }}
+
+        // href={element.link}
+      >
         <ListItemMy
           click={click}
           classes={classes}
           nested={nested}
           element={element}
           dark={dark}
-          close={close}
+          active={active}
         />
       </RouterLink>
     )}
   </ShowLinkToComp>
 );
-
-const ListItemMy = ({ click, classes, nested, element, dark, close }) => (
+const ListItemMy = ({ click, classes, nested, element, dark, active }) => (
   <ListItem
     button
     onClick={click}
-    className={classes.main}
-    onMouseOver={() => console.log("ListItemMy")}
-    // onMouseOver={close}
+    // className={classes.main}
+    className={active && classes.itemClicked}
   >
     {nested || (
       <ListItemIcon className={dark && classes.iconWhite}>
@@ -403,10 +473,19 @@ const ListItemMy = ({ click, classes, nested, element, dark, close }) => (
         primary: dark ? classes.listItemTextWhite : classes.listItemText,
         root: classes.itemText
       }}
+      // primary={isActive(path)}
       primary={element.text}
     />
   </ListItem>
 );
+
+// const isActive = links => {
+//   // const active = links.filter(x => x === window.location.pathname);
+//   // isActive.length > 0
+//   //   ? this.setState({ active: true })
+//   //   : this.setState({ active: false });
+//   return links.toString();
+// };
 
 const Menus = ({
   openMenu,
@@ -416,7 +495,8 @@ const Menus = ({
   element,
   classes,
   nested,
-  dark
+  dark,
+  active
 }) => (
   <div>
     {/* <Button
@@ -435,7 +515,7 @@ const Menus = ({
       nested={nested}
       dark={dark}
       anchor={anchorEl}
-      close={close}
+      active={active}
     />
     <Menu
       PopoverClasses={{
@@ -473,16 +553,13 @@ const Menus = ({
     </Menu>
   </div>
 );
-
 DrawerLink.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired
 };
-
 function mapStateToProps({ auth }) {
   return { auth };
 }
-
 export default withStyles(styles, { withTheme: true })(
   connect(
     mapStateToProps,

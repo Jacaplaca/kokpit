@@ -14,6 +14,15 @@ const styles = theme => ({
   }
 });
 
+const makeNextReportsLink = auth => {
+  const linkFromDB = auth.Company.nextReportsLink;
+  const user = auth.nextReports_user;
+  const pass = auth.nextReports_pass;
+  const fullLink = `${linkFromDB}username=${user}&password=${pass}`;
+  console.log(linkFromDB, user, pass, fullLink);
+  return fullLink;
+};
+
 class NextReports extends React.Component {
   render() {
     return (
@@ -32,7 +41,8 @@ class NextReports extends React.Component {
             width: "100%",
             height: "100%"
           }}
-          src={this.props.auth.Company.nextReportsLink}
+          // src={this.props.auth.Company.nextReportsLink}
+          src={makeNextReportsLink(this.props.auth)}
         />
         {/* <div
           style={{

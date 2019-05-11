@@ -108,6 +108,12 @@ module.exports = (sequelize, Sequelize) => {
       start_comp: {
         type: Sequelize.INTEGER
         // defaultValue: 1
+      },
+      nextReports_user: {
+        type: Sequelize.STRING
+      },
+      nextReports_pass: {
+        type: Sequelize.STRING
       }
     },
     {

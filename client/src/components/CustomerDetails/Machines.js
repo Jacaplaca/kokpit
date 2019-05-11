@@ -251,6 +251,7 @@ const AddButton = ({
   ) {
     return (
       <ButtonMy
+        title="Dodaj następny"
         color="primary"
         aria-label="Add"
         onClick={() => add(group)}
@@ -266,6 +267,7 @@ const AddButton = ({
   ) {
     return (
       <ButtonMy
+        title="Usuń wpis"
         color="primary"
         aria-label="Add"
         onClick={() => remove(group, i)}

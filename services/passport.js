@@ -53,7 +53,9 @@ passport.deserializeUser((user_id, done) => {
         start_comp,
         UserModule,
         Company,
-        SalesChannels
+        SalesChannels,
+        nextReports_user,
+        nextReports_pass
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -70,7 +72,9 @@ passport.deserializeUser((user_id, done) => {
             start_comp,
             UserModule,
             Company,
-            SalesChannels
+            SalesChannels,
+            nextReports_user,
+            nextReports_pass
           })
         );
       } else {

@@ -87,12 +87,13 @@ class SerwisForm extends Component {
     }
   };
 
+  // componentDidUpdate() {
+  //   console.log("calc");
+  // }
+
   componentWillReceiveProps = async nextProps => {
     const { channelId, userId, show } = this.props;
-    console.log(
-      "SerwisForm, componentWillReceiveProps",
-      userId !== nextProps.userId || (show !== nextProps.show && nextProps.show)
-    );
+    // console.log("SerwisForm, componentWillReceiveProps", nextProps);
 
     if (nextProps.edit && nextProps.edit !== this.props.edit) {
       //Perform some operation

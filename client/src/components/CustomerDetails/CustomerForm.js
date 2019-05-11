@@ -36,7 +36,8 @@ const tractorBrands = [
 
 const styles = theme => ({
   root: {
-    width: "100%"
+    width: "100%",
+    padding: 20
   },
   button: {
     marginRight: theme.spacing.unit
@@ -476,95 +477,133 @@ class CustomerForm extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Paper style={{ padding: 20 }}>
-          <Stepper alternativeLabel nonLinear activeStep={activeStep}>
-            {steps.map((label, index) => {
-              const props = {};
-              const buttonProps = {};
-              const labelProps = {};
-              // if (this.isStepOptional(index)) {
-              //   buttonProps.optional = (
-              //     <Typography variant="caption">Optional</Typography>
-              //   );
-              // }
-              if (this.isStepSkipped(index)) {
-                props.completed = false;
-              }
-              // labelProps.disabled = true;
+        <Stepper alternativeLabel nonLinear activeStep={activeStep}>
+          {steps.map((label, index) => {
+            const props = {};
+            const buttonProps = {};
+            const labelProps = {};
+            // if (this.isStepOptional(index)) {
+            //   buttonProps.optional = (
+            //     <Typography variant="caption">Optional</Typography>
+            //   );
+            // }
+            if (this.isStepSkipped(index)) {
+              props.completed = false;
+            }
+            // labelProps.disabled = true;
 
-              props.disabled = this.checkIfPrevComplete(index);
-              return (
-                <Step key={label} {...props}>
-                  <StepButton
-                    onClick={this.handleStep(index)}
-                    completed={this.isStepComplete(index)}
-                    {...buttonProps}
-                  >
-                    <StepLabel {...labelProps}>{label}</StepLabel>
-                  </StepButton>
-                </Step>
-              );
-            })}
-          </Stepper>
-          {activeStep === 0 && (
-            <AddressForm
-              change={this.handleChange}
-              // name={name}
-              // surname={surname}
-              // address={address}
-              phone={phone}
-              customer={customer}
-              clearCustomer={this.clearCustomer}
-              filledCustomers={filledCustomers}
-            />
-          )}
-          {activeStep === 1 && (
-            <DetailsForm
-              brands={tractorBrands}
-              change={this.handleChange}
-              name={customer.name}
-              surname={surname}
-              address={`${customer.kod} ${customer.miejscowosc}`}
-              phone={phone}
-              tractorBrand={tractorBrand}
-              changeMachines={this.handleChangeMachines}
-              data={{ tractor, harvester, agro, cultivator }}
-              addMachine={this.addMachine}
-              removeMachine={this.removeMachine}
-              field={field}
-              meadow={meadow}
-              changeSimple={this.handleChange}
-              filledMachines={this.filledMachines}
-            />
-          )}
-          {activeStep === 2 && (
-            <Summary
-              data={{
-                name: customer.name,
-                surname,
-                address: `${customer.kod} ${customer.miejscowosc}`,
-                phone,
-                tractorBrand,
-                field,
-                meadow,
-                // tractor: tractorFilled,
-                // harvester: harvesterFilled,
-                // cultivator: cultivatorFilled,
-                // agro: agroFilled,
-                tractor,
-                harvester,
-                cultivator,
-                agro
-              }}
-            />
-          )}
-          <div style={{ marginTop: 10 }}>
-            {this.allStepsCompleted() ? (
-              <div>
-                {/* <Typography className={classes.instructions}>
+            props.disabled = this.checkIfPrevComplete(index);
+            return (
+              <Step key={label} {...props}>
+                <StepButton
+                  onClick={this.handleStep(index)}
+                  completed={this.isStepComplete(index)}
+                  {...buttonProps}
+                >
+                  <StepLabel {...labelProps}>{label}</StepLabel>
+                </StepButton>
+              </Step>
+            );
+          })}
+        </Stepper>
+        {activeStep === 0 && (
+          <AddressForm
+            change={this.handleChange}
+            // name={name}
+            // surname={surname}
+            // address={address}
+            phone={phone}
+            customer={customer}
+            clearCustomer={this.clearCustomer}
+            filledCustomers={filledCustomers}
+          />
+        )}
+        {activeStep === 1 && (
+          <DetailsForm
+            brands={tractorBrands}
+            change={this.handleChange}
+            name={customer.name}
+            surname={surname}
+            address={`${customer.kod} ${customer.miejscowosc}`}
+            phone={phone}
+            tractorBrand={tractorBrand}
+            changeMachines={this.handleChangeMachines}
+            data={{ tractor, harvester, agro, cultivator }}
+            addMachine={this.addMachine}
+            removeMachine={this.removeMachine}
+            field={field}
+            meadow={meadow}
+            changeSimple={this.handleChange}
+            filledMachines={this.filledMachines}
+          />
+        )}
+        {activeStep === 2 && (
+          <Summary
+            data={{
+              name: customer.name,
+              surname,
+              address: `${customer.kod} ${customer.miejscowosc}`,
+              phone,
+              tractorBrand,
+              field,
+              meadow,
+              // tractor: tractorFilled,
+              // harvester: harvesterFilled,
+              // cultivator: cultivatorFilled,
+              // agro: agroFilled,
+              tractor,
+              harvester,
+              cultivator,
+              agro
+            }}
+          />
+        )}
+        <div style={{ marginTop: 10 }}>
+          {this.allStepsCompleted() ? (
+            <div>
+              {/* <Typography className={classes.instructions}>
                   All steps completed - you&apos;re finished
                 </Typography> */}
 
+              <Button
+                disabled={activeStep === 0}
+                onClick={this.handleBack}
+                className={classes.button}
+              >
+                Wróć
+              </Button>
+              {activeStep !== 2 && (
+                <Button
+                  disabled={
+                    !this.isStepComplete(activeStep) || activeStep === 2
+                  }
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleNext}
+                  className={classes.button}
+                >
+                  {activeStep === 1 && "Dalej"}
+                  {activeStep === 0 && "Dalej"}
+                  {activeStep === 2 && "Następny krok"}
+                </Button>
+              )}
+              {activeStep === 2 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleSubmit}
+                  className={classes.button}
+                >
+                  {edited ? "Zapisz dane klienta" : "Dodaj dane klienta"}
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div>
+              <Typography className={classes.instructions}>
+                {/* {getStepContent(activeStep)} */}
+              </Typography>
+              <div>
                 <Button
                   disabled={activeStep === 0}
                   onClick={this.handleBack}
@@ -572,70 +611,31 @@ class CustomerForm extends React.Component {
                 >
                   Wróć
                 </Button>
-                {activeStep !== 2 && (
-                  <Button
-                    disabled={
-                      !this.isStepComplete(activeStep) || activeStep === 2
-                    }
-                    variant="contained"
-                    color="primary"
-                    onClick={this.handleNext}
-                    className={classes.button}
-                  >
-                    {activeStep === 1 && "Podsumowanie"}
-                    {activeStep === 0 && "Dane szczegółowe"}
-                    {activeStep === 2 && "Następny krok"}
-                  </Button>
-                )}
-                {activeStep === 2 && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={this.handleSubmit}
-                    className={classes.button}
-                  >
-                    {edited ? "Zapisz dane klienta" : "Dodaj dane klienta"}
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div>
-                <Typography className={classes.instructions}>
-                  {/* {getStepContent(activeStep)} */}
-                </Typography>
-                <div>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={this.handleBack}
-                    className={classes.button}
-                  >
-                    Wróć
-                  </Button>
-                  <Button
-                    disabled={!this.isStepComplete(activeStep)}
-                    variant="contained"
-                    color="primary"
-                    onClick={this.handleNext}
-                    className={classes.button}
-                  >
-                    {activeStep === 1 && "Podsumowanie"}
-                    {activeStep === 0 && "Dane szczegółowe"}
-                    {activeStep === 2 && "Następny krok"}
-                  </Button>
-                  <Button onClick={this.handleReset}>Resetuj formularz</Button>
-                  {this.isStepOptional(activeStep) &&
-                    !this.state.completed.has(this.state.activeStep) && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={this.handleSkip}
-                        className={classes.button}
-                      >
-                        Skip
-                      </Button>
-                    )}
+                <Button
+                  disabled={!this.isStepComplete(activeStep)}
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleNext}
+                  className={classes.button}
+                >
+                  {activeStep === 1 && "Dalej"}
+                  {activeStep === 0 && "Dalej"}
+                  {activeStep === 2 && "Następny krok"}
+                </Button>
+                <Button onClick={this.handleReset}>Resetuj formularz</Button>
+                {/* {this.isStepOptional(activeStep) &&
+                  !this.state.completed.has(this.state.activeStep) && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={this.handleSkip}
+                      className={classes.button}
+                    >
+                      Skip
+                    </Button>
+                  )} */}
 
-                  {/* {activeStep !== steps.length &&
+                {/* {activeStep !== steps.length &&
                     (this.state.completed.has(this.state.activeStep) ? (
                       <Typography
                         variant="caption"
@@ -654,11 +654,10 @@ class CustomerForm extends React.Component {
                           : "Complete Step"}
                       </Button>
                     ))} */}
-                </div>
               </div>
-            )}
-          </div>
-        </Paper>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

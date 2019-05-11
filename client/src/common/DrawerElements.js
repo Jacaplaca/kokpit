@@ -3,18 +3,21 @@ export const elements = role => [
     comp: "powerBi",
     text: "Power BI",
     link: "https://powerbi.microsoft.com/pl-pl/",
-    icon: "Pageview"
+    icon: "Pageview",
+    links: []
   },
   {
     comp: "nextReports",
     text: "Next Reports",
     link: "/nextreports",
-    icon: "InsertChartOutlined"
+    icon: "InsertChartOutlined",
+    links: ["/nextreports"]
   },
   {
     text: "Planer",
     icon: "EventIcon",
     comp: "planer_reports",
+    links: ["/planer", "/raporty"],
     menus: [
       // {
       //   comp: "nextReports",
@@ -36,35 +39,46 @@ export const elements = role => [
       }
     ]
   },
-  { comp: "costs", text: "Koszty", link: "/costs", icon: "MoneyIcon" },
+  {
+    comp: "costs",
+    text: "Koszty",
+    link: "/costs",
+    icon: "MoneyIcon",
+    links: ["/costs"]
+  },
   {
     comp: "invoices",
     text: "Faktury",
     link: "/invoices",
-    icon: "ListAlt"
+    icon: "ListAlt",
+    links: ["/invoices"]
   },
   {
     comp: "customer_details",
     text: "Informacje o klientach",
     link: "/customerdetails",
-    icon: "People"
+    icon: "People",
+    links: ["/customerdetails"]
   },
   {
     comp: "calculators",
     text: "Kalkulator premiowy",
     link: "/calculators",
-    icon: "Money"
+    icon: "Money",
+    links: ["/calculators"]
   },
   {
     comp: "bonusRules",
     text: "Regulamin premiowy",
     link: "/bonusrules",
-    icon: "Description"
+    icon: "Description",
+    links: ["/bonusrules"]
   },
   {
     text: "Konfiguracja",
     comp: "settings",
     icon: "Settings",
+    links: ["/products", "/systems", "/users_channels", "/users", "/settings"],
     // link: "/costs",
     comps: [
       {
@@ -96,13 +110,15 @@ export const elements = role => [
         comp: "users",
         text: "Użytkownicy",
         link: "/users",
-        icon: "Person"
+        icon: "Person",
+        links: ["/users"]
       },
       {
         comp: "settings",
         text: "Ogólne ustawienia",
         link: "/settings",
-        icon: "Settings"
+        icon: "Settings",
+        links: ["/settings"]
       }
     ]
   }

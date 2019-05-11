@@ -29,6 +29,10 @@ class ExpansionWithAbsolute extends React.Component {
     expanded: null
   };
 
+  componentDidMount() {
+    this.props.open && this.setState({ expanded: "panel1" });
+  }
+
   handleChange = panel => (event, expanded) => {
     this.setState({
       expanded: expanded ? panel : false
