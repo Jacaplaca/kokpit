@@ -24,42 +24,48 @@ const routes = [
     comp: "start",
     path: "/start",
     component: Start,
-    id: 0
+    id: 0,
+    parrentId: 0
     // title: "Start"
   },
   {
     comp: "costs",
     path: "/costs",
     component: Costs,
-    id: 8
+    id: 8,
+    parrentId: 8
     // title: "Dodaj koszty"
   },
   {
     comp: "planer_reports",
     path: "/planer",
     component: Planer,
-    id: 17
+    id: 17,
+    parrentId: 24
     // title: "Zaplanuj aktywności"
   },
   {
     comp: "planer_reports",
     path: "/raporty",
     component: PlanerRaport,
-    id: 3
+    id: 3,
+    parrentId: 24
     // title: "Dodaj raport z aktywności"
   },
   {
     comp: "nextReports",
     path: "/nextreports",
     component: NextReports,
-    id: 4
+    id: 4,
+    parrentId: 4
     // title: ""
   },
   {
     comp: "powerBi",
     path: "/powerbi",
     component: PowerBI,
-    id: 22
+    id: 22,
+    parrentId: 22
     // title: ""
   },
   // {
@@ -81,7 +87,8 @@ const routes = [
     comp: "bonus_system",
     path: "/products",
     component: Products,
-    id: 25
+    id: 25,
+    parrentId: 25
     // title: "Produkty"
     //channel: auth ? auth.channel_first : 0
   },
@@ -89,7 +96,8 @@ const routes = [
     comp: "bonus_system",
     path: "/systems",
     component: Channels,
-    id: 26
+    id: 26,
+    parrentId: 26
     // title: "Systemy prowizyjne"
     //channel: auth ? auth.channel_first : 0
   },
@@ -97,7 +105,8 @@ const routes = [
     comp: "bonus_system",
     path: "/users_channels",
     component: UsersChannels,
-    id: 27
+    id: 27,
+    parrentId: 27
     // id: 20
     // title: "Dodaj koszty"
   },
@@ -105,7 +114,8 @@ const routes = [
     comp: "users",
     path: "/users",
     component: Users,
-    id: 1
+    id: 1,
+    parrentId: 1
     // title: "Użytkownicy"
     //channel: auth ? auth.channel_first : 0
   },
@@ -120,7 +130,8 @@ const routes = [
     comp: "invoices",
     path: "/invoices",
     component: Invoices,
-    id: 10
+    id: 10,
+    parrentId: 10
     // title: "Zaległe faktury"
     //channel: auth ? auth.channel_first : 0
   },
@@ -130,14 +141,16 @@ const routes = [
     component: CustomerDetails,
     // title: "Informacje o klientach",
     // open: true,
-    id: 12
+    id: 12,
+    parrentId: 12
     //channel: auth ? auth.channel_first : 0
   },
   {
     comp: "calculators",
     path: "/calculators",
     component: Calculators,
-    id: 11
+    id: 11,
+    parrentId: 11
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0
@@ -146,7 +159,8 @@ const routes = [
     comp: "settings",
     path: "/settings",
     component: Settings,
-    id: 21
+    id: 21,
+    parrentId: 21
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0
@@ -155,7 +169,8 @@ const routes = [
     comp: "bonusRules",
     path: "/bonusrules",
     component: BonusRules,
-    id: 23
+    id: 23,
+    parrentId: 23
     // title: "Kalkulatory"
     // open: true
     //channel: auth ? auth.channel_first : 0
