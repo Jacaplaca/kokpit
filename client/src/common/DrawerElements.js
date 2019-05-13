@@ -28,10 +28,7 @@ export const elements = auth => {
         // }
         {
           // comp: "planer",
-          text:
-            auth && auth.role === "master"
-              ? "Aktywności"
-              : "Zaplanuj aktywności",
+          text: "Aktywności",
           link: "/planer",
           icon: "EventIcon"
         },

@@ -88,9 +88,9 @@ class MiniDrawer extends React.Component {
     this.props.clicked(where);
   };
 
-  compAllowed = (comps, comp) => {
-    console.log("comps comp", comps, comp);
-    return comps.filter(x => x.comp === comp).length > 0;
+  compAllowed = (comps, id) => {
+    console.log("comps comp", comps, id);
+    return comps.filter(x => x.id === id).length > 0;
   };
 
   render() {
@@ -130,7 +130,7 @@ class MiniDrawer extends React.Component {
                 // const titlesFromDb = auth.UserModule.filter(x => x.id === id);
                 // console.log("auth", path, id, comp, titlesFromDb);
                 // const titleFromDb = titlesFromDb[0] ? titlesFromDb[0].name : "";
-                return (auth && this.compAllowed(auth.UserModule, comp)) ||
+                return (auth && this.compAllowed(auth.UserModule, id)) ||
                   open ? (
                   <Route
                     key={i}

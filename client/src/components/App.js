@@ -41,7 +41,7 @@ class App extends Component {
     this.props.fetchUser();
     this.props.fetchModules();
     document.title = `Świadoma Firma - Kokpit`;
-    console.log("auth", this.props);
+    // console.log("auth", this.props);
     //this.props.loading(true);
   }
 
