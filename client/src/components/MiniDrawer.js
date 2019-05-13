@@ -88,8 +88,14 @@ class MiniDrawer extends React.Component {
     this.props.clicked(where);
   };
 
-  compAllowed = (comps, id) => {
-    console.log("comps comp", comps, id);
+  compAllowed = (comps, id, comp) => {
+    console.log(
+      "comps comp",
+      comps,
+      id,
+      comp,
+      comps.filter(x => x.id === id).length
+    );
     return comps.filter(x => x.id === id).length > 0;
   };
 
@@ -127,11 +133,11 @@ class MiniDrawer extends React.Component {
                 const { comp, path, component, open, id } = route;
                 const titles = modules.filter(x => x.id === id);
                 const moduleTitle = titles[0] ? titles[0].name : "";
-                // console.log('route ');
+                // console.log("route", comp, path);
                 // const titlesFromDb = auth.UserModule.filter(x => x.id === id);
                 // console.log("auth", path, id, comp, titlesFromDb);
                 // const titleFromDb = titlesFromDb[0] ? titlesFromDb[0].name : "";
-                return (auth && this.compAllowed(auth.UserModule, id)) ||
+                return (auth && this.compAllowed(auth.UserModule, id, comp)) ||
                   open ? (
                   <Route
                     key={i}
