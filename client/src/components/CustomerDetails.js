@@ -18,11 +18,15 @@ class CustomerDetails extends Component {
   state = {
     details: null,
     edited: null,
-    customersWithDetails: null
+    customersWithDetails: null,
+    openForm: true
   };
 
   componentWillMount() {
     this.fetching();
+    this.setState({
+      openForm: this.props.auth.role === "master" ? false : true
+    });
   }
 
   fetching = async () => {
@@ -39,6 +43,7 @@ class CustomerDetails extends Component {
     const edited = this.improveData(data.data);
     console.log("edit", edited);
     // console.log(this.improveData(details));
+    await this.setAsyncState({ openForm: true });
     await this.setAsyncState({ edited });
 
     // const { items, editedId } = this.state;
@@ -110,13 +115,13 @@ class CustomerDetails extends Component {
   };
 
   render() {
-    const { details, edited, customersWithDetails } = this.state;
+    const { details, edited, customersWithDetails, openForm } = this.state;
     const { auth } = this.props;
     return (
       <div>
         <ExpansionWithAbsolute
           title="Dodawanie i edycja informacji o klientach"
-          open={auth.role === "master" ? false : true}
+          open={openForm}
         >
           <CustomerForm
             edited={edited}

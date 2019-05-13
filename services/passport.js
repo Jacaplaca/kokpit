@@ -55,7 +55,8 @@ passport.deserializeUser((user_id, done) => {
         Company,
         SalesChannels,
         nextReports_user,
-        nextReports_pass
+        nextReports_pass,
+        filesToDownload
       } = result;
       // console.log(result);
       if (result.status === "active") {
@@ -74,7 +75,8 @@ passport.deserializeUser((user_id, done) => {
             Company,
             SalesChannels,
             nextReports_user,
-            nextReports_pass
+            nextReports_pass,
+            filesToDownload
           })
         );
       } else {

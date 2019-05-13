@@ -119,7 +119,8 @@ class MachinesForm extends React.Component {
       <div
         style={{
           padding: 10,
-          backgroundColor: "rgba(232, 232, 232, 0.4)"
+          backgroundColor: "rgba(232, 232, 232, 0.4)",
+          maxWidth: 870
         }}
       >
         <h6 style={{ fontWeight: 700 }}>{label.toUpperCase()}</h6>

@@ -5,6 +5,7 @@ import {
   MuiThemeProvider,
   withStyles
 } from "@material-ui/core/styles";
+import deepOrange from "@material-ui/core/colors/deepOrange";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -37,16 +38,19 @@ const MainFrameHOC = WrappedComponent => {
               // backgroundColor: "red"
             }
           }
+        },
+        palette: {
+          secondary: deepOrange
         }
       });
 
       return (
-        <div id="MainFrameHOC" style={styles.container}>
-          <div style={{ display: "inline-flex" }}>
-            <SiteHeader text={this.props.title} />
-            {this.props.help && (
-              <div>
-                <MuiThemeProvider theme={theme}>
+        <MuiThemeProvider theme={theme}>
+          <div id="MainFrameHOC" style={styles.container}>
+            <div style={{ display: "inline-flex" }}>
+              <SiteHeader text={this.props.title} />
+              {this.props.help && (
+                <div>
                   <Tooltip
                     disableFocusListener
                     title={this.props.help}
@@ -54,12 +58,12 @@ const MainFrameHOC = WrappedComponent => {
                   >
                     <div style={{ marginLeft: 5 }}>(?)</div>
                   </Tooltip>
-                </MuiThemeProvider>
-              </div>
-            )}
+                </div>
+              )}
+            </div>
+            <WrappedComponent {...this.props} />
           </div>
-          <WrappedComponent {...this.props} />
-        </div>
+        </MuiThemeProvider>
       );
     }
   };

@@ -203,7 +203,7 @@ class KlienciSearch extends React.Component {
     });
   }
 
-  addFlags = (list, flags) => {
+  addFlags = (list = [], flags) => {
     const flaged = list.map(customer => {
       let obj = customer;
       for (let flag of flags) {

@@ -61,7 +61,7 @@ class TopNavBar extends React.Component {
         return;
       case false:
         return [
-          <ButtonNavBar key="1a" link="/register" text="Rejestracja" />,
+          // <ButtonNavBar key="1a" link="/register" text="Rejestracja" />,
           <ButtonNavBar key="2b" link="/login" text="Logowanie" />
         ];
       default:

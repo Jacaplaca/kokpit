@@ -65,12 +65,12 @@ module.exports = app => {
     }
     const { user_id, clientId, role } = req.user;
     console.log("trans remove id", id.split(","));
-    let where = {};
-    if (role === "master") {
-      where = { clientId, id: id.split(",") };
-    } else {
-      where = { clientId, userId: user_id, id: id.split(",") };
-    }
+    let where = { clientId, id: id.split(",") };
+    // if (role === "master") {
+    //   where = { clientId, id: id.split(",") };
+    // } else {
+    //   where = { clientId, userId: user_id, id: id.split(",") };
+    // }
     CustomerDetail.destroy({
       where
     })
@@ -434,7 +434,8 @@ module.exports = app => {
           },
           { model: PlanerKlienci, as: "Customer" }
         ],
-        where: role === "master" ? { clientId } : { clientId, userId: user_id }
+        where: { clientId }
+        // where: role === "master" ? { clientId } : { clientId, userId: user_id }
       })
     );
     console.log("details", details, err);
@@ -471,12 +472,12 @@ module.exports = app => {
     const id = req.params.id;
     const { clientId, role, user_id } = req.user;
     // console.log("customer detail", clientId, user_id, id);
-    let where = {};
-    if (role === "master") {
-      where = { clientId, id };
-    } else {
-      where = { clientId, userId: user_id, id };
-    }
+    let where = { clientId, id };
+    // if (role === "master") {
+    //   where = { clientId, id };
+    // } else {
+    //   where = { clientId, userId: user_id, id };
+    // }
 
     const [err, details] = await to(
       CustomerDetail.findAll({

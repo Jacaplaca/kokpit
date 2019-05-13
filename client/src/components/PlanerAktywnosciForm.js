@@ -111,16 +111,17 @@ class PlanerAktywnosciForm extends Component {
         : true;
     const pelnaData = data.length === 10 ? true : false;
 
-    if (pelnaData) {
-      if (nalezy) {
-        this.setState({ errorKiedy: false });
-        return true;
-      }
-      this.setState({ errorKiedy: true });
-      return false;
-    }
-    this.setState({ errorKiedy: false });
-    return false;
+    // if (pelnaData) {
+    //   if (nalezy) {
+    //     this.setState({ errorKiedy: false });
+    //     return true;
+    //   }
+    //   this.setState({ errorKiedy: true });
+    //   return false;
+    // }
+    // this.setState({ errorKiedy: false });
+    // return false;
+    return true;
   };
 
   validateTime = (time, pole) => {

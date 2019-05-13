@@ -4,18 +4,16 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
 import MainFrameHOC from "../common/MainFrameHOC";
+const host = window.location.hostname;
+
+// const articleContent = `<a href="http://kokpit.swiadomafirma.pl/vitalzam/Kokpit wprowadzenie.docx" download>Kokpit - wprowadzenie</a></br><a href="http://kokpit.swiadomafirma.pl/vitalzam/Komunikat premiowy 201903.odt" download>Komunikat premiowy - marzec 2019r.</a></br><a href="http://kokpit.swiadomafirma.pl/vitalzam/Konfiguracja towarów 201903.xlsx" download>Konfiguracja towarów - marzec 2019r.</a></br><a href="http://kokpit.swiadomafirma.pl/vitalzam/Regulamin_premiowania_20190228.odt" download>Regulamin premiowania - 28 luty 2019r.</a></br>`;
 
 const BonusRules = props => {
   console.log("propsbonus", props);
   return (
     <div>
-      Nisi si commodo hic cupidatat quid id officia philosophari id esse de
-      offendit sed export, quorum occaecat senserit. Si eram a dolore sed multos
-      quo ea fugiat offendit an voluptate do anim ullamco nam officia quae legam
-      consequat tamen, ex duis eruditionem, te noster malis id aliquip, ad minim
-      quid aute fabulas, anim hic nam tempor ullamco. Sed esse sempiternum.Anim
-      nam hic irure nostrud. Sed quorum proident do ad mentitum ubi aliquip.
-      Quis vidisse e concursionibus.
+      {/* <Markup content={articleContent} /> */}
+      <td dangerouslySetInnerHTML={{ __html: props.auth.filesToDownload }} />
     </div>
   );
 };

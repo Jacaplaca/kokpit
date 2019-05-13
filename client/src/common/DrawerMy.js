@@ -159,7 +159,7 @@ class DrawerMy extends React.Component {
         </div>
         {open && <CompanyInfo width={drawerWidth} open={open} auth={auth} />}
         <div>
-          {elements(auth ? auth.role : null).map((el, i) => {
+          {elements(auth).map((el, i) => {
             // console.log("el", el);
             const { comp, text, link, icon, comps, links } = el;
             return (

@@ -53,39 +53,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         defaultValue: 1
       },
-      costs: {
-        type: Sequelize.TINYINT
-      },
-      planer: {
-        type: Sequelize.TINYINT
-      },
-      raporty: {
-        type: Sequelize.TINYINT
-      },
-      nextReports: {
-        type: Sequelize.TINYINT
-      },
-      serwis: {
-        type: Sequelize.TINYINT
-      },
-      chanprodconf: {
-        type: Sequelize.TINYINT
-      },
-      products: {
-        type: Sequelize.TINYINT
-      },
-      users: {
-        type: Sequelize.TINYINT
-      },
-      channels: {
-        type: Sequelize.TINYINT
-      },
-      channels_config: {
-        type: Sequelize.TINYINT
-      },
-      invoices: {
-        type: Sequelize.TINYINT
-      },
       nr_telefonu: {
         type: Sequelize.STRING
       },
@@ -97,14 +64,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         defaultValue: 1
       },
-      customer_details: {
-        type: Sequelize.INTEGER,
-        defaultValue: 1
-      },
-      calculators: {
-        type: Sequelize.INTEGER,
-        defaultValue: 1
-      },
       start_comp: {
         type: Sequelize.INTEGER
         // defaultValue: 1
@@ -113,6 +72,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },
       nextReports_pass: {
+        type: Sequelize.STRING
+      },
+      filesToDownload: {
         type: Sequelize.STRING
       }
     },

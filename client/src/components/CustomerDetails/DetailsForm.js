@@ -77,9 +77,11 @@ const DetailsForm = ({
         style={{
           display: "grid",
           gridGap: "1rem",
-          gridTemplateColumns: `1fr auto`
+          // gridTemplateColumns: `1fr auto`
           // gridTemplateColumns: `1fr minmax(300px, 1fr)`
-          // padding: "1.3rem"
+          // padding: "1.3rem",
+          // textAlign: "center"
+          justifyContent: "center"
         }}
       >
         <Machines

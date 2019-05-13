@@ -30,7 +30,11 @@ class ExpansionWithAbsolute extends React.Component {
   };
 
   componentDidMount() {
-    this.props.open && this.setState({ expanded: "panel1" });
+    this.props.open && this.setState({ expanded: true });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ expanded: nextProps.open });
   }
 
   handleChange = panel => (event, expanded) => {
@@ -45,11 +49,11 @@ class ExpansionWithAbsolute extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Paper elevation={expanded === "panel1" ? 2 : 0}>
+        <Paper elevation={expanded === true ? 2 : 0}>
           <ExpansionPanel
-            elevation={expanded === "panel1" ? 0 : 2}
-            expanded={expanded === "panel1"}
-            onChange={this.handleChange("panel1")}
+            elevation={expanded === true ? 0 : 2}
+            expanded={expanded === true}
+            onChange={this.handleChange(true)}
           >
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
               <Typography className={classes.heading}>{title}</Typography>
@@ -58,10 +62,10 @@ class ExpansionWithAbsolute extends React.Component {
             </Typography> */}
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: "block" }}>
-              {expanded !== "panel1" && children}
+              {expanded !== true && children}
             </ExpansionPanelDetails>
           </ExpansionPanel>
-          {expanded === "panel1" && children}
+          {expanded === true && children}
         </Paper>
       </div>
     );

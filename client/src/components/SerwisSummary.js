@@ -1,5 +1,7 @@
 import React, { useState, Component } from "react";
 import { Formik } from "formik";
+import { withStyles } from "@material-ui/core/styles";
+import { fade } from "@material-ui/core/styles/colorManipulator";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import InputComponent from "../common/inputs/InputComponent";
@@ -56,7 +58,8 @@ class SerwisSummary extends Component {
       marginUnit,
       gross,
       grossMargin,
-      bonusUnit
+      bonusUnit,
+      classes
     } = this.props;
 
     const styles = {
@@ -87,13 +90,7 @@ class SerwisSummary extends Component {
           // grid-template-areas: 1fr
         }}
       >
-        <div
-          style={{
-            padding: 20,
-            background: "rgba(245, 0, 87, 0.06) none repeat scroll 0% 0%",
-            borderRadius: 3
-          }}
-        >
+        <div className={classes.summaryBox}>
           <h6
             style={{
               color: "rgb(64, 64, 64)",
@@ -162,14 +159,7 @@ class SerwisSummary extends Component {
         </div>
         {/* {bonus > 0 && ( */}
 
-        <div
-          style={{
-            padding: 10,
-            display: "grid",
-            background: "rgba(245, 0, 87, 0.63) none repeat scroll 0% 0%",
-            borderRadius: 3
-          }}
-        >
+        <div className={classes.bonusBox}>
           <div
             container
             spacing={0}
@@ -222,6 +212,21 @@ class SerwisSummary extends Component {
   }
 }
 
+const styles = theme => ({
+  bonusBox: {
+    padding: 10,
+    display: "grid",
+    background: theme.palette.secondary.main,
+    borderRadius: 3
+  },
+  summaryBox: {
+    padding: 20,
+    background: fade(theme.palette.secondary.main, 0.06)
+  }
+});
+
 InputComponent.defaultProps = {};
 
-export default SerwisSummary;
+// export default SerwisSummary;
+
+export default withStyles(styles, { withTheme: true })(SerwisSummary);

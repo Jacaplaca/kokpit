@@ -128,7 +128,7 @@ class PlanerAktywnosciSingle extends Component {
                   color="primary"
                   className={classes.button}
                   aria-label="Add to shopping cart"
-                  disabled={wyslano ? true : false}
+                  // disabled={wyslano ? true : false}
                 >
                   <Edit />
                 </IconButton>
@@ -176,7 +176,7 @@ class PlanerAktywnosciSingle extends Component {
                   aria-label="Delete"
                   // onClick={() => this.handleDelete(id)}
                   onClick={() => this.setState({ open: true, id })}
-                  disabled={wyslano ? true : false}
+                  // disabled={wyslano ? true : false}
                 >
                   <DeleteIcon />
                 </IconButton>

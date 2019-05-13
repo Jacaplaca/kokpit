@@ -1,80 +1,86 @@
-export const elements = role => [
-  {
-    comp: "powerBi",
-    text: "Power BI",
-    link: "https://powerbi.microsoft.com/pl-pl/",
-    icon: "Pageview",
-    links: []
-  },
-  {
-    comp: "nextReports",
-    text: "Next Reports",
-    link: "/nextreports",
-    icon: "InsertChartOutlined",
-    links: ["/nextreports"]
-  },
-  {
-    text: "Planer",
-    icon: "EventIcon",
-    comp: "planer_reports",
-    links: ["/planer", "/raporty"],
-    menus: [
-      // {
-      //   comp: "nextReports",
-      //   text: "Next Reports",
-      //   link: "/nextreports",
-      //   icon: "InsertChartOutlined"
-      // }
-      {
-        // comp: "planer",
-        text: role && role === "master" ? "Aktywności" : "Zaplanuj aktywności",
-        link: "/planer",
-        icon: "EventIcon"
-      },
-      {
-        // comp: "raporty",
-        text: "Raporty",
-        link: "/raporty",
-        icon: "EventAvailableIcon"
-      }
-    ]
-  },
-  {
-    comp: "costs",
-    text: "Koszty",
-    link: "/costs",
-    icon: "MoneyIcon",
-    links: ["/costs"]
-  },
-  {
-    comp: "invoices",
-    text: "Faktury",
-    link: "/invoices",
-    icon: "ListAlt",
-    links: ["/invoices"]
-  },
-  {
-    comp: "customer_details",
-    text: "Informacje o klientach",
-    link: "/customerdetails",
-    icon: "People",
-    links: ["/customerdetails"]
-  },
-  {
-    comp: "calculators",
-    text: "Kalkulator premiowy",
-    link: "/calculators",
-    icon: "Money",
-    links: ["/calculators"]
-  },
-  {
-    comp: "bonusRules",
-    text: "Regulamin premiowy",
-    link: "/bonusrules",
-    icon: "Description",
-    links: ["/bonusrules"]
-  },
-  {
+export const elements = auth => {
+  const elementsStandard = [
+    {
+      comp: "powerBi",
+      text: "Power BI",
+      link: "https://powerbi.microsoft.com/pl-pl/",
+      icon: "Pageview",
+      links: []
+    },
+    {
+      comp: "nextReports",
+      text: "Next Reports",
+      link: "/nextreports",
+      icon: "InsertChartOutlined",
+      links: ["/nextreports"]
+    },
+    {
+      text: "Planer",
+      icon: "EventIcon",
+      comp: "planer_reports",
+      links: ["/planer", "/raporty"],
+      menus: [
+        // {
+        //   comp: "nextReports",
+        //   text: "Next Reports",
+        //   link: "/nextreports",
+        //   icon: "InsertChartOutlined"
+        // }
+        {
+          // comp: "planer",
+          text:
+            auth && auth.role === "master"
+              ? "Aktywności"
+              : "Zaplanuj aktywności",
+          link: "/planer",
+          icon: "EventIcon"
+        },
+        {
+          // comp: "raporty",
+          text: "Raporty",
+          link: "/raporty",
+          icon: "EventAvailableIcon"
+        }
+      ]
+    },
+    {
+      comp: "costs",
+      text: "Koszty",
+      link: "/costs",
+      icon: "MoneyIcon",
+      links: ["/costs"]
+    },
+    {
+      comp: "invoices",
+      text: "Faktury",
+      link: "/invoices",
+      icon: "ListAlt",
+      links: ["/invoices"]
+    },
+    {
+      comp: "customer_details",
+      text: "Informacje o klientach",
+      link: "/customerdetails",
+      icon: "People",
+      links: ["/customerdetails"]
+    },
+    {
+      comp: "calculators",
+      text: "Kalkulator premiowy",
+      link: "/calculators",
+      icon: "Money",
+      links: ["/calculators"]
+    },
+    {
+      comp: "bonusRules",
+      text: "Pliki do pobrania",
+      link: "/bonusrules",
+      icon: "Description",
+      links: ["/bonusrules"]
+    }
+  ];
+
+  const elementsKonfig = {
     text: "Konfiguracja",
     comp: "settings",
     icon: "Settings",
@@ -121,5 +127,13 @@ export const elements = role => [
         links: ["/settings"]
       }
     ]
-  }
-];
+  };
+
+  let elements = elementsStandard;
+  elements =
+    auth && auth.clientId === 2
+      ? elementsStandard
+      : Object.assign(elementsStandard, elementsKonfig);
+
+  return elements;
+};

@@ -1,6 +1,8 @@
 import React, { useState, Component } from "react";
 import { Formik } from "formik";
 import _ from "lodash";
+import { withStyles } from "@material-ui/core/styles";
+import { fade } from "@material-ui/core/styles/colorManipulator";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import InputComponent from "../../common/inputs/InputComponent";
@@ -20,17 +22,6 @@ import {
 import FormButtons from "../../common/FormButtons";
 import Send from "@material-ui/icons/Send";
 import SerwisSummary from "../SerwisSummary";
-
-const styles = {
-  toFill: {
-    backgroundColor: "rgb(254, 240, 245)",
-    borderRadius: 4
-  },
-  filled: {
-    backgroundColor: "white",
-    borderRadius: 4
-  }
-};
 
 class SerwisForm extends Component {
   state = {
@@ -1147,4 +1138,28 @@ InputComponent.defaultProps = {
   modal: false
 };
 
-export default SerwisForm;
+const styles = {
+  toFill: {
+    backgroundColor: "rgba(255, 61, 0, 0.06)",
+    borderRadius: 4
+  },
+  filled: {
+    backgroundColor: "white",
+    borderRadius: 4
+  }
+};
+
+const styles2 = theme => ({
+  bonusBox: {
+    padding: 10,
+    display: "grid",
+    background: theme.palette.secondary.main,
+    borderRadius: 3
+  },
+  summaryBox: {
+    padding: 20,
+    background: fade(theme.palette.secondary.main, 0.06)
+  }
+});
+
+export default withStyles(styles2, { withTheme: true })(SerwisForm);
