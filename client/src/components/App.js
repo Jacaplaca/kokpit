@@ -41,6 +41,7 @@ class App extends Component {
     this.props.fetchUser();
     this.props.fetchModules();
     document.title = `Świadoma Firma - Kokpit`;
+    console.log("auth", this.props);
     //this.props.loading(true);
   }
 
@@ -118,7 +119,13 @@ class App extends Component {
   }
 }
 
+function mapStateToProps({ auth }) {
+  return {
+    auth
+  };
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   actions
 )(App);

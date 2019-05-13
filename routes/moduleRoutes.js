@@ -92,7 +92,7 @@ module.exports = app => {
         where: {}
       })
     );
-    console.log("details", details);
+    // console.log("details", details);
     if (!details) {
       res.sendStatus(500);
     } else {

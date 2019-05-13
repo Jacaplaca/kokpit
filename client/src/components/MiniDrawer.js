@@ -73,6 +73,7 @@ class MiniDrawer extends React.Component {
 
   componentDidMount = () => {
     drawerWidth = this.props.auth !== false ? 240 : 0;
+    console.log("minidrawer", this.props.auth);
   };
 
   handleDrawerOpen = () => {
@@ -93,6 +94,7 @@ class MiniDrawer extends React.Component {
   };
 
   render() {
+    console.log("minidrawer render");
     const { classes, theme, auth, modules } = this.props;
 
     return (
