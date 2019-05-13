@@ -14,32 +14,32 @@ export const elements = auth => {
       icon: "InsertChartOutlined",
       links: ["/nextreports"]
     },
-    {
-      text: "Planer",
-      icon: "EventIcon",
-      comp: "planer_reports",
-      links: ["/planer", "/raporty"],
-      menus: [
-        // {
-        //   comp: "nextReports",
-        //   text: "Next Reports",
-        //   link: "/nextreports",
-        //   icon: "InsertChartOutlined"
-        // }
-        {
-          // comp: "planer",
-          text: "Aktywności",
-          link: "/planer",
-          icon: "EventIcon"
-        },
-        {
-          // comp: "raporty",
-          text: "Raporty",
-          link: "/raporty",
-          icon: "EventAvailableIcon"
-        }
-      ]
-    },
+    // {
+    //   text: "Planer",
+    //   icon: "EventIcon",
+    //   comp: "planer_reports",
+    //   links: ["/planer", "/raporty"],
+    //   menus: [
+    //     // {
+    //     //   comp: "nextReports",
+    //     //   text: "Next Reports",
+    //     //   link: "/nextreports",
+    //     //   icon: "InsertChartOutlined"
+    //     // }
+    //     {
+    //       // comp: "planer",
+    //       text: "Aktywności",
+    //       link: "/planer",
+    //       icon: "EventIcon"
+    //     },
+    //     {
+    //       // comp: "raporty",
+    //       text: "Raporty",
+    //       link: "/raporty",
+    //       icon: "EventAvailableIcon"
+    //     }
+    //   ]
+    // },
     {
       comp: "costs",
       text: "Koszty",
