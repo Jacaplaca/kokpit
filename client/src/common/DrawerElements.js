@@ -1,19 +1,19 @@
 export const elements = auth => {
   const elementsStandard = [
-    // {
-    //   comp: "powerBi",
-    //   text: "Power BI",
-    //   link: "https://powerbi.microsoft.com/pl-pl/",
-    //   icon: "Pageview",
-    //   links: []
-    // },
-    // {
-    //   comp: "nextReports",
-    //   text: "Next Reports",
-    //   link: "/nextreports",
-    //   icon: "InsertChartOutlined",
-    //   links: ["/nextreports"]
-    // },
+    {
+      comp: "powerBi",
+      text: "Power BI",
+      link: "https://powerbi.microsoft.com/pl-pl/",
+      icon: "Pageview",
+      links: []
+    },
+    {
+      comp: "nextReports",
+      text: "Next Reports",
+      link: "/nextreports",
+      icon: "InsertChartOutlined",
+      links: ["/nextreports"]
+    },
     // {
     //   text: "Planer",
     //   icon: "EventIcon",
@@ -40,97 +40,105 @@ export const elements = auth => {
     //     }
     //   ]
     // },
-    // {
-    //   comp: "costs",
-    //   text: "Koszty",
-    //   link: "/costs",
-    //   icon: "MoneyIcon",
-    //   links: ["/costs"]
-    // },
-    // {
-    //   comp: "invoices",
-    //   text: "Faktury",
-    //   link: "/invoices",
-    //   icon: "ListAlt",
-    //   links: ["/invoices"]
-    // },
-    // {
-    //   comp: "customer_details",
-    //   text: "Informacje o klientach",
-    //   link: "/customerdetails",
-    //   icon: "People",
-    //   links: ["/customerdetails"]
-    // },
-    // {
-    //   comp: "calculators",
-    //   text: "Kalkulator premiowy",
-    //   link: "/calculators",
-    //   icon: "Money",
-    //   links: ["/calculators"]
-    // },
-    // {
-    //   comp: "bonusRules",
-    //   text: "Pliki do pobrania",
-    //   link: "/bonusrules",
-    //   icon: "Description",
-    //   links: ["/bonusrules"]
-    // }
+    {
+      comp: "costs",
+      text: "Koszty",
+      link: "/costs",
+      icon: "MoneyIcon",
+      links: ["/costs"]
+    },
+    {
+      comp: "invoices",
+      text: "Faktury",
+      link: "/invoices",
+      icon: "ListAlt",
+      links: ["/invoices"]
+    },
+    {
+      comp: "customer_details",
+      text: "Informacje o klientach",
+      link: "/customerdetails",
+      icon: "People",
+      links: ["/customerdetails"]
+    },
+    {
+      comp: "calculators",
+      text: "Kalkulator premiowy",
+      link: "/calculators",
+      icon: "Money",
+      links: ["/calculators"]
+    },
+    {
+      comp: "bonusRules",
+      text: "Pliki do pobrania",
+      link: "/bonusrules",
+      icon: "Description",
+      links: ["/bonusrules"]
+    }
   ];
 
-  const elementsKonfig = {
-    text: "Konfiguracja",
-    comp: "settings",
-    icon: "Settings",
-    links: ["/products", "/systems", "/users_channels", "/users", "/settings"],
-    // link: "/costs",
-    comps: [
-      {
-        comp: "bonus_system",
-        // icon: "Assignment",
-        text: "Ustawienia premii",
-        menus: [
-          {
-            // comp: "products",
-            text: "Produkty",
-            link: "/products",
-            icon: "LocalOffer"
-          },
-          {
-            // comp: "channels",
-            text: "Systemy prowizyjne",
-            link: "/systems",
-            icon: "Assignment"
-          },
-          {
-            // comp: "users_channels",
-            text: "Pracownicy",
-            link: "/users_channels",
-            icon: "People"
-          }
-        ]
-      },
-      {
-        comp: "users",
-        text: "Użytkownicy",
-        link: "/users",
-        icon: "Person",
-        links: ["/users"]
-      },
-      {
-        comp: "settings",
-        text: "Ogólne ustawienia",
-        link: "/settings",
-        icon: "Settings",
-        links: ["/settings"]
-      }
-    ]
-  };
+  const elementsKonfig = [
+    {
+      text: "Konfiguracja",
+      comp: "settings",
+      icon: "Settings",
+      links: [
+        "/products",
+        "/systems",
+        "/users_channels",
+        "/users",
+        "/settings"
+      ],
+      // link: "/costs",
+      comps: [
+        {
+          comp: "bonus_system",
+          // icon: "Assignment",
+          text: "Ustawienia premii",
+          menus: [
+            {
+              // comp: "products",
+              text: "Produkty",
+              link: "/products",
+              icon: "LocalOffer"
+            },
+            {
+              // comp: "channels",
+              text: "Systemy prowizyjne",
+              link: "/systems",
+              icon: "Assignment"
+            },
+            {
+              // comp: "users_channels",
+              text: "Pracownicy",
+              link: "/users_channels",
+              icon: "People"
+            }
+          ]
+        },
+        {
+          comp: "users",
+          text: "Użytkownicy",
+          link: "/users",
+          icon: "Person",
+          links: ["/users"]
+        },
+        {
+          comp: "settings",
+          text: "Ogólne ustawienia",
+          link: "/settings",
+          icon: "Settings",
+          links: ["/settings"]
+        }
+      ]
+    }
+  ];
 
-  let elements = elementsStandard;
-  elements =
-    auth && auth.clientId === 2
-      ? elementsStandard
-      : Object.assign(elementsStandard, elementsKonfig);
+  // let elements = elementsStandard;
+  // elements =
+  //   auth && auth.clientId === 2
+  //     ? elementsStandard
+  //     : Object.assign(elementsStandard, elementsKonfig);
 
-  return elements;
+  return [];
 };
