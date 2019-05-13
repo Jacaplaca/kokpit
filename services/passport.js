@@ -21,7 +21,7 @@ passport.serializeUser((user_id, done) => {
 });
 
 passport.deserializeUser((user_id, done) => {
-  console.log("deserializeUser");
+  console.log("deserializeUser", user_id);
   // console.log(user_id);
   const id = user_id.user_id;
   User.findById(id, {
@@ -63,21 +63,22 @@ passport.deserializeUser((user_id, done) => {
         // console.log(result.status);
         done(
           null,
-          Object.assign(user_id, {
-            clientId,
-            id_client_soft,
-            email,
-            role,
-            name,
-            surname,
-            start_comp,
-            UserModule,
-            Company,
-            SalesChannels,
-            nextReports_user,
-            nextReports_pass,
-            filesToDownload
-          })
+          result
+          // Object.assign(user_id, {
+          //   clientId,
+          //   id_client_soft,
+          //   email,
+          //   role,
+          //   name,
+          //   surname,
+          //   start_comp,
+          //   UserModule,
+          //   Company,
+          //   SalesChannels,
+          //   nextReports_user,
+          //   nextReports_pass,
+          //   filesToDownload
+          // })
         );
       } else {
         console.log("konto zostalo zawieszone");
