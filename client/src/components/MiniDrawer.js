@@ -127,6 +127,7 @@ class MiniDrawer extends React.Component {
                 const { comp, path, component, open, id } = route;
                 const titles = modules.filter(x => x.id === id);
                 const moduleTitle = titles[0] ? titles[0].name : "";
+                // console.log('route ');
                 // const titlesFromDb = auth.UserModule.filter(x => x.id === id);
                 // console.log("auth", path, id, comp, titlesFromDb);
                 // const titleFromDb = titlesFromDb[0] ? titlesFromDb[0].name : "";

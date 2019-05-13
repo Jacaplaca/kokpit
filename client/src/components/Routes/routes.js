@@ -34,20 +34,20 @@ const routes = [
     id: 8
     // title: "Dodaj koszty"
   },
-  {
-    comp: "planer_reports",
-    path: "/planer",
-    component: Planer,
-    id: 17
-    // title: "Zaplanuj aktywności"
-  },
-  {
-    comp: "planer_reports",
-    path: "/raporty",
-    component: PlanerRaport,
-    id: 3
-    // title: "Dodaj raport z aktywności"
-  },
+  // {
+  //   comp: "planer_reports",
+  //   path: "/planer",
+  //   component: Planer,
+  //   id: 17
+  //   // title: "Zaplanuj aktywności"
+  // },
+  // {
+  //   comp: "planer_reports",
+  //   path: "/raporty",
+  //   component: PlanerRaport,
+  //   id: 3
+  //   // title: "Dodaj raport z aktywności"
+  // },
   {
     comp: "nextReports",
     path: "/nextreports",
