@@ -63,7 +63,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId, role } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     console.log("trans remove id", id.split(","));
     let where = { clientId, id: id.split(",") };
     // if (role === "master") {
@@ -106,7 +106,8 @@ module.exports = app => {
   app.post("/api/customerdetail", async (req, res) => {
     // console.log("customer_details", req.body);
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
+    console.log("user", req.user);
     //
     // const { channel_id, item_id } = req.params;
     // console.log("channelId itemId", channel_id, item_id);
@@ -405,7 +406,7 @@ module.exports = app => {
   //
   app.get("/api/customerdetail/", async (req, res) => {
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     console.log("customer detail", clientId, user_id);
 
     const [err, details] = await to(
@@ -447,7 +448,7 @@ module.exports = app => {
   });
   app.get("/api/customerswithdetails/", async (req, res) => {
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     console.log("customer with detail", clientId, user_id);
 
     const [err, details] = await to(
@@ -470,7 +471,7 @@ module.exports = app => {
   app.get("/api/customerdetail/:id", async (req, res) => {
     if (!req.user) res.redirect("/");
     const id = req.params.id;
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     // console.log("customer detail", clientId, user_id, id);
     let where = { clientId, id };
     // if (role === "master") {
