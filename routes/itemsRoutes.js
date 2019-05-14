@@ -15,7 +15,7 @@ module.exports = app => {
     console.log("api/item/");
     console.log(req.body);
     const { channelId } = req.params;
-    const { clientId, user_id } = req.user;
+    const { clientId, id: user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -42,7 +42,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     const form = Object.assign(req.body, { clientId, userId: user_id });
     // console.log(req.body);
     Item.update(form, {
@@ -61,7 +61,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     console.log("trans remove id", id.split(","));
     Item.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {
@@ -103,7 +103,7 @@ module.exports = app => {
   app.get("/api/allitem/channel/", async (req, res) => {
     console.log("allitem/channel");
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
 
     const [err, items] = await to(
       Item.findAll({
@@ -146,7 +146,7 @@ module.exports = app => {
     const { channelId } = req.params;
     console.log(`allitem/channel/${channelId}`);
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
 
     const query = {
       include: [

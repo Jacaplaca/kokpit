@@ -10,7 +10,7 @@ const Op = Sequelize.Op;
 const to = require("await-to-js").default;
 module.exports = app => {
   app.get("/api/client/", async (req, res, next) => {
-    const { clientId, user_id } = req.user;
+    const { clientId } = req.user;
     console.log("get api/client", clientId);
     if (!req.user) {
       return res.redirect("/");
@@ -31,7 +31,7 @@ module.exports = app => {
     // console.log(req.body);
     const { file, name } = req.body;
     // const { id } = req.params;
-    const { clientId, user_id } = req.user;
+    const { clientId } = req.user;
     console.log("put api/client", file, clientId);
     const newName = file ? file.split("/")[1] : null;
     if (!req.user) {

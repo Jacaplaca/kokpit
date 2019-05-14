@@ -34,7 +34,7 @@ module.exports = app => {
   app.post("/api/planerRaporty/", async (req, res, next) => {
     console.log("/api/planerRaporty/");
     console.log(req.body);
-    const { clientId, user_id } = req.user;
+    const { clientId, id: user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -108,7 +108,7 @@ module.exports = app => {
       inna,
       uwagi
     } = req.body;
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     const cleanStart = start.replace(" ", "").replace(" ", "");
     const cleanStop = stop.replace(" ", "").replace(" ", "");
     switch (table) {
