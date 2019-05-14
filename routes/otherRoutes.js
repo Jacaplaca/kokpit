@@ -54,7 +54,7 @@ module.exports = app => {
     if (city.length < 3) {
       res.json([]);
     } else {
-      const { user_id, clientId } = req.user;
+      const { id: user_id, clientId } = req.user;
       if (!req.user) {
         return res.redirect("/");
       }
@@ -80,7 +80,7 @@ module.exports = app => {
     if (city.length < 3) {
       res.json([]);
     } else {
-      const { user_id, clientId } = req.user;
+      const { id: user_id, clientId } = req.user;
       if (!req.user) {
         return res.redirect("/");
       }
@@ -103,7 +103,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     Place.find({
       where: {
         id
@@ -124,7 +124,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     switch (table) {
       case "akt":
         Aktywnosci.destroy({ where: { user_id, id } })
@@ -153,7 +153,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     console.log(user_id);
     Aktywnosci.update(
       {
@@ -264,7 +264,7 @@ module.exports = app => {
     console.log(req.params);
     console.log("przegladaj tabele /api/kiedy/akt/:data");
     const day = req.params.data;
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -292,7 +292,7 @@ module.exports = app => {
   app.post("/api/aktywnosci/", (req, res, next) => {
     console.log("api/aktywnosc/");
     console.log(req.body);
-    const { clientId, user_id } = req.user;
+    const { clientId, id: user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -438,7 +438,7 @@ module.exports = app => {
       return res.redirect("/");
     }
     // const clientId = 2;
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     Item.find({ where: { clientId, name } })
       .then(result => res.json(result))
       .catch(err => {
@@ -456,7 +456,7 @@ module.exports = app => {
       return res.redirect("/");
     }
     // const clientId = 2;
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     ChannelsConfig.find({ where: { clientId, month, name } })
       .then(result => res.json(result))
       .catch(err => {
@@ -475,7 +475,7 @@ module.exports = app => {
       return res.redirect("/");
     }
     // const clientId = 2;
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     Item.findAll({ where: { clientId, channelId } })
       .then(result => {
         // console.log(result);
@@ -494,7 +494,7 @@ module.exports = app => {
       return res.redirect("/");
     }
     // const clientId = 2;
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     ChannelsConfig.findAll({
       where: {
         clientId,
@@ -525,7 +525,7 @@ module.exports = app => {
   app.get("/api/channel_config/item/id/:id/", async (req, res) => {
     const itemId = req.params.id;
     // if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     const [err, result] = await to(
       ChannelsConfig.findAll({ where: { clientId, itemId } })
     );
@@ -553,7 +553,7 @@ module.exports = app => {
     //   return res.redirect("/");
     // }
     console.log("table", req.user);
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     console.log("table", clientId, role, user_id);
     switch (table.table) {
       case "category":
@@ -607,7 +607,7 @@ module.exports = app => {
     if (!req.user) {
       return res.redirect("/");
     }
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     switch (role) {
       case "master":
         User.findAll()
