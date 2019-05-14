@@ -47,7 +47,7 @@ module.exports = app => {
   app.get("/api/channelusers/", async (req, res) => {
     // console.log("api/channelusers");
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     // console.log("ChannelUsers", clientId, user_id);
 
     const [err, details] = await to(
@@ -101,7 +101,7 @@ module.exports = app => {
     // console.log("api/channelusers");
     const { id } = req.params;
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     // console.log("ChannelUsers", clientId, user_id, id);
 
     const [err, details] = await to(
@@ -130,7 +130,7 @@ module.exports = app => {
     // console.log("api/channelusers");
     // const { id } = req.params;
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     // console.log("ChannelUsers", clientId, user_id, id);
 
     const [err, details] = await to(

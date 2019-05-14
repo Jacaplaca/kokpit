@@ -49,7 +49,7 @@ module.exports = app => {
       return res.redirect("/");
     }
     // const clientId = 2;
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     const { channelId } = req.params;
 
     const [errItems, items] = await to(
@@ -115,7 +115,7 @@ module.exports = app => {
         return res.redirect("/");
       }
       // const clientId = 2;
-      const { clientId, role, user_id } = req.user;
+      const { clientId, role, id: user_id } = req.user;
 
       // console.log("config", user_id, userId, userId === "0" ? user_id : userId);
       const [errItem, channels] = await to(
@@ -204,7 +204,7 @@ module.exports = app => {
     async (req, res) => {
       const { itemId, channelId } = req.params;
       // if (!req.user) res.redirect("/");
-      const { clientId, user_id } = req.user;
+      const { clientId, id: user_id } = req.user;
       console.log("config views", clientId, channelId, itemId);
       const [err, result] = await to(
         ChannelsConfig.findAll({
@@ -243,7 +243,7 @@ module.exports = app => {
     // console.log(req.body);
     const { from, to, channelId, itemId, bonusType, bonus } = req.body;
     // res.json(bonus);
-    const { clientId, user_id } = req.user;
+    const { clientId, id: user_id } = req.user;
     // console.log("req.user", req.user);
     if (!req.user) {
       return res.redirect("/");
@@ -301,7 +301,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     console.log("trans remove id", id.split(","));
     ChannelsConfig.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {
@@ -324,7 +324,7 @@ module.exports = app => {
     }
     const { bonusType, bonus } = req.body;
 
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
 
     // const bonus_type = await BonusType.find({
     //   where: { name: bonusType },
