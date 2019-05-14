@@ -20,7 +20,7 @@ module.exports = app => {
     // console.log("api/transaction/");
     // console.log(req.body);
     const { userId } = req.params;
-    const { clientId, user_id } = req.user;
+    const { clientId, id: user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -53,7 +53,7 @@ module.exports = app => {
     }
     // let ids;
     // ids.push(id);
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     // console.log("trans remove id", ids.split(","));
     Transaction.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {
@@ -72,7 +72,7 @@ module.exports = app => {
       // console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     const form = Object.assign(req.body, {
       clientId,
       userId: userId === 0 ? user_id : userId
@@ -91,7 +91,7 @@ module.exports = app => {
   //adding items to channel
   app.post("/api/channel/:channel_id/item/:item_id", async (req, res) => {
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
 
     const { channel_id, item_id } = req.params;
     // console.log("channelId itemId", channel_id, item_id);
@@ -125,7 +125,7 @@ module.exports = app => {
 
   app.get("/api/allusers/channel/", async (req, res) => {
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
 
     const [err, users] = await to(
       User.findAll({
@@ -151,7 +151,7 @@ module.exports = app => {
   app.get("/api/transaction/:id", async (req, res) => {
     const { id } = req.params;
     //   // if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
 
     const [err, items] = await to(
       Transaction.find({
@@ -211,7 +211,7 @@ module.exports = app => {
     async (req, res) => {
       const { channelId, userIdParams, start, end } = req.params;
       if (!req.user) res.redirect("/");
-      const { clientId, role, user_id } = req.user;
+      const { clientId, role, id: user_id } = req.user;
       console.log("start", start, new Date(start));
       let user = user_id;
       let query = {};
@@ -301,38 +301,10 @@ module.exports = app => {
     const { channelId, start, end } = req.params;
     // console.log(`api/transactions/${channelId}/${start}/${end}`);
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
 
     let user = user_id;
     let query = {};
-
-    // if (role === "master" && userIdParams !== user_id && userIdParams !== "0") {
-    //   user = userIdParams;
-    //   query = { clientId, userId: user, channelId };
-    // } else if (role === "master" && userIdParams !== "0") {
-    //   query = { clientId, user: userIdParams };
-    // } else {
-    //   user = user_id;
-    //   query = { clientId };
-    // }
-
-    // if (userIdParams === "0" && role === "master") {
-    //   //showing every transaction in channel
-    //   query = channelId === "0" ? { clientId } : { channelId, clientId };
-    // } else {
-    //   // showing transaction only for specyfic user
-    //   if (role !== "master" && userIdParams !== user_id) {
-    //     user = user_id;
-    //     // query = { clientId, userId: user, channelId };
-    //   } else {
-    //     user = userIdParams;
-    //   }
-    //   // user = user_id;
-    //   query =
-    //     channelId === "0"
-    //       ? { clientId, userId: user }
-    //       : { clientId, userId: user, channelId };
-    // }
     const queryDate = {
       [Op.lte]: new Date(end),
       [Op.gte]: new Date(start)
