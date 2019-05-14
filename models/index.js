@@ -69,6 +69,7 @@ const Item = db.items;
 const User = db.users;
 const Transaction = db.transactions;
 const Invoices = db.invoices4sms_intf;
+const DocumentTransaction = db.documents_transactions;
 
 // console.log(db);
 ///
@@ -313,6 +314,18 @@ CustomersOfCustomer.belongsToMany(Flag, {
   as: "CustomerFlag",
   through: db.flags_customers,
   foreignKey: "customer_id"
+});
+
+DocumentTransaction.belongsTo(User, {
+  as: "User",
+  targetKey: "id",
+  foreignKey: "userId"
+});
+
+DocumentTransaction.belongsTo(CustomersOfCustomer, {
+  as: "Customer",
+  targetKey: "id",
+  foreignKey: "customerId"
 });
 
 // db.overdue_payments.belongsTo(db.users, {

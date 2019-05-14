@@ -18,6 +18,7 @@ import UsersChannels from "../UsersChannels";
 import Settings from "../Settings";
 import PowerBI from "../PowerBI";
 import BonusRules from "../BonusRules";
+import DocumentsTransactions from "../DocumentsTransactions";
 
 const routes = [
   {
@@ -132,6 +133,15 @@ const routes = [
     component: Invoices,
     id: 10,
     parrentId: 10
+    // title: "Zaległe faktury"
+    //channel: auth ? auth.channel_first : 0
+  },
+  {
+    comp: "documents_transactions",
+    path: "/documentstransactions",
+    component: DocumentsTransactions,
+    id: 28,
+    parrentId: 28
     // title: "Zaległe faktury"
     //channel: auth ? auth.channel_first : 0
   },

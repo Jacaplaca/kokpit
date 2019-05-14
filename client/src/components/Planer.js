@@ -160,7 +160,7 @@ class Planer extends Component {
         <ModalWindow
           open={this.state.openModal}
           close={this.handleClose}
-          maxWidth={900}
+          maxWidth={100}
         >
           <PlanerAktywnosciForm
             modal

@@ -119,6 +119,8 @@ export const Field1 = ({
       return <DefaultTC>{row.name}</DefaultTC>;
     case "transactions":
       return <DefaultTC>{row.date}</DefaultTC>;
+    case "documents_transactions":
+      return <DefaultTC>{row.date}</DefaultTC>;
     default:
       return null;
   }
@@ -165,6 +167,8 @@ export const Field2 = ({
       return <DefaultTC>{row.kod}</DefaultTC>;
     case "transactions":
       return <DefaultTC>{row.ItemTrans.name}</DefaultTC>;
+    case "documents_transactions":
+      return <DefaultTC>{row.documents_nr}</DefaultTC>;
     default:
       return null;
   }
@@ -208,6 +212,15 @@ export const Field3 = ({ rowType, row }) => {
           />
         </DefaultTC>
       );
+    case "documents_transactions":
+      return (
+        <DefaultTC>
+          {`${currency(row.ammount, {
+            separator: " ",
+            decimal: ","
+          }).format()} zł`}
+        </DefaultTC>
+      );
     default:
       return null;
   }
@@ -227,6 +240,8 @@ export const Field4 = ({ rowType, row }) => {
       return (
         <DefaultTC>{shorting(row.Places ? row.Places.name : "", 30)}</DefaultTC>
       );
+    case "documents_transactions":
+      return <DefaultTC>{shorting(row.customer, 30)}</DefaultTC>;
     default:
       return null;
   }

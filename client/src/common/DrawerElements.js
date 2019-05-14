@@ -69,6 +69,13 @@ export const elements = auth => {
       links: ["/calculators"]
     },
     {
+      comp: "documents_transactions",
+      text: "Premie z dokumentów",
+      link: "/documentstransactions",
+      icon: "Money",
+      links: ["/documentstransactions"]
+    },
+    {
       comp: "bonusRules",
       text: "Pliki do pobrania",
       link: "/bonusrules",

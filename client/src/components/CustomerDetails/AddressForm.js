@@ -61,39 +61,6 @@ class AddressForm extends React.Component {
           label="Klient"
           placeholder="Zacznij wpisywać klienta"
         />
-        {/* <InputComponent
-          // disabled={disabled}
-          // key={i}
-          name="channel"
-          label="Imię"
-          type="text"
-          edytuj={value => change("name", value)}
-          // edytuj={value => change("name", value, "adding")}
-          value={name || ""}
-          // disabled={field2disabled}
-        />
-        <InputComponent
-          // disabled={disabled}
-          // key={i}
-          name="channel"
-          label="Nazwisko"
-          type="text"
-          edytuj={value => change("surname", value)}
-          // edytuj={value => change("name", value, "adding")}
-          value={surname || ""}
-          // disabled={field2disabled}
-        /> */}
-        {/* <InputComponent
-          // disabled={disabled}
-          // key={i}
-          name="channel"
-          label="Adres"
-          type="text"
-          edytuj={value => change("address", value)}
-          // edytuj={value => change("name", value, "adding")}
-          value={address || ""}
-          // disabled={field2disabled}
-        /> */}
         <InputComponent
           // disabled={disabled}
           // key={i}
