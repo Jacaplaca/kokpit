@@ -43,28 +43,27 @@ passport.deserializeUser((user_id, done) => {
     .then(project => {
       // console.log("proj", project);
       const result = JSON.parse(JSON.stringify(project));
-      const {
-        clientId,
-        id_client_soft,
-        email,
-        role,
-        name,
-        surname,
-        start_comp,
-        UserModule,
-        Company,
-        SalesChannels,
-        nextReports_user,
-        nextReports_pass,
-        filesToDownload
-      } = result;
+      // const {
+      //   clientId,
+      //   id_client_soft,
+      //   email,
+      //   role,
+      //   name,
+      //   surname,
+      //   start_comp,
+      //   UserModule,
+      //   Company,
+      //   SalesChannels,
+      //   nextReports_user,
+      //   nextReports_pass,
+      //   filesToDownload
+      // } = result;
       // console.log(result);
       if (result.status === "active") {
         // console.log(result.status);
         done(
           null,
-          // result
-          Object.assign(user_id, result)
+          result
           // Object.assign(user_id, {
           //   clientId,
           //   id_client_soft,
