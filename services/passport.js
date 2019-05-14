@@ -63,7 +63,8 @@ passport.deserializeUser((user_id, done) => {
         // console.log(result.status);
         done(
           null,
-          result
+          // result
+          Object.assign(user_id, result)
           // Object.assign(user_id, {
           //   clientId,
           //   id_client_soft,
