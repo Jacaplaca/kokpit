@@ -1,20 +1,12 @@
 const db = require("../models/index");
-// const User = db.users;
-
-// const Channel = db.sales_channels;
 const Module = db.modules;
 const Client = db.clients;
-// const User = db.users;
-// const Item = db.items;
-// const ModuleUser = db.modules_users;
-// const ChannelUsers = db.channel_users;
-// const ChannelsConfig = db.channels_config;
 const to = require("await-to-js").default;
 
 module.exports = app => {
   app.post("/api/remove/modules/:id", async (req, res, next) => {
     const { id } = req.params;
-    const { clientId, user_id } = req.user;
+    const { clientId } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -28,7 +20,7 @@ module.exports = app => {
   });
 
   app.post("/api/modules", (req, res, next) => {
-    const { clientId, user_id } = req.user;
+    const { clientId } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -44,25 +36,9 @@ module.exports = app => {
 
   app.get("/api/modules/", async (req, res) => {
     console.log("api/modules");
-
-    // const { client_id } = req.params;
-
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
-    console.log("ChannelUsers", clientId, user_id);
-
+    const { clientId } = req.user;
     const [err, details] = await to(
-      // User.findAll({
-      //   include: [
-      //     {
-      //       model: Module,
-      //       as: "UserModule"
-      //       // where: { id: clientId },
-      //       // attributes: []
-      //     }
-      //   ],
-      //   where: { clientId }
-      // })
       Module.findAll({
         include: [
           {
@@ -75,7 +51,6 @@ module.exports = app => {
         where: {}
       })
     );
-    // console.log("details", details, err);
     if (!details) {
       res.sendStatus(500);
     } else {
@@ -83,16 +58,14 @@ module.exports = app => {
     }
   });
   app.get("/api/allmodules/", async (req, res) => {
-    // console.log("api/modules");
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId } = req.user;
 
     const [err, details] = await to(
       Module.findAll({
         where: {}
       })
     );
-    // console.log("details", details);
     if (!details) {
       res.sendStatus(500);
     } else {
@@ -102,19 +75,15 @@ module.exports = app => {
 
   app.get("/api/modulefirst/", async (req, res) => {
     console.log("api/modules");
-
-    // const { client_id } = req.params;
-
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
-    console.log("ChannelUsers", clientId, user_id);
+    const { clientId } = req.user;
+    console.log("ChannelUsers", clientId);
 
     const [err, details] = await to(
       Module.findAll({
         where: { id: 1 }
       })
     );
-    // console.log("details", details, err);
     if (!details) {
       res.sendStatus(500);
     } else {
