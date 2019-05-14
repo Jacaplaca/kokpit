@@ -43,22 +43,6 @@ const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
-// const User = require('../models/user');
-// const Op = Sequelize.Op;
-
-// dynamicSort = property => {
-//   let sortOrder = 1;
-//   if (property[0] === "-") {
-//     sortOrder = -1;
-//     property = property.substr(1);
-//   }
-//   return function(a, b) {
-//     const result =
-//       a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-//     return result * sortOrder;
-//   };
-// };
-
 module.exports = app => {
   app.get("/api/city/:city", (req, res, next) => {
     const wyszukiwanie = req.params.city;
@@ -75,111 +59,13 @@ module.exports = app => {
         return res.redirect("/");
       }
       let mods = [];
-
-      // Street.findAll({
-      //   where: { nazwa_1: { [Op.like]: `%${city.toLowerCase()}%` } },
-      //   limit: 30
-      // }).then(result =>
-      //   res.json(
-      //     result.map(x => {
-      //       Object.assign(x.get(), { nazwa: x.get().nazwa_1 });
-      //       // console.log(x);
-      //     })
-      //   )
-      // );
-
-      // City.findAll({
-      //   where: {
-      //     nazwa: { [Op.like]: `${city}%` }
-      //   },
-      //   include: [
-      //     { model: Wojewodztwo, attributes: ["nazwa"] },
-      //     {
-      //       model: Powiat,
-      //       attributes: ["nazwa"]
-      //     },
-      //     { model: Terc, attributes: ["nazwa"] }
-      //   ],
-      //   limit: 30
       Miejsca.findAll({
         where: {
           name: { [Op.like]: `%${city}%` }
         },
         limit: 30
       }).then(result => {
-        // var promises = [];
-        // let wojewodztwo;
-        // let powiat;
-        // let gmina;
-        // const filtrowany = result.filter(x => x.rm !== "95");
-        // const sortowany = result.sort(dynamicSort("rm"));
-        // const sortRevSlice = sortowany.reverse().slice(0, 10);
-        // return res.json(sortRevSlice);
         return res.json(result);
-
-        // sortRevSlice.map((wynik, i) => {
-        //   const { woj, pow, gmi } = wynik.get();
-        //   var promise_woj = Terc.find({ where: { woj } }).then(x => {
-        //     wojewodztwo = x.get().nazwa;
-        //   });
-        //   var promise_pow = Terc.find({ where: { woj, pow } }).then(x => {
-        //     powiat = x.get().nazwa;
-        //   });
-        //   var promise_gmi = Terc.find({ where: { woj, pow, gmi } }).then(x => {
-        //     gmina = x.get().nazwa;
-        //     mods.push(
-        //       Object.assign(wynik.get(), {
-        //         wojewodztwo:
-        //           wojewodztwo
-        //             // .toLowerCase()
-        //             .charAt(0)
-        //             .toUpperCase() + wojewodztwo.slice(1),
-        //         powiat:
-        //           powiat
-        //             // .toLowerCase()
-        //             .charAt(0)
-        //             .toUpperCase() + powiat.slice(1),
-        //         gmina:
-        //           gmina
-        //             // .toLowerCase()
-        //             .charAt(0)
-        //             .toUpperCase() + gmina.slice(1)
-        //       })
-        //     );
-        //   });
-        //   promises.push(promise_woj, promise_pow, promise_gmi);
-        // });
-        // Promise.all(promises).then(y => {
-        //   if (!drugiCzlon) {
-        //     res.json(mods);
-        //   } else if (drugiCzlon.length > 2) {
-        //     const symboleMiast = mods.map(miasto => miasto.sym);
-        //     Street.findAll({
-        //       where: {
-        //         nazwa_1: { [Op.like]: `%${drugiCzlon}%` },
-        //         sym: symboleMiast
-        //       },
-        //       limit: 30
-        //     }).then(result => {
-        //       const ulice = result.map(b =>
-        //         Object.assign(
-        //           {},
-        //           {
-        //             cecha: b.get().cecha,
-        //             nazwa_1: b.get().nazwa_1,
-        //             nazwa_2: b.get().nazwa_2,
-        //             sym: b.get().sym
-        //           }
-        //         )
-        //       );
-        //       const uliceImiasta = ulice.map(ulica => {
-        //         const miasto = mods.filter(m => m.sym === ulica.sym);
-        //         return Object.assign(ulica, miasto[0]);
-        //       });
-        //       return res.json(uliceImiasta);
-        //     });
-        //   }
-        // });
       });
     }
   });
@@ -324,19 +210,7 @@ module.exports = app => {
             res.sendStatus(500);
           });
         break;
-      // case "transaction":
-      //   Transaction.find({
-      //     // include: [{ model: Category }, { model: Group }],
-      //     where: { clientId, id }
-      //   })
-      //     .then(result => {
-      //       res.json(result);
-      //     })
-      //     .catch(err => {
-      //       console.log(err);
-      //       res.sendStatus(500);
-      //     });
-      //   break;
+
       case "cost":
         Cost.find({
           include: [{ model: Category }, { model: Group }],
@@ -733,30 +607,6 @@ module.exports = app => {
     const { clientId, role, user_id } = req.user;
     console.log("table", clientId, role, user_id);
     switch (table.table) {
-      // case "channels":
-      //   Channel.findAll({ where: { clientId } })
-      //     .then(result => res.json(result))
-      //     .catch(err => {
-      //       console.log(err);
-      //       res.sendStatus(500);
-      //     });
-      //   break;
-      // case "transactions":
-      //   Transaction.findAll({ where: { clientId, userId: user_id } })
-      //     .then(result => res.json(result))
-      //     .catch(err => {
-      //       console.log(err);
-      //       res.sendStatus(500);
-      //     });
-      //   break;
-      // case "items":
-      //   Item.findAll({ where: { clientId } })
-      //     .then(result => res.json(result))
-      //     .catch(err => {
-      //       console.log(err);
-      //       res.sendStatus(500);
-      //     });
-      //   break;
       case "category":
         Category.findAll({ where: { clientId } })
           .then(result => res.json(result))
@@ -835,61 +685,4 @@ module.exports = app => {
         res.redirect("/");
     }
   });
-
-  // helper route to assign id for config according item Id
-  // app.get("/api/modyfikuj/konfiguracje/po/itemsach", async (req, res, next) => {
-  //   console.log("po itemsach");
-  //   const items = await Item.findAll({ where: { clientId: 2 }, raw: true });
-  //   const configs = await ChannelsConfig.findAll({
-  //     where: { clientId: 2 },
-  //     raw: true
-  //   });
-  //   const promises = configs.map(config => {
-  //     const item = items.filter(item => config.name === item.name);
-  //     return ChannelsConfig.update(
-  //       { itemId: item[0].id },
-  //       { where: { id: config.id } }
-  //     );
-  //   });
-  //   await Promise.all(promises);
-  //   console.log("Done!");
-  //   res.json(items);
-  // });
-  //wypelnienie suffixa po bonusType
-  // app.get("/api/modyfikuj/konfiguracje/po/itemsach", async (req, res, next) => {
-  //   console.log("po itemsach");
-  //   // const items = await Item.findAll({ where: { clientId: 2 }, raw: true });
-  //   const configs = await ChannelsConfig.findAll({
-  //     where: { clientId: 2 },
-  //     raw: true
-  //   });
-  //
-  //   const promises = configs.map(config => {
-  //     // const item = items.filter(item => config.name === item.name);
-  //     let suffix;
-  //     if (config.bonusType === "stawka") {
-  //       suffix = "zł";
-  //     } else if (config.bonusType === "% marży") {
-  //       suffix = "%";
-  //     }
-  //     return ChannelsConfig.update({ suffix }, { where: { id: config.id } });
-  //   });
-  //   await Promise.all(promises);
-  //   console.log("Done!");
-  //   res.json(configs);
-  // });
-  // wypelnienie id_client dla vitala
-  // app.get("/api/modyfikuj/invoices4sms/po/client", async (req, res, next) => {
-  //   console.log("po itemsach");
-  //   const invoices = await Invoices4SMS.findAll({
-  //     raw: true
-  //   });
-  //
-  //   const promises = invoices.map(config => {
-  //     return Invoices4SMS.update({ id_client: 2 }, { where: {} });
-  //   });
-  //   await Promise.all(promises);
-  //   console.log("Done!");
-  //   res.json(invoices);
-  // });
 };

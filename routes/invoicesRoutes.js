@@ -10,7 +10,7 @@ module.exports = app => {
   //remove configs
 
   app.get("/api/invoices/", async (req, res, next) => {
-    const { clientId, user_id, id_client_soft, role } = req.user;
+    const { clientId, id: user_id, id_client_soft, role } = req.user;
     console.log("api/invoices/", clientId, user_id, id_client_soft);
 
     const queryMain = {
