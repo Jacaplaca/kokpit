@@ -10,7 +10,6 @@ module.exports = app => {
   app.post("/api/accountinfo/", async (req, res, next) => {
     console.log("api/accountinfo/");
     console.log(req.body);
-    const { clientId, user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }

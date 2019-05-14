@@ -9,7 +9,7 @@ module.exports = app => {
   app.get("/api/customers/:query", (req, res, next) => {
     const query = req.params.query;
 
-    const { user_id, clientId } = req.user;
+    const { clientId } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -55,7 +55,7 @@ module.exports = app => {
     const { id } = req.params;
     console.log(`api/customer/${id}`);
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role } = req.user;
 
     const query = {
       where: { clientId, id },

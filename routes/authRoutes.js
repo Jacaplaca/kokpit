@@ -80,7 +80,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     console.log("user remove id", id.split(","));
     User.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {
@@ -101,7 +101,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     let form = {};
     if (password === "") {
       form = Object.assign({}, { name, surname, email });
