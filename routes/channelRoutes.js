@@ -13,7 +13,7 @@ module.exports = app => {
     if (!req.user || req.user.role !== "master") {
       return res.redirect("/");
     }
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     Channel.findAll({ where: { clientId } })
       .then(result => res.json(result))
       .catch(err => {
@@ -25,7 +25,7 @@ module.exports = app => {
   app.post("/api/channel/", (req, res, next) => {
     console.log("api/sales_channel/");
     console.log(req.body);
-    const { clientId, user_id } = req.user;
+    const { clientId, id: user_id } = req.user;
     if (!req.user) {
       return res.redirect("/");
     }
@@ -49,7 +49,7 @@ module.exports = app => {
       console.log("przekierowanie");
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     const form = Object.assign(req.body, { clientId, userId: user_id });
     // console.log(req.body);
     Channel.update(form, {
@@ -67,7 +67,7 @@ module.exports = app => {
     if (!req.user) {
       return res.redirect("/");
     }
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     console.log("channel remove id", id.split(","));
     Channel.destroy({ where: { clientId, id: id.split(",") } })
       .then(result => {

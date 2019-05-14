@@ -18,7 +18,6 @@ module.exports = app => {
     // const { clientId, role } = req.user;
     //
     const { module_id, client_id } = req.params;
-    // console.log("channel_id user_id", channel_id, user_id);
 
     const [errMC, mc] = await to(
       ModuleClient.findAll({ where: { client_id, module_id } })
@@ -72,8 +71,8 @@ module.exports = app => {
     // const { client_id } = req.params;
 
     if (!req.user) res.redirect("/");
-    const { clientId, role, user_id } = req.user;
-    console.log("ChannelUsers", clientId, user_id);
+    const { clientId, role } = req.user;
+    console.log("ChannelUsers", clientId);
 
     const [err, details] = await to(
       User.findAll({
