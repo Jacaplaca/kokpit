@@ -118,21 +118,6 @@ module.exports = app => {
     res.send(message);
   });
 
-  app.post("/api/cost/remove/:id", (req, res, next) => {
-    const id = req.params.id;
-    if (!req.user) {
-      console.log("przekierowanie");
-      return res.redirect("/");
-    }
-    const { user_id, clientId } = req.user;
-    Cost.destroy({ where: { clientId, id } })
-      .then(() => res.end())
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   app.post("/api/:table/remove/:id", (req, res, next) => {
     const { id, table } = req.params;
     if (!req.user) {
@@ -191,7 +176,7 @@ module.exports = app => {
     console.log("przegladaj tabele");
     const table = req.params.table;
     const id = req.params.id;
-    const { user_id, clientId } = req.user;
+    const { id: user_id, clientId } = req.user;
     console.log(`${table} ${id}`);
     if (!req.user) {
       return res.redirect("/");
@@ -304,44 +289,8 @@ module.exports = app => {
     res.json([]);
   });
 
-  app.post("/api/cost/", (req, res, next) => {
-    console.log("api/cost/");
-    console.log(req.body);
-    const { clientId, user_id } = req.user;
-    if (!req.user) {
-      return res.redirect("/");
-    }
-    const {
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto,
-      kwota_brutto,
-      categoryId,
-      groupId
-    } = req.body;
-    Cost.create({
-      nr_dokumentu,
-      data_wystawienia,
-      nazwa_pozycji,
-      kwota_netto: kwota_netto.replace(",", ".").replace("zł", ""),
-      kwota_brutto: kwota_brutto.replace(",", ".").replace("zł", ""),
-      categoryId: categoryId,
-      groupId: groupId,
-      clientId,
-      userId: user_id
-    })
-      .then(results => {
-        return res.json(results);
-      })
-      .catch(err => {
-        console.log(err);
-        res.sendStatus(500);
-      });
-  });
-
   app.post("/api/aktywnosci/", (req, res, next) => {
-    console.log("api/cost/");
+    console.log("api/aktywnosc/");
     console.log(req.body);
     const { clientId, user_id } = req.user;
     if (!req.user) {
@@ -392,7 +341,7 @@ module.exports = app => {
     if (!req.user) {
       return res.redirect("/");
     }
-    const { clientId, role, user_id } = req.user;
+    const { clientId, role, id: user_id } = req.user;
     switch (table.table) {
       case "planerAktywnosci":
         let whereMasterAct = { klient_id: clientId };
