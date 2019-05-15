@@ -30,6 +30,7 @@ import Settings from "@material-ui/icons/Settings";
 import Person from "@material-ui/icons/Person";
 import ListAlt from "@material-ui/icons/ListAlt";
 import People from "@material-ui/icons/People";
+import Inbox from "@material-ui/icons/Inbox";
 import Assignment from "@material-ui/icons/Assignment";
 import LocalOffer from "@material-ui/icons/LocalOffer";
 import Money from "@material-ui/icons/Money";
@@ -144,7 +145,8 @@ const components = {
   LocalOffer: <LocalOffer />,
   Money: <Money />,
   Description: <Description />,
-  Pageview: <Pageview />
+  Pageview: <Pageview />,
+  Inbox: <Inbox />
 };
 
 class DrawerLink extends React.Component {

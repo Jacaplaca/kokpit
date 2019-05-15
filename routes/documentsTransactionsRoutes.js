@@ -10,8 +10,15 @@ module.exports = app => {
     console.log("/api/documentstransactions", req.user);
     const { clientId, role, id: user_id } = req.user;
 
+    let where = {};
+    if (role === "master") {
+      where = { clientId };
+    } else {
+      where = { clientId, userId: user_id };
+    }
+
     DocumentTransaction.findAll({
-      where: { userId: user_id },
+      where,
       include: [
         {
           model: User,

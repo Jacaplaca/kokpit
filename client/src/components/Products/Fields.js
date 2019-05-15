@@ -260,6 +260,10 @@ export const Field5 = ({ rowType, row, role }) => {
       );
     case "transactions":
       return <DefaultTC>{row.customer}</DefaultTC>;
+    case "documents_transactions":
+      return role === "master" ? (
+        <DefaultTC>{`${row.User.name} ${row.User.surname}`}</DefaultTC>
+      ) : null;
     default:
       return null;
   }

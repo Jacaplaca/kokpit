@@ -70,9 +70,9 @@ export const elements = auth => {
     },
     {
       comp: "documents_transactions",
-      text: "Premie z dokumentów",
+      text: "Transakcje z dokumentów",
       link: "/documentstransactions",
-      icon: "Money",
+      icon: "Inbox",
       links: ["/documentstransactions"]
     },
     {

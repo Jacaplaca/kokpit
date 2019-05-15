@@ -65,7 +65,7 @@ class DocumentTransactionForm extends Component {
       url = `/api/documentstransactions/${edited.id}`;
     }
 
-    await fetch(url, {
+    const resp = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
@@ -83,6 +83,8 @@ class DocumentTransactionForm extends Component {
     // this.handleReset();
     await this.clearForm();
     await this.props.fetching();
+    const data = await resp.json();
+    await this.props.changeRange(data);
     // await this.props.fetchuj();
     // await this.clearForm();
     // await this.props.submit(false);

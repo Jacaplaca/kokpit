@@ -1,19 +1,21 @@
 import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
+import { startOfMonth, endOfMonth } from "date-fns";
 import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
+import { defineds, dataToString, durationLabel } from "../common/functions";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
 import * as actions from "../actions";
 import MainFrameHOC from "../common/MainFrameHOC";
-
 import FormWithListClicks from "../common/FormWithListClicks";
 import Form from "../components/Users/Form";
 import EditUserForm from "../components/Users/EditForm";
 import ModalWindow from "./ModalWindow";
 import ProductsList from "./Products/ProductsList";
 import DocumentTransactionForm from "./DocumentsTransactions/Form";
+import DurationWithButton from "../common/DurationWithButton";
 
 const fetchItemsUrl = "api/documentstransactions";
 
@@ -35,7 +37,12 @@ class DocumentsTransactions extends Component {
     itemsUnfilter: null,
     channel: "",
     edited: { id: 0 },
-    openModal: false
+    openModal: false,
+    rangeselection: {
+      startDate: defineds.startOfLastMonth,
+      endDate: defineds.endOfMonth,
+      key: "rangeselection"
+    }
   };
 
   componentWillMount = async () => {
@@ -45,17 +52,24 @@ class DocumentsTransactions extends Component {
   setAsyncState = newState =>
     new Promise(resolve => this.setState(newState, () => resolve()));
 
-  fetching = async () =>
-    await this.urlToState(fetchItemsUrl, ["items", "itemsUnfilter"]);
+  fetching = async () => await this.urlToState(fetchItemsUrl);
 
-  urlToState = async (url, names) => {
+  urlToState = async url => {
     const result = await this.fetch(url);
+    const {
+      rangeselection: { startDate, endDate }
+    } = this.state;
+    await this.setAsyncState({
+      items: this.handleDateFilter(result, startDate, endDate),
+      itemsUnfilter: result
+    });
+
     // console.log("list", JSON.stringify(list));
-    for (let name of names) {
-      this.setState({
-        [name]: result
-      });
-    }
+    // for (let name of names) {
+    //   this.setState({
+    //     [name]: result
+    //   });
+    // }
   };
 
   fetch = async url => {
@@ -74,28 +88,6 @@ class DocumentsTransactions extends Component {
 
   handleRowClick = id => {
     console.log("id", id);
-    // const { itemsUnfilter } = this.state;
-    // let filteredItems = [];
-    // let name;
-    // for (let item of itemsUnfilter) {
-    //   const channels = item.SalesChannels;
-    //   for (let channel of channels) {
-    //     if (channel.id === id) {
-    //       name = channel.name;
-    //       filteredItems.push(item);
-    //     }
-    //   }
-    // }
-    //
-    // // const channel =
-    // //   filteredItems[0] &&
-    // //   filteredItems[0].SalesChannels[0] &&
-    // //   filteredItems[0].SalesChannels[0].name;
-    //
-    // this.setState({
-    //   items: filteredItems,
-    //   channel: ` w ${name}`
-    // });
   };
 
   handleClickOnItem = id => {
@@ -157,8 +149,83 @@ class DocumentsTransactions extends Component {
     this.setState({ openModal: false });
   };
 
+  handleSelect = ranges => {
+    console.log("handleSelect", ranges);
+    const { startDate, endDate } = ranges.rangeselection;
+    this.setState(
+      {
+        ...ranges
+      },
+      () => {
+        // this.fetchTransactions();
+        // return
+        this.setState({
+          items: this.handleDateFilter(
+            this.state.itemsUnfilter,
+            startDate,
+            endDate
+          )
+        });
+      }
+    );
+  };
+
+  handleDateFilter = (array, startDate, endDate) => {
+    const arrayFiltered = array.filter(x => {
+      const data = new Date(x.date);
+      // console.log("data", data, data.getTime(), startDate, startDate.getTime());
+      return (
+        // data.getTime() >= startDate.getTime() + 2 * 60 * 60 * 1000 &&
+        data.getTime() >= new Date(dataToString(startDate)).getTime() &&
+        // data.getTime() <= endDate.getTime() + 2 * 60 * 60 * 1000
+        data.getTime() <= new Date(dataToString(endDate)).getTime()
+      );
+    });
+    console.log("arrayFiltered", arrayFiltered);
+    return arrayFiltered;
+  };
+
+  changeRange = data => {
+    let { rangeselection } = this.state;
+    const durStart = new Date(rangeselection.startDate).getTime();
+    const durEnd = new Date(rangeselection.endDate).getTime();
+    const dataTrans = new Date(data.date).getTime();
+    console.log(
+      "changeRange",
+      new Date(data.date).getTime() >= durStart,
+      new Date(data.date).getTime() <= durStart,
+      new Date(data.date).getTime() >= durEnd,
+      new Date(data.date).getTime() <= durEnd
+    );
+    let startDate = rangeselection.startDate;
+    let endDate = rangeselection.endDate;
+    if (dataTrans >= durEnd) {
+      endDate = endOfMonth(new Date(dataTrans));
+      if (dataTrans <= durStart) {
+        startDate = startOfMonth(new Date(dataTrans));
+      }
+    } else if (dataTrans <= durStart) {
+      startDate = startOfMonth(new Date(dataTrans));
+      if (dataTrans >= durEnd) {
+        endDate = endOfMonth(new Date(dataTrans));
+      }
+    }
+    // const startDate = startOfMonth(new Date(dataWystawienia));
+    // const endDate = endOfMonth(new Date(dataWystawienia));
+    rangeselection = { endDate, startDate, key: "rangeselection" };
+    this.handleSelect({ rangeselection });
+    // this.setState({ rangeselection });
+  };
+
   render() {
-    const { items, channel, label, edited, openModal } = this.state;
+    const {
+      items,
+      channel,
+      label,
+      edited,
+      openModal,
+      rangeselection
+    } = this.state;
     const {
       auth: { role }
     } = this.props;
@@ -169,6 +236,7 @@ class DocumentsTransactions extends Component {
             fetching={this.fetching}
             edited={edited}
             clear={this.clearEdited}
+            changeRange={data => this.changeRange(data)}
           />
         </ModalWindow>
         <div style={{ marginBottom: 20 }}>
@@ -176,12 +244,16 @@ class DocumentsTransactions extends Component {
             fetching={this.fetching}
             edited={{ id: 0 }}
             clear={this.clearEdited}
+            changeRange={data => this.changeRange(data)}
           />
         </div>
+        <DurationWithButton
+          onChange={this.handleSelect}
+          range={rangeselection}
+        />
         {items && items.length > 0 && (
           <Paper>
             {/* <SimpleProductList data={data} /> */}
-            <div>Moduł w opracowaniu</div>
             <ProductsList
               defaultSort="id"
               searchSum="ammount"
