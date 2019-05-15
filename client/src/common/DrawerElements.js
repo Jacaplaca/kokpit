@@ -143,7 +143,7 @@ export const elements = auth => {
 
   let elements = elementsStandard;
   elements =
-    auth && auth.clientId === 2
+    auth && auth.id === 93
       ? elementsStandard
       : // : Object.assign(elementsStandard, elementsKonfig);
         [...elementsStandard, ...elementsKonfig];

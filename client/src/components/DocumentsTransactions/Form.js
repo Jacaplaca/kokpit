@@ -156,7 +156,7 @@ class DocumentTransactionForm extends Component {
             suffix="zł"
             name="buy"
             error={""}
-            label={"Kwota brutto"}
+            label={"Kwota netto"}
             type="text"
             edytuj={value => {
               this.handleChange("ammount", value);
