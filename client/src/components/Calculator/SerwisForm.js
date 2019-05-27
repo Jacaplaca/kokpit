@@ -54,7 +54,7 @@ class SerwisForm extends Component {
 
   componentWillMount = async () => {
     const { edit, channelId, userId, show } = this.props;
-    console.log("SerwisForm() componentWillMount channelId", channelId);
+    console.log("SerwisForm() componentWillMount channelId", channelId, userId);
     const date = dataToString(new Date());
 
     if (!edit && !show) {

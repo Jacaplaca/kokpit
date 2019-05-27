@@ -5,7 +5,7 @@ require("moment/locale/pl");
 const nodemailer = require("nodemailer");
 
 // async..await is not allowed in global scope, must use a wrapper
-async function main(text, raport, time, date) {
+async function main(text, raport, time, date, to) {
   console.log("main", raport);
   // Generate test SMTP service account from ethereal.email
   // Only needed if you don't have a real mail account for testing
@@ -25,7 +25,7 @@ async function main(text, raport, time, date) {
   // setup email data with unicode symbols
   let mailOptions = {
     from: `"Świadoma Firma 📈 Raporty" ${process.env.RAPORTMAIL}`, // sender address
-    to: "dziewanowski@gmail.com", // list of receivers
+    to, // list of receivers
     subject: `✉️ Raport SMS z dnia ${date}`, // Subject line
     text: text, // plain text body
     html: raport // html body
@@ -44,7 +44,7 @@ async function main(text, raport, time, date) {
 
 // ;
 
-const sendingMailAfterSms = sms => {
+const sendingMailAfterSms = (sms, receivers) => {
   const data = new Date();
   const timeFormated = moment(data).format("H:mm");
   const formatedDay = moment(data).format("DD MMMM YYYY");
@@ -69,7 +69,7 @@ const sendingMailAfterSms = sms => {
     text = `${text} ${line}`;
   });
   // console.log("raport", html);
-  main(text, html, timeFormated, formatedDay).catch(console.error);
+  main(text, html, timeFormated, formatedDay, receivers).catch(console.error);
 };
 
 module.exports = sendingMailAfterSms;

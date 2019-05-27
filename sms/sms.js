@@ -19,6 +19,8 @@ let smsArray = [];
 
 console.log(`Now is ${today()} ${time()}`);
 
+const sending = false;
+
 var rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [1, 3, 5];
 // rule.dayOfWeek = [new schedule.Range(1, 5)];
@@ -36,7 +38,7 @@ var randomizeSendingTime = schedule.scheduleJob(rule, function() {
   randomTime(9, 10, 9, 50);
 });
 
-// fetchInvoices();
+sending && fetchInvoices();
 
 var runFetching = schedule.scheduleJob(
   {
@@ -341,11 +343,12 @@ let promisy = [];
 function send(invoices, sms) {
   console.log("sms", sms);
   // console.log(sms);
-  // smsapi.authentication
-  //   .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
-  //   .then(sendMessage)
-  //   .then(displayResult)
-  //   .catch(displayError);
+  sending &&
+    smsapi.authentication
+      .login(process.env.SMS_LOGIN, process.env.SMS_PASSWORD)
+      .then(sendMessage)
+      .then(displayResult)
+      .catch(displayError);
   //
   function sendMessage() {
     return smsapi.message
@@ -377,15 +380,18 @@ function send(invoices, sms) {
   });
 
   promisy.push(promise1);
-  // waitForEverySending();
+  sending &&
+    waitForEverySending(
+      "konrad.gnutek@vitalzam.pl, analityka@swiadomafirma.pl"
+    );
 }
 
-const waitForEverySending = async () => {
+const waitForEverySending = async receivers => {
   const result = await Promise.all(promisy);
   const len = promisy.length;
   // console.log("result", result, len);
   result.filter(x => x === "foo").length === len &&
-    sendingMailAfterSms(smsArray);
+    sendingMailAfterSms(smsArray, receivers);
   // .every(x => x.Promise === "foo");
 };
 
