@@ -89,7 +89,7 @@ const routes = [
     path: "/products",
     component: Products,
     id: 25,
-    parrentId: 25
+    parrentId: 20
     // title: "Produkty"
     //channel: auth ? auth.channel_first : 0
   },
@@ -98,7 +98,7 @@ const routes = [
     path: "/systems",
     component: Channels,
     id: 26,
-    parrentId: 26
+    parrentId: 20
     // title: "Systemy prowizyjne"
     //channel: auth ? auth.channel_first : 0
   },
@@ -107,7 +107,7 @@ const routes = [
     path: "/users_channels",
     component: UsersChannels,
     id: 27,
-    parrentId: 27
+    parrentId: 20
     // id: 20
     // title: "Dodaj koszty"
   },
