@@ -18,6 +18,7 @@ import UsersChannels from "../UsersChannels";
 import Settings from "../Settings";
 import PowerBI from "../PowerBI";
 import BonusRules from "../BonusRules";
+import Barcodes from "../Barcodes";
 import DocumentsTransactions from "../DocumentsTransactions";
 
 const routes = [
@@ -28,6 +29,14 @@ const routes = [
     id: 0,
     parrentId: 0
     // title: "Start"
+  },
+  {
+    comp: "barcodes",
+    path: "/barcodes",
+    component: Barcodes,
+    id: 29,
+    parrentId: 29
+    // title: "Dodaj koszty"
   },
   {
     comp: "costs",

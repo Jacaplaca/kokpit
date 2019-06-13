@@ -87,6 +87,7 @@ class SerwisForm extends Component {
     // console.log("SerwisForm, componentWillReceiveProps", nextProps);
 
     if (nextProps.edit && nextProps.edit !== this.props.edit) {
+      console.log("SerwisForm() CWRP 1");
       //Perform some operation
       // this.setState({ customer: nextProps.edit.customer });
       // this.clearSummary();
@@ -151,7 +152,10 @@ class SerwisForm extends Component {
           itemId,
           itemsUnfiltered: items
         },
-        () => this.count()
+        () => {
+          this.count();
+          this.filterItemsForUsers(nextProps.userId, nextProps.users, true);
+        }
       );
     } else if (
       userId !== nextProps.userId ||
@@ -206,7 +210,7 @@ class SerwisForm extends Component {
     }
   };
 
-  filterItemsForUsers = (userId, users) => {
+  filterItemsForUsers = (userId, users, noclear) => {
     // const { users } = this.props;
     const { items } = this.state;
     const itemsFromState = JSON.parse(JSON.stringify(items));
@@ -232,7 +236,7 @@ class SerwisForm extends Component {
       }
       // console.log("filterItemsForUsers()");
       // this.clearForm();
-      this.clearOnlyItem();
+      noclear || this.clearOnlyItem();
       // props.resetForm();
       this.setState({ items: filteredItems });
     } else {
@@ -319,7 +323,8 @@ class SerwisForm extends Component {
       gross: null,
       grossMargin: null
     });
-    props && props.setFieldValue("items", { name: "", id: 0 });
+    //problemy z zerowaniem inputu w itemach podczas wpisywania
+    // props && props.setFieldValue("items", { name: "", id: 0 });
   };
 
   validate = bonus => {
@@ -341,6 +346,7 @@ class SerwisForm extends Component {
       sell,
       quantity
     } = this.state;
+    const { user } = this.props;
 
     bonusUnit = cleanNumber(bonusUnit);
     buy = cleanNumber(buy);
@@ -349,18 +355,28 @@ class SerwisForm extends Component {
     // console.log("count()", bonusUnit, buy, sell, quantity);
 
     console.log("count", bonusType);
+
     if (bonusType === "% marży") {
       const marginUnit = sell - buy;
       const gross = sell * quantity;
       const grossMargin = marginUnit * quantity;
       const bonus = grossMargin * bonusUnit;
       this.validate(bonus);
+      this.validateEmployee(user);
       this.setState({ marginUnit, gross, grossMargin, bonus });
     } else if (bonusType === "stawka") {
       const bonus = bonusUnit * quantity;
       this.validate(bonus);
+      this.validateEmployee(user);
       this.setState({ bonus, marginUnit: 0, gross: 0, grossMargin: 0 });
     }
+  };
+
+  validateEmployee = user => {
+    // console.log("validuj", bonus);
+    user.id !== 0
+      ? this.setState({ submitIsDisable: false })
+      : this.setState({ submitIsDisable: true });
   };
 
   // askForConfig = async (date, name) => {
@@ -386,12 +402,14 @@ class SerwisForm extends Component {
   // };
 
   getConfig = async (date, id, props) => {
-    const { items } = this.state;
+    const { items, channelId } = this.state;
     const configs = _.clone(items);
     this.clearSummary();
     // this.clearOnlyItem();
     // this.setState({ buy: "0", sell: null });
-    const config = configs.filter(x => x.id === id);
+    const config = configs
+      .filter(x => x.id === id)
+      .filter(y => y.channelId === channelId);
 
     // const oldType = this.state.bonusType;
     // const result = await axios.get(
@@ -407,6 +425,7 @@ class SerwisForm extends Component {
       // props.resetForm();
       this.clearOnlyItem(props);
     } else if (config.length > 0) {
+      console.log("config", config);
       const { bonus, bonusType, unit } = config[0];
       if (bonusType !== this.state.bonusType) {
         this.setState({ buy: 0, sell: null });
@@ -892,6 +911,12 @@ class SerwisForm extends Component {
                           props.setFieldTouched("items", true);
                         }}
                         edytuj={edytuj => {
+                          console.log(
+                            "edytuj item",
+                            // edytuj,
+                            props.values
+                            // edytuj.id
+                          );
                           edytuj.id ||
                             props.setFieldValue("items", {
                               name: edytuj,

@@ -31,6 +31,7 @@ class Users extends Component {
   };
 
   render() {
+    const { auth } = this.props;
     return (
       <Paper>
         <FormWithListClicks
@@ -90,8 +91,8 @@ class Users extends Component {
           maxWidth={900}
         >
         </ModalWindow> */}
-          <Form addLabel={"Dodaj"} activity="adding" />
-          <EditUserForm addLabel={"Dodaj"} activity="editing" />
+          <Form addLabel={"Dodaj"} activity="adding" auth={auth} />
+          <EditUserForm addLabel={"Dodaj"} activity="editing" auth={auth} />
         </FormWithListClicks>
       </Paper>
     );

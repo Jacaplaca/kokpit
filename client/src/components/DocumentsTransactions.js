@@ -333,7 +333,10 @@ class DocumentsTransactions extends Component {
 // export default DocumentsTransactions;
 
 function mapStateToProps({ auth }) {
-  return { auth };
+  return {
+    auth,
+    help: `Tu przedstawiciel handlowy może dodawać transakcje, które przeprowadził. Jest to jeden z elementów, które wykorzystujemy do wyliczania prowizji.`
+  };
 }
 
 export default compose(

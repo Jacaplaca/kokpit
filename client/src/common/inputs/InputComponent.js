@@ -101,7 +101,11 @@ class InputComponent extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({ width: 10 + this.props.value.length * 8 });
+    this.setState({
+      width:
+        10 +
+        (typeof this.props.value === "string" ? this.props.value.length * 8 : 0)
+    });
     switch (this.props.format) {
       case "select":
         this.setState({ format: this.selectFormat });

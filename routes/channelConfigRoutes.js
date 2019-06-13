@@ -73,6 +73,7 @@ module.exports = app => {
       ChannelsConfig.findAll({
         where: { clientId, itemId: itemsIds, channelId },
         attributes: [
+          // "id",
           "from",
           "to",
           "itemId",
@@ -110,7 +111,7 @@ module.exports = app => {
     "/api/config/month_channel/:day/:channelId/:userId",
     async (req, res) => {
       const { day, channelId, userId } = req.params;
-      // console.log(`/api/config/day_channel/${day}/${channelId}/${userId}`);
+      console.log(`I'm in geting configs`);
       if (!req.user) {
         return res.redirect("/");
       }
@@ -135,12 +136,12 @@ module.exports = app => {
       );
       // console.log("channels", channels);
       const channelsIds = channels.map(x => x.id);
-      // console.log(
-      //   "channelsIds",
-      //   channelsIds,
-      //   channelId,
-      //   channelsIds.includes(Math.trunc(channelId))
-      // );
+      console.log(
+        "channelsIds",
+        channelsIds,
+        channelId,
+        channelsIds.includes(Math.trunc(channelId))
+      );
 
       const add = { channelId };
 
@@ -159,7 +160,14 @@ module.exports = app => {
       };
 
       const query = {
-        attributes: ["id", "bonusType", "bonus", "suffix", "from", "to"],
+        attributes: [
+          ["id", "configId"],
+          "bonusType",
+          "bonus",
+          "suffix",
+          "from",
+          "to"
+        ],
         where: channelId === "0" ? where : Object.assign(where, add),
         include: [
           {
@@ -176,26 +184,70 @@ module.exports = app => {
         ],
         raw: true
       };
-      if (
-        channelsIds.includes(Math.trunc(channelId)) ||
-        (role === "master" && channelId === "0")
-      ) {
-        console.log(
-          channelsIds.includes(Math.trunc(channelId)) ||
-            (role === "master" && channelId === "0")
-        );
-        ChannelsConfig.findAll(query)
-          .then(result => {
-            // console.log("config", result);
-            return res.json(result);
-          })
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-      } else {
-        return res.json([]);
-      }
+      // if (
+      //   channelsIds.includes(Math.trunc(channelId)) ||
+      //   (role === "master" && channelId === "0")
+      // ) {
+      //   console.log(
+      //     channelsIds.includes(Math.trunc(channelId)) ||
+      //       (role === "master" && channelId === "0")
+      //   );
+      //   ChannelsConfig.findAll(query)
+      //     .then(result => {
+      //       // console.log("config", result);
+      //       return res.json(result);
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       res.sendStatus(500);
+      //     });
+      // } else {
+      //   return res.json([]);
+      // }
+      // console.log(
+      //   "query",
+      //   query,
+      //   channelsIds.includes(Math.trunc(channelId)),
+      //   channelId === "0"
+      // );
+      // if (!channelsIds.includes(Math.trunc(channelId)) && channelId === "0") {
+      //   ChannelsConfig.findAll(query)
+      //     .then(result => {
+      //       console.log("config1", result);
+      //       return res.json(result);
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       res.sendStatus(500);
+      //     });
+      // } else if (
+      //   channelsIds.includes(Math.trunc(channelId)) &&
+      //   channelId !== "0"
+      // ) {
+      //   ChannelsConfig.findAll(query)
+      //     .then(result => {
+      //       // console.log("config", result);
+      //       console.log("config2", result);
+      //       return res.json(result);
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       res.sendStatus(500);
+      //     });
+      // } else {
+      //   console.log("config3");
+      //   return res.json([]);
+      // }
+      ChannelsConfig.findAll(query)
+        .then(result => {
+          // console.log("config", result);
+          console.log("config2", result);
+          return res.json(result);
+        })
+        .catch(err => {
+          console.log(err);
+          res.sendStatus(500);
+        });
     }
   );
 

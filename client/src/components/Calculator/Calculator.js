@@ -56,15 +56,15 @@ class Calculator extends Component {
     const { role, id: user_id, name, surname } = this.props.auth;
     const { channelId } = this.props;
     // const {users} = this.props
-    console.log(
-      "Caluculator componentWillMount(), channelId",
-      channelId,
-      this.props.auth
-    );
+    // console.log(
+    //   "Caluculator componentWillMount(), channelId",
+    //   channelId,
+    //   this.props.auth
+    // );
 
     if (role === "master") {
       if (channelId === 0) {
-        console.log("calc cwm");
+        // console.log("calc cwm");
         await this.setAsyncState({ employee: { id: 0, name: "" } });
         await this.fetchAllChannelUsers();
         await this.fetchAllTransactionsInRange();
@@ -173,7 +173,7 @@ class Calculator extends Component {
     const fetched = await axios.get(
       `/api/transactions/${channelId}/${id}/${startDate}/${endDate}`
     );
-    console.log("fetchedtransactions", fetched.data);
+    // console.log("fetchedtransactions", fetched.data);
     // const transactions = this.handleDateFilter(
     //   fetched.data,
     //   startDate,
@@ -244,7 +244,7 @@ class Calculator extends Component {
     // console.log("calculator", employees);
 
     const empIds = employees.map(x => x.id);
-    console.log("empIds", empIds);
+    // console.log("empIds", empIds);
     empIds.includes(user_id)
       ? this.setState({
           employees,
@@ -282,6 +282,7 @@ class Calculator extends Component {
   };
 
   handleChangeItem = (item, show) => {
+    console.log("handleChangeItem", item, show);
     let itemId;
     let transactions;
     if (item && show) {
@@ -299,6 +300,7 @@ class Calculator extends Component {
     } else {
       transactions = this.state.transactionsUnfiltered;
     }
+    console.log("handleChangeItem()", item);
     this.setState({ transactions, item });
   };
 

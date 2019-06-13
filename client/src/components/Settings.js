@@ -118,6 +118,7 @@ class Settings extends Component {
 
   render() {
     const { logo, name, disableSubmit, size } = this.state;
+    const { auth } = this.props;
     return (
       <div style={{ maxWidth: 500 }}>
         <InputComponent
@@ -144,7 +145,14 @@ class Settings extends Component {
             zastosuj silniejszą kompresję lub wybierz inny plik.
           </p>
         )}
-        <ButtonMy onClick={this.handleSubmit}>Zapisz zmiany</ButtonMy>
+        <ButtonMy
+          disabled={auth.Company.accountType === "demo"}
+          onClick={auth.Company.accountType === "demo" || this.handleSubmit}
+        >
+          {auth.Company.accountType === "demo"
+            ? "DEMO - brak możliwości zapisu"
+            : "Zapisz zmiany"}
+        </ButtonMy>
       </div>
     );
   }

@@ -10,12 +10,9 @@ import * as actions from "../actions";
 
 class Register extends Component {
   state = {
-    email:
-      this.props.formTemp.length > 0
-        ? this.props.formTemp[0].email
-        : "zzz@zzz.com",
-    password: "zzzzzz",
-    password2: "zzzzzz",
+    email: this.props.formTemp.length > 0 ? this.props.formTemp[0].email : "",
+    password: "",
+    password2: "",
     disableSubmit: true,
     emailHelper: "Podaj prawidłowy adres email",
     passwordHelper: "Hasło powinno mieć conajmniej 5 znaków",
@@ -43,7 +40,7 @@ class Register extends Component {
   };
 
   onChange = (value, field) => {
-    console.log("onChange", value, field);
+    // console.log("onChange", value, field);
     this.setState({ [field]: value }, () => this.validate());
   };
 
@@ -60,7 +57,7 @@ class Register extends Component {
       passwordHelper,
       passwordHelper2
     } = validate;
-    console.log("validate", validate);
+    // console.log("validate", validate);
 
     this.setState({
       disableSubmit,

@@ -239,9 +239,9 @@ class DrawerLink extends React.Component {
           <ListItem
             button
             onClick={this.handleClick}
-            className={active && classes.itemClicked}
+            className={active ? classes.itemClicked : ""}
           >
-            <ListItemIcon className={darkTheme && classes.iconWhite}>
+            <ListItemIcon className={darkTheme ? classes.iconWhite : ""}>
               {ktoraIkona(icon)}
             </ListItemIcon>
             <ListItemText
@@ -294,6 +294,7 @@ class DrawerLink extends React.Component {
               } else if (x.menus) {
                 return (
                   <Menus
+                    key={i}
                     style={{
                       backgroundColor: lighten(theme.palette.primary.main, 0.92)
                     }}
@@ -381,7 +382,7 @@ const Item = ({
               : classes.item
             : active
             ? classes.itemClicked
-            : null
+            : ""
         }
         // className={
         //   anchor
@@ -395,7 +396,7 @@ const Item = ({
         // className={active && classes.itemClicked}
       >
         {icon && (
-          <ListItemIcon className={dark && classes.iconWhite}>
+          <ListItemIcon className={dark ? classes.iconWhite : ""}>
             {ktoraIkona(icon)}
           </ListItemIcon>
         )}
@@ -462,10 +463,10 @@ const ListItemMy = ({ click, classes, nested, element, dark, active }) => (
     button
     onClick={click}
     // className={classes.main}
-    className={active && classes.itemClicked}
+    className={active ? classes.itemClicked : ""}
   >
     {nested || (
-      <ListItemIcon className={dark && classes.iconWhite}>
+      <ListItemIcon className={dark ? classes.iconWhite : ""}>
         {ktoraIkona(element.icon)}
       </ListItemIcon>
     )}

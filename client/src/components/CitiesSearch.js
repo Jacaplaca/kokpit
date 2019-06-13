@@ -155,7 +155,7 @@ class CitySearch extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("klienci search", this.props.value, nextProps.value);
+    // console.log("klienci search", this.props.value, nextProps.value);
     if (nextProps.value && nextProps.value > 0) {
       this.loadEditedElement(nextProps.value);
     } else if (nextProps.value === 0) {

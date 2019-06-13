@@ -41,17 +41,27 @@ const DefaultTC = ({ children, center }) => (
   </TableCell>
 );
 
+const blockCheckbox = (id, role, rowType, accountType) => {
+  if (rowType === "user" && accountType !== "demo") {
+    return id === 1 && role === "master";
+  } else if (rowType === "user" && accountType === "demo") {
+    return true;
+  }
+};
+
 export const FieldCheck = ({
   role,
   channel,
   row,
   iconProps,
   iconPropsOpacity,
-  click
+  click,
+  rowType,
+  accountType
 }) => (
   <DefaultTC center key={channel.id}>
     <Checkbox
-      disabled={channel.id === 1 && row.role === "master"}
+      disabled={blockCheckbox(channel.id, row.role, rowType, accountType)}
       checked={row[channel.id] === 1}
       icon={<CheckBoxOutlineBlankIcon {...iconPropsOpacity} />}
       checkedIcon={<CheckBoxIcon {...iconProps} />}
@@ -158,7 +168,7 @@ export const Field2 = ({
     case "user":
       return <DefaultTC>{row.surname}</DefaultTC>;
     case "productsInChannel":
-      return <DefaultTC>{row.config}</DefaultTC>;
+      return <DefaultTC>{row.unit}</DefaultTC>;
     case "invoices":
       return <DefaultTC center>{row.termin_platnosci}</DefaultTC>;
     case "channelConfig":
@@ -196,6 +206,8 @@ export const Field3 = ({ rowType, row }) => {
           }).format()} zł`}
         </DefaultTC>
       );
+    case "productsInChannel":
+      return <DefaultTC>{row.config}</DefaultTC>;
     case "channelConfig":
       return <DefaultTC>{row.bonusType}</DefaultTC>;
     case "customerDetails":
@@ -284,9 +296,9 @@ export const Field6 = ({ rowType, row, role }) => {
     case "transactions":
       return (
         <DefaultTC>
-          {row.gross !== 0 && (
+          {row.sell !== 0 && (
             <NumberFormat
-              value={formatNumber(row.gross)}
+              value={formatNumber(row.sell)}
               displayType={"text"}
               thousandSeparator={" "}
               decimalSeparator={","}

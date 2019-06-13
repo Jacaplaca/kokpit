@@ -118,7 +118,7 @@ class Row extends Component {
       isClicked,
       overlaps,
       conditionOne,
-      auth: { role }
+      auth: { role, Company }
     } = this.props;
     // const { clickedRow } = this.state;
     return (
@@ -187,6 +187,8 @@ class Row extends Component {
         <Field11 rowType={rowType} row={item} role={role} />
         {headCols.map((channel, i) => (
           <FieldCheck
+            rowType={rowType}
+            accountType={Company.accountType}
             key={i}
             role={role}
             channel={channel}

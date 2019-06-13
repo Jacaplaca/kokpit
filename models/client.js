@@ -15,6 +15,9 @@ module.exports = (sequelize, Sequelize) => {
       },
       nextReportsLink: {
         type: Sequelize.STRING
+      },
+      accountType: {
+        type: Sequelize.STRING
       }
     },
     {

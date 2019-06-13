@@ -78,7 +78,13 @@ class Channels extends Component {
   };
 
   hideItemsConfig = () => {
+    console.log("hideItemsConfig()");
     this.setState(state => ({ itemsConfig: false }));
+  };
+
+  fetchAfterHide = () => {
+    console.log("fetchAfterHide()");
+    this.handleClickOnRow("clickedChannel", this.state.clickedChannel);
   };
 
   switchItemsConfig = () => {
@@ -228,6 +234,7 @@ class Channels extends Component {
               itemId={clickedItem}
               channelName={channelName}
               itemName={itemName}
+              fetchAfterHide={this.fetchAfterHide}
             />
           </div>
         </div>

@@ -350,7 +350,7 @@ class SimpleList extends React.Component {
                 {stableSort(transactions, getSorting(order, orderBy))
                   // {stableSort(data, getSorting(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map(n => {
+                  .map((n, i) => {
                     const isSelected = this.isSelected(n.id);
                     return (
                       <TableRow
@@ -360,7 +360,7 @@ class SimpleList extends React.Component {
                         role="checkbox"
                         aria-checked={isSelected}
                         tabIndex={-1}
-                        key={n.id}
+                        key={i}
                         selected={isSelected}
                       >
                         <TableCell

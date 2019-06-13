@@ -239,7 +239,8 @@ class EnhancedTableHead extends Component {
                     active={orderBy === col.id}
                     direction={order}
                     onClick={this.createSortHandler(col.id)}
-                    hideSortIcon
+                    // hideSortIcon
+                    // hidesorticon
                     classes={{
                       // Override with the active class if this is the selected column or inactive otherwise
                       icon:

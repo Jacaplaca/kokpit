@@ -110,10 +110,11 @@ class EditUser extends React.Component {
       passwordHelper,
       passwordHelper2
     } = validate;
-    console.log("validate", validate);
+    // console.log("validate", validate);
 
     this.setState({
-      disableSubmit,
+      disableSubmit:
+        this.props.auth.Company.accountType === "demo" ? true : disableSubmit,
       emailHelper,
       passwordHelper,
       passwordHelper2
@@ -183,7 +184,8 @@ class EditUser extends React.Component {
       values,
       submit,
       activity,
-      cancel
+      cancel,
+      auth
     } = this.props;
 
     return (
@@ -305,14 +307,20 @@ class EditUser extends React.Component {
               <FormButtons
                 subDisable={disableSubmit}
                 subLabel={
-                  "Zmień konto pracownika"
+                  auth.Company.accountType === "demo"
+                    ? "DEMO - brak możliwości edycji kont"
+                    : "Zmień konto pracownika"
                   //   modal && edit
                   //     ? "Potwierdź edycję"
                   //     : bonus > 0
                   //     ? `Dodaj premię ${formatNumber(bonus)} zł`
                   //     : "Potwierdź"
                 }
-                subAction={e => this.handleSubmit(e)}
+                subAction={e => {
+                  auth.Company.accountType === "demo"
+                    ? console.log("demo")
+                    : this.handleSubmit(e);
+                }}
                 cancelLabel={"Anuluj"}
                 cancelAction={this.handleCancel}
               />

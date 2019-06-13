@@ -67,11 +67,19 @@ class Calculators extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log("calculators", this.props, nextProps);
+    // console.log("calculators", this.props, nextProps);
   }
 
   handleChange = (event, value) => {
-    this.setState({ value });
+    if (value === 0) {
+      this.setState({ value, presentation: true });
+    } else {
+      if (this.state.value === 0) {
+        this.setState({ value, presentation: false });
+      } else {
+        this.setState({ value, presentation: this.state.presentation });
+      }
+    }
   };
 
   handleSwitch = name => event => {
@@ -90,12 +98,22 @@ class Calculators extends Component {
 
   fetchAllChannels = async () => {
     const channels = await axios.get(`/api/channels`);
-    this.setState({ channels: channels.data });
+    const presentation = this.blockEdit(channels.data);
+    this.setState({ channels: channels.data, presentation });
   };
 
   fetchChannels = async () => {
     const channels = await axios.get(`/api/channelusers`);
-    this.setState({ channels: channels.data });
+    const presentation = this.blockEdit(channels.data);
+    this.setState({ channels: channels.data, presentation });
+  };
+
+  blockEdit = channels => {
+    if (channels.length > 0 && this.state.value === 0) {
+      return true;
+    } else {
+      return this.state.presentation;
+    }
   };
 
   render() {
@@ -121,7 +139,9 @@ class Calculators extends Component {
               variant="scrollable"
               scrollButtons="auto"
             >
-              {channels && channels.length > 1 && <Tab label={"Wszystko"} />}
+              {channels && channels.length > 1 && (
+                <Tab label={"Wszystko"} key={"all"} />
+              )}
               {channels &&
                 [...channels].map((channel, i) => (
                   <Tab key={i} label={channel.name} />
@@ -134,6 +154,7 @@ class Calculators extends Component {
                     checked={presentation}
                     onChange={this.handleSwitch("presentation")}
                     value="presentation"
+                    disabled={channels.length > 1 && value === 0}
                   />
                 }
                 label={presentation ? "Prezentacja" : "Wprowadzanie"}
@@ -150,13 +171,21 @@ class Calculators extends Component {
             ? [{ id: 0, name: "Wszystko" }, ...channels].map(
                 (channel, i) =>
                   value === i && (
-                    <Caluculator channelId={channel.id} show={presentation} />
+                    <Caluculator
+                      channelId={channel.id}
+                      show={presentation}
+                      key={i}
+                    />
                   )
               )
             : [...channels].map(
                 (channel, i) =>
                   value === i && (
-                    <Caluculator channelId={channel.id} show={presentation} />
+                    <Caluculator
+                      channelId={channel.id}
+                      show={presentation}
+                      key={i}
+                    />
                   )
               )
           : null}

@@ -53,7 +53,7 @@ class MiniDrawer extends React.Component {
   };
 
   checkStartComp = ({ start_comp, UserModule }) => {
-    console.log("startComp", start_comp, UserModule);
+    // console.log("startComp", start_comp, UserModule);
     let startModule;
     let routeStart;
     if (UserModule.length === 0) {
@@ -89,18 +89,18 @@ class MiniDrawer extends React.Component {
   };
 
   compAllowed = (comps, id, comp) => {
-    console.log(
-      "comps comp",
-      comps,
-      id,
-      comp,
-      comps.filter(x => x.id === id).length
-    );
+    // console.log(
+    //   "comps comp",
+    //   comps,
+    //   id,
+    //   comp,
+    //   comps.filter(x => x.id === id).length
+    // );
     return comps.filter(x => x.id === id).length > 0;
   };
 
   render() {
-    console.log("minidrawer render");
+    // console.log("minidrawer render");
     const { classes, theme, auth, modules } = this.props;
 
     return (

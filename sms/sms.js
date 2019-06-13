@@ -20,6 +20,7 @@ let smsArray = [];
 console.log(`Now is ${today()} ${time()}`);
 
 const sending = false;
+// const sending = true;
 
 var rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [1, 3, 5];

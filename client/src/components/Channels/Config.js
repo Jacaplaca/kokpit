@@ -27,7 +27,8 @@ class Config extends Component {
       channelId,
       itemId,
       itemName,
-      channelName
+      channelName,
+      fetchAfterHide
     } = this.props;
     // console.log("data", data);
     return (
@@ -85,17 +86,17 @@ class Config extends Component {
                   label: "Nazwa"
                 },
                 {
+                  id: "unit",
+                  numeric: false,
+                  disablePadding: true,
+                  label: "Jednostka"
+                },
+                {
                   id: "config",
                   numeric: false,
                   disablePadding: true,
                   label: "Konfiguracja"
                 }
-                // {
-                //   id: "unit",
-                //   numeric: false,
-                //   disablePadding: true,
-                //   label: "Jednostka"
-                // }
               ]}
             >
               <Slide
@@ -128,7 +129,10 @@ class Config extends Component {
                   style={{ display: "grid", gridTemplateColumns: "13px 1fr" }}
                 >
                   <Button
-                    onClick={hideChild}
+                    onClick={() => {
+                      hideChild();
+                      fetchAfterHide();
+                    }}
                     style={{
                       height: "100%",
                       // backgroundColor: "grey",
