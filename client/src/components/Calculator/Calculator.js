@@ -372,15 +372,15 @@ class Calculator extends Component {
           onChange={this.handleSelect}
           range={this.state.rangeselection}
         />
-        {this.state.transactions.length > 0 && (
-          <div>
-            {show && (
-              <Summary
-                transactions={this.state.allTransactions}
-                show={show}
-                channelId={channelId}
-              />
-            )}
+        <div>
+          {show && (
+            <Summary
+              transactions={this.state.allTransactions}
+              show={show}
+              channelId={channelId}
+            />
+          )}
+          {this.state.transactions.length > 0 && (
             <div
               style={{
                 paddingTop: 1,
@@ -500,8 +500,8 @@ class Calculator extends Component {
                 />
               </Paper>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </React.Fragment>
     );
   }

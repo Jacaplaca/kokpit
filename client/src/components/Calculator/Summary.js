@@ -21,7 +21,7 @@ const report = (transactions, key) => {
     case "channelId":
       group = "ChannelTrans";
       break;
-    case "itemId":
+    case "nameAndChannel":
       group = "ItemTrans";
       break;
     case "userId":
@@ -49,11 +49,22 @@ const report = (transactions, key) => {
   return { list: reportSorted, sum };
 };
 
+const modTrans = transactions =>
+  transactions.map(x =>
+    Object.assign(x, {
+      nameAndChannel: `${x.name} (${x.ChannelTrans.name})`,
+      ItemTrans: Object.assign(x.ItemTrans, {
+        name: `${x.name} (${x.ChannelTrans.name})`
+      })
+    })
+  );
+
 const Summary = ({ transactions, channelId }) => {
   // const { transactions, show } = props;
-  const channel = report(transactions, "channelId");
-  const item = report(transactions, "itemId");
-  const user = report(transactions, "userId");
+  const modedTrans = modTrans(transactions);
+  const channel = report(modedTrans, "channelId");
+  const item = report(modedTrans, "nameAndChannel");
+  const user = report(modedTrans, "userId");
   return (
     <div>
       {/* {console.log(createReport(transactions))} */}

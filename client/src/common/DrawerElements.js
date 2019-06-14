@@ -3,6 +3,7 @@ export const elements = auth => {
     {
       comp: "powerBi",
       text: "Power BI",
+      text_en: "Power BI",
       link: "https://powerbi.microsoft.com/pl-pl/",
       icon: "Pageview",
       links: []
@@ -10,12 +11,14 @@ export const elements = auth => {
     {
       comp: "nextReports",
       text: "Next Reports",
+      text_en: "Next Reports",
       link: "/nextreports",
       icon: "InsertChartOutlined",
       links: ["/nextreports"]
     },
     {
       text: "Planer",
+      text_en: "Planner",
       icon: "EventIcon",
       comp: "planer_reports",
       links: ["/planer", "/raporty"],
@@ -29,12 +32,14 @@ export const elements = auth => {
         {
           // comp: "planer",
           text: "Aktywności",
+          text_en: "Activities",
           link: "/planer",
           icon: "EventIcon"
         },
         {
           // comp: "raporty",
           text: "Raporty",
+          text_en: "Reports",
           link: "/raporty",
           icon: "EventAvailableIcon"
         }
@@ -43,6 +48,7 @@ export const elements = auth => {
     {
       comp: "costs",
       text: "Koszty",
+      text_en: "Costs",
       link: "/costs",
       icon: "MoneyIcon",
       links: ["/costs"]
@@ -50,6 +56,7 @@ export const elements = auth => {
     {
       comp: "invoices",
       text: "Faktury",
+      text_en: "Invoices",
       link: "/invoices",
       icon: "ListAlt",
       links: ["/invoices"]
@@ -57,6 +64,7 @@ export const elements = auth => {
     {
       comp: "customer_details",
       text: "Informacje o klientach",
+      text_en: "Customer details",
       link: "/customerdetails",
       icon: "People",
       links: ["/customerdetails"]
@@ -64,6 +72,7 @@ export const elements = auth => {
     {
       comp: "calculators",
       text: "Kalkulator premiowy",
+      text_en: "Bonus calculator",
       link: "/calculators",
       icon: "Money",
       links: ["/calculators"]
@@ -71,6 +80,7 @@ export const elements = auth => {
     {
       comp: "documents_transactions",
       text: "Transakcje z dokumentów",
+      text_en: "Documents transactions",
       link: "/documentstransactions",
       icon: "Inbox",
       links: ["/documentstransactions"]
@@ -78,6 +88,7 @@ export const elements = auth => {
     {
       comp: "bonusRules",
       text: "Pliki do pobrania",
+      text_en: "Files",
       link: "/bonusrules",
       icon: "Description",
       links: ["/bonusrules"]
@@ -87,6 +98,7 @@ export const elements = auth => {
   const elementsKonfig = [
     {
       text: "Konfiguracja",
+      text_en: "Settings",
       comp: "settings",
       icon: "Settings",
       links: [
@@ -102,22 +114,26 @@ export const elements = auth => {
           comp: "bonus_system",
           // icon: "Assignment",
           text: "Ustawienia premii",
+          text_en: "Bonus settings",
           menus: [
             {
               // comp: "products",
               text: "Produkty",
+              text_en: "Products",
               link: "/products",
               icon: "LocalOffer"
             },
             {
               // comp: "channels",
               text: "Systemy prowizyjne",
+              text_en: "Bonus systems",
               link: "/systems",
               icon: "Assignment"
             },
             {
               // comp: "users_channels",
               text: "Pracownicy",
+              text_en: "Employees",
               link: "/users_channels",
               icon: "People"
             }
@@ -126,6 +142,7 @@ export const elements = auth => {
         {
           comp: "users",
           text: "Użytkownicy",
+          text_en: "Users",
           link: "/users",
           icon: "Person",
           links: ["/users"]
@@ -133,6 +150,7 @@ export const elements = auth => {
         {
           comp: "settings",
           text: "Ogólne ustawienia",
+          text_en: "Settings",
           link: "/settings",
           icon: "Settings",
           links: ["/settings"]

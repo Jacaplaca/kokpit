@@ -13,6 +13,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 import { connect } from "react-redux";
 import * as actions from "../actions";
+import LanguageSwitch from "./LanguageSwitch";
+import { getString } from "../translate";
 
 import ButtonNavBar from "./ButtonNavBar";
 // import LinearProgress from "./LinearProgress";
@@ -62,10 +64,22 @@ class TopNavBar extends React.Component {
       case false:
         return [
           // <ButtonNavBar key="1a" link="/register" text="Rejestracja" />,
-          <ButtonNavBar key="2b" link="/login" text="Logowanie" />
+          <ButtonNavBar
+            key="2b"
+            link="/login"
+            text={getString("TOP_NAV_LOGIN", this.props.language)}
+          />,
+          <LanguageSwitch key={3} />
         ];
       default:
-        return [<ButtonNavBar key={2} link="/api/logout" text="Wyloguj się" />];
+        return [
+          <ButtonNavBar
+            key={2}
+            link="/api/logout"
+            text={getString("TOP_NAV_LOGOUT", this.props.language)}
+          />,
+          <LanguageSwitch key={3} />
+        ];
     }
   }
 
@@ -123,8 +137,8 @@ TopNavBar.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, language }) {
+  return { auth, language };
 }
 
 export default withStyles(styles, { withTheme: true })(

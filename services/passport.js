@@ -132,14 +132,14 @@ passport.use(
                   return done(null, { user_id: result[0].id });
                 }
                 Object.assign(message, {
-                  errors: "Błędne hasło, czy chcesz je zresetować?"
+                  errors: "LOGIN_RESET"
                 });
                 req.flash("info", message);
                 return done(null, false);
               }
             });
           } else {
-            req.flash("info", { errors: ["Niepoprawny email lub hasło."] });
+            req.flash("info", { errors: ["LOGIN_ERROR"] });
             return done(null, false);
           }
         })

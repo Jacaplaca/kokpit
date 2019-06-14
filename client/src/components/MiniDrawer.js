@@ -101,7 +101,18 @@ class MiniDrawer extends React.Component {
 
   render() {
     // console.log("minidrawer render");
-    const { classes, theme, auth, modules } = this.props;
+    const { classes, theme, auth, modules, language } = this.props;
+
+    const switchLang = title => {
+      switch (language) {
+        case "pl":
+          return title.name;
+        case "en":
+          return title.name_en;
+        default:
+          return title.name;
+      }
+    };
 
     return (
       <BrowserRouter>
@@ -132,7 +143,8 @@ class MiniDrawer extends React.Component {
               routes.map((route, i) => {
                 const { comp, path, component, open, id, parrentId } = route;
                 const titles = modules.filter(x => x.id === id);
-                const moduleTitle = titles[0] ? titles[0].name : "";
+                const moduleTitle = titles[0] ? switchLang(titles[0]) : "";
+                // const moduleTitle = titles[0] ? titles[0].name : "";
                 // console.log("route", comp, path);
                 // const titlesFromDb = auth.UserModule.filter(x => x.id === id);
                 // console.log("auth", path, id, comp, titlesFromDb);
@@ -166,8 +178,8 @@ MiniDrawer.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth, modules }) {
-  return { auth, modules };
+function mapStateToProps({ auth, modules, language }) {
+  return { auth, modules, language };
 }
 
 export default withStyles(styles, { withTheme: true })(

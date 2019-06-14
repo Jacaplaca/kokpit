@@ -6,7 +6,8 @@ import {
   LOADING,
   SUBMIT,
   FETCH_MODULES,
-  FETCH_CUSTOMERSWITHDETAILS
+  FETCH_CUSTOMERSWITHDETAILS,
+  LANGUAGE
 } from "./types";
 
 export const fetchUser = () => async dispatch => {
@@ -49,4 +50,12 @@ export const fetchForm = () => async dispatch => {
   console.log("fetchForm()");
   const res = await axios.get("/api/message");
   dispatch({ type: FETCH_FORM, payload: res.data });
+};
+
+export const languageChange = state => dispatch => {
+  console.log("LANGUAGE", state);
+  dispatch({
+    type: LANGUAGE,
+    payload: state
+  });
 };

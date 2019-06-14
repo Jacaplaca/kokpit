@@ -134,6 +134,7 @@ class DrawerMy extends React.Component {
       anchorEl
     } = this.props;
     const { activeLink } = this.state;
+
     return (
       <Drawer
         variant="permanent"
@@ -161,12 +162,12 @@ class DrawerMy extends React.Component {
         <div>
           {elements(auth).map((el, i) => {
             // console.log("el", el);
-            const { comp, text, link, icon, comps, links } = el;
+            const { comp, link, icon, comps, links, text } = el;
             return (
               <ShowLinkToComp key={i} comp={comp}>
                 <DrawerLink
                   openDrawer={open}
-                  text={text}
+                  // text={switchLang(el)}
                   link={link}
                   icon={icon}
                   comps={comps}

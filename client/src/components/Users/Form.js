@@ -1,5 +1,6 @@
 import React from "react";
 import FormButtons from "../../common/FormButtons";
+import { connect } from "react-redux";
 
 import SelectItem from "../../common/inputs/SelectItem";
 import { DatePicker } from "material-ui-pickers";
@@ -12,6 +13,11 @@ import {
   validateRegister
 } from "../../common/functions";
 import SummaryAddingUser from "./SummaryAddingUser";
+import { getString } from "../../translate";
+
+const emailHelperMessage = language => {
+  return getString("LOGIN_EMAIL_GIVE_CORRECT", language);
+};
 
 class UserForm extends React.Component {
   // static contextType = MyContext;
@@ -21,7 +27,7 @@ class UserForm extends React.Component {
     email: "",
     password: "",
     disableSubmit: true,
-    emailHelper: "Podaj prawidłowy adres email",
+    emailHelper: getString("LOGIN_EMAIL_GIVE_CORRECT", this.props.language),
     passwordHelper: "Hasło powinno mieć conajmniej 5 znaków",
     passwordHelper2: "Hasła nie mogą się różnić",
     report: null,
@@ -125,11 +131,12 @@ class UserForm extends React.Component {
       submit,
       activity,
       cancel,
-      auth
+      auth,
+      language
     } = this.props;
 
     return (
-      <Expansion title="Dodaj użytkownika">
+      <Expansion title={getString("USER_ADD_LABEL", language)}>
         <div
           style={{
             display: "grid",
@@ -154,7 +161,7 @@ class UserForm extends React.Component {
                 // disabled={disabled}
                 // key={i}
                 name="name"
-                label="Imię"
+                label={getString("NAME", language)}
                 type="text"
                 edytuj={value => change("name", value, activity)}
                 value={values.name || ""}
@@ -166,7 +173,7 @@ class UserForm extends React.Component {
                 // disabled={disabled}
                 // key={i}
                 name="surname"
-                label="Nazwisko"
+                label={getString("SURNAME", language)}
                 type="text"
                 edytuj={value => change("surname", value, activity)}
                 value={values.surname || ""}
@@ -191,7 +198,7 @@ class UserForm extends React.Component {
                 // disabled={disabled}
                 // key={i}
                 name="password"
-                label="Hasło"
+                label={getString("LOGIN_PASS", language)}
                 type="password"
                 edytuj={value => change("password", value, activity)}
                 value={values.password || ""}
@@ -205,7 +212,7 @@ class UserForm extends React.Component {
                 // disabled={disabled}
                 // key={i}
                 name="password2"
-                label="Potwierdź hasło"
+                label={getString("CONFIRM_PASS", language)}
                 type="password2"
                 edytuj={value => change("password2", value, activity)}
                 value={values.password2 || ""}
@@ -263,7 +270,7 @@ class UserForm extends React.Component {
                     ? console.log("demo")
                     : this.handleSubmit(e);
                 }}
-                cancelLabel={"Anuluj"}
+                cancelLabel={getString("CANCEL", language)}
                 cancelAction={this.handleCancel}
               />
             </div>
@@ -290,4 +297,13 @@ class UserForm extends React.Component {
 //   ) : null;
 // };
 
-export default UserForm;
+function mapStateToProps({ language }) {
+  return { language };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(UserForm);
+
+// export default UserForm;

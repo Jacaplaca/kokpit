@@ -216,12 +216,26 @@ export const Field3 = ({ rowType, row }) => {
       return (
         <DefaultTC center>
           <NumberFormat
+            style={{ fontWeight: 700 }}
             value={row.quantity}
             displayType={"text"}
             thousandSeparator={" "}
             decimalSeparator={","}
-            suffix={` ${row.unit}`}
+            // suffix={` ${row.unit}`}
           />
+          <span
+            style={{
+              marginLeft: 4,
+              fontSize: "0.875em",
+              // backgroundColor: "rgb(221, 221, 221)",
+              color: "grey",
+              // borderRadius: 10,
+              padding: 3,
+              fontWeight: 700
+            }}
+          >
+            {row.unit}
+          </span>
         </DefaultTC>
       );
     case "documents_transactions":

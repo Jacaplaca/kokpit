@@ -40,6 +40,19 @@ class App extends Component {
   componentDidMount() {
     this.props.fetchUser();
     this.props.fetchModules();
+
+    let language = localStorage.getItem("language");
+    console.log("cookies lan", language);
+
+    if (!language) {
+      localStorage.setItem("language", "pl");
+      language = "pl";
+    } else {
+      // localStorage.setItem("language", action.payload);
+      // language = action.payload;
+      this.props.languageChange(language);
+    }
+
     document.title = `Świadoma Firma - Kokpit`;
     // console.log("auth", this.props);
     //this.props.loading(true);

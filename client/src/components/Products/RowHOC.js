@@ -6,10 +6,12 @@ import CheckBoxOutlineBlankIcon from "@material-ui/icons/RadioButtonUnchecked";
 import CheckBoxIcon from "@material-ui/icons/CheckCircle";
 import InputInRow from "../../common/inputs/InputInRow";
 import Input from "@material-ui/core/Input";
+import { connect } from "react-redux";
 import ButtonIconCircle from "../../common/ButtonIconCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import { shallowEqual } from "../../common/functions";
 import ButtonMy from "../../common/ButtonMy";
+import { getString } from "../../translate";
 
 const RowHOC = WrappedComponent => {
   class Row extends Component {
@@ -64,7 +66,8 @@ const RowHOC = WrappedComponent => {
         handleClick,
         handleClickChannel,
         disableSubmit,
-        submit
+        submit,
+        language
       } = this.props;
       return (
         <TableRow
@@ -146,10 +149,10 @@ const RowHOC = WrappedComponent => {
           <TableCell padding="checkbox" style={{ width: 35 }}>
             {/* <Checkbox checked={is selected} /> */}
             <ButtonIconCircle
-              title="Edytuj"
+              // title={getString("EDIT", language)}
               akcja={() => {
                 // props.edit(cell);
-                console.log("edit", item.id);
+                console.log("edit", language, item.id);
                 edit(item.id);
               }}
             >
@@ -163,4 +166,13 @@ const RowHOC = WrappedComponent => {
   return Row;
 };
 
-export default RowHOC;
+const mapStateToProps = ({ language }) => {
+  return { language };
+};
+
+export default connect(
+  mapStateToProps,
+  null
+)(RowHOC);
+
+// export default RowHOC;

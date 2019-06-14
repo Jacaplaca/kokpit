@@ -12,6 +12,8 @@ import {
 import axios from "axios";
 import moment from "moment";
 import _ from "lodash";
+import store from "../store";
+import { getString } from "../translate";
 
 var {
   startOfQuarter,
@@ -27,8 +29,10 @@ export const validateRegister = async ({
   originalEmail
 }) => {
   // console.log("validateRegister()", email, password, password2, originalEmail);
-  const goodEmail = "Podaj prawidłowy adres email";
-  const wrongEmail = "Podany email jest już wykorzystany";
+  const language = store.getState().language;
+  console.log("validate", language);
+  const goodEmail = getString("LOGIN_EMAIL_GIVE_CORRECT", language);
+  const wrongEmail = getString("REGISTER_USED", language);
   const badPass = `Hasło powinno mieć conajmniej 6 znaków. Brakuje: ${6 -
     password.length}`;
   const goodPass = "Im dłuższe i bardziej skomplikowane hasło tym lepiej";

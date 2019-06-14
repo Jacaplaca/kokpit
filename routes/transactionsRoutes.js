@@ -65,19 +65,28 @@ module.exports = app => {
       });
   });
 
-  app.post("/api/transaction/edit/id/:id/:userId", (req, res, next) => {
+  app.post("/api/transaction/edit/id/:id/:userId", async (req, res, next) => {
     const { id, userId } = req.params;
     // console.log("edytuje transaction api", id, req.body);
     if (!req.user) {
       // console.log("przekierowanie");
       return res.redirect("/");
     }
+
     const { id: user_id, clientId } = req.user;
+    const [err, item] = await to(
+      Item.find({
+        where: { id: req.body.itemId },
+        raw: true
+      })
+    );
     const form = Object.assign(req.body, {
       clientId,
-      userId: userId === 0 ? user_id : userId
+      userId: userId === 0 ? user_id : userId,
+      name: item.name
     });
-    console.log(form);
+
+    // console.log("update item", item, item.name, form.name);
     Transaction.update(form, {
       where: { clientId, id }
     })

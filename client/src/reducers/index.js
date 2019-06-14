@@ -6,6 +6,7 @@ import clickedReducer from "./clickedReducer";
 import loadingReducer from "./loadingReducer";
 import submitReducer from "./submitReducer";
 import customerDetailsReducer from "./customerDetailsReducer";
+import languageReducer from "./languageReducer";
 
 export default combineReducers({
   auth: authReducer,
@@ -14,5 +15,6 @@ export default combineReducers({
   formTemp: formReducer,
   clicked: clickedReducer,
   loading: loadingReducer,
-  submit: submitReducer
+  submit: submitReducer,
+  language: languageReducer
 });

@@ -46,6 +46,7 @@ import SearchField from "../../common/inputs/SearchField";
 import InputInRow from "../../common/inputs/InputInRow";
 import SemiButton from "../../common/SemiButton";
 import Row from "./Row";
+import { getString } from "../../translate";
 
 let counter = 0;
 function createData(name, calories, fat, carbs, protein) {
@@ -95,6 +96,17 @@ function desc(a, b, orderBy) {
 //   }
 // ];
 
+const switchLang = (el, language) => {
+  switch (language) {
+    case "pl":
+      return el.name;
+    case "en":
+      return el.name_en;
+    default:
+      return el.name;
+  }
+};
+
 class EnhancedTableHead extends Component {
   state = {
     headCols: []
@@ -135,7 +147,8 @@ class EnhancedTableHead extends Component {
       rowCount,
       classes,
       headRow,
-      disableDelete
+      disableDelete,
+      language
     } = this.props;
 
     const { headCols } = this.state;
@@ -183,7 +196,7 @@ class EnhancedTableHead extends Component {
                     row.label
                   ) : (
                     <Tooltip
-                      title="Sortuj"
+                      title={getString("SORT", language)}
                       placement={row.numeric ? "bottom-end" : "bottom-start"}
                       enterDelay={300}
                     >
@@ -205,6 +218,7 @@ class EnhancedTableHead extends Component {
                         // hideSortIcon={row.hideSort}
                       >
                         {row.label}
+                        {/* {switchLang(row, language)} */}
                       </TableSortLabel>
                     </Tooltip>
                   )}
@@ -231,7 +245,7 @@ class EnhancedTableHead extends Component {
               >
                 {/* {col.label} */}
                 <Tooltip
-                  title="Sortuj"
+                  title={getString("SORT", language)}
                   placement={col.numeric ? "bottom-end" : "bottom-start"}
                   enterDelay={300}
                 >
@@ -253,7 +267,8 @@ class EnhancedTableHead extends Component {
                           : classes.inactiveTableSort
                     }}
                   >
-                    {col.label}
+                    {/* {col.label} */}
+                    {switchLang(col, language)}
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
@@ -312,7 +327,8 @@ let EnhancedTableToolbar = props => {
     search,
     labelList,
     searchColumns,
-    sum
+    sum,
+    language
   } = props;
 
   return (
@@ -327,7 +343,7 @@ let EnhancedTableToolbar = props => {
             color="inherit"
             // variant="subtitle1"
           >
-            {numSelected} wybrano
+            {numSelected} {getString("CHOOSE", language)}
           </Typography>
         ) : (
           <Typography
@@ -342,7 +358,7 @@ let EnhancedTableToolbar = props => {
       <div className={classes.center}>
         {sum && (
           <div style={{ fontSize: "0.85em" }}>
-            Suma:{" "}
+            {getString("SUM", language)}:{" "}
             <NumberFormat
               style={{ fontWeight: 600 }}
               value={formatNumber(sum)}
@@ -356,7 +372,7 @@ let EnhancedTableToolbar = props => {
       </div>
       <div className={classes.actions}>
         {numSelected > 0 ? (
-          <Tooltip title="Usuń">
+          <Tooltip title={getString("REMOVE", language)}>
             <IconButton aria-label="Delete" onClick={deleteRows}>
               <DeleteIcon />
             </IconButton>
@@ -645,7 +661,8 @@ class EnhancedTable extends Component {
       children,
       showChild,
       overlaps,
-      conditionOne
+      conditionOne,
+      language
     } = this.props;
     const {
       data,
@@ -714,6 +731,7 @@ class EnhancedTable extends Component {
         >
           <div className={classes.root}>
             <EnhancedTableToolbar
+              language={language}
               sum={sum}
               numSelected={selected.length}
               deleteRows={this.handleConfirmation}
@@ -725,6 +743,7 @@ class EnhancedTable extends Component {
             <div className={classes.tableWrapper}>
               <Table className={classes.table} aria-labelledby="tableTitle">
                 <EnhancedTableHead
+                  language={language}
                   disableDelete={disableDelete}
                   headCols={headCols}
                   numSelected={selected.length}
@@ -790,12 +809,12 @@ class EnhancedTable extends Component {
               rowsPerPage={rowsPerPage}
               page={page}
               backIconButtonProps={{
-                "aria-label": "Poprzednia"
+                "aria-label": getString("PAGINATION_PREV", language)
               }}
               nextIconButtonProps={{
-                "aria-label": "Następna"
+                "aria-label": getString("PAGINATION_NEXT", language)
               }}
-              labelRowsPerPage="Elementów na stronie"
+              labelRowsPerPage={getString("PAGINATION_LABEL", language)}
               onChangePage={this.handleChangePage}
               onChangeRowsPerPage={this.handleChangeRowsPerPage}
             />
@@ -818,8 +837,8 @@ EnhancedTable.defaultProps = {
   defaultOrder: "desc"
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, language }) {
+  return { auth, language };
 }
 
 export default compose(

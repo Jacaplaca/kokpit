@@ -10,6 +10,7 @@ import FormWithListClicks from "../common/FormWithListClicks";
 import Form from "../components/Users/Form";
 import EditUserForm from "../components/Users/EditForm";
 import ModalWindow from "./ModalWindow";
+import { getString } from "../translate";
 
 const styles = theme => ({
   input: {
@@ -31,7 +32,7 @@ class Users extends Component {
   };
 
   render() {
-    const { auth } = this.props;
+    const { auth, language } = this.props;
     return (
       <Paper>
         <FormWithListClicks
@@ -58,20 +59,20 @@ class Users extends Component {
               id: "name",
               numeric: false,
               disablePadding: true,
-              label: "Imię"
+              label: getString("NAME", language)
             },
             {
               id: "surname",
               numeric: false,
               disablePadding: true,
-              label: "Nazwisko"
+              label: getString("SURNAME", language)
             },
             {
               id: "role",
               textAlign: "center",
               numeric: false,
               disablePadding: true,
-              label: "Rola"
+              label: getString("ROLE", language)
             },
             {
               id: "email",
@@ -83,7 +84,7 @@ class Users extends Component {
           ]}
           rowType="user"
           modal
-          labelList="Edycja użytkowników i uprawnienia"
+          labelList={getString("USERS_EDITING", language)}
         >
           {/* <ModalWindow
           open={this.state.openModal}
@@ -91,8 +92,16 @@ class Users extends Component {
           maxWidth={900}
         >
         </ModalWindow> */}
-          <Form addLabel={"Dodaj"} activity="adding" auth={auth} />
-          <EditUserForm addLabel={"Dodaj"} activity="editing" auth={auth} />
+          <Form
+            addLabel={getString("ADD", language)}
+            activity="adding"
+            auth={auth}
+          />
+          <EditUserForm
+            addLabel={getString("ADD", language)}
+            activity="editing"
+            auth={auth}
+          />
         </FormWithListClicks>
       </Paper>
     );
@@ -101,8 +110,9 @@ class Users extends Component {
 
 // export default Users;
 
-function mapStateToProps({ auth }) {
+function mapStateToProps({ auth, language }) {
   return {
+    language,
     auth,
     help:
       "Tu możesz dodawać, usuwać oraz edytować użytkowników/pracowników oraz nadawać im uprawnienia do poszczególnych modułów."

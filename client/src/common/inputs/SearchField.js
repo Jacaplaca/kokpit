@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -12,6 +13,7 @@ import { withStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import { getSuggestions } from "../../common/functions";
+import { getString } from "../../translate";
 
 const styles = theme => ({
   root: {
@@ -104,21 +106,24 @@ class SearchField extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, language } = this.props;
     const { value } = this.state;
 
     return (
       <div className={classes.root}>
         <div className={classes.grow} />
         <div className={classes.search}>
-          <div className={classes.searchIcon} title="Szukaj...">
+          <div
+            className={classes.searchIcon}
+            title={`${getString("SEARCH", language)}...`}
+          >
             <SearchIcon />
           </div>
           <Input
-            title="Szukaj..."
+            title={`${getString("SEARCH", language)}...`}
             // disableUnderline
             // type="search"
-            placeholder="Szukaj…"
+            placeholder={`${getString("SEARCH", language)}…`}
             classes={{
               root: classes.inputRoot,
               input: classes.inputInput
@@ -138,4 +143,15 @@ SearchField.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(SearchField);
+const mapStateToProps = ({ language }) => {
+  return { language };
+};
+
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    null
+  )(SearchField)
+);
+
+// export default withStyles(styles)(SearchField);

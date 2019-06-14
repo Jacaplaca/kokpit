@@ -54,7 +54,6 @@ const styles = theme => ({
   },
   listItemText: {
     fontSize: "0.9em"
-    // padding: "0px 1px" //Insert your required size
   },
   listItemTextWhite: { fontSize: "0.9em", color: "white", fontWeight: 500 },
   itemText: {
@@ -63,75 +62,34 @@ const styles = theme => ({
   itemClicked: {
     backgroundColor: theme.palette.grey["300"]
   },
-  expanded: {
-    // backgroundColor: "rgb(231, 231, 231, 0.35)",
-    // backgroundColor: lighten(theme.palette.primary.main, 0.86),
-    // boxShadow: "inset 1px 4px 9px -6px"
-    // boxShadow: "0 5px 11px -6px gray",
-    // webkitBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
-    // mozBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
-    // boxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
-    // borderBottomWidth: 1,
-    // borderBottomStyle: "solid",
-    // borderBottomColor: lighten(theme.palette.primary.main, 0.7)
-    // borderTopWidth: 1,
-    // borderTopStyle: "solid",
-    // borderTopColor: theme.palette.primary.main
-  },
+  expanded: {},
   expandedBottom: {
     backgroundColor: theme.palette.grey["300"]
-    // backgroundColor: "rgb(231, 231, 231, 0.35)",
-    // backgroundColor: lighten(theme.palette.primary.main, 0.86),
-    // boxShadow: "inset 1px -2px 9px -6px"
-    // boxShadow: "0 5px 11px -6px gray",
-    // webkitBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
-    // mozBoxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
-    // boxShadow: "inset 0px 0px 14px 5px rgba(0,0,0,0.63)",
-    // borderBottomWidth: 1,
-    // borderBottomStyle: "solid",
-    // borderBottomColor: theme.palette.primary.main,
-    // borderTopWidth: 1,
-    // borderTopStyle: "solid",
-    // borderTopColor: theme.palette.primary.main
   },
   menu: {
-    // backgroundColor: lighten(theme.palette.primary.main, 0.92),
-    // backgroundColor: theme.palette.grey["700"],
     borderRadius: 0,
     backgroundColor: theme.palette.grey["300"],
     boxShadow: "8px 5px 14px -9px rgba(0,0,0,0.63)"
-    // borderTop: `1px solid ${theme.palette.grey["500"]}`,
-    // borderRight: `1px solid ${theme.palette.grey["500"]}`,
-    // borderBottom: `1px solid ${theme.palette.grey["500"]}`,
-    // borderLeft: `1px solid ${theme.palette.grey["500"]}`
-    // color: "white"
   },
   menuNested: {
-    // backgroundColor: lighten(theme.palette.primary.main, 0.92),
-    // backgroundColor: theme.palette.grey["700"],
     borderRadius: 0,
     backgroundColor: theme.palette.grey["200"],
     boxShadow: "8px 5px 14px -9px rgba(0,0,0,0.63)"
-    // color: "white"
   },
   item: {
     backgroundColor: theme.palette.grey["300"]
-    // borderTop: `1px solid ${theme.palette.grey["500"]}`,
-    // borderLeft: `1px solid ${theme.palette.grey["500"]}`,
-    // borderBottom: `1px solid ${theme.palette.grey["500"]}`
   },
   itemNested: {
     backgroundColor: theme.palette.grey["200"]
   },
   menuDark: {
-    // backgroundColor: lighten(theme.palette.primary.main, 0.92),
     backgroundColor: darken(theme.palette.primary.main, 0.3),
     boxShadow: "8px 5px 14px -9px rgba(0,0,0,0.63)",
     borderRadius: 0
-    // color: "white"
   },
   collapseIcon: { color: "white" }
 });
+
 const components = {
   MoneyIcon: <MoneyIcon />,
   EventIcon: <EventIcon />,
@@ -149,6 +107,17 @@ const components = {
   Inbox: <Inbox />
 };
 
+const switchLang = (el, language) => {
+  switch (language) {
+    case "pl":
+      return el.text;
+    case "en":
+      return el.text_en;
+    default:
+      return el.text;
+  }
+};
+
 class DrawerLink extends React.Component {
   state = {
     open: false,
@@ -156,48 +125,20 @@ class DrawerLink extends React.Component {
     active: false
   };
 
-  // componentDidMount() {
-  //   const { links } = this.props;
-  //   // let isActive = []
-  //   const isActive = links.filter(x => x === window.location.pathname);
-  //   isActive.length > 0
-  //     ? this.setState({ active: true })
-  //     : this.setState({ active: false });
-  //
-  //   // console.log(
-  //   //   "DrawerLink DidMount",
-  //   //   this.props.links,
-  //   //   window.location.pathname,
-  //   //   isActive
-  //   // );
-  // }
-
   componentDidMount() {
     this.checkIfActive(window.location.path);
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log("receive props");
-    // console.log(
-    //   "drawerlink receive props,",
-    //   nextProps.path,
-    //   window.location.pathname
-    // );
     this.checkIfActive(window.location.path);
-    // if (nextProps.path !== window.location.path) {
-    //   // this.setState({activeLink:})
-    //   this.checkIfActive(window.location.path);
-    // }
     if (!nextProps.openDrawer) {
       this.setState({ open: false });
     }
   }
 
   checkIfActive = path => {
-    // console.log("active", path, window.location.pathname);
     const { links } = this.props;
     const isActive = links.filter(x => x === window.location.pathname);
-    // console.log("active", links, isActive);
     isActive.length > 0
       ? this.setState({ active: true })
       : this.setState({ active: false });
@@ -213,7 +154,6 @@ class DrawerLink extends React.Component {
   };
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
-    // this.props.clickDrawer();
   };
 
   render() {
@@ -221,13 +161,13 @@ class DrawerLink extends React.Component {
       classes,
       theme,
       link,
-      text,
       icon,
       comps,
       comp,
       element,
       path,
-      clickDrawer
+      clickDrawer,
+      language
     } = this.props;
     const { open, anchorEl, active } = this.state;
     const openMenu = Boolean(anchorEl);
@@ -246,7 +186,7 @@ class DrawerLink extends React.Component {
             </ListItemIcon>
             <ListItemText
               inset
-              primary={text}
+              primary={switchLang(element, language)}
               classes={{
                 primary: darkTheme
                   ? classes.listItemTextWhite
@@ -266,22 +206,8 @@ class DrawerLink extends React.Component {
             {comps.map((x, i) => {
               if (x.link) {
                 return (
-                  // <Link key={i} to={x.link}>
-                  //   {/* <List component="div" disablePadding> */}
-                  //   <ListItem button className={classes.nested}>
-                  //     {/* <ListItemIcon>{this.ktoraIkona(icon)}</ListItemIcon> */}
-                  //     <ListItemText
-                  //       inset
-                  //       primary={x.text}
-                  //       classes={{
-                  //         primary: classes.listItemText,
-                  //         root: classes.itemText
-                  //       }}
-                  //     />
-                  //   </ListItem>
-                  //   {/* </List> */}
-                  // </Link>
                   <ItemLink
+                    language={language}
                     key={i}
                     click={clickDrawer}
                     element={x}
@@ -294,6 +220,7 @@ class DrawerLink extends React.Component {
               } else if (x.menus) {
                 return (
                   <Menus
+                    language={language}
                     key={i}
                     style={{
                       backgroundColor: lighten(theme.palette.primary.main, 0.92)
@@ -316,6 +243,7 @@ class DrawerLink extends React.Component {
       </div>
     ) : element.menus ? (
       <Menus
+        language={language}
         openMenu={openMenu}
         click={this.handleClickMenu}
         anchorEl={anchorEl}
@@ -327,21 +255,8 @@ class DrawerLink extends React.Component {
         // nested
       />
     ) : (
-      // <ShowLinkToComp comp={comp}>
-      //   <Link to={link}>
-      //     <ListItem button>
-      //       <ListItemIcon>{ktoraIkona(icon)}</ListItemIcon>
-      //       <ListItemText
-      //         classes={{
-      //           primary: classes.listItemText,
-      //           root: classes.itemText
-      //         }}
-      //         primary={text}
-      //       />
-      //     </ListItem>
-      //   </Link>
-      // </ShowLinkToComp>
       <ItemLink
+        language={language}
         click={clickDrawer}
         element={element}
         classes={classes}
@@ -420,12 +335,14 @@ const ItemLink = ({
   element,
   nested,
   dark,
-  active
+  active,
+  language
 }) => (
   <ShowLinkToComp comp={element.comp}>
     {element.link[0] === "h" ? (
       <a target="_blank" href={element.link}>
         <ListItemMy
+          language={language}
           click={click}
           classes={classes}
           nested={nested}
@@ -447,6 +364,7 @@ const ItemLink = ({
         // href={element.link}
       >
         <ListItemMy
+          language={language}
           click={click}
           classes={classes}
           nested={nested}
@@ -458,7 +376,15 @@ const ItemLink = ({
     )}
   </ShowLinkToComp>
 );
-const ListItemMy = ({ click, classes, nested, element, dark, active }) => (
+const ListItemMy = ({
+  click,
+  classes,
+  nested,
+  element,
+  dark,
+  active,
+  language
+}) => (
   <ListItem
     button
     onClick={click}
@@ -477,7 +403,7 @@ const ListItemMy = ({ click, classes, nested, element, dark, active }) => (
         root: classes.itemText
       }}
       // primary={isActive(path)}
-      primary={element.text}
+      primary={switchLang(element, language)}
     />
   </ListItem>
 );
@@ -499,7 +425,8 @@ const Menus = ({
   classes,
   nested,
   dark,
-  active
+  active,
+  language
 }) => (
   <div>
     {/* <Button
@@ -511,7 +438,7 @@ const Menus = ({
     </Button> */}
     <Item
       comp={element.comp}
-      text={element.text}
+      text={switchLang(element, language)}
       icon={element.icon}
       classes={classes}
       click={click}
@@ -548,6 +475,7 @@ const Menus = ({
           element={x}
           classes={classes}
           dark={dark}
+          language={language}
         />
       ))}
       {/* <MenuItem onClick={close}>Profile</MenuItem> */}
@@ -560,8 +488,8 @@ DrawerLink.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired
 };
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, language }) {
+  return { auth, language };
 }
 export default withStyles(styles, { withTheme: true })(
   connect(

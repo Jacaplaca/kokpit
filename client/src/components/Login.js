@@ -13,11 +13,15 @@ import * as actions from "../actions";
 import InputComponent from "../common/inputs/InputComponent";
 import CenteringComponent from "../common/CenteringComponent";
 
-const emailHelperMessage = "Adres email podany przy rejestracji";
+import { getString } from "../translate";
+
+const emailHelperMessage = language => {
+  return getString("LOGIN_EMAIL_GIVE_CORRECT", language);
+};
 
 class Login extends Component {
   state = {
-    emailHelper: emailHelperMessage,
+    emailHelper: emailHelperMessage(this.props.language),
     disabledButton: true,
     errorEmail: false,
     email: "",
@@ -31,6 +35,7 @@ class Login extends Component {
 
   componentDidUpdate = (prevProps, prevState, snapshot) => {
     const { email: emailPrev } = prevState;
+
     const { email } = this.state;
     if (
       this.state.email === "" &&
@@ -44,7 +49,10 @@ class Login extends Component {
       EmailValidator.validate(email)
         ? this.setState({
             disabledButton: false,
-            emailHelper: emailHelperMessage,
+            emailHelper: getString(
+              "LOGIN_EMAIL_GIVE_CORRECT",
+              this.props.language
+            ),
             errorEmail: false
           })
         : this.setState({ disabledButton: true });
@@ -52,13 +60,17 @@ class Login extends Component {
   };
 
   onChangePassword = password => {
+    const { language } = this.props;
     this.setState({ password });
     this.state.disabledButton === true
       ? this.setState({
-          emailHelper: "Podaj prawidłowy adres email",
+          emailHelper: emailHelperMessage(language),
           errorEmail: true
         })
-      : this.setState({ emailHelper: emailHelperMessage, errorEmail: false });
+      : this.setState({
+          emailHelper: emailHelperMessage(language),
+          errorEmail: false
+        });
   };
 
   render() {
@@ -79,7 +91,7 @@ class Login extends Component {
           {/* {this.state.error} */}
           {this.props.formTemp[0] ? (
             <div style={{ display: !this.state.resetShow && "none" }}>
-              {this.props.formTemp[0].errors}
+              {getString(this.props.formTemp[0].errors, this.props.language)}
               {"email" in this.props.formTemp[0] && (
                 <form method="POST" action="/auth/reset">
                   <input name="email" type="hidden" value={this.state.email} />
@@ -89,7 +101,7 @@ class Login extends Component {
                     variant="contained"
                     color="primary"
                   >
-                    Tak
+                    {getString("LOGIN_RESET_YES", this.props.language)}
                   </Button>
                   <Button
                     onClick={() => this.setState({ resetShow: false })}
@@ -98,7 +110,7 @@ class Login extends Component {
                     variant="contained"
                     color="primary"
                   >
-                    Nie
+                    {getString("LOGIN_RESET_NO", this.props.language)}
                   </Button>
                 </form>
               )}
@@ -113,11 +125,15 @@ class Login extends Component {
               edytuj={email => this.setState({ email })}
               value={this.state.email}
               error={this.state.errorEmail}
-              helperText={this.state.emailHelper}
+              helperText={
+                this.state.disabledButton
+                  ? emailHelperMessage(this.props.language)
+                  : " "
+              }
             />
             <InputComponent
               name="password"
-              label="Password"
+              label={getString("LOGIN_PASS", this.props.language)}
               type="password"
               edytuj={password => this.onChangePassword(password)}
               value={this.state.password}
@@ -136,7 +152,7 @@ class Login extends Component {
                 color="primary"
                 disabled={this.state.disabledButton}
               >
-                Zaloguj się
+                {getString("LOGIN_BUTTON", this.props.language)}
                 <Key style={{ marginLeft: 10 }} />
               </Button>
             </div>
@@ -152,8 +168,8 @@ Login.propTypes = {
   formTemp: PropTypes.array
 };
 
-const mapStateToProps = ({ formTemp }) => {
-  return { formTemp };
+const mapStateToProps = ({ formTemp, language }) => {
+  return { formTemp, language };
 };
 
 export default connect(

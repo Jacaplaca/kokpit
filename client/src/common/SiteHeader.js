@@ -1,7 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
+import { getString } from "../translate";
 
 const styles = theme => ({
   root: {
@@ -18,8 +20,8 @@ const styles = theme => ({
 });
 
 function SiteHeader(props) {
-  const { classes, text, align } = props;
-
+  const { classes, text, align, language } = props;
+  console.log("SiteHeader", props);
   return (
     <div className={classes.root}>
       <Typography
@@ -32,6 +34,7 @@ function SiteHeader(props) {
           display1: classes.text // class name, e.g. `classes-nesting-label-x`
         }}
       >
+        {/* {text} */}
         {text}
       </Typography>
     </div>
@@ -46,4 +49,15 @@ SiteHeader.defaultProps = {
   align: "left"
 };
 
-export default withStyles(styles, { withTheme: true })(SiteHeader);
+const mapStateToProps = ({ language }) => {
+  return { language };
+};
+
+export default withStyles(styles, { withTheme: true })(
+  connect(
+    mapStateToProps,
+    null
+  )(SiteHeader)
+);
+
+// export default withStyles(styles, { withTheme: true })(SiteHeader);

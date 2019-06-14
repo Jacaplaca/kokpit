@@ -23,6 +23,7 @@ import {
   Field10,
   Field11
 } from "./Fields";
+import { getString } from "../../translate";
 
 const styles = theme => ({
   everyRow: {
@@ -118,7 +119,8 @@ class Row extends Component {
       isClicked,
       overlaps,
       conditionOne,
-      auth: { role, Company }
+      auth: { role, Company },
+      language
     } = this.props;
     // const { clickedRow } = this.state;
     return (
@@ -212,7 +214,7 @@ class Row extends Component {
           {/* <Checkbox checked={is selected} /> */}
           {disableDelete || (
             <ButtonIconCircle
-              title="Edytuj"
+              title={getString("EDIT", language)}
               akcja={() => {
                 // props.edit(cell);
                 console.log("edit", item.id);
@@ -228,8 +230,8 @@ class Row extends Component {
   }
 }
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, language }) {
+  return { auth, language };
 }
 
 // export default connect(

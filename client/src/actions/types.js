@@ -11,3 +11,4 @@ export const CLICKED = "clicked";
 export const LOADING = "loading";
 
 export const SUBMIT = "submit";
+export const LANGUAGE = "language";
