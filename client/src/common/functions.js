@@ -22,6 +22,18 @@ var {
   getYear,
   startOfYear
 } = require("date-fns");
+
+export const translateType = (type, language) => {
+  switch (type) {
+    case "% marży":
+      return getString("TYPE_MARGIN", language);
+    case "stawka":
+      return getString("TYPE_FLAT_RATE", language);
+    default:
+      return " ";
+  }
+};
+
 export const validateRegister = async ({
   email,
   password,
@@ -33,11 +45,11 @@ export const validateRegister = async ({
   console.log("validate", language);
   const goodEmail = getString("LOGIN_EMAIL_GIVE_CORRECT", language);
   const wrongEmail = getString("REGISTER_USED", language);
-  const badPass = `Hasło powinno mieć conajmniej 6 znaków. Brakuje: ${6 -
+  const badPass = `${getString("REGISTER_TOOSHORT", language)} ${6 -
     password.length}`;
-  const goodPass = "Im dłuższe i bardziej skomplikowane hasło tym lepiej";
-  const badPass2 = "Hasła nie mogą się różnić";
-  const goodPass2 = "Hasła są identyczne";
+  const goodPass = getString("REGISTER_LONGERBETTER", language);
+  const badPass2 = getString("REGISTER_PASS_DIFF", language);
+  const goodPass2 = getString("REGISTER_IDENTICAL", language);
   let validates = [];
   let freeEmail = false;
   const validEmail = originalEmail === email || validateEmail(email);

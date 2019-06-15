@@ -1,10 +1,11 @@
 import React from "react";
 import FormButtons from "../../common/FormButtons";
-
+import { connect } from "react-redux";
 import SelectItem from "../../common/inputs/SelectItem";
 import { DatePicker } from "material-ui-pickers";
 import InputComponent from "../../common/inputs/InputComponent";
 import { YMtoDate, dateToYM } from "../../common/functions";
+import { getString } from "../../translate";
 
 class ChannelForm extends React.Component {
   componentDidMount() {
@@ -42,7 +43,8 @@ class ChannelForm extends React.Component {
       // adding,
       validate,
       values,
-      submit
+      submit,
+      language
     } = this.props;
 
     return (
@@ -60,7 +62,7 @@ class ChannelForm extends React.Component {
           autoFocus
           onRef={ref => (this.nameField = ref)}
           name="channel"
-          label="Nazwa kanału/systemu prowizyjnego"
+          label={getString("CHANNELS_FORM_INPUT_NAME", language)}
           type="text"
           edytuj={value => change("name", value, "adding")}
           value={values.name || ""}
@@ -77,7 +79,7 @@ class ChannelForm extends React.Component {
             //     : "Potwierdź"
           }
           subAction={e => submit(e)}
-          cancelLabel={"Anuluj"}
+          // cancelLabel={"Anuluj"}
           cancelAction={() => {
             console.log("clear");
           }}
@@ -95,4 +97,11 @@ class ChannelForm extends React.Component {
   }
 }
 
-export default ChannelForm;
+function mapStateToProps({ language }) {
+  return { language };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(ChannelForm);

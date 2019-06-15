@@ -119,7 +119,7 @@ export const elements = auth => {
             {
               // comp: "products",
               text: "Produkty",
-              text_en: "Products",
+              text_en: "Items",
               link: "/products",
               icon: "LocalOffer"
             },

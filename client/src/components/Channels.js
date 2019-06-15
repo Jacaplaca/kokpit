@@ -10,10 +10,13 @@ import MainFrameHOC from "../common/MainFrameHOC";
 import FormWithListClicks from "../common/FormWithListClicks";
 import ChannelForm from "../components/Channels/ChannelForm";
 import Config from "../components/Channels/Config";
+import { getString } from "../translate";
+import { translateType } from "../common/functions";
 
 // import Test from "../components/Products/Test";
 const fetchItemsUrl = "api/allitem/channel";
 const fetchConfigsUrl = "api/channel_config/";
+
 const styles = theme => ({
   input: {
     display: "flex",
@@ -34,7 +37,7 @@ class Channels extends Component {
   state = {
     items: null,
     itemsUnfilter: null,
-    channel: " we wszystkich systemach",
+    channel: getString("CHANNELS_IN_ALL", this.props.language),
     itemsConfig: false,
     itemName: "",
     channelName: "",
@@ -115,9 +118,12 @@ class Channels extends Component {
         const itemWithConfig =
           itemLastConfig.length > 0
             ? Object.assign(item, {
-                config: `${itemLastConfig[0].from} - ${itemLastConfig[0].to} ${
-                  itemLastConfig[0].bonusType
-                } ${
+                config: `${itemLastConfig[0].from} - ${
+                  itemLastConfig[0].to
+                } ${translateType(
+                  itemLastConfig[0].bonusType,
+                  this.props.language
+                )} ${
                   itemLastConfig[0].suffix === "%"
                     ? `${parseFloat(itemLastConfig[0].bonus) * 100}`.replace(
                         ".",
@@ -126,7 +132,9 @@ class Channels extends Component {
                     : `${parseFloat(itemLastConfig[0].bonus)}`.replace(".", ",")
                 }${itemLastConfig[0].suffix} `
               })
-            : Object.assign(item, { config: "Brak konfiguracji" });
+            : Object.assign(item, {
+                config: getString("CHANNELS_NOCONFIG", this.props.language)
+              });
         itemsWithLastConfig.push(itemWithConfig);
       }
 
@@ -135,7 +143,7 @@ class Channels extends Component {
       this.setState(
         {
           items: [],
-          channel: ` w ${name}`,
+          channel: ` ${getString("IN", this.props.language)} ${name}`,
           channelName: name
         },
         () => this.setState({ items: itemsWithLastConfig })
@@ -173,6 +181,7 @@ class Channels extends Component {
       itemName,
       channelName
     } = this.state;
+    const { language } = this.props;
     return (
       <div>
         <div
@@ -205,7 +214,7 @@ class Channels extends Component {
                     id: "name",
                     numeric: false,
                     disablePadding: true,
-                    label: "Towar/Usługa"
+                    label: getString("ITEM", language)
                   }
                   // {
                   //   id: "unit",
@@ -215,9 +224,9 @@ class Channels extends Component {
                   // }
                 ]}
                 rowType="channel"
-                labelList="Kanały/systemy premiowe"
+                labelList={getString("CHANNELS_TABLE_TITLE", language)}
               >
-                <ChannelForm addLabel={"Dodaj"} />
+                <ChannelForm addLabel={getString("ADD", language)} />
               </FormWithListClicks>
             </Paper>
           )}
@@ -243,8 +252,9 @@ class Channels extends Component {
   }
 }
 
-function mapStateToProps({ auth }) {
+function mapStateToProps({ auth, language }) {
   return {
+    language,
     auth,
     help: `W lewym panelu możesz zarządzać systemami prowizyjnymi, dodawać je,
           edytować i usuwać. Po prawej stronie możesz konfigurować premie dla

@@ -28,8 +28,8 @@ class UserForm extends React.Component {
     password: "",
     disableSubmit: true,
     emailHelper: getString("LOGIN_EMAIL_GIVE_CORRECT", this.props.language),
-    passwordHelper: "Hasło powinno mieć conajmniej 5 znaków",
-    passwordHelper2: "Hasła nie mogą się różnić",
+    passwordHelper: getString("REGISTER_PASS_5", this.props.language),
+    passwordHelper2: getString("REGISTER_PASS_DIFF", this.props.language),
     report: null,
     // report: {
     //   name: "Antoni",
@@ -257,8 +257,8 @@ class UserForm extends React.Component {
                 subDisable={disableSubmit}
                 subLabel={
                   auth.Company.accountType === "demo"
-                    ? "DEMO - brak możliwości zakładania kont"
-                    : "Załóż konto pracownika"
+                    ? getString("USER_ADD_CONFIRM_BUTTON_DEMO", language)
+                    : getString("USER_ADD_CONFIRM_BUTTON", language)
                   //   modal && edit
                   //     ? "Potwierdź edycję"
                   //     : bonus > 0

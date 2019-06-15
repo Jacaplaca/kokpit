@@ -13,6 +13,16 @@ import SiteHeader from "../common/SiteHeader";
 
 const MainFrameHOC = WrappedComponent => {
   return class MainFrameHOCClass extends Component {
+    state = {
+      key: 0
+    };
+
+    componentWillReceiveProps = nextProps => {
+      if (nextProps.language !== this.props.language) {
+        this.setState({ key: this.state.key + 1 });
+      }
+    };
+
     render() {
       const styles = {
         container: {
@@ -61,7 +71,7 @@ const MainFrameHOC = WrappedComponent => {
                 </div>
               )}
             </div>
-            <WrappedComponent {...this.props} />
+            <WrappedComponent {...this.props} key={this.state.key} />
           </div>
         </MuiThemeProvider>
       );

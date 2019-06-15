@@ -9,6 +9,7 @@ import MainFrameHOC from "../common/MainFrameHOC";
 
 import FormWithListClicks from "../common/FormWithListClicks";
 import ProductForm from "../components/Products/ProductForm";
+import { getString } from "../translate";
 // import Test from "../components/Products/Test";
 
 const styles = theme => ({
@@ -23,7 +24,7 @@ const styles = theme => ({
   }
 });
 
-const Products = () => (
+const Products = ({ language }) => (
   <Paper>
     <FormWithListClicks
       searchColumns={["name", "unit"]}
@@ -43,26 +44,27 @@ const Products = () => (
           id: "name",
           numeric: false,
           disablePadding: true,
-          label: "Towar/Usługa"
+          label: getString("ITEM", language)
         },
         {
           id: "unit",
           numeric: false,
           disablePadding: true,
-          label: "Jednostka",
+          label: getString("UNIT", language),
           textAlign: "center"
         }
       ]}
       rowType="product"
-      labelList="Produkty/usługi w systemach premiowych"
+      labelList={getString("PRODUCTS_TABLE_TITLE", language)}
     >
-      <ProductForm addLabel={"Dodaj"} />
+      <ProductForm addLabel={getString("ADD", language)} />
     </FormWithListClicks>
   </Paper>
 );
 
-function mapStateToProps({ auth }) {
+function mapStateToProps({ auth, language }) {
   return {
+    language,
     auth,
     help: `Tu możesz dopisywać produkty/usługi/czynności do kanałów sprzedaży/systemów prowizyjnych. Aby zacząć to robić należy wcześniej dodać przynajmniej jeden system prowizyjny.`
   };

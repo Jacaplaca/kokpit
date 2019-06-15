@@ -23,13 +23,19 @@ const LanguageSwitch = ({ languageChange, language }) => {
     <span>
       <ButtonMy
         style={{ fontWeight: language === "pl" ? 800 : 100 }}
-        onClick={() => languageChange("pl")}
+        onClick={() => {
+          languageChange("pl");
+          // window.location.reload();
+        }}
       >
         PL
       </ButtonMy>
       <ButtonMy
         style={{ fontWeight: language === "en" ? 800 : 100 }}
-        onClick={() => languageChange("en")}
+        onClick={() => {
+          languageChange("en");
+          // window.location.reload();
+        }}
       >
         EN
       </ButtonMy>

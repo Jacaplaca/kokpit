@@ -101,7 +101,7 @@ const switchLang = (el, language) => {
     case "pl":
       return el.name;
     case "en":
-      return el.name_en;
+      return el.name_en ? el.name_en : el.name;
     default:
       return el.name;
   }

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import ChevronRight from "@material-ui/icons/ChevronRight";
@@ -7,6 +8,7 @@ import FormWithListClicks from "../../common/FormWithListClicks";
 import Slide from "@material-ui/core/Slide";
 import ProductsList from "../Products/ProductsList";
 import ConfigForm from "./Config/ConfigForm";
+import { getString } from "../../translate";
 
 class Config extends Component {
   // state = { itemsConfig: true };
@@ -28,7 +30,8 @@ class Config extends Component {
       itemId,
       itemName,
       channelName,
-      fetchAfterHide
+      fetchAfterHide,
+      language
     } = this.props;
     // console.log("data", data);
     return (
@@ -49,12 +52,10 @@ class Config extends Component {
               }}
             >
               <h6 style={{ textTransform: "uppercase" }}>
-                Brak usług/towarów przypisanych do systemu prowizyjnego.
+                {getString("CONFIG_MISSING_ITEMS", language)}
               </h6>
               <p style={{ marginTop: 20 }}>
-                Aby dodać elementy premiowane do poszczegółnych systemów udaje
-                się w zakładkę "Produkty" i tam przy produkcie kliknij na
-                wybrany system.
+                {getString("CONFIG_MISSING_INSTRUCTION", language)}
               </p>
             </div>
           ) : (
@@ -75,7 +76,10 @@ class Config extends Component {
               // value={value}
               // disableSubmit={disableSubmit["editing"]}
               // onSubmit={this.handleSubmit}
-              labelList={`Lista produktów/usług ${label}`}
+              labelList={`${getString(
+                "CONFIG_TABLE_LABEL",
+                language
+              )} ${label}`}
               rowType={"productsInChannel"}
               headCols={[]}
               headRow={[
@@ -83,19 +87,19 @@ class Config extends Component {
                   id: "name",
                   numeric: false,
                   disablePadding: true,
-                  label: "Nazwa"
+                  label: getString("ITEMNAME", language)
                 },
                 {
                   id: "unit",
                   numeric: false,
                   disablePadding: true,
-                  label: "Jednostka"
+                  label: getString("UNIT", language)
                 },
                 {
                   id: "config",
                   numeric: false,
                   disablePadding: true,
-                  label: "Konfiguracja"
+                  label: getString("CONFIGURATION", language)
                 }
               ]}
             >
@@ -170,25 +174,25 @@ class Config extends Component {
                           id: "from",
                           numeric: false,
                           disablePadding: true,
-                          label: "Od"
+                          label: getString("SINCE", language)
                         },
                         {
                           id: "to",
                           numeric: false,
                           disablePadding: true,
-                          label: "Do"
+                          label: getString("TO", language)
                         },
                         {
                           id: "bonusType",
                           numeric: false,
                           disablePadding: true,
-                          label: "Typ"
+                          label: getString("TYPE", language)
                         },
                         {
                           id: "bonus",
                           numeric: true,
                           disablePadding: true,
-                          label: "Prowizja"
+                          label: getString("BONUS", language)
                         }
                       ]}
                       rowType="channelConfig"
@@ -213,7 +217,13 @@ class Config extends Component {
                         overlapsing={this.handleOverlapsing}
                       />
                       <ConfigForm
-                        label={`Edytuj prowizje dla ${itemName} w ${channelName}`}
+                        label={`${getString(
+                          "CONFIG_FORM_LABEL",
+                          language
+                        )} ${itemName} ${getString(
+                          "IN",
+                          language
+                        )} ${channelName}`}
                         activity="editing"
                         channelId={channelId}
                         itemId={itemId}
@@ -233,4 +243,11 @@ class Config extends Component {
   }
 }
 
-export default Config;
+function mapStateToProps({ language }) {
+  return { language };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(Config);

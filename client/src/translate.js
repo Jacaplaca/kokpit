@@ -30,7 +30,40 @@ const strings = {
     USER_ADD_LABEL: "Dodaj użytkownika",
     CONFIRM_PASS: "Potwierdź hasło",
     CANCEL: "Anuluj",
-    REGISTER_USED: "Podany email jest już wykorzystany"
+    ITEM: "Towar/Usługa",
+    UNIT: "Jednostka",
+    REGISTER_USED: "Podany email jest już wykorzystany",
+    REGISTER_PASS_5: "Hasło powinno mieć conajmniej 6 znaków",
+    REGISTER_PASS_DIFF: "Hasła nie mogą się różnić",
+    REGISTER_TOOSHORT: "Hasło powinno mieć conajmniej 6 znaków. Brakuje:",
+    REGISTER_LONGERBETTER:
+      "Im dłuższe i bardziej skomplikowane hasło tym lepiej",
+    REGISTER_IDENTICAL: "Hasła są identyczne",
+    USER_ADD_CONFIRM_BUTTON: "Załóż konto pracownika",
+    USER_ADD_CONFIRM_BUTTON_DEMO: "DEMO - brak możliwości zakładania kont",
+    PRODUCTS_TABLE_TITLE: "Produkty/usługi w systemach premiowych",
+
+    CHANNELS_NOCONFIG: "Brak konfiguracji",
+    CHANNELS_TABLE_TITLE: "Kanały/systemy premiowe",
+    CHANNELS_IN_ALL: " we wszystkich systemach",
+
+    CHANNELS_FORM_INPUT_NAME: "Nazwa kanału/systemu prowizyjnego",
+    IN: "w",
+    CONFIG_TABLE_LABEL: "Lista produktów/usług",
+    CONFIG_FORM_LABEL: "Edytuj prowizje dla",
+    SINCE: "Od",
+    TO: "Do",
+    TYPE: "Typ",
+    BONUS: "Prowizja",
+    ITEMNAME: "Nazwa",
+    CONFIGURATION: "Konfiguracja",
+
+    CONFIG_MISSING_ITEMS:
+      "Brak usług/towarów przypisanych do systemu prowizyjnego.",
+    CONFIG_MISSING_INSTRUCTION:
+      "Aby dodać elementy premiowane do poszczegółnych systemów udaj się w zakładkę 'Produkty' i tam przy produkcie kliknij na wybrany system.",
+    TYPE_MARGIN: "% marży",
+    TYPE_FLAT_RATE: "stawka"
   },
   en: {
     LOGIN_BUTTON: "Login",
@@ -63,7 +96,37 @@ const strings = {
     USER_ADD_LABEL: "Add user",
     CONFIRM_PASS: "Confirm password",
     CANCEL: "Cancel",
-    REGISTER_USED: "Email is used"
+    ITEM: "Item",
+    UNIT: "Unit",
+    REGISTER_USED: "Email is used",
+    REGISTER_PASS_5: "Password should have at least 6 characters",
+    REGISTER_PASS_DIFF: "Passwords shouldn't be different",
+    REGISTER_TOOSHORT: "Should have at least 6 characters. Missing:",
+    REGISTER_LONGERBETTER: "The longer password, the better",
+    REGISTER_IDENTICAL: "Passwords are identical",
+    USER_ADD_CONFIRM_BUTTON: "Create an account",
+    USER_ADD_CONFIRM_BUTTON_DEMO: "DEMO - creating account disabled",
+    PRODUCTS_TABLE_TITLE: "Items in bonus systems",
+
+    CHANNELS_NOCONFIG: "No configuration",
+    CHANNELS_TABLE_TITLE: "Bonus systems",
+    CHANNELS_IN_ALL: " in all systems",
+
+    CHANNELS_FORM_INPUT_NAME: "Bonus system name",
+    IN: "in",
+    CONFIG_TABLE_LABEL: "List of items",
+    CONFIG_FORM_LABEL: "Edit bonuses for",
+    SINCE: "Since",
+    TO: "To",
+    TYPE: "Type",
+    BONUS: "Bonus",
+    ITEMNAME: "Name",
+    CONFIGURATION: "Configuration",
+    CONFIG_MISSING_ITEMS: "No assigned items for bonus system.",
+    CONFIG_MISSING_INSTRUCTION:
+      "In order to add items to bonus system go to 'Items' and pick desired systems for specyfic item.",
+    TYPE_MARGIN: "% of margin",
+    TYPE_FLAT_RATE: "flat rate"
   }
 };
 
