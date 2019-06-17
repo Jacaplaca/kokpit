@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import Autosuggest from "react-autosuggest";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
@@ -9,6 +11,7 @@ import debounce from "lodash.debounce";
 import { withStyles } from "@material-ui/core/styles";
 
 import InputSelectTextField from "../common/inputs/InputSelectTextField";
+import { getString } from "../translate";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 //z lapa
@@ -307,15 +310,17 @@ class CitySearch extends React.Component {
   };
 
   render() {
-    const { classes, error, helperText, label } = this.props;
+    const { classes, error, helperText, label, language } = this.props;
 
-    const status = this.state.isLoading ? "Szukam..." : label;
+    const status = this.state.isLoading
+      ? getString("SEARCHING", language)
+      : label;
 
     const inputProps = {
       clearValue: this.clearValue,
       classes,
       label: status,
-      placeholder: "Zacznij wpisywać miejscowość",
+      placeholder: getString("CITYSEARCH_INPUT", language),
       value: this.editMiejsceLabel(),
       //value: this.state.single,
       //value: this.props.miejsceLabel,
@@ -368,4 +373,18 @@ CitySearch.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(CitySearch);
+function mapStateToProps({ language }) {
+  return {
+    language
+  };
+}
+
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+    null
+  )
+)(CitySearch);
+
+// export default withStyles(styles)(CitySearch);

@@ -1,9 +1,11 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import ButtonMy from "./ButtonMy";
 import ModalWindow from "../components/ModalWindow";
 import DateRangePickerMy from "./DateRangePickerMy";
 import { durationLabel } from "./functions";
+import { getString } from "../translate";
 
 class DurationWithButton extends Component {
   state = {
@@ -18,11 +20,11 @@ class DurationWithButton extends Component {
   };
 
   render() {
-    const { range, onChange } = this.props;
+    const { range, onChange, language } = this.props;
     return (
       <React.Fragment>
         <ButtonMy onClick={this.handleOpenDuration}>
-          Zakres {durationLabel([range])}
+          {getString("DURATION", language)} {durationLabel([range], language)}
         </ButtonMy>
         <ModalWindow
           open={this.state.openModalDuration}
@@ -43,4 +45,11 @@ class DurationWithButton extends Component {
   }
 }
 
-export default DurationWithButton;
+function mapStateToProps({ language }) {
+  return { language };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(DurationWithButton);

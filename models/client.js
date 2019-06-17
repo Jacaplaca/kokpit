@@ -13,6 +13,9 @@ module.exports = (sequelize, Sequelize) => {
       logo: {
         type: Sequelize.STRING
       },
+      currency: {
+        type: Sequelize.STRING
+      },
       nextReportsLink: {
         type: Sequelize.STRING
       },

@@ -18,6 +18,7 @@ import * as actions from "../actions";
 // import { defineds } from "../common/functions";
 import MainFrameHOC from "../common/MainFrameHOC";
 import Caluculator from "./Calculator/Calculator";
+import { getString } from "../translate";
 //import SiteHeader from "../common/SiteHeader";
 // import ModalWindow from "./ModalWindow";
 // import DateRangePickerMy from "../common/DateRangePickerMy";
@@ -117,7 +118,7 @@ class Calculators extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, language } = this.props;
     const { value, channels, presentation } = this.state;
     return (
       <div className={classes.root}>
@@ -140,7 +141,10 @@ class Calculators extends Component {
               scrollButtons="auto"
             >
               {channels && channels.length > 1 && (
-                <Tab label={"Wszystko"} key={"all"} />
+                <Tab
+                  label={getString("CALCULATORS_ALL", language)}
+                  key={"all"}
+                />
               )}
               {channels &&
                 [...channels].map((channel, i) => (
@@ -157,18 +161,25 @@ class Calculators extends Component {
                     disabled={channels.length > 1 && value === 0}
                   />
                 }
-                label={presentation ? "Prezentacja" : "Wprowadzanie"}
+                label={
+                  presentation
+                    ? getString("CALCULATORS_SHOW", language)
+                    : getString("CALCULATORS_ADD", language)
+                }
               />
             </FormGroup>
           </AppBar>
         ) : (
-          <span>Brak skonfigurowanych kanałów/systemów premiowych</span>
+          <span>{getString("CALCULATORS_FORM_NO_CHANNELS", language)}</span>
         )}
         {/* {value === 0 && <Caluculator channelId={0} show={presentation} />} */}
 
         {channels
           ? channels.length > 1
-            ? [{ id: 0, name: "Wszystko" }, ...channels].map(
+            ? [
+                { id: 0, name: getString("CALCULATORS_ALL", language) },
+                ...channels
+              ].map(
                 (channel, i) =>
                   value === i && (
                     <Caluculator
@@ -210,11 +221,11 @@ class Calculators extends Component {
   }
 }
 
-function mapStateToProps({ auth }) {
+function mapStateToProps({ auth, language }) {
   return {
     auth,
-    help:
-      "Tu możesz dodawać, usuwać oraz edytować transakcje lub inne premiowane czynności oraz przeglądać zbiorcze podsumowania."
+    language,
+    help: getString("CALCULATORS_HELP", language)
   };
 }
 

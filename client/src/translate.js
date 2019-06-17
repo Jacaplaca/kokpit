@@ -1,5 +1,6 @@
 const strings = {
   pl: {
+    DATE_TIME_FORMAT: "pl-PL",
     LOGIN_BUTTON: "Zaloguj się",
     LOGIN_EMAIL: "Adres email",
     LOGIN_PASS: "Hasło",
@@ -24,6 +25,8 @@ const strings = {
     REMOVE: "Usuń",
     EDIT: "Edytuj",
     SEARCH: "Szukaj",
+    SEARCHING: "Szukam...",
+    CITYSEARCH_INPUT: "Zacznij wpisywać miejscowość",
     PAGINATION_NEXT: "Następna",
     PAGINATION_PREV: "Poprzednia",
     PAGINATION_LABEL: "Elementów na stronie",
@@ -63,9 +66,80 @@ const strings = {
     CONFIG_MISSING_INSTRUCTION:
       "Aby dodać elementy premiowane do poszczegółnych systemów udaj się w zakładkę 'Produkty' i tam przy produkcie kliknij na wybrany system.",
     TYPE_MARGIN: "% marży",
-    TYPE_FLAT_RATE: "stawka"
+    TYPE_FLAT_RATE: "stawka",
+    USERS_IN_SYSTEMS_TABLE_TITLE: "Pracownicy w systemach premiowych",
+    SETTINGS_COMPANY_NAME_INPUT: "Nazwa firmy",
+    SETTINGS_COMPANY_LOGO: "Logo firmy",
+    SETTINGS_COMPANY_BUTTON_SAVE: "Zapisz ustawienia",
+    SETTINGS_COMPANY_BUTTON_SAVE_DEMO: "DEMO - brak możliwości zapisu",
+    SETTINGS_FILE_1: "Plik zajmuje",
+    SETTINGS_FILE_2:
+      "KB i jest większy niż dopuszczalne 500KB. Zmniejsz rozdzielczość zdjęcia, zastosuj silniejszą kompresję lub wybierz inny plik.",
+    DOC_TRANS_TABLE_LABEL: "Faktury / transakcje",
+    DOC_TRANS_TABLE_DATE: "Data transakcji",
+    DOC_TRANS_TABLE_NO: "Nr dokumentu",
+    DOC_TRANS_TABLE_AMMOUNT: "Kwota netto",
+    DOC_TRANS_TABLE_CUSTOMER: "Klient",
+    DOC_TRANS_TABLE_USER: "Pracownik",
+    DOC_TRANS_TABLE_HELP:
+      "Tu przedstawiciel handlowy może dodawać transakcje, które przeprowadził. Jest to jeden z elementów, które wykorzystujemy do wyliczania prowizji.",
+    DOC_TRANS_FORM_LABEL_DATE: "Data transakcji",
+    DOC_TRANS_FORM_LABEL_NO: "Nr dokumentu",
+    DOC_TRANS_FORM_LABEL_CUSTOMER: "Klient",
+    DOC_TRANS_FORM_LABEL_CUSTOMER_INPUT: "Zacznij wpisywać klienta",
+    DOC_TRANS_FORM_LABEL_AMMOUNT: "Kwota netto",
+    DOC_TRANS_FORM_BUTTON_CONFIRM_EDIT: "Potwierdź edycję",
+    DOC_TRANS_FORM_BUTTON_ADD_TRANS: "Dodaj transakcję",
+    DURATION: "Zakres",
+    CURRENCY: "Waluta",
+
+    CALCULATORS_ALL: "Wszystko",
+    CALCULATORS_SHOW: "Prezentacja",
+    CALCULATORS_ADD: "Wprowadzanie",
+    CALCULATORS_FORM_USER: "Pracownik",
+    CALCULATORS_FORM_USER_CHOOSE: "Wybierz pracownika",
+    CALCULATORS_FORM_ITEM: "Towar/usługa",
+    CALCULATORS_FORM_DATE: "Data transakcji",
+    CALCULATORS_FORM_CITY: "Miejscowość",
+    CALCULATORS_FORM_QUANTITY: "Ilość",
+    CALCULATORS_FORM_CUSTOMER: "Klient",
+    CALCULATORS_FORM_BUY: "Cena zakupu jedn. brutto",
+    CALCULATORS_FORM_SELL: "Cena sprzedaży jedn. brutto",
+    CALCULATORS_FORM_CONFIRM: "Potwierdź",
+
+    CALCULATORS_FORM_CONFIRM_EDIT: "Potwierdź edycję",
+
+    CALCULATORS_FORM_SUMMARY: "Podsumowanie",
+    CALCULATORS_FORM_MARGIN_SINGLE: "Marża jednostkowa",
+    CALCULATORS_FORM_GROSS: "Wartość brutto",
+    CALCULATORS_FORM_GROSS_MARGIN: "Marża brutto",
+    CALCULATORS_FORM_BONUS: "Premia",
+
+    CALCULATORS_FORM_DATE_INPUT: "Podaj prawidłową datę",
+    CALCULATORS_FORM_ITEM_INPUT: "Wybierz produkt/usługę",
+    CALCULATORS_FORM_QUANTITY_INPUT: "Wpisz ilość",
+    CALCULATORS_FORM_BUY_INPUT: "Wpisz cenę zakupu jedn. (brutto)",
+    CALCULATORS_FORM_SELL_INPUT: "Wpisz cenę sprzedaży jedn. (brutto)",
+
+    CALCULATORS_BUTTON_SUBMIT: "Dodaj premię",
+    CALCULATORS_FORM_NO_CHANNELS:
+      "Brak skonfigurowanych kanałów/systemów premiowych",
+    CALCULATORS_HELP:
+      "Tu możesz dodawać, usuwać oraz edytować transakcje lub inne premiowane czynności oraz przeglądać zbiorcze podsumowania.",
+
+    CALCULATORS_TABLE_DATE: "Data",
+    CALCULATORS_TABLE_ITEM: "Towar/Usługa",
+    CALCULATORS_TABLE_QUANTITY: "Ilość",
+    CALCULATORS_TABLE_LOCO: "Lokalizacja",
+    CALCULATORS_TABLE_CUSTOMER: "Klient",
+    CALCULATORS_TABLE_SELL: "Cena jedn.",
+    CALCULATORS_TABLE_TOTAL: "Wartość brutto",
+    CALCULATORS_TABLE_BONUS: "Premia",
+    CALCULATORS_TABLE_USER: "Pracownik",
+    CALCULATORS_TABLE_SYSTEM: "System"
   },
   en: {
+    DATE_TIME_FORMAT: "en-EN",
     LOGIN_BUTTON: "Login",
     LOGIN_EMAIL: "Email",
     LOGIN_PASS: "Password",
@@ -90,6 +164,8 @@ const strings = {
     REMOVE: "Remove",
     EDIT: "Edit",
     SEARCH: "Search",
+    SEARCHING: "Searching...",
+    CITYSEARCH_INPUT: "Start typing city",
     PAGINATION_NEXT: "Next page",
     PAGINATION_PREV: "Previous",
     PAGINATION_LABEL: "Elements on page",
@@ -126,14 +202,81 @@ const strings = {
     CONFIG_MISSING_INSTRUCTION:
       "In order to add items to bonus system go to 'Items' and pick desired systems for specyfic item.",
     TYPE_MARGIN: "% of margin",
-    TYPE_FLAT_RATE: "flat rate"
+    TYPE_FLAT_RATE: "flat rate",
+    USERS_IN_SYSTEMS_TABLE_TITLE: "Users in bonus systems",
+    SETTINGS_COMPANY_NAME_INPUT: "Company name",
+    SETTINGS_COMPANY_LOGO: "Company logo",
+    SETTINGS_COMPANY_BUTTON_SAVE: "Save settings",
+    SETTINGS_COMPANY_BUTTON_SAVE_DEMO: "DEMO - saving not available",
+    SETTINGS_FILE_1: "The file is",
+    SETTINGS_FILE_2:
+      "KB. It is bigger than 500KB. Lower image resolution, use bigger compression or choose another file.",
+    DOC_TRANS_TABLE_LABEL: "Invoices / Transactions",
+    DOC_TRANS_TABLE_DATE: "Transaction date",
+    DOC_TRANS_TABLE_NO: "Document number",
+    DOC_TRANS_TABLE_AMMOUNT: "Ammount",
+    DOC_TRANS_TABLE_CUSTOMER: "Customer",
+    DOC_TRANS_TABLE_USER: "User",
+    DOC_TRANS_TABLE_HELP:
+      "Here salesmen can add his transactions. It is one element of bonus system.",
+    DOC_TRANS_FORM_LABEL_DATE: "Transaction date",
+    DOC_TRANS_FORM_LABEL_NO: "Dosument number",
+    DOC_TRANS_FORM_LABEL_CUSTOMER: "Customer",
+    DOC_TRANS_FORM_LABEL_CUSTOMER_INPUT: "Start typing you customer",
+    DOC_TRANS_FORM_LABEL_AMMOUNT: "Ammount",
+    DOC_TRANS_FORM_BUTTON_CONFIRM_EDIT: "Confirm edit",
+    DOC_TRANS_FORM_BUTTON_ADD_TRANS: "Add transaction",
+    DURATION: "Duration",
+    CURRENCY: "Currency",
+
+    CALCULATORS_ALL: "All",
+    CALCULATORS_SHOW: "Presentation",
+    CALCULATORS_ADD: "Adding",
+    CALCULATORS_FORM_USER: "User",
+    CALCULATORS_FORM_USER_CHOOSE: "Choose user",
+    CALCULATORS_FORM_ITEM: "Item",
+    CALCULATORS_FORM_DATE: "Transaction date",
+    CALCULATORS_FORM_CITY: "Localization",
+    CALCULATORS_FORM_QUANTITY: "Quantity",
+    CALCULATORS_FORM_CUSTOMER: "Customer",
+    CALCULATORS_FORM_BUY: "Unit purchase price",
+    CALCULATORS_FORM_SELL: "Unit sell price",
+    CALCULATORS_FORM_CONFIRM: "Confirm",
+    CALCULATORS_FORM_CONFIRM_EDIT: "Confirm edit",
+    CALCULATORS_FORM_SUMMARY: "Summary",
+    CALCULATORS_FORM_MARGIN_SINGLE: "Unit margin",
+    CALCULATORS_FORM_GROSS: "Total price",
+    CALCULATORS_FORM_GROSS_MARGIN: "Total margin",
+    CALCULATORS_FORM_BONUS: "Bonus",
+
+    CALCULATORS_FORM_DATE_INPUT: "Choose correct date",
+    CALCULATORS_FORM_ITEM_INPUT: "Choose item",
+    CALCULATORS_FORM_QUANTITY_INPUT: "Type quantity",
+    CALCULATORS_FORM_BUY_INPUT: "Type unit purchase price",
+    CALCULATORS_FORM_SELL_INPUT: "Type unit sell price",
+
+    CALCULATORS_BUTTON_SUBMIT: "Add bonus",
+    CALCULATORS_FORM_NO_CHANNELS: "No configured systems",
+    CALCULATORS_HELP:
+      "Here you can add, edit and remove promoted actions and inspect summaries.",
+    CALCULATORS_TABLE_DATE: "Date",
+    CALCULATORS_TABLE_ITEM: "Item",
+    CALCULATORS_TABLE_QUANTITY: "Quantity",
+    CALCULATORS_TABLE_LOCO: "Localization",
+    CALCULATORS_TABLE_CUSTOMER: "Customer",
+    CALCULATORS_TABLE_SELL: "Unit price",
+    CALCULATORS_TABLE_TOTAL: "Total price",
+    CALCULATORS_TABLE_BONUS: "Bonus",
+    CALCULATORS_TABLE_USER: "User",
+    CALCULATORS_TABLE_SYSTEM: "System"
   }
 };
 
 export const getString = (stringId, language) => {
   if (!language) {
-    console.warn("getString, language is undefined");
-    return "";
+    // console.warn("getString, language is undefined");
+    // return "";
+    language = "pl";
   }
   if (!strings[language][stringId]) {
     const alternativeLanguage = language === "pl" ? "en" : "pl";

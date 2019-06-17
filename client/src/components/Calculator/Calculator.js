@@ -20,6 +20,7 @@ import { greyBackground } from "../../globalStyles";
 import ProductsList from "../Products/ProductsList";
 import ButtonMy from "../../common/ButtonMy";
 import DurationWithButton from "../../common/DurationWithButton";
+import { getString } from "../../translate";
 
 const styles = theme => ({
   input: {
@@ -310,7 +311,7 @@ class Calculator extends Component {
   };
 
   render() {
-    const { channelId, auth, show } = this.props;
+    const { channelId, auth, show, language } = this.props;
     const { employees, employee } = this.state;
     return (
       <React.Fragment>
@@ -436,64 +437,64 @@ class Calculator extends Component {
                       id: "date",
                       numeric: false,
                       disablePadding: false,
-                      label: "Data"
+                      label: getString("CALCULATORS_TABLE_DATE", language)
                     },
                     {
                       id: "ItemTrans.name",
                       numeric: false,
                       disablePadding: true,
-                      label: "Towar/Usługa"
+                      label: getString("CALCULATORS_TABLE_ITEM", language)
                     },
                     {
                       id: "quantity",
                       numeric: true,
                       disablePadding: false,
-                      label: "Ilość",
+                      label: getString("CALCULATORS_TABLE_QUANTITY", language),
                       textAlign: "center"
                     },
                     {
                       id: "cityName",
                       numeric: false,
                       disablePadding: false,
-                      label: "Lokalizacja"
+                      label: getString("CALCULATORS_TABLE_LOCO", language)
                     },
                     {
                       id: "customer",
                       numeric: false,
                       disablePadding: false,
-                      label: "Klient"
+                      label: getString("CALCULATORS_TABLE_CUSTOMER", language)
                     },
                     {
                       id: "sell",
                       numeric: true,
                       disablePadding: false,
-                      label: "Cena jedn."
+                      label: getString("CALCULATORS_TABLE_SELL", language)
                     },
                     {
                       id: "gross",
                       numeric: true,
                       disablePadding: false,
-                      label: "Wartość brutto"
+                      label: getString("CALCULATORS_TABLE_TOTAL", language)
                     },
                     {
                       id: "bonus",
                       numeric: true,
                       disablePadding: false,
-                      label: "Premia"
+                      label: getString("CALCULATORS_TABLE_BONUS", language)
                     },
                     // auth.role === "master" && {
                     {
                       id: "User.name",
                       numeric: false,
                       disablePadding: false,
-                      label: "Pracownik",
+                      label: getString("CALCULATORS_TABLE_USER", language),
                       hide: auth.role !== "master"
                     },
                     {
                       id: "ChannelTrans.name",
                       numeric: false,
                       disablePadding: false,
-                      label: "System",
+                      label: getString("CALCULATORS_TABLE_SYSTEM", language),
                       hide: channelId !== 0 || auth.role !== "master"
                     }
                   ]}
@@ -507,8 +508,8 @@ class Calculator extends Component {
   }
 }
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, language }) {
+  return { auth, language };
 }
 
 export default compose(

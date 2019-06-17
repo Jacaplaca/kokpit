@@ -81,18 +81,24 @@ export const validateRegister = async ({
   return { disableSubmit, emailHelper, passwordHelper, passwordHelper2 };
 };
 
-export const durationLabel = range => {
+export const durationLabel = (range, language) => {
   const { startDate, endDate } = range[0];
-  const startDateString = new Intl.DateTimeFormat("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "2-digit"
-  }).format(startDate);
-  const endDateString = new Intl.DateTimeFormat("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "2-digit"
-  }).format(endDate);
+  const startDateString = new Intl.DateTimeFormat(
+    getString("DATE_TIME_FORMAT", language),
+    {
+      year: "numeric",
+      month: "long",
+      day: "2-digit"
+    }
+  ).format(startDate);
+  const endDateString = new Intl.DateTimeFormat(
+    getString("DATE_TIME_FORMAT", language),
+    {
+      year: "numeric",
+      month: "long",
+      day: "2-digit"
+    }
+  ).format(endDate);
 
   return `${startDateString} - ${endDateString}`;
 };

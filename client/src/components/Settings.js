@@ -8,13 +8,15 @@ import MainFrameHOC from "../common/MainFrameHOC";
 import UploadFile from "../common/inputs/UploadFile";
 import Thumb from "../common/Thumb";
 import ButtonMy from "../common/ButtonMy";
+import { getString } from "../translate";
 
 class Settings extends Component {
   state = {
     logo: null,
     name: "",
     disableSubmit: false,
-    size: 0
+    size: 0,
+    currency: ""
   };
 
   componentDidMount() {
@@ -28,11 +30,15 @@ class Settings extends Component {
 
   fetchCompany = async () => {
     const res = await axios.get("/api/client/");
-    this.setState({ name: res.data.name, logo: res.data.logo });
+    this.setState({
+      name: res.data.name,
+      logo: res.data.logo,
+      currency: res.data.currency
+    });
   };
 
   handleSubmit = async () => {
-    const { logo, name } = this.state;
+    const { logo, name, currency } = this.state;
     let fileName;
     console.log("logo nam", logo, typeof logo);
 
@@ -81,7 +87,7 @@ class Settings extends Component {
     // console.log("settings", res.data);
     const client = await axios.put(
       "api/client",
-      { file: fileName, name },
+      { file: fileName, name, currency },
       {
         onUploadProgress: ProgressEvent => {
           console.log((ProgressEvent.loaded / ProgressEvent.total) * 100);
@@ -117,32 +123,42 @@ class Settings extends Component {
   };
 
   render() {
-    const { logo, name, disableSubmit, size } = this.state;
-    const { auth } = this.props;
+    const { logo, name, disableSubmit, size, currency } = this.state;
+    const { auth, language } = this.props;
     return (
       <div style={{ maxWidth: 500 }}>
         <InputComponent
           // disabled={disabled}
           // key={i}
           name="name"
-          label="Nazwa firmy"
+          label={getString("SETTINGS_COMPANY_NAME_INPUT", language)}
           type="text"
           edytuj={value => this.handleChange("name", value)}
           // edytuj={value => change("name", value, "adding")}
           value={name || ""}
           // disabled={field2disabled}
         />
+        <InputComponent
+          // disabled={disabled}
+          // key={i}
+          name="currency"
+          label={getString("CURRENCY", language)}
+          type="text"
+          edytuj={value => this.handleChange("currency", value)}
+          // edytuj={value => change("name", value, "adding")}
+          value={currency || ""}
+          // disabled={field2disabled}
+        />
         <UploadFile
           name="0"
-          title="Załącz logo firmy"
+          title={getString("SETTINGS_COMPANY_LOGO", language)}
           onChange={this.addLogo}
         />
         <Thumb key={1} file={logo} name="0" clear={this.clearLogo} />
         {disableSubmit && (
           <p>
-            Plik zajmuje {Math.trunc(size)}KB i jest {Math.trunc(size / 500)}{" "}
-            razy większy niż dopuszczalne 500KB. Zmniejsz rozdzielczość zdjęcia,
-            zastosuj silniejszą kompresję lub wybierz inny plik.
+            {getString("SETTINGS_FILE_1", language)} {Math.trunc(size)}
+            {getString("SETTINGS_FILE_2", language)}
           </p>
         )}
         <ButtonMy
@@ -150,8 +166,8 @@ class Settings extends Component {
           onClick={auth.Company.accountType === "demo" || this.handleSubmit}
         >
           {auth.Company.accountType === "demo"
-            ? "DEMO - brak możliwości zapisu"
-            : "Zapisz zmiany"}
+            ? getString("SETTINGS_COMPANY_BUTTON_SAVE_DEMO", language)
+            : getString("SETTINGS_COMPANY_BUTTON_SAVE", language)}
         </ButtonMy>
       </div>
     );
@@ -167,8 +183,8 @@ const styles = theme => ({
   }
 });
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, language }) {
+  return { auth, language };
 }
 
 export default compose(

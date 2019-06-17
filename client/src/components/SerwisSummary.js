@@ -1,5 +1,7 @@
 import React, { useState, Component } from "react";
 import { Formik } from "formik";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import Grid from "@material-ui/core/Grid";
@@ -15,15 +17,27 @@ import NumberFormat from "react-number-format";
 import { formatNumber, cleanNumber, dynamicSort } from "../common/functions";
 import FormButtons from "../common/FormButtons";
 import Send from "@material-ui/icons/Send";
+import { getString } from "../translate";
 
 class SerwisSummary extends Component {
   state = {};
 
+  numberFormatProps = () => {
+    return {
+      displayType: "text",
+      thousandSeparator: " ",
+      decimalSeparator: this.props.language === "pl" ? "," : ".",
+      suffix: ` ${
+        this.props.auth.Company.currency ? this.props.auth.Company.currency : ""
+      }`
+    };
+  };
+
   bonusType = type => {
     if (type === "stawka") {
-      return "Stawka: ";
+      return `${getString("TYPE_FLAT_RATE", this.props.language)}: `;
     } else if (type === "% marży") {
-      return "% marży: ";
+      return `${getString("TYPE_MARGIN", this.props.language)}: `;
     }
   };
 
@@ -31,21 +45,15 @@ class SerwisSummary extends Component {
     if (type === "stawka") {
       return (
         <NumberFormat
+          {...this.numberFormatProps()}
           value={formatNumber(unit)}
-          displayType={"text"}
-          thousandSeparator={" "}
-          decimalSeparator={","}
-          suffix={" zł"}
         />
       );
     } else if (type === "% marży") {
       return (
         <NumberFormat
           value={formatNumber(unit * 100)}
-          displayType={"text"}
-          thousandSeparator={" "}
-          decimalSeparator={","}
-          suffix={"%"}
+          {...this.numberFormatProps()}
         />
       );
     }
@@ -59,7 +67,9 @@ class SerwisSummary extends Component {
       gross,
       grossMargin,
       bonusUnit,
-      classes
+      classes,
+      language,
+      auth: { Company }
     } = this.props;
 
     const styles = {
@@ -98,7 +108,7 @@ class SerwisSummary extends Component {
               fontWeight: "700"
             }}
           >
-            Podsumowanie:
+            {getString("CALCULATORS_FORM_SUMMARY", language)}:
           </h6>
           <Grid container spacing={0}>
             <Grid item xs={7}>
@@ -115,42 +125,33 @@ class SerwisSummary extends Component {
             {bonusType === "% marży" && (
               <React.Fragment>
                 <Grid item xs={7} style={{ ...styles.summaryTitles }}>
-                  Marża jednostkowa:
+                  {getString("CALCULATORS_FORM_MARGIN_SINGLE", language)}:
                 </Grid>
                 <Grid item xs={5}>
                   <NumberFormat
                     style={{ ...styles.summaryNumbers }}
                     value={formatNumber(marginUnit)}
-                    displayType={"text"}
-                    thousandSeparator={" "}
-                    decimalSeparator={","}
-                    suffix={" zł"}
+                    {...this.numberFormatProps()}
                   />
                 </Grid>
                 <Grid item xs={7} style={{ ...styles.summaryTitles }}>
-                  Wartość brutto:
+                  {getString("CALCULATORS_FORM_GROSS", language)}:
                 </Grid>
                 <Grid item xs={5}>
                   <NumberFormat
                     style={{ ...styles.summaryNumbers }}
                     value={formatNumber(gross)}
-                    displayType={"text"}
-                    thousandSeparator={" "}
-                    decimalSeparator={","}
-                    suffix={" zł"}
+                    {...this.numberFormatProps()}
                   />
                 </Grid>
                 <Grid item xs={7} style={{ ...styles.summaryTitles }}>
-                  Marża brutto:
+                  {getString("CALCULATORS_FORM_GROSS_MARGIN", language)}:
                 </Grid>
                 <Grid item xs={5}>
                   <NumberFormat
                     style={{ ...styles.summaryNumbers }}
                     value={formatNumber(grossMargin)}
-                    displayType={"text"}
-                    thousandSeparator={" "}
-                    decimalSeparator={","}
-                    suffix={" zł"}
+                    {...this.numberFormatProps()}
                   />
                 </Grid>
               </React.Fragment>
@@ -186,7 +187,7 @@ class SerwisSummary extends Component {
                   fontWeight: "700"
                 }}
               >
-                Premia:
+                {getString("CALCULATORS_FORM_BONUS", language)}:
               </h6>
             </div>
             <h4
@@ -198,10 +199,7 @@ class SerwisSummary extends Component {
             >
               <NumberFormat
                 value={formatNumber(bonus)}
-                displayType={"text"}
-                thousandSeparator={" "}
-                decimalSeparator={","}
-                suffix={" zł"}
+                {...this.numberFormatProps()}
               />
             </h4>
           </div>
@@ -229,4 +227,19 @@ InputComponent.defaultProps = {};
 
 // export default SerwisSummary;
 
-export default withStyles(styles, { withTheme: true })(SerwisSummary);
+function mapStateToProps({ auth, language }) {
+  return {
+    language,
+    auth
+  };
+}
+
+export default compose(
+  withStyles(styles, { withTheme: true }),
+  connect(
+    mapStateToProps,
+    null
+  )
+)(SerwisSummary);
+
+// export default withStyles(styles, { withTheme: true })(SerwisSummary);

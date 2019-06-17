@@ -1,5 +1,7 @@
 import React, { useState, Component } from "react";
 import { Formik } from "formik";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import _ from "lodash";
 import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
@@ -22,6 +24,7 @@ import {
 import FormButtons from "../../common/FormButtons";
 import Send from "@material-ui/icons/Send";
 import SerwisSummary from "../SerwisSummary";
+import { getString } from "../../translate";
 
 class SerwisForm extends Component {
   state = {
@@ -723,7 +726,9 @@ class SerwisForm extends Component {
       loggedUser,
       show,
       changeItem,
-      userId
+      userId,
+      language,
+      auth
     } = this.props;
     const { dateWithConfig, items } = this.state;
 
@@ -731,13 +736,19 @@ class SerwisForm extends Component {
       // console.log("validation in SerwisForm()", props.isValid, submitIsDisable);
       return {
         // date: Yup.string().required("Podaj prawidłową datę"),
-        date: Yup.mixed().test("a", "Podaj prawidłową datę", value => {
-          // console.log("date validate", items, items.length, items.length > 0);
-          // return this.fetchConfig(value);
-          return true;
-        }),
-        items: Yup.mixed().test("a", "Wybierz produkt/usługę", value =>
-          show ? true : this.state.item
+        date: Yup.mixed().test(
+          "a",
+          getString("CALCULATORS_FORM_DATE_INPUT", language),
+          value => {
+            // console.log("date validate", items, items.length, items.length > 0);
+            // return this.fetchConfig(value);
+            return true;
+          }
+        ),
+        items: Yup.mixed().test(
+          "a",
+          getString("CALCULATORS_FORM_ITEM_INPUT", language),
+          value => (show ? true : this.state.item)
         ),
         // customer: Yup.string().required("Wpisz klienta"),
         // city: Yup.mixed().test(
@@ -745,13 +756,19 @@ class SerwisForm extends Component {
         //   "Wybierz miejscowość",
         //   value => this.state.cityId
         // ),
-        quantity: Yup.string().required("Wpisz ilość")
+        quantity: Yup.string().required(
+          getString("CALCULATORS_FORM_QUANTITY_INPUT", language)
+        )
       };
     };
     const validationSchemaMargin = props => {
       return {
-        buy: Yup.string().required("Wpisz cenę zakupu jedn. (brutto)"),
-        sell: Yup.string().required("Wpisz cenę sprzedaży jedn. (brutto)")
+        buy: Yup.string().required(
+          getString("CALCULATORS_FORM_BUY_INPUT", language)
+        ),
+        sell: Yup.string().required(
+          getString("CALCULATORS_FORM_SELL_INPUT", language)
+        )
       };
     };
 
@@ -853,8 +870,11 @@ class SerwisForm extends Component {
                         value={user.name}
                         label={
                           loggedUser.role === "master"
-                            ? "Wybierz pracownika"
-                            : "Pracownik"
+                            ? getString(
+                                "CALCULATORS_FORM_USER_CHOOSE",
+                                language
+                              )
+                            : getString("CALCULATORS_FORM_USER", language)
                         }
                         przeszukuje={users}
                         name="items"
@@ -868,7 +888,7 @@ class SerwisForm extends Component {
                           label={
                             props.touched.date && props.errors.date
                               ? props.errors.date
-                              : "Data transakcji"
+                              : getString("CALCULATORS_FORM_DATE", language)
                           }
                           type="date"
                           value={props.values.date}
@@ -944,7 +964,7 @@ class SerwisForm extends Component {
                         label={
                           props.touched.items && props.errors.items
                             ? props.errors.items
-                            : "Towar/Usługa"
+                            : getString("CALCULATORS_FORM_ITEM", language)
                         }
                         przeszukuje={this.state.items}
                         name="items"
@@ -968,7 +988,7 @@ class SerwisForm extends Component {
                           label={
                             props.touched.quantity && props.errors.quantity
                               ? props.errors.quantity
-                              : "Ilość"
+                              : getString("CALCULATORS_FORM_QUANTITY", language)
                           }
                           type="text"
                           edytuj={value => {
@@ -988,7 +1008,7 @@ class SerwisForm extends Component {
                           label={
                             props.touched.customer && props.errors.customer
                               ? props.errors.customer
-                              : "Klient"
+                              : getString("CALCULATORS_FORM_CUSTOMER", language)
                           }
                           type="text"
                           edytuj={value => {
@@ -1026,7 +1046,7 @@ class SerwisForm extends Component {
                           label={
                             props.touched.city && props.errors.city
                               ? props.errors.city
-                              : "Miejscowość"
+                              : getString("CALCULATORS_FORM_CITY", language)
                           }
                           places
                         />
@@ -1049,13 +1069,15 @@ class SerwisForm extends Component {
                         <InputComponent
                           disabled={bonusType !== "% marży"}
                           format="number"
-                          suffix="zł"
+                          suffix={
+                            auth.Company.currency ? auth.Company.currency : ""
+                          }
                           name="buy"
                           error={props.touched.buy && Boolean(props.errors.buy)}
                           label={
                             props.touched.buy && props.errors.buy
                               ? props.errors.buy
-                              : "Cena zakupu jedn. brutto"
+                              : getString("CALCULATORS_FORM_BUY", language)
                           }
                           type="text"
                           edytuj={value => {
@@ -1085,7 +1107,9 @@ class SerwisForm extends Component {
                         <InputComponent
                           disabled={bonusType !== "% marży"}
                           format="number"
-                          suffix="zł"
+                          suffix={
+                            auth.Company.currency ? auth.Company.currency : ""
+                          }
                           name="sell"
                           error={
                             props.touched.sell && Boolean(props.errors.sell)
@@ -1093,7 +1117,7 @@ class SerwisForm extends Component {
                           label={
                             props.touched.sell && props.errors.sell
                               ? props.errors.sell
-                              : "Cena sprzedaży jedn. brutto"
+                              : getString("CALCULATORS_FORM_SELL", language)
                           }
                           type="text"
                           edytuj={value => {
@@ -1114,10 +1138,15 @@ class SerwisForm extends Component {
                       }
                       subLabel={
                         modal && edit
-                          ? "Potwierdź edycję"
+                          ? getString("CALCULATORS_FORM_CONFIRM_EDIT", language)
                           : bonus > 0
-                          ? `Dodaj premię ${formatNumber(bonus)} zł`
-                          : "Potwierdź"
+                          ? `${getString(
+                              "CALCULATORS_BUTTON_SUBMIT",
+                              language
+                            )} ${formatNumber(bonus)} ${
+                              auth.Company.currency ? auth.Company.currency : ""
+                            }`
+                          : getString("CALCULATORS_FORM_CONFIRM", language)
                       }
                       subAction={e => {
                         this.handleSubmit(e);
@@ -1128,7 +1157,7 @@ class SerwisForm extends Component {
                           name: "cancelLabel"
                         });
                       }}
-                      cancelLabel={"Anuluj"}
+                      // cancelLabel={"Anuluj"}
                       cancelAction={() => {
                         this.props.modal && this.props.closeModal();
                         this.clearForm();
@@ -1187,4 +1216,19 @@ const styles2 = theme => ({
   }
 });
 
-export default withStyles(styles2, { withTheme: true })(SerwisForm);
+// export default withStyles(styles2, { withTheme: true })(SerwisForm);
+
+function mapStateToProps({ auth, language }) {
+  return {
+    language,
+    auth
+  };
+}
+
+export default compose(
+  withStyles(styles2, { withTheme: true }),
+  connect(
+    mapStateToProps,
+    null
+  )
+)(SerwisForm);

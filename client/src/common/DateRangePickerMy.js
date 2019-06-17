@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
@@ -10,6 +12,7 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { getYear } from "date-fns";
 import { durationLabel } from "../common/functions";
+import { getString } from "../translate";
 
 import {
   addDays,
@@ -173,7 +176,8 @@ class DateTimePickerMy extends React.Component {
       nopaper,
       expand,
       defaultExp,
-      config
+      config,
+      language
     } = this.props;
     return nopaper ? (
       <div>
@@ -233,7 +237,8 @@ class DateTimePickerMy extends React.Component {
                   fontWeight: "600"
                 }}
               >
-                Zakres: {durationLabel(range)}
+                {getString("DURATION", language)}:{" "}
+                {durationLabel(range, language)}
               </span>
             </Typography>
           </ExpansionPanelSummary>
@@ -268,4 +273,18 @@ DateTimePickerMy.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(DateTimePickerMy);
+function mapStateToProps({ language }) {
+  return {
+    language
+  };
+}
+
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+    null
+  )
+)(DateTimePickerMy);
+
+// export default withStyles(styles)(DateTimePickerMy);

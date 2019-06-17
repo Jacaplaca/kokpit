@@ -93,17 +93,28 @@ module.exports = app => {
       });
   });
 
-  app.get("/api/documentstransactions/:id", (req, res, next) => {
+  app.get("/api/documentstransactions/:id", async (req, res, next) => {
     console.log("api/documentstransactions/id");
-    console.log(req.body);
     const { id } = req.params;
-    const { clientId, id: user_id } = req.user;
+    const { clientId, id: user_id, role } = req.user;
+    console.log(id, clientId, user_id, role);
     if (!req.user) {
       return res.redirect("/");
     }
-    const { customer, doc, date, ammount } = req.body;
+
+    const [err, trans] = await to(DocumentTransaction.findByPk(id));
+    // console.log("trans", trans);
+
+    let where = { id };
+    if (role === "master" && trans.clientId === clientId) {
+      where = { id };
+    } else {
+      where = { userId: user_id, id };
+    }
+
+    // const { customer, doc, date, ammount } = req.body;
     DocumentTransaction.find({
-      where: { userId: user_id, id },
+      where,
       include: [
         {
           model: User,
@@ -117,6 +128,7 @@ module.exports = app => {
       ]
     })
       .then(result => {
+        console.log("result in documentstransactions/id", result);
         return res.json(result);
       })
       .catch(err => {

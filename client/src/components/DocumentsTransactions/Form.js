@@ -1,9 +1,11 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import InputComponent from "../../common/inputs/InputComponent";
 import InputData from "../../common/inputs/InputData";
 import FormButtons from "../../common/FormButtons";
 import KlienciSearch from "../KlienciSearch";
+import { getString } from "../../translate";
 
 class DocumentTransactionForm extends Component {
   state = {
@@ -16,13 +18,17 @@ class DocumentTransactionForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { edited } = nextProps;
+    const { auth } = this.props;
     if (edited.id !== this.props.edited.id && edited.id !== 0) {
       const { id, ammount_netto, date, documents_nr, customerId } = edited;
       this.setState({
         customer: { id: customerId, name: "", kod: "", miejscowosc: "" },
         doc: documents_nr,
         date: date,
-        ammount: ammount_netto.replace(".", ",")
+        ammount:
+          auth.Company.language === "pl"
+            ? ammount_netto.replace(".", ",")
+            : ammount_netto
       });
     }
   }
@@ -94,7 +100,7 @@ class DocumentTransactionForm extends Component {
     new Promise(resolve => this.setState(newState, () => resolve()));
 
   render() {
-    const { modal, edited } = this.props;
+    const { modal, edited, language, auth } = this.props;
     const { customer, doc, date, ammount, disableSubmit } = this.state;
     return (
       <Paper style={{ padding: 20 }}>
@@ -109,7 +115,7 @@ class DocumentTransactionForm extends Component {
           <InputData
             id="date"
             name="date"
-            label={"Data transakcji"}
+            label={getString("DOC_TRANS_FORM_LABEL_DATE", language)}
             type="date"
             value={date}
             edytuj={value => {
@@ -122,7 +128,7 @@ class DocumentTransactionForm extends Component {
             // disabled={disabled}
             // key={i}
             name="document"
-            label="Nr dokumentu."
+            label={getString("DOC_TRANS_FORM_LABEL_NO", language)}
             type="text"
             edytuj={value => this.handleChange("doc", value)}
             // edytuj={value => change("name", value, "adding")}
@@ -147,16 +153,19 @@ class DocumentTransactionForm extends Component {
             // edytuj={this.editCustomer}
             value={customer.id}
             //cancelLabel={() => this.setState({ miejsceLabel: "" })}
-            label="Klient"
-            placeholder="Zacznij wpisywać klienta"
+            label={getString("DOC_TRANS_FORM_LABEL_CUSTOMER", language)}
+            placeholder={getString(
+              "DOC_TRANS_FORM_LABEL_CUSTOMER_INPUT",
+              language
+            )}
           />
           <InputComponent
             // disabled={bonusType !== "% marży"}
             format="number"
-            suffix="zł"
+            suffix={auth.Company.currency}
             name="buy"
             error={""}
-            label={"Kwota netto"}
+            label={getString("DOC_TRANS_FORM_LABEL_AMMOUNT", language)}
             type="text"
             edytuj={value => {
               this.handleChange("ammount", value);
@@ -166,9 +175,13 @@ class DocumentTransactionForm extends Component {
         </div>
         <FormButtons
           subDisable={disableSubmit}
-          subLabel={edited.id !== 0 ? "Potwierdź edycję" : `Dodaj transakcję`}
+          subLabel={
+            edited.id !== 0
+              ? getString("DOC_TRANS_FORM_BUTTON_CONFIRM_EDIT", language)
+              : getString("DOC_TRANS_FORM_BUTTON_ADD_TRANS", language)
+          }
           subAction={this.handleSubmit}
-          cancelLabel={"Anuluj"}
+          // cancelLabel={"Anuluj"}
           cancelAction={this.clearForm}
         />
       </Paper>
@@ -176,4 +189,11 @@ class DocumentTransactionForm extends Component {
   }
 }
 
-export default DocumentTransactionForm;
+function mapStateToProps({ language, auth }) {
+  return { language, auth };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(DocumentTransactionForm);

@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import NumberFormat from "react-number-format";
 import TextField from "@material-ui/core/TextField";
 import Input from "@material-ui/core/Input";
-
+import { connect } from "react-redux";
+import { compose } from "redux";
 import FormControl from "@material-ui/core/FormControl";
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
@@ -14,6 +15,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import ButtonIconCircle from "../ButtonIconCircle";
 import KeyboardArrowUp from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDown from "@material-ui/icons/KeyboardArrowDown";
+import { getString } from "../../translate";
 
 // https://codepen.io/moroshko/pen/KVaGJE debounceing loading
 
@@ -51,7 +53,7 @@ class InputComponent extends React.Component {
   }
 
   operation = direction => {
-    const { value, edytuj } = this.props;
+    const { value, edytuj, auth } = this.props;
     const nowa = parseFloat(value.replace(",", "."));
     let mod = nowa % 1;
     mod = parseFloat(mod.toFixed(2));
@@ -74,10 +76,14 @@ class InputComponent extends React.Component {
 
     if (direction === "more") {
       const sum = nowa + addon;
-      edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","));
+      auth.Company.language === "pl"
+        ? edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","))
+        : edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`);
     } else if (direction === "less") {
       const sum = nowa - addon;
-      edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","));
+      auth.Company.language === "pl"
+        ? edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","))
+        : edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`);
     }
     // console.log("number", direction, value, number);
   };
@@ -138,6 +144,7 @@ class InputComponent extends React.Component {
   };
   simpleNumberFormat = props => {
     const { decimals, inputRef, onChange, ...other } = props;
+    const { auth } = this.props;
 
     return (
       <NumberFormat
@@ -154,7 +161,7 @@ class InputComponent extends React.Component {
             }
           });
         }}
-        decimalSeparator=","
+        decimalSeparator={auth.Company.language === "pl" ? "," : "."}
         thousandSeparator=" "
         decimalScale={this.props.decimals}
         // suffix={this.props.suffix ? ` ${this.props.suffix}` : null}
@@ -225,7 +232,8 @@ class InputComponent extends React.Component {
       short,
       prefix,
       decimals,
-      format
+      format,
+      auth
     } = this.props;
 
     const { width } = this.state;
@@ -360,4 +368,17 @@ InputComponent.propTypes = {
   helperText: PropTypes.string
 };
 
-export default withStyles(styles)(InputComponent);
+function mapStateToProps({ language, auth }) {
+  return {
+    language,
+    auth
+  };
+}
+
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+    null
+  )
+)(InputComponent);

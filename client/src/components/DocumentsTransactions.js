@@ -16,6 +16,7 @@ import ModalWindow from "./ModalWindow";
 import ProductsList from "./Products/ProductsList";
 import DocumentTransactionForm from "./DocumentsTransactions/Form";
 import DurationWithButton from "../common/DurationWithButton";
+import { getString } from "../translate";
 
 const fetchItemsUrl = "api/documentstransactions";
 
@@ -227,7 +228,8 @@ class DocumentsTransactions extends Component {
       rangeselection
     } = this.state;
     const {
-      auth: { role }
+      auth: { role },
+      language
     } = this.props;
     return (
       <div>
@@ -279,7 +281,7 @@ class DocumentsTransactions extends Component {
               // value={value}
               // disableSubmit={disableSubmit["editing"]}
               // onSubmit={this.handleSubmit}
-              labelList={`Faktury / transakcje`}
+              labelList={getString("DOC_TRANS_TABLE_LABEL", language)}
               rowType={"documents_transactions"}
               headCols={[]}
               headRow={[
@@ -287,32 +289,32 @@ class DocumentsTransactions extends Component {
                   id: "date",
                   numeric: false,
                   disablePadding: true,
-                  label: "Data transakcji"
+                  label: getString("DOC_TRANS_TABLE_DATE", language)
                   // textAlign: "center"
                 },
                 {
                   id: "documents_nr",
                   numeric: false,
                   disablePadding: true,
-                  label: "Nr dokmentu"
+                  label: getString("DOC_TRANS_TABLE_NO", language)
                 },
                 {
                   id: "ammount",
                   numeric: true,
                   disablePadding: true,
-                  label: "Kwota netto"
+                  label: getString("DOC_TRANS_TABLE_AMMOUNT", language)
                 },
                 {
                   id: "Customer",
                   numeric: true,
                   disablePadding: true,
-                  label: "Klient"
+                  label: getString("DOC_TRANS_TABLE_CUSTOMER", language)
                 },
                 role === "master" && {
                   id: "surname",
                   numeric: false,
                   disablePadding: true,
-                  label: "Pracownik",
+                  label: getString("DOC_TRANS_TABLE_USER", language),
                   hideRightBorder: true
                 }
                 // {
@@ -332,10 +334,11 @@ class DocumentsTransactions extends Component {
 
 // export default DocumentsTransactions;
 
-function mapStateToProps({ auth }) {
+function mapStateToProps({ auth, language }) {
   return {
+    language,
     auth,
-    help: `Tu przedstawiciel handlowy może dodawać transakcje, które przeprowadził. Jest to jeden z elementów, które wykorzystujemy do wyliczania prowizji.`
+    help: getString("DOC_TRANS_TABLE_HELP", language)
   };
 }
 

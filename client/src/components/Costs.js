@@ -24,6 +24,7 @@ import ModalWindow from "./ModalWindow";
 import CostsForm from "./CostsForm";
 import DateRangePickerMy from "../common/DateRangePickerMy";
 import CostsPodsumowanie from "./CostsPodsumowanie";
+import { getString } from "../translate";
 
 const styles = theme => ({
   input: {
@@ -272,8 +273,8 @@ Costs.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+function mapStateToProps({ auth, language }) {
+  return { auth, language };
 }
 
 // export default withStyles(styles, { withTheme: true })(

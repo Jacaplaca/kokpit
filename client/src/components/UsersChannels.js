@@ -10,6 +10,7 @@ import FormWithListClicks from "../common/FormWithListClicks";
 import Form from "../components/Users/Form";
 import EditUserForm from "../components/Users/EditForm";
 import ModalWindow from "./ModalWindow";
+import { getString } from "../translate";
 
 const styles = theme => ({
   input: {
@@ -31,6 +32,7 @@ class Users extends Component {
   };
 
   render() {
+    const { language } = this.props;
     return (
       <div>
         <Paper>
@@ -52,19 +54,19 @@ class Users extends Component {
                 id: "name",
                 numeric: false,
                 disablePadding: true,
-                label: "Imię"
+                label: getString("NAME", language)
               },
               {
                 id: "surname",
                 numeric: false,
                 disablePadding: true,
-                label: "Nazwisko"
+                label: getString("SURNAME", language)
               },
               {
                 id: "role",
                 numeric: false,
                 disablePadding: true,
-                label: "Rola",
+                label: getString("ROLE", language),
                 textAlign: "center"
               },
               {
@@ -78,7 +80,7 @@ class Users extends Component {
             rowType="user"
             disableDelete
             disableEdit
-            labelList="Pracownicy w systemach premiowych"
+            labelList={getString("USERS_IN_SYSTEMS_TABLE_TITLE", language)}
             modal
           >
             {/* <ModalWindow
@@ -98,8 +100,9 @@ class Users extends Component {
 
 // export default Users;
 
-function mapStateToProps({ auth }) {
+function mapStateToProps({ auth, language }) {
   return {
+    language,
     auth,
     help: `Tu możesz dopisywać pracowników do kanałów sprzedaży/systemów
           prowizyjnych. Aby zacząć to robić należy wcześniej dodać przynajmniej

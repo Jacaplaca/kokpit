@@ -29,7 +29,7 @@ module.exports = app => {
   app.put("/api/client/", async (req, res, next) => {
     // console.log("api/transaction/");
     // console.log(req.body);
-    const { file, name } = req.body;
+    const { file, name, currency } = req.body;
     // const { id } = req.params;
     const { clientId } = req.user;
     console.log("put api/client", file, clientId);
@@ -64,7 +64,7 @@ module.exports = app => {
 
     const [errClient, client] = await to(
       Client.update(
-        { logo: file, name },
+        { logo: file, name, currency },
         {
           where: { id: clientId }
         }
