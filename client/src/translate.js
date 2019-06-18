@@ -136,7 +136,12 @@ const strings = {
     CALCULATORS_TABLE_TOTAL: "Wartość brutto",
     CALCULATORS_TABLE_BONUS: "Premia",
     CALCULATORS_TABLE_USER: "Pracownik",
-    CALCULATORS_TABLE_SYSTEM: "System"
+    CALCULATORS_TABLE_SYSTEM: "System",
+
+    CALCULATORS_SUMMARY_SUM: "Razem",
+    CALCULATORS_SUMMARY_SYSTEMS: "Kanały/systemy",
+    CALCULATORS_SUMMARY_USERS: "Pracownicy",
+    CALCULATORS_SUMMARY_ITEMS: "Produkty/Usługi"
   },
   en: {
     DATE_TIME_FORMAT: "en-EN",
@@ -268,7 +273,12 @@ const strings = {
     CALCULATORS_TABLE_TOTAL: "Total price",
     CALCULATORS_TABLE_BONUS: "Bonus",
     CALCULATORS_TABLE_USER: "User",
-    CALCULATORS_TABLE_SYSTEM: "System"
+    CALCULATORS_TABLE_SYSTEM: "System",
+
+    CALCULATORS_SUMMARY_SUM: "In total",
+    CALCULATORS_SUMMARY_SYSTEMS: "Bonus systems",
+    CALCULATORS_SUMMARY_USERS: "Users",
+    CALCULATORS_SUMMARY_ITEMS: "Items"
   }
 };
 

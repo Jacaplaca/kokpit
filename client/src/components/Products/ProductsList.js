@@ -1,52 +1,35 @@
 import React, { Component, PureComponent } from "react";
-import Input from "@material-ui/core/Input";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import Slide from "@material-ui/core/Slide";
-import NumberFormat from "react-number-format";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/RadioButtonUnchecked";
-import CheckBoxIcon from "@material-ui/icons/CheckCircle";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import Fade from "@material-ui/core/Fade";
 import Grow from "@material-ui/core/Grow";
 import Zoom from "@material-ui/core/Zoom";
 
-import ButtonIconCircle from "../../common/ButtonIconCircle";
-import EditIcon from "@material-ui/icons/Edit";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
 import Confirmation from "../Confirmation";
 import * as actions from "../../actions";
-import {
-  formatNumber,
-  shorting,
-  simpleSortUpDown,
-  getSuggestions,
-  sum
-} from "../../common/functions";
-import MainFrameHOC from "../../common/MainFrameHOC";
+import { simpleSortUpDown, getSuggestions, sum } from "../../common/functions";
 import SearchField from "../../common/inputs/SearchField";
-import InputInRow from "../../common/inputs/InputInRow";
-import SemiButton from "../../common/SemiButton";
 import Row from "./Row";
 import { getString } from "../../translate";
+import CurrencyFormat from "../../common/CurrencyFormat";
 
 let counter = 0;
 function createData(name, calories, fat, carbs, protein) {
@@ -359,14 +342,7 @@ let EnhancedTableToolbar = props => {
         {sum && (
           <div style={{ fontSize: "0.85em" }}>
             {getString("SUM", language)}:{" "}
-            <NumberFormat
-              style={{ fontWeight: 600 }}
-              value={formatNumber(sum)}
-              displayType={"text"}
-              thousandSeparator={" "}
-              decimalSeparator={","}
-              suffix={" zł"}
-            />
+            <CurrencyFormat value={sum} style={{ fontWeight: 600 }} />
           </div>
         )}
       </div>

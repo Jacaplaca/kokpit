@@ -1,18 +1,6 @@
 import React, { useState, Component } from "react";
-// import { Formik } from "formik";
 import Grid from "@material-ui/core/Grid";
-// import Paper from "@material-ui/core/Paper";
-// import InputComponent from "../common/inputs/InputComponent";
-// import InputSelectBaza from "../common/inputs/InputSelectBaza";
-// import InputData from "../common/inputs/InputData";
-// import axios from "axios";
-// import * as Yup from "yup";
-// import ButtonMy from "../common/ButtonMy";
-// import CitySearch from "./CitiesSearch";
-// import NumberFormat from "react-number-format";
-// import { formatNumber, cleanNumber, dynamicSort } from "../common/functions";
 import FormButtons from "../../common/FormButtons";
-import Send from "@material-ui/icons/Send";
 
 class SummaryAddingUser extends Component {
   render() {
@@ -29,13 +17,6 @@ class SummaryAddingUser extends Component {
       }
     };
 
-    console.log("SummaryAddingUser()", this.props);
-    // const bonus = 85.2;
-    // const bonusType = "% marży";
-    // const marginUnit = 10;
-    // const gross = 33;
-    // const grossMargin = 10;
-    // const bonusUnit = "stawka";
     return (
       <div
         style={{
@@ -132,52 +113,7 @@ class SummaryAddingUser extends Component {
               cancelAction={cancel}
             />
           </div>
-
-          {/* {bonusType === "% marży" && (
-              <React.Fragment>
-                <Grid item xs={7} style={{ ...styles.summaryTitles }}>
-                  Marża jednostkowa:
-                </Grid>
-                <Grid item xs={5}>
-                  <NumberFormat
-                    style={{ ...styles.summaryNumbers }}
-                    value={formatNumber(marginUnit)}
-                    displayType={"text"}
-                    thousandSeparator={" "}
-                    decimalSeparator={","}
-                    suffix={" zł"}
-                  />
-                </Grid>
-                <Grid item xs={7} style={{ ...styles.summaryTitles }}>
-                  Wartość brutto:
-                </Grid>
-                <Grid item xs={5}>
-                  <NumberFormat
-                    style={{ ...styles.summaryNumbers }}
-                    value={formatNumber(gross)}
-                    displayType={"text"}
-                    thousandSeparator={" "}
-                    decimalSeparator={","}
-                    suffix={" zł"}
-                  />
-                </Grid>
-                <Grid item xs={7} style={{ ...styles.summaryTitles }}>
-                  Marża brutto:
-                </Grid>
-                <Grid item xs={5}>
-                  <NumberFormat
-                    style={{ ...styles.summaryNumbers }}
-                    value={formatNumber(grossMargin)}
-                    displayType={"text"}
-                    thousandSeparator={" "}
-                    decimalSeparator={","}
-                    suffix={" zł"}
-                  />
-                </Grid>
-              </React.Fragment>
-            )} */}
         </div>
-        {/* {bonus > 0 && ( */}
         {ok && (
           <div
             style={{

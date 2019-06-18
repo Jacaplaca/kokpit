@@ -1,14 +1,14 @@
 import React from "react";
-import currency from "currency.js";
+// import currency from "currency.js";
 import TableCell from "@material-ui/core/TableCell";
 import Checkbox from "@material-ui/core/Checkbox";
-import NumberFormat from "react-number-format";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/RadioButtonUnchecked";
 import CheckBoxIcon from "@material-ui/icons/CheckCircle";
 import Input from "@material-ui/core/Input";
 import ButtonMy from "../../common/ButtonMy";
 import SemiButton from "../../common/SemiButton";
 import { shorting, formatNumber } from "../../common/functions";
+import CurrencyFormat from "../../common/CurrencyFormat";
 
 const styleField = {
   content: {
@@ -200,10 +200,7 @@ export const Field3 = ({ rowType, row }) => {
     case "invoices":
       return (
         <DefaultTC>
-          {`${currency(row.pozostalo_do_zaplacenia, {
-            separator: " ",
-            decimal: ","
-          }).format()} zł`}
+          <CurrencyFormat value={row.pozostalo_do_zaplacenia} />
         </DefaultTC>
       );
     case "productsInChannel":
@@ -215,14 +212,7 @@ export const Field3 = ({ rowType, row }) => {
     case "transactions":
       return (
         <DefaultTC center>
-          <NumberFormat
-            style={{ fontWeight: 700 }}
-            value={row.quantity}
-            displayType={"text"}
-            thousandSeparator={" "}
-            decimalSeparator={","}
-            // suffix={` ${row.unit}`}
-          />
+          <CurrencyFormat value={row.quantity} nosuffix />
           <span
             style={{
               marginLeft: 4,
@@ -241,10 +231,7 @@ export const Field3 = ({ rowType, row }) => {
     case "documents_transactions":
       return (
         <DefaultTC>
-          {`${currency(row.ammount, {
-            separator: " ",
-            decimal: ","
-          }).format()} zł`}
+          <CurrencyFormat value={row.ammount} />
         </DefaultTC>
       );
     default:
@@ -310,15 +297,7 @@ export const Field6 = ({ rowType, row, role }) => {
     case "transactions":
       return (
         <DefaultTC>
-          {row.sell !== 0 && (
-            <NumberFormat
-              value={formatNumber(row.sell)}
-              displayType={"text"}
-              thousandSeparator={" "}
-              decimalSeparator={","}
-              suffix={" zł"}
-            />
-          )}
+          {row.sell !== 0 && <CurrencyFormat value={row.sell} />}
         </DefaultTC>
       );
     default:
@@ -337,15 +316,7 @@ export const Field7 = ({ rowType, row }) => {
     case "transactions":
       return (
         <DefaultTC>
-          {row.gross !== 0 && (
-            <NumberFormat
-              value={formatNumber(row.gross)}
-              displayType={"text"}
-              thousandSeparator={" "}
-              decimalSeparator={","}
-              suffix={" zł"}
-            />
-          )}
+          {row.gross !== 0 && <CurrencyFormat value={row.gross} />}
         </DefaultTC>
       );
     default:
@@ -364,13 +335,7 @@ export const Field8 = ({ rowType, row }) => {
     case "transactions":
       return (
         <DefaultTC>
-          <NumberFormat
-            value={formatNumber(row.bonus)}
-            displayType={"text"}
-            thousandSeparator={" "}
-            decimalSeparator={","}
-            suffix={" zł"}
-          />
+          <CurrencyFormat value={row.bonus} />
         </DefaultTC>
       );
     default:

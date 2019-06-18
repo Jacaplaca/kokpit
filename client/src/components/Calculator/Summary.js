@@ -1,6 +1,7 @@
 import React from "react";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import Paper from "@material-ui/core/Paper";
-import NumberFormat from "react-number-format";
 import { greyBackground } from "../../globalStyles";
 import {
   onlyUnique,
@@ -11,6 +12,8 @@ import {
   dynamicSort
 } from "../../common/functions";
 import SimpleList from "./SimpleList";
+import { getString } from "../../translate";
+import CurrencyFormat from "../../common/CurrencyFormat";
 
 const report = (transactions, key) => {
   let report = [];
@@ -59,7 +62,7 @@ const modTrans = transactions =>
     })
   );
 
-const Summary = ({ transactions, channelId }) => {
+const Summary = ({ transactions, channelId, language, auth }) => {
   // const { transactions, show } = props;
   const modedTrans = modTrans(transactions);
   const channel = report(modedTrans, "channelId");
@@ -76,21 +79,8 @@ const Summary = ({ transactions, channelId }) => {
           backgroundColor: greyBackground
         }}
       >
-        <span>Razem: </span>
-        {/* <NumberFormat
-          value={formatNumber(sum)}
-          displayType={"text"}
-          thousandSeparator={" "}
-          decimalSeparator={","}
-          suffix={" zł"}
-        /> */}
-        <NumberFormat
-          value={formatNumber(channel.sum)}
-          displayType={"text"}
-          thousandSeparator={" "}
-          decimalSeparator={","}
-          suffix={" zł"}
-        />
+        <span>{getString("CALCULATORS_SUMMARY_SUM", language)}: </span>
+        <CurrencyFormat value={channel.sum} />
       </div>
 
       <div
@@ -104,13 +94,21 @@ const Summary = ({ transactions, channelId }) => {
       >
         {!channelId && (
           <RankBox
-            title="Kanały/systemy"
+            title={getString("CALCULATORS_SUMMARY_SYSTEMS", language)}
             sum={channel.sum}
             list={channel.list}
           />
         )}
-        <RankBox title="Pracownicy" sum={user.sum} list={user.list} />
-        <RankBox title="Produkty/Usługi" sum={item.sum} list={item.list} />
+        <RankBox
+          title={getString("CALCULATORS_SUMMARY_USERS", language)}
+          sum={user.sum}
+          list={user.list}
+        />
+        <RankBox
+          title={getString("CALCULATORS_SUMMARY_ITEMS", language)}
+          sum={item.sum}
+          list={item.list}
+        />
       </div>
     </div>
   );
@@ -127,15 +125,15 @@ const RankBox = ({ title, sum, list }) => (
     }}
   >
     <span>{title}</span>
-    {/* <NumberFormat
-      value={formatNumber(sum)}
-      displayType={"text"}
-      thousandSeparator={" "}
-      decimalSeparator={","}
-      suffix={" zł"}
-    /> */}
     <SimpleList transactions={list} />
   </Paper>
 );
 
-export default Summary;
+function mapStateToProps({ language, auth }) {
+  return { language, auth };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(Summary);

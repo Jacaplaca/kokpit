@@ -12,17 +12,13 @@ import InputSelectBaza from "../../common/inputs/InputSelectBaza";
 import InputData from "../../common/inputs/InputData";
 import axios from "axios";
 import * as Yup from "yup";
-import ButtonMy from "../../common/ButtonMy";
 import CitySearch from "../CitiesSearch";
-import NumberFormat from "react-number-format";
 import {
   formatNumber,
   cleanNumber,
-  dynamicSort,
   dataToString
 } from "../../common/functions";
 import FormButtons from "../../common/FormButtons";
-import Send from "@material-ui/icons/Send";
 import SerwisSummary from "../SerwisSummary";
 import { getString } from "../../translate";
 

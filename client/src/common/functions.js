@@ -321,21 +321,27 @@ export const sortNumber = (a, b) => {
 };
 
 export const formatNumber = (n, suffix) => {
+  const language = store.getState().language;
+  // console.log("validate", language);
   let number = Number(n);
   if (suffix === "%") {
     number = Number(n) * 100;
   }
   // console.log("formatNumber()", number);
   if (number % 1 !== 0) {
-    return number
-      .toFixed(2)
-      .toString()
-      .replace(".", ",");
+    return language === "pl"
+      ? number
+          .toFixed(2)
+          .toString()
+          .replace(".", ",")
+      : number.toFixed(2).toString();
   } else if (n === "") {
     return "";
   } else {
     // console.log("formatNumber()", n, number, "second");
-    return number.toString().replace(".", ",");
+    return language === "pl"
+      ? number.toString().replace(".", ",")
+      : number.toString();
   }
 };
 
