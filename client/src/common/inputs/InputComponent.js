@@ -271,7 +271,7 @@ class InputComponent extends React.Component {
             // onClick={() => {
             //   return;
             // }}
-            inputComponent={this.state.format}
+            inputComponent={this.state.format ? this.state.format : "input"}
             inputProps={{
               style: { textAlign: "end", width }
             }}
@@ -299,7 +299,7 @@ class InputComponent extends React.Component {
               startAdornment: (
                 <InputAdornment position="start">{prefix}</InputAdornment>
               ),
-              inputComponent: this.state.format,
+              inputComponent: this.state.format ? this.state.format : "input",
               // inputComponent: this.format,
               endAdornment: password ? (
                 <InputAdornment position="end">
@@ -374,6 +374,8 @@ function mapStateToProps({ language, auth }) {
     auth
   };
 }
+
+const InputComponent2 = () => <div>asdfksjdfsldf</div>;
 
 export default compose(
   withStyles(styles),

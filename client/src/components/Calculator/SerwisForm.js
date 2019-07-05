@@ -327,10 +327,12 @@ class SerwisForm extends Component {
   };
 
   validate = bonus => {
-    // console.log("validuj", bonus);
-    bonus > 0
-      ? this.setState({ submitIsDisable: false })
-      : this.setState({ submitIsDisable: true });
+    // console.log("validuj", bonus, bonus > 0);
+    // this.setState({ submitIsDisable: bonus < 0 });
+    return bonus > 0;
+    // bonus > 0
+    //   ? this.setState({ submitIsDisable: false })
+    //   : this.setState({ submitIsDisable: true });
   };
 
   count = () => {
@@ -354,28 +356,37 @@ class SerwisForm extends Component {
     // console.log("count()", bonusUnit, buy, sell, quantity);
 
     console.log("count", bonusType);
-
+    let validation = [];
     if (bonusType === "% marży") {
       const marginUnit = sell - buy;
       const gross = sell * quantity;
       const grossMargin = marginUnit * quantity;
       const bonus = grossMargin * bonusUnit;
-      this.validate(bonus);
-      this.validateEmployee(user);
+      validation.push(this.validate(bonus));
+      validation.push(this.validateEmployee(user));
       this.setState({ marginUnit, gross, grossMargin, bonus });
     } else if (bonusType === "stawka") {
       const bonus = bonusUnit * quantity;
-      this.validate(bonus);
-      this.validateEmployee(user);
+      validation.push(this.validate(bonus));
+      validation.push(this.validateEmployee(user));
       this.setState({ bonus, marginUnit: 0, gross: 0, grossMargin: 0 });
+    }
+    console.log("validation", validation, validation.every(x => x === true));
+    if (validation.every(x => x === true)) {
+      this.setState({ submitIsDisable: false });
+      validation = [];
+    } else {
+      this.setState({ submitIsDisable: true });
+      validation = [];
     }
   };
 
   validateEmployee = user => {
     // console.log("validuj", bonus);
-    user.id !== 0
-      ? this.setState({ submitIsDisable: false })
-      : this.setState({ submitIsDisable: true });
+    return user.id !== 0;
+    // user.id !== 0
+    //   ? this.setState({ submitIsDisable: false })
+    //   : this.setState({ submitIsDisable: true });
   };
 
   // askForConfig = async (date, name) => {

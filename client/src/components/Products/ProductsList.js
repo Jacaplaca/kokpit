@@ -778,7 +778,7 @@ class EnhancedTable extends Component {
               </Table>
             </div>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[5, 10, 25, 50]}
               component="div"
               // count={data.length}
               count={transactions.length}

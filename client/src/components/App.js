@@ -86,9 +86,15 @@ class App extends Component {
               moment={moment}
             >
               <MiniDrawer>
-                <Route path="/login" component={Login} />
+                <Route
+                  path="/login"
+                  component={Login}
+                  // render={() => <Login />}
+                />
+                {/* <Login /> */}
                 <Route path="/register" component={Register} />
                 <Route path="/reset" component={ResetPassword} />
+                {/* <div>testowanie child</div>
                 {/* <div
                 // style={{ position: "absolute" }}
                 >

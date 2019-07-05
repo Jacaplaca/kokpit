@@ -30,7 +30,7 @@ const styles = theme => ({
   },
   text: {
     fontWeight: "600",
-    height: 4
+    height: 28
   }
 });
 

@@ -128,6 +128,7 @@ class Row extends Component {
         hover
         onClick={() => rowClick(item.id)}
         style={{
+          height: 29,
           cursor: "pointer",
           backgroundColor: overlaps ? "rgba(255, 0, 0, 0.3)" : null
         }}

@@ -353,11 +353,12 @@ const ItemLink = ({
       </a>
     ) : (
       <RouterLink
+        style={{ textDecoration: "none", color: "black" }}
         // params={{ testvalue: "hello" }}
         to={{
-          state: {
-            name: "asdfasdf"
-          },
+          // state: {
+          //   name: "asdfasdf"
+          // },
           pathname: element.link
         }}
 
