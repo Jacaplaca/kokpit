@@ -34,7 +34,8 @@ class InputData extends React.Component {
       value,
       error,
       disabled,
-      helperText
+      helperText,
+      max
     } = this.props;
 
     return (
@@ -54,6 +55,7 @@ class InputData extends React.Component {
           InputLabelProps={{
             shrink: true
           }}
+          InputProps={{ inputProps: { max: max ? max : "2099-01-01" } }}
           helperText={helperText}
         />
       </FormControl>

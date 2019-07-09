@@ -55,11 +55,16 @@ class PlanerRaporty extends Component {
     openModal: false,
     expanded: "",
 
-    kiedy: ""
+    kiedy: "",
+    formKey: 0,
+    addToDay: false
   };
 
   componentWillMount() {
     this.fetchRaporty();
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    this.setState({ kiedy: dataToString(date) });
   }
 
   fetchRaporty = async range => {
@@ -120,11 +125,22 @@ class PlanerRaporty extends Component {
     this.fetchRaporty(ranges);
   };
 
+  addToDay = kiedy => {
+    this.setState({
+      openModal: true,
+      kiedy,
+      addToDay: true,
+      formKey: this.state.formKey + 1
+    });
+  };
+
   render() {
     const {
       classes,
       auth: { role }
     } = this.props;
+
+    const { addToDay } = this.state;
 
     return (
       <div>
@@ -143,11 +159,11 @@ class PlanerRaporty extends Component {
         />
         <Paper>
           <PlanerLista
-            dodajDoDnia={kiedy => this.setState({ openModal: true, kiedy })}
+            dodajDoDnia={kiedy => this.addToDay(kiedy)}
             aktywnosci={this.state.aktywnosci}
             edit={id => {
               this.setState({ openModal: true });
-              this.setState({ editedId: id });
+              this.setState({ editedId: id, addToDay: false });
             }}
             //delete={id => console.log(id)}
             fetchuj={() => this.fetchRaporty()}
@@ -163,6 +179,8 @@ class PlanerRaporty extends Component {
           maxWidth={900}
         >
           <PlanerRaportyForm
+            // key={this.state.formKey}
+            addToDay={addToDay}
             modal
             editedId={this.state.editedId}
             closeModal={() => this.setState({ openModal: false })}

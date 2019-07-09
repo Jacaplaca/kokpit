@@ -93,10 +93,12 @@ class PlanerAktywnosciForm extends Component {
         dniWyslane
       });
     });
-    console.log(this.props.editedId);
-    console.log(this.props.modal);
-    this.state.id !== this.props.editedId &&
-      this.handleEdit(this.props.editedId);
+    if (!this.props.addToDay) {
+      console.log(this.props.editedId);
+      console.log(this.props.modal);
+      this.state.id !== this.props.editedId &&
+        this.handleEdit(this.props.editedId);
+    }
     // this.props.modal && (
     //
     // )

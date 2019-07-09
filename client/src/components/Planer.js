@@ -57,7 +57,8 @@ class Planer extends Component {
     openModal: false,
     expanded: "",
 
-    kiedy: ""
+    kiedy: "",
+    addToDay: false
   };
 
   componentWillMount() {
@@ -124,6 +125,7 @@ class Planer extends Component {
 
   render() {
     const { auth } = this.props;
+    const { addToDay } = this.state;
 
     return (
       <div>
@@ -142,7 +144,9 @@ class Planer extends Component {
         />
         <Paper>
           <PlanerLista
-            dodajDoDnia={kiedy => this.setState({ openModal: true, kiedy })}
+            dodajDoDnia={kiedy =>
+              this.setState({ openModal: true, kiedy, addToDay: true })
+            }
             wyslijDoPlanuButton
             aktywnosci={this.state.aktywnosci}
             edit={id => {
@@ -160,15 +164,16 @@ class Planer extends Component {
         <ModalWindow
           open={this.state.openModal}
           close={this.handleClose}
-          maxWidth={100}
+          maxWidth={1000}
         >
           <PlanerAktywnosciForm
+            addToDay={addToDay}
             modal
             editedId={this.state.editedId}
             closeModal={() => this.setState({ openModal: false })}
             fetchuj={() => this.fetchAktywnosci()}
             expanded={expanded => this.setState({ expanded })}
-            edytuj={kiedy => this.setState({ kiedy })}
+            edytuj={kiedy => this.setState({ kiedy, addToDay: false })}
             kiedy={this.state.kiedy}
           />
         </ModalWindow>

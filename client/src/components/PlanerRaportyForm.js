@@ -24,6 +24,7 @@ import CitySearch from "./CitiesSearch";
 import InputWyborBaza from "../common/inputs/InputWyborBaza";
 import InputSelectBaza from "../common/inputs/InputSelectBaza";
 import InputTime from "../common/inputs/InputTime";
+import InputData from "../common/inputs/InputData";
 import InputComponent from "../common/inputs/InputComponent";
 
 import KlienciSearch from "./KlienciSearch";
@@ -169,10 +170,12 @@ class PlanerRaportyForm extends Component {
   };
 
   componentWillMount() {
-    this.state.id !== this.props.editedId &&
-      this.handleEdit(this.props.editedId);
-    this.fetchDatesToReport();
-    this.props.fetchCustomersWithDetails();
+    if (!this.props.addToDay) {
+      this.state.id !== this.props.editedId &&
+        this.handleEdit(this.props.editedId);
+      this.fetchDatesToReport();
+      this.props.fetchCustomersWithDetails();
+    }
   }
 
   fetchDatesToReport = () => {
@@ -226,28 +229,32 @@ class PlanerRaportyForm extends Component {
     return false;
   };
 
+  // //dla daty pobieranych z zaplanowanych aktywnosci
+  //   validateKiedy = data => {
+  //     //return this.props.modal && true;
+  //     if (this.props.modal) {
+  //       return true;
+  //     }
+  //     const nalezy =
+  //       this.state.datesToReport.filter(x => x.name === data).length === 1
+  //         ? true
+  //         : false;
+  //     const pelnaData = data.length === 10 ? true : false;
+  //     console.log(nalezy, data, data.length, pelnaData);
+  //
+  //     if (pelnaData) {
+  //       if (nalezy) {
+  //         this.setState({ errorKiedy: false });
+  //         return true;
+  //       }
+  //       this.setState({ errorKiedy: true });
+  //       return false;
+  //     }
+  //     this.setState({ errorKiedy: false });
+  //     return false;
+  //   };
   validateKiedy = data => {
-    //return this.props.modal && true;
-    if (this.props.modal) {
-      return true;
-    }
-    const nalezy =
-      this.state.datesToReport.filter(x => x.name === data).length === 1
-        ? true
-        : false;
-    const pelnaData = data.length === 10 ? true : false;
-    console.log(nalezy, data, data.length, pelnaData);
-
-    if (pelnaData) {
-      if (nalezy) {
-        this.setState({ errorKiedy: false });
-        return true;
-      }
-      this.setState({ errorKiedy: true });
-      return false;
-    }
-    this.setState({ errorKiedy: false });
-    return false;
+    return true;
   };
 
   sprawdzPola = () => {
@@ -513,11 +520,11 @@ class PlanerRaportyForm extends Component {
         zboza,
         customer: {
           id: planer_klienci_id,
-          name: planer_klienci.name,
-          kod: planer_klienci.adr_Kod,
-          miejscowosc: planer_klienci.adr_Miejscowosc
+          name: planer_klienci ? planer_klienci.name : "",
+          kod: planer_klienci ? planer_klienci.adr_Kod : "",
+          miejscowosc: planer_klienci ? planer_klienci.adr_Miejscowosc : ""
         },
-        rodo: this.checkRodo(planer_klienci.CustomerFlag)
+        rodo: this.checkRodo(planer_klienci ? planer_klienci.CustomerFlag : [])
       });
       this.fetchujDate(kiedy);
       this.props.loading(false);
@@ -743,35 +750,48 @@ class PlanerRaportyForm extends Component {
               {modal ? (
                 <p>{kiedy}</p>
               ) : (
-                <InputSelectBaza
-                  daty={datyDoRaportu => this.setState({ datyDoRaportu })}
-                  error={this.state.errorKiedy}
-                  miejsceLabel={miejsceLabel}
-                  // miejsceLabel="lublin"
-                  // edytujValue={kiedy => {
-                  //   this.setState({ kiedy });
-                  //   this.fetchujDate(kiedy);
-                  // }}
-                  wybrano={wybrano => {
-                    wybrano && this.fetchujDate(wybrano.name);
-                    // this.setState({})
-                  }}
-                  // edytuj={kiedy => {
-                  //   this.setState({ kiedy });
-                  // }}
-                  edytuj={kiedy => {
-                    edytuj(kiedy);
-                  }}
-                  //czysc={() => this.setState({ kiedy: "" })}
-                  czysc={() => edytuj("")}
-                  //value={this.state.kiedy}
-                  value={kiedy}
-                  //cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                <InputData
+                  disabled={modal ? true : false}
                   label="Kiedy"
-                  placeholder="Dzień"
-                  przeszukuje={datesToReport}
-                  reverse
+                  error={this.state.errorKiedy}
+                  //label="Kiedy"
+                  type="date"
+                  //edytuj={kiedy => this.setState({ kiedy })}
+                  edytuj={kiedy => edytuj(kiedy)}
+                  value={kiedy}
+                  max={dataToString(new Date())}
+                  //value={this.state.kiedy}
                 />
+
+                // <InputSelectBaza
+                //   daty={datyDoRaportu => this.setState({ datyDoRaportu })}
+                //   error={this.state.errorKiedy}
+                //   miejsceLabel={miejsceLabel}
+                //   // miejsceLabel="lublin"
+                //   // edytujValue={kiedy => {
+                //   //   this.setState({ kiedy });
+                //   //   this.fetchujDate(kiedy);
+                //   // }}
+                //   wybrano={wybrano => {
+                //     wybrano && this.fetchujDate(wybrano.name);
+                //     // this.setState({})
+                //   }}
+                //   // edytuj={kiedy => {
+                //   //   this.setState({ kiedy });
+                //   // }}
+                //   edytuj={kiedy => {
+                //     edytuj(kiedy);
+                //   }}
+                //   //czysc={() => this.setState({ kiedy: "" })}
+                //   czysc={() => edytuj("")}
+                //   //value={this.state.kiedy}
+                //   value={kiedy}
+                //   //cancelLabel={() => this.setState({ miejsceLabel: "" })}
+                //   label="Kiedy"
+                //   placeholder="Dzień"
+                //   przeszukuje={datesToReport}
+                //   reverse
+                // />
               )}
               <div className={classes.aktyDoRaportu}>
                 {this.renderAktywnosci()}

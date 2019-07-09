@@ -56,7 +56,8 @@ class SerwisForm extends Component {
     console.log("SerwisForm() componentWillMount channelId", channelId, userId);
     const date = dataToString(new Date());
 
-    if (!edit && !show) {
+    if (true) {
+      // if (!edit && !show) {
       const fetched = await this.fetchConfigFromDB(date, channelId, userId);
       const items = this.itemsFromConfig(fetched);
       console.log(
@@ -272,8 +273,18 @@ class SerwisForm extends Component {
   }
 
   clearSummary = () => {
-    // console.log("clearSummary");
-    this.setState({ marginUnit: 0, gross: 0, grossMargin: 0, bonus: 0 });
+    console.log("clearSummary");
+    this.setState({
+      marginUnit: 0,
+      gross: 0,
+      grossMargin: 0,
+      bonus: 0,
+      quantity: 1
+      // itemId: 0,
+      // item: 0,
+      // bonusType: null,
+      // bonusUnit: null
+    });
   };
 
   clearForm = () => {
@@ -336,6 +347,7 @@ class SerwisForm extends Component {
   };
 
   count = () => {
+    console.log("count");
     let {
       marginUnit,
       bonusType,
@@ -420,6 +432,7 @@ class SerwisForm extends Component {
     const config = configs
       .filter(x => x.id === id)
       .filter(y => y.channelId === channelId);
+    console.log("getConfig", config);
 
     // const oldType = this.state.bonusType;
     // const result = await axios.get(
@@ -449,16 +462,18 @@ class SerwisForm extends Component {
       //   unit
       // );
       const bonusUnit = cleanNumber(bonus);
-      this.setState(
-        {
-          bonusUnit,
-          bonusType,
-          month: date,
-          unit,
-          itemId: id
-        },
-        () => this.count()
-      );
+      if (this.state.item && this.state.item > 0) {
+        this.setState(
+          {
+            bonusUnit,
+            bonusType,
+            month: date,
+            unit,
+            itemId: id
+          },
+          () => this.count()
+        );
+      }
       // this.count();
     }
   };
@@ -588,7 +603,17 @@ class SerwisForm extends Component {
         }
       );
     } else if (field === "date") {
-      this.fetchConfig(value, props);
+      console.log("changing Date field");
+      this.fetchConfig(value, props, "reset");
+      this.clearSummary();
+
+      this.setState({
+        itemId: 0,
+        item: 0,
+        bonusType: null,
+        bonusUnit: 0
+      });
+
       return;
     } else {
       this.setState({ [field]: value }, () => this.handleUpdate(prevState));
