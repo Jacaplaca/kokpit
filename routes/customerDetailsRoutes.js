@@ -7,6 +7,7 @@ const Tractor = db.tractors;
 const Harvester = db.harvesters;
 const Cultivator = db.cultivators;
 const Agro = db.agros;
+const Milk = db.milks;
 
 const to = require("await-to-js").default;
 
@@ -119,10 +120,13 @@ module.exports = app => {
       phone,
       field,
       meadow,
+      cows,
+      pigs,
       tractor,
       harvester,
       cultivator,
       agro,
+      milk,
       customerId
     } = req.body;
     const form = {
@@ -132,6 +136,8 @@ module.exports = app => {
       phone,
       field: field === "" ? 0 : parseFloat(field.replace(",", ".")),
       meadow: meadow === "" ? 0 : parseFloat(meadow.replace(",", ".")),
+      cows: cows === "" ? 0 : Math.floor(parseFloat(cows.replace(",", "."))),
+      pigs: pigs === "" ? 0 : Math.floor(parseFloat(pigs.replace(",", "."))),
       clientId,
       userId: user_id,
       customerId
@@ -144,6 +150,7 @@ module.exports = app => {
     const harvesters = harvester ? harvester.filter(x => x.isOK) : [];
     const cultivators = cultivator ? cultivator.filter(x => x.isOK) : [];
     const agros = agro ? agro.filter(x => x.isOK) : [];
+    const milks = milk ? milk.filter(x => x.isOK) : [];
     // console.log("form THCA", form, tractors, harvesters, cultivators, agros);
     let adding, updating, errAdding;
     if (id === 0) {
@@ -171,7 +178,8 @@ module.exports = app => {
         { name: "tractor", post: tractors, db: Tractor },
         { name: "harvester", post: harvesters, db: Harvester },
         { name: "cultivator", post: cultivators, db: Cultivator },
-        { name: "agro", post: agros, db: Agro }
+        { name: "agro", post: agros, db: Agro },
+        { name: "milk", post: milks, db: Milk }
       ];
 
       for (let machine of machines) {
@@ -201,6 +209,9 @@ module.exports = app => {
                 break;
               case "agro":
                 machForm = agroForm(mach, customerDetailsId);
+                break;
+              case "milk":
+                machForm = tracHarvForm(mach, customerDetailsId);
                 break;
               default:
             }
@@ -429,14 +440,21 @@ module.exports = app => {
             as: "Agros"
           },
           {
+            model: Milk,
+            as: "Milks"
+          },
+          {
             model: User,
             as: "User",
             attributes: ["name", "surname"]
           },
           { model: PlanerKlienci, as: "Customer" }
         ],
-        where: { clientId }
-        // where: role === "master" ? { clientId } : { clientId, userId: user_id }
+        // where: { clientId }
+        where:
+          role === "master" || user_id === 139
+            ? { clientId }
+            : { clientId, userId: user_id }
       })
     );
     console.log("details", details, err);
@@ -498,6 +516,10 @@ module.exports = app => {
           {
             model: Agro,
             as: "Agros"
+          },
+          {
+            model: Milk,
+            as: "Milks"
           },
           {
             model: User,

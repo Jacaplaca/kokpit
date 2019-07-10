@@ -21,7 +21,10 @@ import {
   Field8,
   Field9,
   Field10,
-  Field11
+  Field11,
+  Field12,
+  Field13,
+  Field14
 } from "./Fields";
 import { getString } from "../../translate";
 
@@ -126,7 +129,7 @@ class Row extends Component {
     return (
       <TableRow
         hover
-        onClick={() => rowClick(item.id)}
+        onClick={event => rowClick(item.id, event)}
         style={{
           height: 29,
           cursor: "pointer",
@@ -188,6 +191,9 @@ class Row extends Component {
           conditionOne={conditionOne}
         />
         <Field11 rowType={rowType} row={item} role={role} />
+        <Field12 rowType={rowType} row={item} role={role} />
+        <Field13 rowType={rowType} row={item} role={role} />
+        <Field14 rowType={rowType} row={item} role={role} />
         {headCols.map((channel, i) => (
           <FieldCheck
             rowType={rowType}

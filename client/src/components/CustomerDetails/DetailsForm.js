@@ -9,14 +9,18 @@ import Machines from "./Machines";
 
 const DetailsForm = ({
   changeMachines,
-  data: { tractor, harvester, agro, cultivator },
+  data: { tractor, harvester, agro, cultivator, milk },
   addMachine,
   removeMachine,
   field,
   meadow,
   changeSimple,
   filledMachines,
-  brands
+  brands,
+  cows,
+  pigs,
+  milkMaidBrands,
+  milkMaidTypes
 }) => {
   return (
     <div
@@ -42,7 +46,7 @@ const DetailsForm = ({
             backgroundColor: "rgba(232, 232, 232, 0.4)",
             display: "grid",
             gridGap: "1rem",
-            gridTemplateColumns: `150px 150px`
+            gridTemplateColumns: `150px 150px 150px 150px`
           }}
         >
           <InputComponent
@@ -69,6 +73,34 @@ const DetailsForm = ({
             value={meadow || ""}
             format="number"
             suffix={"ha"}
+            // disabled={field2disabled}
+          />
+          <InputComponent
+            // disabled={disabled}
+            // key={i}
+            name="cows"
+            label="Ilość krów"
+            type="text"
+            edytuj={v => changeSimple("cows", v)}
+            // edytuj={value => change("name", value, "adding")}
+            value={cows || ""}
+            format="number"
+            suffix={"szt."}
+            decimals={0}
+            // disabled={field2disabled}
+          />
+          <InputComponent
+            // disabled={disabled}
+            // key={i}
+            name="pigs"
+            label="Ilość świń"
+            type="text"
+            edytuj={v => changeSimple("pigs", v)}
+            // edytuj={value => change("name", value, "adding")}
+            value={pigs || ""}
+            format="number"
+            suffix={"szt."}
+            decimals={0}
             // disabled={field2disabled}
           />
         </div>
@@ -121,6 +153,21 @@ const DetailsForm = ({
           group="harvester"
           change={changeMachines}
           values={harvester}
+          addMachine={addMachine}
+          removeMachine={removeMachine}
+          filledMachines={filledMachines}
+        />
+        <Machines
+          showBrand
+          showType
+          label={"Dojarki"}
+          brands={milkMaidBrands}
+          types={milkMaidTypes}
+          addLabel={"Dodaj dojarkę"}
+          removeLabel={"Usuń dojarkę"}
+          group="milk"
+          change={changeMachines}
+          values={milk}
           addMachine={addMachine}
           removeMachine={removeMachine}
           filledMachines={filledMachines}

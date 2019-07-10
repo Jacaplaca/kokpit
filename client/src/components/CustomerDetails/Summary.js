@@ -112,6 +112,10 @@ const Summary = ({ data }) => {
           <div style={{ ...style.content }}>{data.field} ha</div>
           <div style={{ ...style.label }}>Ile hektarów łąk:</div>
           <div style={{ ...style.content }}>{data.meadow} ha</div>
+          <div style={{ ...style.label }}>Ilość krów:</div>
+          <div style={{ ...style.content }}>{data.cows} szt.</div>
+          <div style={{ ...style.label }}>Ilość świń:</div>
+          <div style={{ ...style.content }}>{data.pigs} szt.</div>
         </div>
       </div>
       <div>
@@ -170,6 +174,26 @@ const Summary = ({ data }) => {
                 .map((x, i) => (
                   <div key={i} style={{ ...style.content }}>
                     {x.otherBrand} - {x.type} - {x.howMany} szt.
+                  </div>
+                ))}
+          </div>
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `210px 1fr`,
+            marginBottom: 10
+          }}
+        >
+          <div style={{ ...style.label }}>Dojarki:</div>
+          <div>
+            {data.milk &&
+              data.milk
+                .filter(x => x.isOK)
+                .map((x, i) => (
+                  <div key={i} style={{ ...style.content }}>
+                    {x.brand === "" ? x.otherBrand : x.brand} - {x.type} -{" "}
+                    {x.howMany} szt.
                   </div>
                 ))}
           </div>

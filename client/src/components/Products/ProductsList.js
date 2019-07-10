@@ -580,8 +580,9 @@ class EnhancedTable extends Component {
   };
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
-  handleClickOnRow = id => {
-    this.props.clickOnRow(id);
+  handleClickOnRow = (id, event) => {
+    // console.log("handleClickOnRow", id, event);
+    this.props.clickOnRow(id, event);
     this.setState({ clickedRow: id });
   };
 
@@ -761,7 +762,9 @@ class EnhancedTable extends Component {
                           i={i}
                           edit={edit}
                           handleClick={this.handleClick}
-                          rowClick={this.handleClickOnRow}
+                          rowClick={(id, event) =>
+                            this.handleClickOnRow(id, event)
+                          }
                           handleClickChannel={this.handleClickChannel}
                           disableSubmit={disableSubmit}
                           submit={onSubmit}

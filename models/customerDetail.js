@@ -25,6 +25,12 @@ module.exports = (sequelize, Sequelize) => {
       meadow: {
         type: Sequelize.DECIMAL(10, 2)
       },
+      cows: {
+        type: Sequelize.INTEGER
+      },
+      pigs: {
+        type: Sequelize.INTEGER
+      },
       clientId: {
         type: Sequelize.INTEGER,
         defaultValue: 1

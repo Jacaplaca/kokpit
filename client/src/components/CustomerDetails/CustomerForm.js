@@ -14,26 +14,6 @@ import AddressForm from "./AddressForm";
 import DetailsForm from "./DetailsForm";
 import Summary from "./Summary";
 
-const tractorBrands = [
-  // { id: 0, name: "Inna" },
-  { id: 1, name: "Case" },
-  { id: 2, name: "Deutz-Fahr" },
-  { id: 3, name: "New Holland" },
-  { id: 4, name: "Fendt" },
-  { id: 5, name: "Massey Ferguson" },
-  { id: 6, name: "Fiat" },
-  { id: 7, name: "Lamborghini" },
-  { id: 8, name: "Landini" },
-  { id: 9, name: "Renault" },
-  { id: 10, name: "SAME" },
-  { id: 11, name: "Zetor" },
-  { id: 12, name: "John Deere" },
-  { id: 13, name: "Kubota" },
-  { id: 14, name: "McCormick" },
-  { id: 15, name: "Ursus" },
-  { id: 16, name: "Valtra" }
-];
-
 const styles = theme => ({
   root: {
     width: "100%",
@@ -71,8 +51,6 @@ function getStepContent(step) {
   }
 }
 
-const scheme = [{ type: "", brand: "", otherBrand: "", howMany: 1, id: 0 }];
-
 class CustomerForm extends React.Component {
   state = {
     id: 0,
@@ -87,15 +65,19 @@ class CustomerForm extends React.Component {
     field: "",
     meadow: "",
     // machines: {}
-    tractor: scheme,
-    harvester: scheme,
-    cultivator: scheme,
-    agro: scheme,
+    tractor: this.props.scheme,
+    harvester: this.props.scheme,
+    cultivator: this.props.scheme,
+    agro: this.props.scheme,
+    milk: this.props.scheme,
     tractorFilled: null,
     harvesterFilled: null,
     cultivatorFilled: null,
     agroFilled: null,
-    customer: { id: 0, name: "", kod: "", miejscowosc: "" }
+    milkFilled: null,
+    customer: { id: 0, name: "", kod: "", miejscowosc: "" },
+    cows: "",
+    pigs: ""
   };
 
   componentWillReceiveProps(nextProps) {
@@ -114,30 +96,25 @@ class CustomerForm extends React.Component {
         // address,
         phone,
         field,
+        cows,
+        pigs,
         meadow,
         Tractors,
         Harvesters,
         Cultivators,
         Agros,
+        Milks,
         Customer: { id: idCust, name, adr_Kod, adr_Miejscowosc }
       } = edited[0];
 
-      const tractor = this.modifyMachine(Tractors);
+      const tractor = this.props.modifyMachine(Tractors);
 
-      const harvester = this.modifyMachine(Harvesters);
-      const cultMod = Cultivators.map(x =>
-        Object.assign(x, { brand: "", otherBrand: x.brand, isOK: true })
-      );
-      const cultivator = cultMod.length > 0 ? [...cultMod] : [...scheme];
-      const agroMod = Agros.map(x =>
-        Object.assign(x, {
-          brand: "",
-          otherBrand: x.model,
-          type: "",
-          isOK: true
-        })
-      );
-      const agro = agroMod.length > 0 ? [...agroMod] : [...scheme];
+      const harvester = this.props.modifyMachine(Harvesters);
+      const milk = this.props.modifyMachine(Milks);
+
+      const agro = this.props.modifyAgro(Agros);
+      const cultivator = this.props.modifyCultivator(Cultivators);
+
       this.setState({
         id,
         // name,
@@ -146,10 +123,13 @@ class CustomerForm extends React.Component {
         phone,
         field: field.replace(".", ","),
         meadow: meadow.replace(".", ","),
+        cows: cows ? `${cows}` : "0",
+        pigs: pigs ? `${pigs}` : "0",
         tractor,
         harvester,
         cultivator,
         agro,
+        milk,
         customer: {
           id: idCust,
           name,
@@ -159,19 +139,6 @@ class CustomerForm extends React.Component {
       });
     }
   }
-
-  modifyMachine = machine => {
-    const brands = tractorBrands.map(x => x.name);
-    const mod = machine.map(x => {
-      return Object.assign(x, {
-        brand: brands.includes(x.brand) ? x.brand : "",
-        otherBrand: brands.includes(x.brand) ? "" : x.brand,
-        isOK: true
-      });
-    });
-    return mod.length > 0 ? [...mod] : [...scheme];
-    // return [...mod];
-  };
 
   totalSteps = () => getSteps().length;
 
@@ -239,14 +206,17 @@ class CustomerForm extends React.Component {
       phone,
       field,
       meadow,
-      tractorFilled,
-      harvesterFilled,
-      cultivatorFilled,
-      agroFilled,
+      cows,
+      pigs,
+      // tractorFilled,
+      // harvesterFilled,
+      // cultivatorFilled,
+      // agroFilled,
       tractor,
       harvester,
       cultivator,
       agro,
+      milk,
       customer
     } = this.state;
     const url = `/api/customerdetail/`;
@@ -267,6 +237,9 @@ class CustomerForm extends React.Component {
         harvester,
         cultivator,
         agro,
+        milk,
+        cows,
+        pigs,
         customerId: customer.id
         // tractor: tractorFilled,
         // harvester: harvesterFilled,
@@ -323,14 +296,18 @@ class CustomerForm extends React.Component {
       tractorBrand: "",
       field: "",
       meadow: "",
-      tractor: scheme,
-      harvester: scheme,
-      cultivator: scheme,
-      agro: scheme,
+      cows: "",
+      pigs: "",
+      tractor: this.props.scheme,
+      harvester: this.props.scheme,
+      cultivator: this.props.scheme,
+      agro: this.props.scheme,
+      milk: this.props.scheme,
       tractorFilled: null,
       harvesterFilled: null,
       cultivatorFilled: null,
       agroFilled: null,
+      milkFilled: null,
       customer: { id: 0, name: "", kod: "", miejscowosc: "" }
     });
   };
@@ -393,7 +370,7 @@ class CustomerForm extends React.Component {
     console.log("add machine");
     // const { machines: machinesState } = this.state;
     const machines = _.clone(this.state[machine]);
-    const newMachine = scheme[0];
+    const newMachine = this.props.scheme[0];
     machines.push(newMachine);
     // console.log("machines", machines);
     this.setState({ [machine]: machines, addAllowed: false });
@@ -453,7 +430,14 @@ class CustomerForm extends React.Component {
   };
 
   render() {
-    const { classes, edited, filledCustomers } = this.props;
+    const {
+      classes,
+      edited,
+      filledCustomers,
+      tractorBrands,
+      milkMaidBrands,
+      milkMaidTypes
+    } = this.props;
     const steps = getSteps();
     const {
       activeStep,
@@ -468,11 +452,15 @@ class CustomerForm extends React.Component {
       agro,
       field,
       meadow,
-      tractorFilled,
-      harvesterFilled,
-      agroFilled,
-      cultivatorFilled,
-      customer
+      milk,
+      // tractorFilled,
+      // harvesterFilled,
+      // agroFilled,
+      // cultivatorFilled,
+      // milkFilled,
+      customer,
+      cows,
+      pigs
     } = this.state;
 
     return (
@@ -521,6 +509,8 @@ class CustomerForm extends React.Component {
         {activeStep === 1 && (
           <DetailsForm
             brands={tractorBrands}
+            milkMaidBrands={milkMaidBrands}
+            milkMaidTypes={milkMaidTypes}
             change={this.handleChange}
             name={customer.name}
             surname={surname}
@@ -528,11 +518,13 @@ class CustomerForm extends React.Component {
             phone={phone}
             tractorBrand={tractorBrand}
             changeMachines={this.handleChangeMachines}
-            data={{ tractor, harvester, agro, cultivator }}
+            data={{ tractor, harvester, agro, cultivator, milk }}
             addMachine={this.addMachine}
             removeMachine={this.removeMachine}
             field={field}
             meadow={meadow}
+            cows={cows}
+            pigs={pigs}
             changeSimple={this.handleChange}
             filledMachines={this.filledMachines}
           />
@@ -547,14 +539,13 @@ class CustomerForm extends React.Component {
               tractorBrand,
               field,
               meadow,
-              // tractor: tractorFilled,
-              // harvester: harvesterFilled,
-              // cultivator: cultivatorFilled,
-              // agro: agroFilled,
+              cows,
+              pigs,
               tractor,
               harvester,
               cultivator,
-              agro
+              agro,
+              milk
             }}
           />
         )}

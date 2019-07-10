@@ -104,7 +104,8 @@ class MachinesForm extends React.Component {
       change,
       group,
       addMachine,
-      removeMachine
+      removeMachine,
+      types
     } = this.props;
     const {
       machines,
@@ -162,16 +163,38 @@ class MachinesForm extends React.Component {
                 )}
                 {showType && (
                   <span style={{ maxWidth: 200, marginRight: 10 }}>
-                    <InputComponent
-                      // key={i}
-                      name="channel"
-                      label="Typ"
-                      type="text"
-                      edytuj={v => change(group, "type", v, i)}
-                      // edytuj={value => change("name", value, "adding")}
-                      value={values[i].type || ""}
-                      // disabled={field2disabled}
-                    />
+                    {types ? (
+                      <InputSelectBaza
+                        daty={datyDoRaportu => this.setState({ datyDoRaportu })}
+                        wybrano={e => {
+                          e && change(group, "type", e.name, i);
+                        }}
+                        edytuj={v => change(group, "type", v, i)}
+                        czysc={() => change(group, "type", "", i)}
+                        value={values[i].type}
+                        // wybrano={e => {
+                        //   e && this.handleChange("type", e.name, i);
+                        // }}
+                        // edytuj={value => this.handleChange("type", value, i)}
+                        // czysc={() => this.handleChange("type", "", i)}
+                        // value={machines[i].type}
+                        label="Typ"
+                        placeholder="Typ"
+                        przeszukuje={types}
+                        // disabled={this.isBrandDisabled(i)}
+                      />
+                    ) : (
+                      <InputComponent
+                        // key={i}
+                        name="channel"
+                        label="Typ"
+                        type="text"
+                        edytuj={v => change(group, "type", v, i)}
+                        // edytuj={value => change("name", value, "adding")}
+                        value={values[i].type || ""}
+                        // disabled={field2disabled}
+                      />
+                    )}
                   </span>
                 )}
                 <span

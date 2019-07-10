@@ -202,6 +202,10 @@ db.customer_details.hasMany(db.agros, {
   as: "Agros",
   foreignKey: "customerDetailsId"
 });
+db.customer_details.hasMany(db.milks, {
+  as: "Milks",
+  foreignKey: "customerDetailsId"
+});
 
 // db.customer_details.hasOne(db.users, {
 //   as: "User",

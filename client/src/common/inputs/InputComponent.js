@@ -53,7 +53,7 @@ class InputComponent extends React.Component {
   }
 
   operation = direction => {
-    const { value, edytuj, auth } = this.props;
+    const { value, edytuj, auth, language } = this.props;
     const nowa = parseFloat(value.replace(",", "."));
     let mod = nowa % 1;
     mod = parseFloat(mod.toFixed(2));
@@ -63,7 +63,6 @@ class InputComponent extends React.Component {
     dec = parseFloat(dec.toFixed(2));
     let addon = 0;
     let fixed = 0;
-    console.log(value, nowa, mod, mod2, dec, addon);
     if (mod === 0) {
       addon = 1;
     } else if (mod !== 0 && dec === 0) {
@@ -76,12 +75,23 @@ class InputComponent extends React.Component {
 
     if (direction === "more") {
       const sum = nowa + addon;
-      auth.Company.language === "pl"
+      console.log(
+        value,
+        nowa,
+        mod,
+        mod2,
+        dec,
+        addon,
+        sum,
+        sum.toFixed(fixed),
+        `${sum.toFixed(fixed)}`.replace(".", ",")
+      );
+      language === "pl"
         ? edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","))
         : edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`);
     } else if (direction === "less") {
       const sum = nowa - addon;
-      auth.Company.language === "pl"
+      language === "pl"
         ? edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`.replace(".", ","))
         : edytuj(sum < 0 ? "0" : `${sum.toFixed(fixed)}`);
     }
@@ -144,8 +154,8 @@ class InputComponent extends React.Component {
   };
   simpleNumberFormat = props => {
     const { decimals, inputRef, onChange, ...other } = props;
-    const { auth } = this.props;
-
+    const { auth, language } = this.props;
+    console.log("simpleNumberFormat", props.value, language);
     return (
       <NumberFormat
         {...other}
@@ -157,11 +167,15 @@ class InputComponent extends React.Component {
           onChange({
             target: {
               // value: values.value
-              value: values.formattedValue.replace(/ /g, "").replace("-", "")
+              value:
+                language === "pl"
+                  ? values.formattedValue.replace(/ /g, "").replace("-", "")
+                  : // .replace(".", ",")
+                    values.formattedValue.replace(/ /g, "").replace("-", "")
             }
           });
         }}
-        decimalSeparator={auth.Company.language === "pl" ? "," : "."}
+        decimalSeparator={language === "pl" ? "," : "."}
         thousandSeparator=" "
         decimalScale={this.props.decimals}
         // suffix={this.props.suffix ? ` ${this.props.suffix}` : null}

@@ -304,12 +304,13 @@ export const Field6 = ({ rowType, row, role }) => {
       return null;
   }
 };
+
 export const Field7 = ({ rowType, row }) => {
   switch (rowType) {
     case "customerDetails":
       return (
         <DefaultTC center>
-          {row.qTractors}
+          {row.cows}
           <span style={{ ...styleField.suffix }}>szt.</span>
         </DefaultTC>
       );
@@ -323,12 +324,13 @@ export const Field7 = ({ rowType, row }) => {
       return null;
   }
 };
+
 export const Field8 = ({ rowType, row }) => {
   switch (rowType) {
     case "customerDetails":
       return (
         <DefaultTC center>
-          {row.qHarvesters}
+          {row.pigs}
           <span style={{ ...styleField.suffix }}>szt.</span>
         </DefaultTC>
       );
@@ -347,7 +349,7 @@ export const Field9 = ({ rowType, row, role }) => {
     case "customerDetails":
       return (
         <DefaultTC center>
-          {row.qCultivators}
+          {row.qTractors}
           <span style={{ ...styleField.suffix }}>szt.</span>
         </DefaultTC>
       );
@@ -364,7 +366,7 @@ export const Field10 = ({ rowType, row, role, conditionOne }) => {
     case "customerDetails":
       return (
         <DefaultTC center>
-          {row.qAgros}
+          {row.qHarvesters}
           <span style={{ ...styleField.suffix }}>szt.</span>
         </DefaultTC>
       );
@@ -378,6 +380,47 @@ export const Field10 = ({ rowType, row, role, conditionOne }) => {
 };
 
 export const Field11 = ({ rowType, row, role }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <DefaultTC center>
+          {row.qCultivators}
+          <span style={{ ...styleField.suffix }}>szt.</span>
+        </DefaultTC>
+      );
+    default:
+      return null;
+  }
+};
+
+export const Field12 = ({ rowType, row, role }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <DefaultTC center>
+          {row.qMilks}
+          <span style={{ ...styleField.suffix }}>szt.</span>
+        </DefaultTC>
+      );
+    default:
+      return null;
+  }
+};
+
+export const Field13 = ({ rowType, row, role }) => {
+  switch (rowType) {
+    case "customerDetails":
+      return (
+        <DefaultTC center>
+          {row.qAgros}
+          <span style={{ ...styleField.suffix }}>szt.</span>
+        </DefaultTC>
+      );
+    default:
+      return null;
+  }
+};
+export const Field14 = ({ rowType, row, role }) => {
   switch (rowType) {
     case "customerDetails":
       return role === "master" ? (
