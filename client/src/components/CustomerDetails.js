@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import axios from "axios";
 import Paper from "@material-ui/core/Paper";
+import axios from "axios";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
@@ -17,32 +17,35 @@ import CustomerForm from "./CustomerDetails/CustomerForm";
 import CustomerDetailsList from "./Products/ProductsList";
 import ExpansionWithAbsolute from "../common/ExpansionWithAbsolute";
 
+import InfoElement from "../common/InfoElement";
+
 const tractorBrands = [
   // { id: 0, name: "Inna" },
   { id: 1, name: "Case" },
-  { id: 2, name: "Deutz-Fahr" },
-  { id: 3, name: "New Holland" },
+  { id: 2, name: "Claas" },
+  { id: 3, name: "Deutz-Fahr" },
   { id: 4, name: "Fendt" },
-  { id: 5, name: "Massey Ferguson" },
-  { id: 6, name: "Fiat" },
-  { id: 7, name: "Lamborghini" },
-  { id: 8, name: "Landini" },
-  { id: 9, name: "Renault" },
-  { id: 10, name: "SAME" },
-  { id: 11, name: "Zetor" },
-  { id: 12, name: "John Deere" },
-  { id: 13, name: "Kubota" },
-  { id: 14, name: "McCormick" },
+  { id: 5, name: "Fiat" },
+  { id: 6, name: "John Deere" },
+  { id: 7, name: "Kubota" },
+  { id: 8, name: "Lamborghini" },
+  { id: 9, name: "Landini" },
+  { id: 10, name: "Massey Ferguson" },
+  { id: 11, name: "McCormick" },
+  { id: 12, name: "New Holland" },
+  { id: 13, name: "Renault" },
+  { id: 14, name: "SAME" },
   { id: 15, name: "Ursus" },
-  { id: 16, name: "Valtra" }
+  { id: 16, name: "Valtra" },
+  { id: 17, name: "Zetor" }
 ];
 
-const milkMaidBrands = [{ id: 1, name: "Gea" }, { id: 2, name: "Delaval" }];
+const milkMaidBrands = [{ id: 1, name: "Delaval" }, { id: 2, name: "Gea" }];
 
 const milkMaidTypes = [
   { id: 1, name: "Bańkowa" },
-  { id: 2, name: "Przewodowa" },
-  { id: 3, name: "Halal" }
+  { id: 2, name: "Halal" },
+  { id: 3, name: "Przewodowa" }
 ];
 
 const scheme = [{ type: "", brand: "", otherBrand: "", howMany: 1, id: 0 }];
@@ -265,6 +268,31 @@ class CustomerDetails extends Component {
     const { auth } = this.props;
     return (
       <div>
+        <InfoElement published={"2019 7 19"} duration={14}>
+          <div>
+            <h6>Najnowsze zmiany:</h6>
+            <ul style={{ fontSize: 11.55 }}>
+              <li>Dodany Claas do marek traktorów i kombajnów </li>
+              <li>
+                Po kliknięciu na listę dodanych wpisów, pokazuje się informacja
+                o klikniętym wpisie. Aby wrócić wystarczy wcisnąć ESC lub
+                kliknąć myszą poza okienkiem z informacją.
+              </li>
+              <li>Dodana ilość krów i ilość świń </li>
+              <li>
+                Każdy użytkownik widzi tylko tych klientów, których sam dodał.
+                Konto sklepu na Kilińskiego widzi wszystkich.
+              </li>
+              <li>Dodana możliwość dodawania informacji o dojarkach. </li>
+              <li>
+                Dodany licznik pokazujący ilość wypełnionych przez danego
+                użytkownika.
+              </li>
+              {/* <p>Okienko będzie sie pojawiało do sierpnia</p> */}
+            </ul>
+          </div>
+        </InfoElement>
+
         <ExpansionWithAbsolute
           title="Dodawanie i edycja informacji o klientach"
           open={openForm}
