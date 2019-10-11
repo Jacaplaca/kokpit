@@ -13,6 +13,7 @@ var flash = require("connect-flash");
 var morgan = require("morgan");
 // const seql = require('./seql');
 require("./sms/sms");
+// const syn = require("./synchronization/index");
 
 // const User = require('./models/user');
 // const Client = require('./models/client');
@@ -35,6 +36,8 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 require("dotenv").config();
 app.use(morgan("short"));
 app.use(fileUpload());
+
+// console.log("syn", syn);
 // console.log("datazmienia", YMtoMonthYear(201905));
 // console.log(db);
 

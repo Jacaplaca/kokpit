@@ -5,9 +5,9 @@ import { lighten, darken } from "@material-ui/core/styles/colorManipulator";
 const Footer = ({ classes }) => {
   return (
     <div className={classes.root}>
-      <div>email: analityka@swiadomafirma.pl</div>
-      <div>© ŚWIADOMA FIRMA, 2019</div>
-      <div>tel. 507 478 971</div>
+      <div>email: analityka@uptima.pl</div>
+      <div>© Leverage Point Ltd, 2019</div>
+      <div>tel. 604 280 499</div>
       <div style={{ fontSize: 13 }} />
     </div>
   );

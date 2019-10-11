@@ -120,7 +120,8 @@ class TopNavBar extends React.Component {
                     maxHeight: 150,
                     margin: 5
                   }}
-                  src={require(`../images/logo-tylko-text.png`)}
+                  // src={require(`../images/logo-tylko-text.png`)}
+                  src={require(`../images/logo_web.png`)}
                 />
               </NavLink>
             </Typography>

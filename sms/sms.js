@@ -17,7 +17,7 @@ let minuteRandom = 20;
 let smsArray = [];
 //let randomizeTime;
 
-console.log(`Now is ${today()} ${time()}`);
+console.log(`SMS Now is ${today()} ${time()}`);
 
 const sending = false;
 // const sending = true;

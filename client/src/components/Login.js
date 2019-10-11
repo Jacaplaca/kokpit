@@ -84,7 +84,8 @@ class Login extends Component {
                 maxHeight: 270,
                 marginBottom: 20
               }}
-              src={require(`../images/sf_logo_strona_retina.png`)}
+              // src={require(`../images/sf_logo_strona_retina.png`)}
+              src={require(`../images/main_logo_web.png`)}
             />
           }
         >
