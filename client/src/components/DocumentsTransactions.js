@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import { startOfMonth, endOfMonth } from "date-fns";
-import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
+import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import { defineds, dataToString, durationLabel } from "../common/functions";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -172,14 +172,21 @@ class DocumentsTransactions extends Component {
   };
 
   handleDateFilter = (array, startDate, endDate) => {
+    // const t = new Date(array[11].date);
+    // console.log(
+    //   "TCL: DocumentsTransactions -> handleDateFilter -> array",
+    //   t.getTime(),
+    //   startDate.getTime(),
+    //   endDate.getTime()
+    // );
     const arrayFiltered = array.filter(x => {
       const data = new Date(x.date);
       // console.log("data", data, data.getTime(), startDate, startDate.getTime());
       return (
         // data.getTime() >= startDate.getTime() + 2 * 60 * 60 * 1000 &&
-        data.getTime() >= new Date(dataToString(startDate)).getTime() &&
+        data.getTime() >= startDate.getTime() &&
         // data.getTime() <= endDate.getTime() + 2 * 60 * 60 * 1000
-        data.getTime() <= new Date(dataToString(endDate)).getTime()
+        data.getTime() <= endDate.getTime()
       );
     });
     console.log("arrayFiltered", arrayFiltered);

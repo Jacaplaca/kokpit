@@ -446,7 +446,7 @@ module.exports = app => {
           {
             model: User,
             as: "User",
-            attributes: ["name", "surname"]
+            attributes: ["name", "surname", "id"]
           },
           { model: PlanerKlienci, as: "Customer" }
         ],

@@ -24,11 +24,12 @@ class DocumentTransactionForm extends Component {
       this.setState({
         customer: { id: customerId, name: "", kod: "", miejscowosc: "" },
         doc: documents_nr,
-        date: date,
-        ammount:
-          auth.Company.language === "pl"
-            ? ammount_netto.replace(".", ",")
-            : ammount_netto
+        date,
+        ammount: parseFloat(ammount_netto)
+        // :
+        //   auth.Company.language === "pl"
+        //     ? ammount_netto.replace(".", ",")
+        //     : ammount_netto
       });
     }
   }
@@ -170,6 +171,7 @@ class DocumentTransactionForm extends Component {
             edytuj={value => {
               this.handleChange("ammount", value);
             }}
+            // value={parseFloat(ammount)}
             value={ammount}
           />
         </div>

@@ -66,11 +66,11 @@ module.exports = app => {
         }
       ]
     };
-    const [err, items] = await to(PlanerKlienci.find(query));
+    const [err, items] = await to(PlanerKlienci.findAll(query));
     if (!items) {
       res.sendStatus(500);
     } else {
-      res.json(items);
+      res.json(items[0]);
     }
   });
 };

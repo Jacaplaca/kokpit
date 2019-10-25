@@ -7,6 +7,8 @@ const to = require("await-to-js").default;
 
 module.exports = app => {
   app.post("/api/cost/remove/:id", (req, res, next) => {
+    console.log("cost remove route", req.params.id);
+
     const id = req.params.id;
     if (!req.user) {
       console.log("przekierowanie");
@@ -56,4 +58,60 @@ module.exports = app => {
         res.sendStatus(500);
       });
   });
+
+  app.post("/api/cost/edit/:id", async (req, res, next) => {
+    console.log("edytuje cost api");
+    // const id = req.params.id;
+    const { id } = req.params;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
+    }
+    let {
+      // kiedy,
+      // start,
+      // stop,
+      // aktywnosc_id,
+      // miejsce_id,
+      // inna,
+      // uwagi
+      kwota_netto,
+      kwota_brutto
+    } = req.body;
+    const { id: userId, clientId } = req.user;
+    kwota_netto = kwota_netto.replace(",", ".").replace("zł", "");
+    kwota_brutto = kwota_brutto.replace(",", ".").replace("zł", "");
+    // const modified_form = { ...req.body };
+    // console.log(req.body, kwota_netto, kwota_brutto);
+    // const a = { q: 1, w: 2 };
+    // const b = { r: 2 };
+    // const c = { ...a, ...b };
+
+    Cost.update(Object.assign(req.body, { kwota_brutto, kwota_netto }), {
+      where: { userId, id }
+    })
+      .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  // app.post("/api/cost/remove/:id", (req, res, next) => {
+  //   console.log('cost remove route');
+
+  //   const { id, table } = req.params;
+  //   if (!req.user) {
+  //     console.log("przekierowanie");
+  //     return res.redirect("/");
+  //   }
+  //   const { id: user_id, clientId } = req.user;
+
+  //   Aktywnosci.destroy({ where: { user_id, id } })
+  //     .then(() => res.end())
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.sendStatus(500);
+  //     });
+  // });
 };

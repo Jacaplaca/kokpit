@@ -94,7 +94,7 @@ module.exports = app => {
   });
 
   app.get("/api/documentstransactions/:id", async (req, res, next) => {
-    console.log("api/documentstransactions/id");
+    console.log("api/documentstransactions/id fetch to edit", req.params.id);
     const { id } = req.params;
     const { clientId, id: user_id, role } = req.user;
     console.log(id, clientId, user_id, role);
@@ -113,7 +113,7 @@ module.exports = app => {
     }
 
     // const { customer, doc, date, ammount } = req.body;
-    DocumentTransaction.find({
+    DocumentTransaction.findAll({
       where,
       include: [
         {
@@ -129,7 +129,7 @@ module.exports = app => {
     })
       .then(result => {
         console.log("result in documentstransactions/id", result);
-        return res.json(result);
+        return res.json(result[0]);
       })
       .catch(err => {
         console.log(err);

@@ -118,32 +118,35 @@ module.exports = app => {
     res.send(message);
   });
 
-  app.post("/api/:table/remove/:id", (req, res, next) => {
+  app.post("/api/akt/remove/:id", (req, res, next) => {
     const { id, table } = req.params;
     if (!req.user) {
       console.log("przekierowanie");
       return res.redirect("/");
     }
     const { id: user_id, clientId } = req.user;
-    switch (table) {
-      case "akt":
-        Aktywnosci.destroy({ where: { user_id, id } })
-          .then(() => res.end())
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-        break;
-      case "planerRaporty":
-        Raporty.destroy({ where: { user_id, id } })
-          .then(() => res.end())
-          .catch(err => {
-            console.log(err);
-            res.sendStatus(500);
-          });
-        break;
-      default:
+
+    Aktywnosci.destroy({ where: { user_id, id } })
+      .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+  app.post("/api/planerRaporty/remove/:id", (req, res, next) => {
+    const { id, table } = req.params;
+    if (!req.user) {
+      console.log("przekierowanie");
+      return res.redirect("/");
     }
+    const { id: user_id, clientId } = req.user;
+
+    Raporty.destroy({ where: { user_id, id } })
+      .then(() => res.end())
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   });
 
   app.post("/api/akt/planned/:day", (req, res, next) => {
@@ -183,12 +186,12 @@ module.exports = app => {
     }
     switch (table) {
       case "channel":
-        Channel.find({
+        Channel.findAll({
           // include: [{ model: Category }, { model: Group }],
           where: { clientId, id }
         })
           .then(result => {
-            res.json(result);
+            res.json(result[0]);
           })
           .catch(err => {
             console.log(err);
@@ -197,12 +200,12 @@ module.exports = app => {
         break;
 
       case "cost":
-        Cost.find({
+        Cost.findAll({
           include: [{ model: Category }, { model: Group }],
           where: { clientId, id }
         })
           .then(result => {
-            res.json(result);
+            res.json(result[0]);
           })
           .catch(err => {
             console.log(err);
@@ -210,7 +213,7 @@ module.exports = app => {
           });
         break;
       case "akt":
-        Aktywnosci.find({
+        Aktywnosci.findAll({
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
@@ -220,7 +223,7 @@ module.exports = app => {
           where: { user_id, id }
         })
           .then(result => {
-            res.json(result);
+            res.json(result[0]);
           })
           .catch(err => {
             console.log(err);
@@ -229,7 +232,7 @@ module.exports = app => {
         break;
       case "planerRaporty":
         console.log("raport");
-        Raporty.find({
+        Raporty.findAll({
           include: [
             // { model: User },
             { model: RodzajAktywnosci, attributes: ["name"] },
@@ -249,7 +252,7 @@ module.exports = app => {
           where: { user_id, id }
         })
           .then(result => {
-            res.json(result);
+            res.json(result[0]);
           })
           .catch(err => {
             console.log(err);

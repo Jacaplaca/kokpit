@@ -18,6 +18,7 @@ import CustomerDetailsList from "./Products/ProductsList";
 import ExpansionWithAbsolute from "../common/ExpansionWithAbsolute";
 
 import InfoElement from "../common/InfoElement";
+import CustomerDetailsSummary from "./CustomerDetailsSummary";
 
 const tractorBrands = [
   // { id: 0, name: "Inna" },
@@ -69,7 +70,8 @@ class CustomerDetails extends Component {
     harvester: [],
     milk: [],
     agro: [],
-    cultivator: []
+    cultivator: [],
+    addedByUsers: false
   };
 
   componentWillMount() {
@@ -113,11 +115,19 @@ class CustomerDetails extends Component {
 
   fetching = async () => {
     const data = await axios.get("/api/customerdetail/");
+    console.log("TCL: CustomerDetails -> fetching -> data", data);
     const details = this.improveData(data.data);
+    console.log("TCL: CustomerDetails -> fetching -> details", details);
     const inMonth = this.addedInMonth(data.data);
+    const addedByUsers = this.addedRecordsByUsers(data.data);
     // console.log(details);
     const customersWithDetails = details.map(x => x.Customer.id);
-    await this.setAsyncState({ details, customersWithDetails, inMonth });
+    await this.setAsyncState({
+      details,
+      customersWithDetails,
+      inMonth,
+      addedByUsers
+    });
     console.log("this.state.inMonth", inMonth);
   };
 
@@ -127,6 +137,67 @@ class CustomerDetails extends Component {
       .filter(z => auth.id === z.userId)
       .map(x => new Date(x.createdAt).getMonth())
       .filter(y => y === new Date().getMonth()).length;
+  };
+
+  addedRecordsByUsers = data => {
+    const today = new Date();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getYear();
+    let todayMonthMinusOne = 0;
+    let todayYearMinusOne = 0;
+    if (todayMonth == 0) {
+      todayMonthMinusOne = 11;
+      todayYearMinusOne = todayYear - 1;
+    } else {
+      todayMonthMinusOne = todayMonth - 1;
+      todayYearMinusOne = todayYear;
+    }
+    let activeUsers = data.map(record => record.User.id);
+    activeUsers = [...new Set(activeUsers)];
+    let usersRecordsDates = {};
+    let usersSummary = {};
+    let usersSummaryArray = [];
+    data.forEach(record => {
+      // const month = new Date();
+      const recordDate = new Date(record.createdAt);
+      const recordMonth = recordDate.getMonth();
+      const recordYear = recordDate.getYear();
+      if (record.User.id in usersRecordsDates) {
+        usersRecordsDates[record.User.id].push([recordYear, recordMonth]);
+      } else {
+        usersRecordsDates = {
+          ...usersRecordsDates,
+          [record.User.id]: [[recordYear, recordMonth]]
+        };
+      }
+    });
+    activeUsers.forEach(user => {
+      // const recordDate = new Date(record.createdAt);
+      // const recordMonth = recordDate.getMonth();
+      // const recordYear = recordDate.getYear();
+      let all = 0;
+      let thisMonth = 0;
+      let prevMonth = 0;
+      let employee = "";
+      usersRecordsDates[user].forEach(month => {
+        const userRecords = data.filter(record => record.User.id == user);
+        employee = userRecords[0].employee;
+        all = all + 1;
+        if (month.join(",") == [todayYear, todayMonth].join(",")) {
+          thisMonth = thisMonth + 1;
+        } else if (
+          month.join(",") == [todayYearMinusOne, todayMonthMinusOne].join(",")
+        ) {
+          prevMonth = prevMonth + 1;
+        }
+      });
+      usersSummaryArray.push({ user, all, thisMonth, prevMonth, employee });
+
+      // var d = new Date("2020-01-05");
+      // console.log(d.setMonth(d.getMonth() - 1));
+      // console.log("TCL: CustomerDetails -> usersRecordsDates", usersRecordsDates);
+    });
+    return usersSummaryArray;
   };
 
   handleEdit = async id => {
@@ -225,9 +296,7 @@ class CustomerDetails extends Component {
     this.setState({
       showDetails: event.target["scope"] === "row",
       customerName: chosenRow.Customer.name,
-      address: `${chosenRow.Customer.adr_Kod} ${
-        chosenRow.Customer.adr_Miejscowosc
-      }`,
+      address: `${chosenRow.Customer.adr_Kod} ${chosenRow.Customer.adr_Miejscowosc}`,
       phone: chosenRow.phone,
       meadow: chosenRow.meadow,
       field: chosenRow.field,
@@ -339,6 +408,9 @@ class CustomerDetails extends Component {
             }}
           />
         </ModalWithHooks>
+        {this.state.addedByUsers && (
+          <CustomerDetailsSummary data={this.state.addedByUsers} />
+        )}
         {details && (
           <Paper style={{ padding: 20, marginTop: "1.3rem" }}>
             <CustomerDetailsList

@@ -506,7 +506,10 @@ class CostsTable extends Component {
   };
 
   handleDelete = () => {
+    console.log("handledelcost");
+
     const url = `/api/cost/remove/${this.state.deleteRow}`;
+    console.log("TCL: handleDelete -> url", url);
     this.setState({ deleteRow: null, open: false });
     fetch(url, {
       method: "POST",

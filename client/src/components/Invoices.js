@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import axios from "axios";
-import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
+import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
