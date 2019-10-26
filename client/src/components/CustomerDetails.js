@@ -380,11 +380,13 @@ class CustomerDetails extends Component {
             modifyAgro={this.modifyAgro}
           />
         </ExpansionWithAbsolute>
-        <div style={{ textAlign: "center", paddingTop: 15 }}>
-          W obecnym miesiącu wypełniłeś{" "}
-          <span style={{ fontWeight: 800 }}> {inMonth} </span>
-          szt. nowych ankiet o klientach
-        </div>
+        {auth.role != "master" && (
+          <div style={{ textAlign: "center", paddingTop: 15 }}>
+            W obecnym miesiącu wypełniłeś{" "}
+            <span style={{ fontWeight: 800 }}> {inMonth} </span>
+            szt. nowych ankiet o klientach
+          </div>
+        )}
         <ModalWithHooks
           maxWidth={1000}
           openModal={showDetails}

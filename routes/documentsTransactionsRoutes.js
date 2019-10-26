@@ -7,7 +7,7 @@ const to = require("await-to-js").default;
 
 module.exports = app => {
   app.get("/api/documentstransactions", (req, res) => {
-    console.log("/api/documentstransactions", req.user);
+    console.log("/api/documentstransactions");
     const { clientId, role, id: user_id } = req.user;
 
     let where = {};
