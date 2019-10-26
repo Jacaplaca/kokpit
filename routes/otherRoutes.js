@@ -516,7 +516,7 @@ module.exports = app => {
       }
     })
       .then(result => {
-        console.log("result", result);
+        // console.log("result", result);
         return res.json(result);
       })
       .catch(err => {
@@ -570,7 +570,7 @@ module.exports = app => {
       case "group":
         Group.findAll({ where: { clientId } })
           .then(result => {
-            console.log("result", result);
+            // console.log("result", result);
             res.json(result);
           })
           .catch(err => {

@@ -110,7 +110,7 @@ module.exports = app => {
         where: { clientId, id }
       })
         .then(result => {
-          console.log("result", result);
+          // console.log("result", result);
           // return res.json(result);
           return res.json({
             name,
@@ -138,7 +138,7 @@ module.exports = app => {
           { where: { clientId, id } }
         )
           .then(result => {
-            console.log("result", result);
+            // console.log("result", result);
             // return res.json(result);
             return res.json({
               name,
