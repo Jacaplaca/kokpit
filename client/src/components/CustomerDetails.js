@@ -408,7 +408,7 @@ class CustomerDetails extends Component {
             }}
           />
         </ModalWithHooks>
-        {this.state.addedByUsers && (
+        {this.state.addedByUsers && auth.role == "master" && (
           <CustomerDetailsSummary data={this.state.addedByUsers} />
         )}
         {details && (

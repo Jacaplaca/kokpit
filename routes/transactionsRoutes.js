@@ -75,7 +75,7 @@ module.exports = app => {
 
     const { id: user_id, clientId } = req.user;
     const [err, item] = await to(
-      Item.find({
+      Item.findAll({
         where: { id: req.body.itemId },
         raw: true
       })
@@ -83,7 +83,7 @@ module.exports = app => {
     const form = Object.assign(req.body, {
       clientId,
       userId: userId === 0 ? user_id : userId,
-      name: item.name
+      name: item[0].name
     });
 
     // console.log("update item", item, item.name, form.name);
@@ -163,7 +163,7 @@ module.exports = app => {
     const { clientId, role, id: user_id } = req.user;
 
     const [err, items] = await to(
-      Transaction.find({
+      Transaction.findAll({
         // include: [{ model: Category }, { model: Group }],
         where: { clientId, id },
         include: [
@@ -202,7 +202,7 @@ module.exports = app => {
     if (!items) {
       res.sendStatus(500);
     } else {
-      res.json(items);
+      res.json(items[0]);
     }
   });
 

@@ -9,18 +9,26 @@ const CustomerDetailsSummary = ({ data, classes }) => {
 
   return (
     <Paper style={{ padding: 20, marginTop: "1.3rem" }}>
-      <h4>Dodano</h4>
+      <h6 className={classes.head}>Dodano</h6>
       <div>
-        <div className={`${classes.summaryElement} ${classes.employee}`}>
+        <div
+          className={`${classes.summaryElement} ${classes.tableHead} ${classes.employee}`}
+        >
           Pracownik
         </div>
-        <div className={`${classes.summaryElement} ${classes.number}`}>
-          Ogólnie
+        <div
+          className={`${classes.summaryElement} ${classes.tableHead} ${classes.number}`}
+        >
+          Sumarycznie
         </div>
-        <div className={`${classes.summaryElement} ${classes.number}`}>
+        <div
+          className={`${classes.summaryElement} ${classes.tableHead} ${classes.number}`}
+        >
           W tym miesiącu
         </div>
-        <div className={`${classes.summaryElement} ${classes.number}`}>
+        <div
+          className={`${classes.summaryElement} ${classes.tableHead} ${classes.number}`}
+        >
           W porzednim
         </div>
       </div>
@@ -50,6 +58,7 @@ const CustomerDetailsSummary = ({ data, classes }) => {
 CustomerDetailsSummary.propTypes = {};
 
 const styles = theme => ({
+  head: { fontSize: "1rem", fontWeight: "600" },
   summaryElement: {
     width: "130px",
     // height: "50px",
@@ -66,6 +75,9 @@ const styles = theme => ({
     position: "absolute",
     left: 2,
     fontSize: 16
+  },
+  tableHead: {
+    textTransform: "uppercase"
   }
 });
 

@@ -108,7 +108,7 @@ module.exports = app => {
     // console.log("customer_details", req.body);
     if (!req.user) res.redirect("/");
     const { clientId, role, id: user_id } = req.user;
-    console.log("user", req.user);
+    // console.log("user", req.user);
     //
     // const { channel_id, item_id } = req.params;
     // console.log("channelId itemId", channel_id, item_id);
@@ -457,7 +457,7 @@ module.exports = app => {
             : { clientId, userId: user_id }
       })
     );
-    console.log("details", details, err);
+    // console.log("details", details, err);
     if (!details) {
       res.sendStatus(500);
     } else {
@@ -467,7 +467,7 @@ module.exports = app => {
   app.get("/api/customerswithdetails/", async (req, res) => {
     if (!req.user) res.redirect("/");
     const { clientId, role, id: user_id } = req.user;
-    console.log("customer with detail", clientId, user_id);
+    // console.log("customer with detail", clientId, user_id);
 
     const [err, details] = await to(
       CustomerDetail.findAll({
@@ -477,7 +477,7 @@ module.exports = app => {
         raw: true
       })
     );
-    console.log("details", details, err);
+    // console.log("details", details, err);
     if (!details) {
       res.sendStatus(500);
     } else {

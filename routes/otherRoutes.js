@@ -104,12 +104,12 @@ module.exports = app => {
       return res.redirect("/");
     }
     const { id: user_id, clientId } = req.user;
-    Place.find({
+    Place.findAll({
       where: {
         id
       }
     }).then(result => {
-      return res.json(result);
+      return res.json(result[0]);
     });
   });
 
@@ -442,8 +442,8 @@ module.exports = app => {
     }
     // const clientId = 2;
     const { clientId, role, id: user_id } = req.user;
-    Item.find({ where: { clientId, name } })
-      .then(result => res.json(result))
+    Item.findAll({ where: { clientId, name } })
+      .then(result => res.json(result[0]))
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
@@ -460,8 +460,8 @@ module.exports = app => {
     }
     // const clientId = 2;
     const { clientId, role, id: user_id } = req.user;
-    ChannelsConfig.find({ where: { clientId, month, name } })
-      .then(result => res.json(result))
+    ChannelsConfig.findAll({ where: { clientId, month, name } })
+      .then(result => res.json(result[0]))
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
@@ -555,9 +555,9 @@ module.exports = app => {
     // if (!req.user) {
     //   return res.redirect("/");
     // }
-    console.log("table", req.user);
+    // console.log("table", req.user);
     const { clientId, role, id: user_id } = req.user;
-    console.log("table", clientId, role, user_id);
+    // console.log("table", clientId, role, user_id);
     switch (table.table) {
       case "category":
         Category.findAll({ where: { clientId } })

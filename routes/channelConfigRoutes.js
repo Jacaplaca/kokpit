@@ -241,7 +241,7 @@ module.exports = app => {
       ChannelsConfig.findAll(query)
         .then(result => {
           // console.log("config", result);
-          console.log("config2", result);
+          // console.log("config2", result);
           return res.json(result);
         })
         .catch(err => {
@@ -300,19 +300,7 @@ module.exports = app => {
     if (!req.user) {
       return res.redirect("/");
     }
-    // const item = await Item.find({
-    //   where: { clientId: 2, id: clickedRow },
-    //   raw: true
-    // });
-    //
-    // const bonus_type = await BonusType.find({
-    //   where: { name: bonusType },
-    //   raw: true
-    // });
-    //
-    // const monthConverted = month ? month : dateToYM(new Date());
-    //
-    // const { name, unit, channelId } = item;
+
     console.log(
       "bonus",
       bonus,
@@ -377,11 +365,6 @@ module.exports = app => {
     const { bonusType, bonus } = req.body;
 
     const { id: user_id, clientId } = req.user;
-
-    // const bonus_type = await BonusType.find({
-    //   where: { name: bonusType },
-    //   raw: true
-    // });
 
     const form = Object.assign(req.body, {
       // bonus: bonusType.suffix === "%" ? bonus / 100 : bonus,
