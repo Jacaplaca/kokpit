@@ -22,7 +22,7 @@ function renderSuggestionsContainer({ containerProps, children, query }) {
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
-  console.log("renderSuggestion", suggestion);
+  // console.log("renderSuggestion");
   const matches = match(suggestion.name, query);
   const parts = parse(suggestion.name, matches);
   const { adr_Kod, adr_Miejscowosc, flag, CustomerFlag } = suggestion;
@@ -177,18 +177,18 @@ class KlienciSearch extends React.Component {
 
   loadSuggestions(value) {
     const { flags } = this.props;
-    console.log("loadSuggestions", flags);
-    console.log("TCL: loadSuggestions -> value", value)
+    // console.log("loadSuggestions", flags);
+    // console.log("TCL: loadSuggestions -> value", value)
 
     this.setState({
       isLoading: true
     });
     axios.get(`/api/customers/${value}`).then(result => {
-      console.log("TCL: loadSuggestions -> result", result)
+      // console.log("TCL: loadSuggestions -> result", result)
       const suggestions = flags
         ? this.addFlags(result.data, flags)
         : result.data;
-      console.log(suggestions);
+      // console.log(suggestions);
 
       if (value === this.state.value) {
         this.setState({
@@ -206,7 +206,7 @@ class KlienciSearch extends React.Component {
   }
 
   addFlags = (list = [], flags) => {
-    console.log("TCL: addFlags -> list", list)
+    // console.log("TCL: addFlags -> list", list)
 
     const flaged = list.map(customer => {
       let obj = customer;
@@ -234,7 +234,7 @@ class KlienciSearch extends React.Component {
 
   handleSuggestionsFetchRequested = ({ value }) => {
     console.log("handleSuggestionsFetchRequested");
-    console.log(value);
+    // console.log(value);
     // if (this.state.single !== "") {
     //   this.loadSuggestions(value);
     //   this.props.cancelLabel();
