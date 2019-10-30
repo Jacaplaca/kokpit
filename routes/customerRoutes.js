@@ -50,6 +50,9 @@ module.exports = app => {
   app.get("/api/klienci", (req, res) => {
     res.json([]);
   });
+  app.get("/api/customers", (req, res) => {
+    res.json([]);
+  });
 
   app.get("/api/customer/:id", async (req, res) => {
     const { id } = req.params;

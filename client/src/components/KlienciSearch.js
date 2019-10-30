@@ -178,6 +178,7 @@ class KlienciSearch extends React.Component {
   loadSuggestions(value) {
     const { flags } = this.props;
     console.log("loadSuggestions", flags);
+    console.log("TCL: loadSuggestions -> value", value)
 
     this.setState({
       isLoading: true
