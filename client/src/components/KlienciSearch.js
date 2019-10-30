@@ -63,10 +63,10 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
                 {part.text}
               </span>
             ) : (
-              <strong key={String(index)} style={{ fontWeight: 300 }}>
-                {part.text}
-              </strong>
-            );
+                <strong key={String(index)} style={{ fontWeight: 300 }}>
+                  {part.text}
+                </strong>
+              );
           })}
         </span>
         <span style={{ float: "right" }}>
@@ -166,7 +166,7 @@ class KlienciSearch extends React.Component {
       this.setState({
         single: `${fetched.name} (${fetched.adr_Kod} ${
           fetched.adr_Miejscowosc
-        })`
+          })`
       });
     });
   };
@@ -183,6 +183,7 @@ class KlienciSearch extends React.Component {
       isLoading: true
     });
     axios.get(`/api/customers/${value}`).then(result => {
+      console.log("TCL: loadSuggestions -> result", result)
       const suggestions = flags
         ? this.addFlags(result.data, flags)
         : result.data;
@@ -204,6 +205,8 @@ class KlienciSearch extends React.Component {
   }
 
   addFlags = (list = [], flags) => {
+    console.log("TCL: addFlags -> list", list)
+
     const flaged = list.map(customer => {
       let obj = customer;
       for (let flag of flags) {
@@ -342,9 +345,9 @@ class KlienciSearch extends React.Component {
           // )}
           inputProps={inputProps}
           ref={this.storeInputReference}
-          // shouldRenderSuggestions={() =>
-          //   this.setState({ single: this.props.miejsceLabel })
-          // }
+        // shouldRenderSuggestions={() =>
+        //   this.setState({ single: this.props.miejsceLabel })
+        // }
         />
       </div>
     );

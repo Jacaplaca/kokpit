@@ -12,18 +12,18 @@ const assignFlagToCustomer = async (flags, customer_id) => {
   console.log("assignFlagToCustomer()", flags, customer_id);
   flags.map(async x => {
     const [errFlag, flag] = await to(
-      Flag.findAll({ where: { short: x.short }, raw: true })
+      Flag.findOne({ where: { short: x.short }, raw: true })
     );
     if (x.tick) {
-      console.log("create", flag[0].id, customer_id);
+      console.log("create", flag.id, customer_id);
       const [createErr, create] = await to(
-        FlagsCustomers.create({ flag_id: flag[0].id, customer_id })
+        FlagsCustomers.create({ flag_id: flag.id, customer_id })
       );
     } else {
-      console.log("destroy", flag[0].id, customer_id);
+      console.log("destroy", flag.id, customer_id);
       const [destroyErr, destroy] = await to(
         FlagsCustomers.destroy({
-          where: { flag_id: flag[0].id, customer_id }
+          where: { flag_id: flag.id, customer_id }
         })
       );
     }
@@ -65,7 +65,7 @@ module.exports = app => {
         kiedy,
         start: `${kiedy} ${cleanStart.split(":")[0]}:${
           cleanStart.split(":")[1]
-        }`,
+          }`,
         stop: `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`,
         aktywnosc_id,
         miejsce_id: miejsce_id === "" ? null : miejsce_id,
@@ -117,7 +117,7 @@ module.exports = app => {
         kiedy,
         start: `${kiedy} ${cleanStart.split(":")[0]}:${
           cleanStart.split(":")[1]
-        }`,
+          }`,
         stop: `${kiedy} ${cleanStop.split(":")[0]}:${cleanStop.split(":")[1]}`,
         aktywnosc_id,
         miejsce_id: miejsce_id === "" ? null : miejsce_id,
@@ -172,10 +172,10 @@ module.exports = app => {
           kiedy,
           start: `${kiedy} ${cleanStart.split(":")[0]}:${
             cleanStart.split(":")[1]
-          }`,
+            }`,
           stop: `${kiedy} ${cleanStop.split(":")[0]}:${
             cleanStop.split(":")[1]
-          }`,
+            }`,
           aktywnosc_id,
           miejsce_id: miejsce_id === "" ? null : miejsce_id,
           planer_klienci_id:
