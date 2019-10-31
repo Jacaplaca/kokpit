@@ -8,10 +8,12 @@ import { MuiPickersUtilsProvider } from "material-ui-pickers";
 import { Provider } from "react-redux";
 import MomentUtils from "@date-io/moment";
 
-import Register from "./Register";
-import Login from "./Login";
-import ResetPassword from "./ResetPassword";
-import MiniDrawer from "./MiniDrawer";
+// import Register from "./Register";
+// import Login from "./Login";
+// import ResetPassword from "./ResetPassword";
+//neikom z edge
+// import MiniDrawer from "./MiniDrawer";
+//
 import LinearProgress from "../common/LinearProgress";
 
 import moment from "moment";
@@ -40,13 +42,15 @@ class App extends Component {
 
 
   state = {
-    edge: false
+    edge: false,
+    module: null
   };
 
   componentDidMount() {
     this.checkBrowser();
     this.props.fetchUser();
     this.props.fetchModules();
+
 
     let language = localStorage.getItem("language");
     console.log("cookies lan", language);
@@ -71,89 +75,75 @@ class App extends Component {
     console.log("det", isIE, isEdge);
     if (isIE || isEdge) {
       this.setState({ edge: true });
+    } else {
+      const path = "./Drawer.js"
+      import(`${path}`)
+        .then(module => this.setState({ module: module.default }))
     }
   };
-  
+
   render() {
     // console.log("props", this.props);
+    // const Drawer = import('./Drawer')
+    const { module: Component } = this.state;
     return (
-      this.state.edge ? <div style={{backgroundColor: 'black', height: "100%", padding: 50}}><div style={{ padding: 15, textAlign: 'left', maxWidth: 800, 
-      border: '1px solid red', margin: '0 auto', borderRadius: 5, backgroundColor: 'white' }}><h4>Uwaga! Wykryto przeglądarkę <span style={{ color: 'red' }}>Edge lub Microsoft Internet Explorer</span></h4><p>Ze względu na aktualizację serwera mogą wystąpić problemy z tymi przeglądarkami. Na czas korzystania z aplikacji Kokpit prosimy przełączyć się na <strong>Chrome bądź Firefox</strong>. Dziękujemy i przepraszamy za kłopot.</p><p style={{fontStyle: "italic"}}>Pracujemy nad rozwiązaniem problemu - Świadoma 
+      this.state.edge ? <div style={{ backgroundColor: 'black', height: "100%", padding: 50 }}><div style={{
+        padding: 15, textAlign: 'left', maxWidth: 800,
+        border: '1px solid red', margin: '0 auto', borderRadius: 5, backgroundColor: 'white'
+      }}><h4>Uwaga! Wykryto przeglądarkę <span style={{ color: 'red' }}>Edge lub Microsoft Internet Explorer</span></h4><p>Ze względu na aktualizację serwera mogą wystąpić problemy z tymi przeglądarkami. Na czas korzystania z aplikacji Kokpit prosimy przełączyć się na <strong>Chrome bądź Firefox</strong>. Dziękujemy i przepraszamy za kłopot.</p><p style={{ fontStyle: "italic" }}>Pracujemy nad rozwiązaniem problemu - Świadoma
         Firma</p></div></div> : (
-        <BrowserRouter style={{ height: "100%" }}>
-          <div id="app" style={{ height: "100%" }}>
-            <StickyContainer style={{ height: "100%" }}>
-              <Sticky>
-                {({ style }) => (
-                  <div
-                    style={{
-                      zIndex: 100,
-                      position: "fixed",
-                      top: "0px",
-                      left: "0px",
-                      width: "100%",
-                      transform: "translateZ(0px)"
-                    }}
-                  >
-                    <LinearProgress />
-                  </div>
-                )}
-              </Sticky>
-              <MuiPickersUtilsProvider
-                utils={MomentUtils}
-                locale={"pl"}
-                moment={moment}
-              >
-                <MiniDrawer>
-                  <Route
-                    path="/login"
-                    component={Login}
-                  // render={() => <Login />}
-                  />
-                  {/* <Login /> */}
-                  <Route path="/register" component={Register} />
-                  <Route path="/reset" component={ResetPassword} />
-                  {/* <div>testowanie child</div>
-              {/* <div
-              // style={{ position: "absolute" }}
-              >
-                asdfla klo Expetendis ne deserunt. Se elit amet ubi ingeniis,
-                amet litteris sed esse tempor, quae in ingeniis et magna, quo
-                sint quem nulla probant. Culpa ita aliquip, export aut
-                voluptate, sed cillum aute iis nostrud, litteris quorum
-                appellat ab ita litteris instituendarum ut ne iis nulla
-                ullamco ad de nostrud graviterque, laboris aut doctrina.Ne quo
-                philosophari, aliquip id aute possumus. Constias quae duis
-                voluptate enim est ad a illum ipsum eram, ipsum voluptatibus
-                expetendis quis mandaremus a quo in imitarentur non ne nisi
-                irure duis quibusdam, velit offendit ab praesentibus quo id
-                fugiat quamquam comprehenderit, ea id fore minim fugiat. Ex
-                illum admodum qui incididunt anim veniam admodum quis.
-                Deserunt dolor eiusmod ut amet ubi laborum, incurreret tamen
-                esse offendit quis, ne in quid sunt dolor in esse possumus ut
-                illustriora o incididunt id arbitror do et malis deserunt non
-                arbitror an offendit.
-              </div> */}
-                </MiniDrawer>
-              </MuiPickersUtilsProvider>
+          <BrowserRouter style={{ height: "100%" }}>
+            <div id="app" style={{ height: "100%" }}>
+              <StickyContainer style={{ height: "100%" }}>
+                <Sticky>
+                  {({ style }) => (
+                    <div
+                      style={{
+                        zIndex: 100,
+                        position: "fixed",
+                        top: "0px",
+                        left: "0px",
+                        width: "100%",
+                        transform: "translateZ(0px)"
+                      }}
+                    >
+                      <LinearProgress />
+                    </div>
+                  )}
+                </Sticky>
+                <MuiPickersUtilsProvider
+                  utils={MomentUtils}
+                  locale={"pl"}
+                  moment={moment}
+                >
+                  {Component && <Component />}
+                  {/* <MiniDrawer>
+                    <Route
+                      path="/login"
+                      component={Login}
+                    />
+                    <Route path="/register" component={Register} />
+                    <Route path="/reset" component={ResetPassword} />
+                  </MiniDrawer> */}
+                </MuiPickersUtilsProvider>
 
-              <div
-                style={{
-                  zIndex: 100,
-                  position: "fixed",
-                  bottom: 0,
-                  left: "0px",
-                  width: "100%",
-                  transform: "translateZ(0px)"
-                }}
-              >
-                <Footer />
-                {/* <div>alskdjflsakdj flasdkfj laskdf</div> */}
-              </div>
-            </StickyContainer>
-          </div>
-        </BrowserRouter>
-      )
+                <div
+                  style={{
+                    zIndex: 100,
+                    position: "fixed",
+                    bottom: 0,
+                    left: "0px",
+                    width: "100%",
+                    transform: "translateZ(0px)"
+                  }}
+                >
+                  <Footer />
+                  {/* <div>alskdjflsakdj flasdkfj laskdf</div> */}
+                </div>
+              </StickyContainer>
+            </div>
+          </BrowserRouter>
+        )
 
     );
   }

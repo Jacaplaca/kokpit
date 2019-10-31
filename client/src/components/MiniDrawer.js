@@ -1,17 +1,20 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { BrowserRouter, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import * as actions from "../actions";
 
+import { BrowserRouter, Route } from "react-router-dom";
 import TopNavBar from "../common/TopNavBar";
+
+//nikompatybilne z edge
 import DrawerMy from "../common/DrawerMy";
+import routes from "./Routes/routes";
+//
 
 import Login from "./Login";
 import MyComponent from "./Routes/MyComponent";
-import routes from "./Routes/routes";
 import Footer from "../common/Footer";
 
 let drawerWidth = 240;
