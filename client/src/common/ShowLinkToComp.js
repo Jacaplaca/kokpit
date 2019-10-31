@@ -1,8 +1,11 @@
 import { connect } from "react-redux";
 import * as actions from "../actions";
 
-const compAllowed = (comps, comp) =>
-  comps.filter(x => x.comp === comp).length > 0;
+const compAllowed = (comps, comp) => {
+  if (Array.isArray(comps)) {
+    return comps.filter(x => x.comp === comp).length > 0
+  } return false
+}
 
 const ShowLinkToComp = ({ children, auth, comp }) => {
   // console.log("ShowLinkToComp", auth && auth[comp] ? children : null);

@@ -132,17 +132,20 @@ class MiniDrawer extends React.Component {
             {!auth ? (
               <Route path="/" exact component={Login} />
             ) : (
-              <Route
-                path="/"
-                exact
-                // render={() => <Invoices title="Zaległe faktury" />}
-                render={() => this.checkStartComp(auth)}
-              />
-            )}
+                <Route
+                  path="/"
+                  exact
+                  // render={() => <Invoices title="Zaległe faktury" />}
+                  render={() => this.checkStartComp(auth)}
+                />
+              )}
             {auth &&
               routes.map((route, i) => {
+                let titles = ['Sample']
                 const { comp, path, component, open, id, parrentId } = route;
-                const titles = modules.filter(x => x.id === id);
+                if (Array.isArray(modules)) {
+                  titles = modules.filter(x => x.id === id);
+                }
                 const moduleTitle = titles[0] ? switchLang(titles[0]) : "";
                 // const moduleTitle = titles[0] ? titles[0].name : "";
                 // console.log("route", comp, path);
@@ -152,18 +155,18 @@ class MiniDrawer extends React.Component {
                 return (auth &&
                   this.compAllowed(auth.UserModule, parrentId, comp)) ||
                   open ? (
-                  <Route
-                    key={i}
-                    path={path}
-                    render={() => (
-                      <MyComponent
-                        title={moduleTitle}
-                        component={component}
+                    <Route
+                      key={i}
+                      path={path}
+                      render={() => (
+                        <MyComponent
+                          title={moduleTitle}
+                          component={component}
                         // channel={channel}
-                      />
-                    )}
-                  />
-                ) : null;
+                        />
+                      )}
+                    />
+                  ) : null;
               })}
             {this.props.children}
           </main>
@@ -192,19 +195,22 @@ class Ble extends Component {
     // console.log("startComp", start_comp, UserModule);
     let startModule;
     let routeStart;
-    if (UserModule.length === 0) {
-      startModule = { name: "Start" };
-      routeStart = routes[0];
-    } else {
-      const startComp = UserModule.filter(x => x.id === start_comp);
-      startModule = startComp.length > 0 ? startComp[0] : UserModule[0];
-      const route = routes.filter(x => x.comp === startModule.comp);
-      routeStart = route.length > 0 ? route[0] : routes[0];
+    if (Array.isArray(UserModule)) {
+
+      if (UserModule.length === 0) {
+        startModule = { name: "Start" };
+        routeStart = routes[0];
+      } else {
+        const startComp = UserModule.filter(x => x.id === start_comp);
+        startModule = startComp.length > 0 ? startComp[0] : UserModule[0];
+        const route = routes.filter(x => x.comp === startModule.comp);
+        routeStart = route.length > 0 ? route[0] : routes[0];
+      }
+      return (
+        <MyComponent title={startModule.name} component={routeStart.component} />
+      );
     }
 
-    return (
-      <MyComponent title={startModule.name} component={routeStart.component} />
-    );
   };
 
   componentDidMount = () => {
@@ -225,14 +231,11 @@ class Ble extends Component {
   };
 
   compAllowed = (comps, id, comp) => {
-    // console.log(
-    //   "comps comp",
-    //   comps,
-    //   id,
-    //   comp,
-    //   comps.filter(x => x.id === id).length
-    // );
-    return comps.filter(x => x.id === id).length > 0;
+    if (!comps) {
+      return false
+    } else {
+      return comps.filter(x => x.id === id).length > 0
+    }
   };
 
   render() {
@@ -272,17 +275,20 @@ class Ble extends Component {
                 render={() => <Login />}
               />
             ) : (
-              <Route
-                path="/"
-                exact
-                // render={() => <Invoices title="Zaległe faktury" />}
-                render={() => this.checkStartComp(auth)}
-              />
-            )}
+                <Route
+                  path="/"
+                  exact
+                  // render={() => <Invoices title="Zaległe faktury" />}
+                  render={() => this.checkStartComp(auth)}
+                />
+              )}
             {auth &&
               routes.map((route, i) => {
+                let titles = ["Sample"]
                 const { comp, path, component, open, id, parrentId } = route;
-                const titles = modules.filter(x => x.id === id);
+                if (Array.isArray(modules)) {
+                  titles = modules.filter(x => x.id === id);
+                }
                 const moduleTitle = titles[0] ? switchLang(titles[0]) : "";
                 // const moduleTitle = titles[0] ? titles[0].name : "";
                 // console.log("route", comp, path);
@@ -292,18 +298,18 @@ class Ble extends Component {
                 return (auth &&
                   this.compAllowed(auth.UserModule, parrentId, comp)) ||
                   open ? (
-                  <Route
-                    key={i}
-                    path={path}
-                    render={() => (
-                      <MyComponent
-                        title={moduleTitle}
-                        component={component}
+                    <Route
+                      key={i}
+                      path={path}
+                      render={() => (
+                        <MyComponent
+                          title={moduleTitle}
+                          component={component}
                         // channel={channel}
-                      />
-                    )}
-                  />
-                ) : null;
+                        />
+                      )}
+                    />
+                  ) : null;
               })}
             {this.props.children}
             {/* <div>asdflksadjfals dkfjlsakdfjla;skdf </div> */}

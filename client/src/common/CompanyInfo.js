@@ -45,7 +45,7 @@ const CompanyInfo = ({ classes, width, open, auth }) => {
               // marginTop: 20,
             }}
           >
-            <h5>{auth.Company.name}</h5>
+            <h5>{auth && auth.Company && auth.Company.name}</h5>
             {isImage && (
               <img
                 // className={classes.rowImg}

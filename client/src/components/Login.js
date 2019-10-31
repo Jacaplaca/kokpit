@@ -48,13 +48,13 @@ class Login extends Component {
     if (email !== emailPrev) {
       EmailValidator.validate(email)
         ? this.setState({
-            disabledButton: false,
-            emailHelper: getString(
-              "LOGIN_EMAIL_GIVE_CORRECT",
-              this.props.language
-            ),
-            errorEmail: false
-          })
+          disabledButton: false,
+          emailHelper: getString(
+            "LOGIN_EMAIL_GIVE_CORRECT",
+            this.props.language
+          ),
+          errorEmail: false
+        })
         : this.setState({ disabledButton: true });
     }
   };
@@ -64,13 +64,13 @@ class Login extends Component {
     this.setState({ password });
     this.state.disabledButton === true
       ? this.setState({
-          emailHelper: emailHelperMessage(language),
-          errorEmail: true
-        })
+        emailHelper: emailHelperMessage(language),
+        errorEmail: true
+      })
       : this.setState({
-          emailHelper: emailHelperMessage(language),
-          errorEmail: false
-        });
+        emailHelper: emailHelperMessage(language),
+        errorEmail: false
+      });
   };
 
   render() {
@@ -93,7 +93,7 @@ class Login extends Component {
           {this.props.formTemp[0] ? (
             <div style={{ display: !this.state.resetShow && "none" }}>
               {getString(this.props.formTemp[0].errors, this.props.language)}
-              {"email" in this.props.formTemp[0] && (
+              {this.props.formTemp[0].hasOwnProperty('email') && (
                 <form method="POST" action="/auth/reset">
                   <input name="email" type="hidden" value={this.state.email} />
                   <Button
